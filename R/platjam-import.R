@@ -66,6 +66,7 @@
 #' @examples
 #' ## There is a small example file to use for testing
 #' cov_file <- system.file("data", "tss_coverage.matrix", package="platjam");
+#' cov_file <- system.file("data", "h3k4me1_coverage.matrix", package="platjam");
 #' if (length(cov_file) > 0) {
 #'    nmat <- coverage_matrix2nmat(cov_file);
 #'    jamba::printDebug("signal_name: ",
