@@ -218,3 +218,212 @@ coverage_matrix2nmat <- function
    mat;
 }
 
+
+#' Make multiple coverage heatmaps
+#'
+#' Make multiple coverage heatmaps
+#'
+#' This function takes a list of `normalizedMatrix` objects,
+#' usually the output of `coverage_matrix2nmat()`, and
+#' produces multiple heatmaps using
+#' `EnrichedHeatmap`.
+#'
+#' This function is intended to be a convenient wrapper to
+#' help keep each data matrix in order, to apply consistent
+#' clustering and filtering across all data matrices,
+#' and to enable optional multi-row heatmap layout.
+#'
+#' @param nmatlist `list` containing `normalizedMatrix` objects,
+#'    usually the output from `coverage_matrix2nmat()`.
+#' @param k_clusters integer number of k-means clusters to
+#'    use to partition each heatmap. Use `0` or `NULL` for
+#'    no clustering.
+#' @param k_subset integer vector of k-means clusters to
+#'    retain. Often one cluster contains mostly empty
+#'    values, and can be removed using this mechanism.
+#' @param k_colors vector of R colors, or `NULL` to use
+#'    the output of `colorjam::rainbowJam(k_clusters)`.
+#' @param k_width unit width of the k-means cluster color
+#'    bar, used with `k_clusters`.
+#' @param partition vector used to split rows of each
+#'    matrix in `nmatlist`, named by rownames. This
+#'    value is ignored when `k_clusters` is supplied.
+#' @param rows vector of `rownames` or integer vector with
+#'    index of rows to keep from each matrix in `nmatlist`.
+#' @param nmat_colors named character vector of R colors,
+#'    to colorize each heatmap. When `NULL` then
+#'    `colorjam::rainbowJam()` is used to create colors
+#'    for each heatmap panel.
+#' @param main_heatmap integer index referring to the
+#'    entry in `nmatlist` to use for clustering and row
+#'    ordering.
+#' @param hm_nrow integer number of rows used to display
+#'    the heatmap panels.
+#' @param transform `function` used to transform numeric
+#'    values in each entry in `nmatlist`.
+#' @param lens numeric value used to scale each heatmap
+#'    color ramp, using `getColorRamp()`.
+#' @param seed numeric value used with `set.seed()` to
+#'    set the random seed. Set to `NULL` to avoid running
+#'    `set.seed()`.
+#' @param use_raster logical indicating whether to create heatmaps
+#'    using raster resizing, almost always recommended `TRUE`.
+#' @param verbose logical indicating whether to print verbose output.
+#' @param ... additional arguments are sent to `colorjam::rainbowJam()`.
+#'
+#' @examples
+#' ## There is a small example file to use for testing
+#' cov_file1 <- system.file("data", "tss_coverage.matrix", package="platjam");
+#' cov_file2 <- system.file("data", "h3k4me1_coverage.matrix", package="platjam");
+#' cov_files <- c(cov_file1, cov_file2);
+#' names(cov_files) <- gsub("[.]matrix",
+#'    "",
+#'    basename(cov_files));
+#' nmatlist <- lapply(cov_files, coverage_matrix2nmat);
+#' nmatlist2heatmaps(nmatlist);
+#'
+#' # k-means clusters
+#' nmatlist2heatmaps(nmatlist, k_clusters=4);
+#'
+#' # multiple rows
+#' nmatlist2heatmaps(nmatlist, k_clusters=4, hm_nrow=2);
+#'
+#' @export
+nmatlist2heatmaps <- function
+(nmatlist,
+ k_clusters=0,
+ k_subset=NULL,
+ k_colors=NULL,
+ k_width=unit(3, "mm"),
+ partition=NULL,
+ rows=NULL,
+ nmat_colors=NULL,
+ main_heatmap=1,
+ hm_nrow=1,
+ transform=jamba::log2signed,
+ lens=-2,
+ seed=123,
+ use_raster=TRUE,
+ verbose=FALSE,
+ ...)
+{
+   #
+   if (length(seed) > 0) {
+      set.seed(seed);
+   }
+   if (length(main_heatmap) == 0 || main_heatmap > length(nmatlist)) {
+      main_heatmap <- 1;
+   }
+   if (length(rows) == 0) {
+      rows <- rownames(nmatlist[[main_heatmap]]);
+   }
+   if (length(nmat_colors) == 0) {
+      nmat_colors <- colorjam::rainbowJam(length(nmatlist),
+         ...);
+   }
+   if (length(nmat_colors) < length(nmatlist)) {
+      nmat_colors <- rep(nmat_colors,
+         length.out=length(nmatlist));
+   }
+   if (length(k_clusters) > 0 && k_clusters > 0) {
+      if (length(k_colors) == 0) {
+         k_colors <- jamba::nameVector(
+            colorjam::rainbowJam(k_clusters,
+               ...),
+            seq_len(k_clusters));
+      } else if (length(k_colors) < k_clusters) {
+         k_colors <- jamba::nameVector(
+            rep(k_colors,
+               length.out=k_clusters),
+            seq_len(k_clusters));
+      } else if (length(names(k_colors)) == 0) {
+         names(k_colors) <- seq_len(k_clusters);
+      }
+      partition <- kmeans(
+         transform(nmatlist[[main_heatmap]][rows,]),
+         centers=k_clusters)$cluster;
+      if (length(k_subset) > 0) {
+         partition <- partition[partition %in% k_subset];
+         rows <- names(partition);
+         k_colors <- k_colors[as.character(k_subset)];
+      }
+   }
+   if (length(partition) > 0) {
+      if (length(k_colors) == 0) {
+         k_colors <- nameVector(
+            colorjam::rainbowJam(length(unique(partition)),
+               ...),
+            unique(partition));
+      }
+      PHM <- Heatmap(partition,
+         use_raster=use_raster,
+         col=k_colors,
+         name="cluster",
+         show_row_names=FALSE,
+         width=k_width);
+   }
+   lens <- rep(lens, length.out=length(nmatlist));
+   EH_l <- lapply(seq_along(nmatlist), function(i){
+      nmat <- nmatlist[[i]][rows,,drop=FALSE];
+      signal_name <- attr(nmat, "signal_name");
+      target_name <- attr(nmat, "target_name");
+      s_name <- gsub("_at_", "\nat_", signal_name);
+      color <- nmat_colors[[i]];
+      EH <- EnrichedHeatmap(log10(1+nmat),
+         split=partition,
+         pos_line=FALSE,
+         use_raster=use_raster,
+         col=jamba::getColorRamp(color,
+            n=10,
+            lens=lens[i]),
+         top_annotation=HeatmapAnnotation(
+            lines=anno_enriched(gp=gpar(col=k_colors))
+         ),
+         axis_name_gp=gpar(fontsize=8),
+         name=signal_name,
+         column_title=signal_name
+      );
+      EH;
+   });
+
+   ## Optional multi-row layout
+   if (hm_nrow > 1 && length(nmatlist) > 1) {
+      hm_split <- rep(rep(
+            seq_len(hm_nrow),
+            each=ceiling(length(nmatlist) / hm_nrow)),
+         length.out=length(nmatlist));
+      EH_l3 <- split(EH_l, hm_split);
+      ht_l <- lapply(EH_l3, function(EHs){
+         if (length(partition) > 0) {
+            ht_1 <- grid.grabExpr(
+               draw(PHM + Reduce("+", EHs),
+                  main_heatmap=main_heatmap+1));
+         } else {
+            ht_1 <- grid.grabExpr(
+               draw(Reduce("+", EHs),
+                  main_heatmap=main_heatmap));
+         }
+         ht_1;
+      });
+      l <- grid.layout(hm_nrow, 1);
+      vp <- viewport(width=1, height=1, layout=l);
+      grid.newpage();
+      pushViewport(vp);
+      for (i in seq_along(ht_l)) {
+         pushViewport(viewport(layout.pos.row=i));
+         grid.draw(ht_l[[i]]);
+         popViewport();
+      }
+      popViewport();
+   } else {
+      ## Single row layout
+      if (length(partition) > 0) {
+         draw(PHM + Reduce("+", EH_l),
+            main_heatmap=main_heatmap+1);
+      } else {
+         draw(Reduce("+", EH_l),
+            main_heatmap=main_heatmap);
+      }
+   }
+   invisible(EH_l);
+}
