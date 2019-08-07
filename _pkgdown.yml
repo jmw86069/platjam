@@ -1,1 +1,17 @@
+template:
+  params:
+    bootswatch: cosmo
 destination: docs
+figure:
+  fig.height: 8
+  fig.width: 8
+reference:
+- title: Import functions
+  desc: Import functions
+  contents:
+  - has_concept("jam import functions")
+- title: Genome functions
+  desc: Functions specific to genome data
+  contents:
+  - has_concept("jam genome functions")
+

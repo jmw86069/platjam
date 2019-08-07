@@ -126,5 +126,8 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
 }
 
 }
+\seealso{
+Other jam genome functions: \code{\link{nmatlist2heatmaps}}
+}
 \concept{jam genome functions}
 \concept{jam import functions}

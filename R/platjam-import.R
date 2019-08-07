@@ -268,8 +268,17 @@ coverage_matrix2nmat <- function
 #'    `set.seed()`.
 #' @param use_raster logical indicating whether to create heatmaps
 #'    using raster resizing, almost always recommended `TRUE`.
+#' @param do_plot logical indicating whether to draw the heatmaps,
+#'    where `FALSE` will return the data used to create heatmaps
+#'    without actually drawing the heatmaps.
+#' @param return_type character string indicating the type of
+#'    data to return: `"heatmaplist"` returns the list of heatmaps,
+#'    which can separately be arranged together using
+#'    `ComplexHeatmap::draw()` or `grid::grid.draw()`.
 #' @param verbose logical indicating whether to print verbose output.
 #' @param ... additional arguments are sent to `colorjam::rainbowJam()`.
+#'
+#' @family jam genome functions
 #'
 #' @examples
 #' ## There is a small example file to use for testing
@@ -304,10 +313,13 @@ nmatlist2heatmaps <- function
  lens=-2,
  seed=123,
  use_raster=TRUE,
+ do_plot=TRUE,
+ return_type=c("heatmaplist", "grid"),
  verbose=FALSE,
  ...)
 {
    #
+   return_type <- match.arg(return_type);
    if (length(seed) > 0) {
       set.seed(seed);
    }
@@ -405,16 +417,21 @@ nmatlist2heatmaps <- function
          }
          ht_1;
       });
-      l <- grid.layout(hm_nrow, 1);
-      vp <- viewport(width=1, height=1, layout=l);
-      grid.newpage();
-      pushViewport(vp);
-      for (i in seq_along(ht_l)) {
-         pushViewport(viewport(layout.pos.row=i));
-         grid.draw(ht_l[[i]]);
+      if (do_plot) {
+         l <- grid.layout(hm_nrow, 1);
+         vp <- viewport(width=1, height=1, layout=l);
+         grid.newpage();
+         pushViewport(vp);
+         for (i in seq_along(ht_l)) {
+            pushViewport(viewport(layout.pos.row=i));
+            grid.draw(ht_l[[i]]);
+            popViewport();
+         }
          popViewport();
       }
-      popViewport();
+      if ("grid" %in% return_type) {
+         EH_l <- ht_l;
+      }
    } else {
       ## Single row layout
       if (length(partition) > 0) {
@@ -427,3 +444,56 @@ nmatlist2heatmaps <- function
    }
    invisible(EH_l);
 }
+
+
+#' Import deepTools coverage matrix to normalizedMatrix
+#'
+#' Import deepTools coverage matrix to normalizedMatrix
+#'
+#' This function is under active development.
+#'
+#' @export
+deepTools_matrix2nmat <- function
+(x=NULL,
+ filename=NULL,
+ signal_name=NULL,
+ target_name="target",
+ background=0,
+ smooth=FALSE,
+ target_is_single_point=FALSE,
+ signal_is_categorical=FALSE,
+ mat_grep="[-0-9]+:[-0-9]+",
+ upstream_grep="^[-]",
+ downstream_grep="^[^-]",
+ target_grep="^0$",
+ verbose=FALSE,
+ ...)
+{
+   x1 <- readLines(filename, n=1);
+   xyaml <- yaml::read_yaml(text=gsub("^@", "", x1));
+   samples <- xyaml$sample_labels;
+   samples;
+   binsize <- xyaml$`bin size`;
+   binsize;
+   upstream <- xyaml$upstream;
+   upstream;
+   group_boundaries <- xyaml$group_boundaries;
+   sample_boundaries <- xyaml$sample_boundaries;
+   x <- data.table::fread(text=readLines(filename),
+      skip=1,
+      header=FALSE,
+      sep="\t");
+   rownames(x) <- x[[4]];
+
+   mats <- as.matrix(x[,-1:-6,drop=FALSE]);
+   mat_n <- ceiling(ncol(mats) / length(samples));
+   mat_split <- rep(rep(samples, each=mat_n), length.out=ncol(mats));
+   colnames_l <- split(colnames(mats), mat_split);
+   mat_l <- lapply(colnames_l, function(i){
+      im <- mats[,i];
+      colnames(im) <- paste0("u", seq_len(ncol(im)));
+      rownames(im) <- x[[4]];
+      im;
+   });
+}
+

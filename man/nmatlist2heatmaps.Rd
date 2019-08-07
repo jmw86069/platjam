@@ -8,7 +8,8 @@ nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
   k_colors = NULL, k_width = unit(3, "mm"), partition = NULL,
   rows = NULL, nmat_colors = NULL, main_heatmap = 1, hm_nrow = 1,
   transform = jamba::log2signed, lens = -2, seed = 123,
-  use_raster = TRUE, verbose = FALSE, ...)
+  use_raster = TRUE, do_plot = TRUE, return_type = c("heatmaplist",
+  "grid"), verbose = FALSE, ...)
 }
 \arguments{
 \item{nmatlist}{\code{list} containing \code{normalizedMatrix} objects,
@@ -60,6 +61,15 @@ set the random seed. Set to \code{NULL} to avoid running
 \item{use_raster}{logical indicating whether to create heatmaps
 using raster resizing, almost always recommended \code{TRUE}.}
 
+\item{do_plot}{logical indicating whether to draw the heatmaps,
+where \code{FALSE} will return the data used to create heatmaps
+without actually drawing the heatmaps.}
+
+\item{return_type}{character string indicating the type of
+data to return: \code{"heatmaplist"} returns the list of heatmaps,
+which can separately be arranged together using
+\code{ComplexHeatmap::draw()} or \code{grid::grid.draw()}.}
+
 \item{verbose}{logical indicating whether to print verbose output.}
 
 \item{...}{additional arguments are sent to \code{colorjam::rainbowJam()}.}
@@ -96,3 +106,7 @@ nmatlist2heatmaps(nmatlist, k_clusters=4);
 nmatlist2heatmaps(nmatlist, k_clusters=4, hm_nrow=2);
 
 }
+\seealso{
+Other jam genome functions: \code{\link{coverage_matrix2nmat}}
+}
+\concept{jam genome functions}

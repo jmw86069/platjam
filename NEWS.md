@@ -1,5 +1,13 @@
 # platjam version 0.0.2.900
 
+## changes
+
+* The package itself allows installation on R-3.0.0 and higher,
+resolving an issue with installing on R-3.5.0 when the
+package said it required R-3.5.1 (and did not).
+
+# platjam version 0.0.2.900
+
 ## new function
 
 * `nmatlist2heatmaps()` creates multiple coverage heatmaps

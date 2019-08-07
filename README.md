@@ -24,5 +24,5 @@ devtools::install_github("jmw86069/platjam")
 A full online function reference is available via the pkgdown
 documentation:
 
-[Full platjam command reference](https://jmw86069.github.io/platjam)
+[Full platjam command reference](https://jmw86069.github.io/platjam/)
 
