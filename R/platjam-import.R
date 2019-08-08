@@ -250,6 +250,15 @@ coverage_matrix2nmat <- function
 #'    value is ignored when `k_clusters` is supplied.
 #' @param rows vector of `rownames` or integer vector with
 #'    index of rows to keep from each matrix in `nmatlist`.
+#' @param row_order integer vector used to order rows.
+#'    When `TRUE` or `NULL` it uses
+#'    the default for `EnrichedHeatmap::EnrichedHeatmap()`
+#'    which is the `EnrichedHeatmap::enriched_score()`
+#'    for the matrix `main_heatmap`. When `FALSE` the
+#'    rows are ordered by the order they appear in `rows`,
+#'    which is either the order they appear in `nmatlist`
+#'    or the order after sorting `anno_df`. When
+#'    `TRUE` the default
 #' @param nmat_colors named character vector of R colors,
 #'    to colorize each heatmap. When `NULL` then
 #'    `colorjam::rainbowJam()` is used to create colors
@@ -257,6 +266,18 @@ coverage_matrix2nmat <- function
 #' @param main_heatmap integer index referring to the
 #'    entry in `nmatlist` to use for clustering and row
 #'    ordering.
+#' @param anno_df `data.frame` or object that can be coerced,
+#'    used to annotate rows of each matrix. It must have
+#'    `rownames(anno_df)` that match `rownames(nmatlist)`.
+#'    When supplied, data can be sorted using `byCols`.
+#'    Note that only the `rownames(anno_df)`
+#'    present in both `nmatlist` and `anno_df` are
+#'    used to display the heatmaps. These rows
+#'    may also be subsetted using argument `rows`.
+#' @param byCols character vector of  values in
+#'    `colnames(anno_df)` used to sort the data.frame
+#'    via `jamba::mixedSortDF()`. Any colname with
+#'    prefix `-` will be reverse-sorted.
 #' @param hm_nrow integer number of rows used to display
 #'    the heatmap panels.
 #' @param transform `function` used to transform numeric
@@ -276,7 +297,10 @@ coverage_matrix2nmat <- function
 #'    which can separately be arranged together using
 #'    `ComplexHeatmap::draw()` or `grid::grid.draw()`.
 #' @param verbose logical indicating whether to print verbose output.
-#' @param ... additional arguments are sent to `colorjam::rainbowJam()`.
+#' @param ... additional arguments are passed to
+#'    `EnrichedHeatmap::EnrichedHeatmap()` to allow greater
+#'    customization of details. Note that many `...` arguments
+#'    are also passed to `ComplexHeatmap::Heatmap()`.
 #'
 #' @family jam genome functions
 #'
@@ -306,8 +330,11 @@ nmatlist2heatmaps <- function
  k_width=unit(3, "mm"),
  partition=NULL,
  rows=NULL,
+ row_order=NULL,
  nmat_colors=NULL,
  main_heatmap=1,
+ anno_df=NULL,
+ byCols=NULL,
  hm_nrow=1,
  transform=jamba::log2signed,
  lens=-2,
@@ -327,7 +354,14 @@ nmatlist2heatmaps <- function
       main_heatmap <- 1;
    }
    if (length(rows) == 0) {
-      rows <- rownames(nmatlist[[main_heatmap]]);
+      ## Make sure rows are present in all nmatlist entries.
+      rows <- Reduce("intersect",
+         lapply(nmatlist, rownames));
+      #rows <- rownames(nmatlist[[main_heatmap]]);
+   } else {
+      ## Make sure rows are present in all rownames of nmatlist
+      rows <- Reduce("intersect",
+         c(list(rows), lapply(nmatlist, rownames)));
    }
    if (length(nmat_colors) == 0) {
       nmat_colors <- colorjam::rainbowJam(length(nmatlist),
@@ -337,6 +371,69 @@ nmatlist2heatmaps <- function
       nmat_colors <- rep(nmat_colors,
          length.out=length(nmatlist));
    }
+   ## Optional data.frame with additional annotations
+   if (length(anno_df) > 0) {
+      if (!igrepHas("data.frame|dataframe|data.table|tibble", class(anno_df))) {
+         stop("anno_df must be data.frame, DataFrame, data.table, or tibble.");
+      }
+      if (!any(rownames(anno_df) %in% rows)) {
+         stop("anno_df must contain rownames present in nmatlist.");
+      }
+      if (length(byCols) > 0) {
+         anno_df <- jamba::mixedSortDF(anno_df, byCols=byCols);
+         rows <- intersect(rownames(anno_df), rows);
+         row_order <- FALSE;
+      } else {
+         rows <- intersect(rows, rownames(anno_df));
+      }
+      anno_df <- anno_df[rows,,drop=FALSE];
+      anno_colors_l <- lapply(nameVector(colnames(anno_df)), function(i){
+         i1 <- anno_df[[i]];
+         if (any(c("integer", "numeric") %in% class(i1))) {
+            if (min(i1, na.rm=TRUE) < 0) {
+               ## Bi-directional color scale
+               ibreaks1 <- max(abs(i1), na.rm=TRUE);
+               ibreaks <- seq(from=-ibreaks1, to=ibreaks1, length.out=51);
+               cBR <- circlize::colorRamp2(breaks=ibreaks,
+                  col=getColorRamp("RdBu_r", n=51));
+            } else {
+               ibreaks1 <- max(abs(i1), na.rm=TRUE);
+               ibreaks2 <- min(abs(i1), na.rm=TRUE);
+               imin <- max(c(0, ibreaks2-(ibreaks1 - ibreaks2)*0.2));
+               ibreaks <- seq(from=imin, to=ibreaks1, length.out=15);
+               cBR <- circlize::colorRamp2(breaks=ibreaks,
+                  col=getColorRamp("purple", n=15, lens=-1));
+            }
+         } else {
+            i2 <- mixedSort(unique(i1));
+            if (!"factor" %in% class(i2)) {
+               i2 <- factor(i2, levels=mixedSort(i2));
+            }
+            cBR <- colorjam::group2colors(i2);
+         }
+         cBR;
+      });
+      for (jj in 1:ncol(anno_df)) {
+         i1 <- anno_df[[jj]];
+         if (any(c("character") %in% class(i1))) {
+            i1 <- factor(i1, levels=mixedSort(unique(i1)));
+            anno_df[[jj]] <- i1;
+         }
+      }
+      AHM <- rowAnnotation(df=anno_df,
+         name="Annotation",
+         col=anno_colors_l);
+   } else {
+      AHM <- NULL;
+   }
+   if (length(row_order) == 0 | isTRUE(row_order)) {
+      row_order <- order(enriched_score(nmatlist[[main_heatmap]][rows,]),
+         decreasing=TRUE);
+   } else if (isFALSE(row_order)) {
+      row_order <- seq_along(rows);
+   }
+
+   ## Optional k-means clustering
    if (length(k_clusters) > 0 && k_clusters > 0) {
       if (length(k_colors) == 0) {
          k_colors <- jamba::nameVector(
@@ -374,6 +471,8 @@ nmatlist2heatmaps <- function
          show_row_names=FALSE,
          width=k_width);
    }
+
+   ## Iterate each matrix to create heatmaps
    lens <- rep(lens, length.out=length(nmatlist));
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
@@ -393,8 +492,9 @@ nmatlist2heatmaps <- function
          ),
          axis_name_gp=gpar(fontsize=8),
          name=signal_name,
-         column_title=signal_name
-      );
+         column_title=signal_name,
+         row_order=row_order,
+         ...);
       EH;
    });
 
@@ -406,14 +506,26 @@ nmatlist2heatmaps <- function
          length.out=length(nmatlist));
       EH_l3 <- split(EH_l, hm_split);
       ht_l <- lapply(EH_l3, function(EHs){
-         if (length(partition) > 0) {
-            ht_1 <- grid.grabExpr(
-               draw(PHM + Reduce("+", EHs),
-                  main_heatmap=main_heatmap+1));
+         if (length(AHM) > 0) {
+            if (length(partition) > 0) {
+               ht_1 <- grid.grabExpr(
+                  draw(AHM + PHM + Reduce("+", EHs),
+                     main_heatmap=main_heatmap+2));
+            } else {
+               ht_1 <- grid.grabExpr(
+                  draw(AHM + Reduce("+", EHs),
+                     main_heatmap=main_heatmap+1));
+            }
          } else {
-            ht_1 <- grid.grabExpr(
-               draw(Reduce("+", EHs),
-                  main_heatmap=main_heatmap));
+            if (length(partition) > 0) {
+               ht_1 <- grid.grabExpr(
+                  draw(PHM + Reduce("+", EHs),
+                     main_heatmap=main_heatmap+1));
+            } else {
+               ht_1 <- grid.grabExpr(
+                  draw(Reduce("+", EHs),
+                     main_heatmap=main_heatmap));
+            }
          }
          ht_1;
       });
@@ -434,12 +546,22 @@ nmatlist2heatmaps <- function
       }
    } else {
       ## Single row layout
-      if (length(partition) > 0) {
-         draw(PHM + Reduce("+", EH_l),
-            main_heatmap=main_heatmap+1);
+      if (length(AHM) > 0) {
+         if (length(partition) > 0) {
+            draw(AHM + PHM + Reduce("+", EH_l),
+               main_heatmap=main_heatmap+2);
+         } else {
+            draw(AHM + Reduce("+", EH_l),
+               main_heatmap=main_heatmap+1);
+         }
       } else {
-         draw(Reduce("+", EH_l),
-            main_heatmap=main_heatmap);
+         if (length(partition) > 0) {
+            draw(PHM + Reduce("+", EH_l),
+               main_heatmap=main_heatmap+1);
+         } else {
+            draw(Reduce("+", EH_l),
+               main_heatmap=main_heatmap);
+         }
       }
    }
    invisible(EH_l);
@@ -487,13 +609,28 @@ deepTools_matrix2nmat <- function
 
    mats <- as.matrix(x[,-1:-6,drop=FALSE]);
    mat_n <- ceiling(ncol(mats) / length(samples));
+
+   ## required attributes
+   starts <- seq(from=-upstream, by=binsize, length.out=mat_n);
+   upstream_index <- which(starts < 0);
+   target_index <- which(starts == 0);
+   downstream_index <- which(starts > 0);
+   target_name <- xyaml$group_labels;
+
    mat_split <- rep(rep(samples, each=mat_n), length.out=ncol(mats));
    colnames_l <- split(colnames(mats), mat_split);
-   mat_l <- lapply(colnames_l, function(i){
+   mat_l <- lapply(seq_along(colnames_l), function(k){
+      i <- colnames_l[[k]];
       im <- mats[,i];
       colnames(im) <- paste0("u", seq_len(ncol(im)));
       rownames(im) <- x[[4]];
+      attr(im, "signal_name") <- samples[k];
+      attr(im, "target_name") <- target_name;
+      attr(im, "upstream_index") <- upstream_index;
+      attr(im, "target_index") <- target_index;
+      attr(im, "downstream_index") <- downstream_index;
       im;
    });
+
 }
 

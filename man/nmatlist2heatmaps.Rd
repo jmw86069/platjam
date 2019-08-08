@@ -6,7 +6,8 @@
 \usage{
 nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
   k_colors = NULL, k_width = unit(3, "mm"), partition = NULL,
-  rows = NULL, nmat_colors = NULL, main_heatmap = 1, hm_nrow = 1,
+  rows = NULL, row_order = NULL, nmat_colors = NULL,
+  main_heatmap = 1, anno_df = NULL, byCols = NULL, hm_nrow = 1,
   transform = jamba::log2signed, lens = -2, seed = 123,
   use_raster = TRUE, do_plot = TRUE, return_type = c("heatmaplist",
   "grid"), verbose = FALSE, ...)
@@ -36,6 +37,16 @@ value is ignored when \code{k_clusters} is supplied.}
 \item{rows}{vector of \code{rownames} or integer vector with
 index of rows to keep from each matrix in \code{nmatlist}.}
 
+\item{row_order}{integer vector used to order rows.
+When \code{TRUE} or \code{NULL} it uses
+the default for \code{EnrichedHeatmap::EnrichedHeatmap()}
+which is the \code{EnrichedHeatmap::enriched_score()}
+for the matrix \code{main_heatmap}. When \code{FALSE} the
+rows are ordered by the order they appear in \code{rows},
+which is either the order they appear in \code{nmatlist}
+or the order after sorting \code{anno_df}. When
+\code{TRUE} the default}
+
 \item{nmat_colors}{named character vector of R colors,
 to colorize each heatmap. When \code{NULL} then
 \code{colorjam::rainbowJam()} is used to create colors
@@ -44,6 +55,20 @@ for each heatmap panel.}
 \item{main_heatmap}{integer index referring to the
 entry in \code{nmatlist} to use for clustering and row
 ordering.}
+
+\item{anno_df}{\code{data.frame} or object that can be coerced,
+used to annotate rows of each matrix. It must have
+\code{rownames(anno_df)} that match \code{rownames(nmatlist)}.
+When supplied, data can be sorted using \code{byCols}.
+Note that only the \code{rownames(anno_df)}
+present in both \code{nmatlist} and \code{anno_df} are
+used to display the heatmaps. These rows
+may also be subsetted using argument \code{rows}.}
+
+\item{byCols}{character vector of  values in
+\code{colnames(anno_df)} used to sort the data.frame
+via \code{jamba::mixedSortDF()}. Any colname with
+prefix \code{-} will be reverse-sorted.}
 
 \item{hm_nrow}{integer number of rows used to display
 the heatmap panels.}
@@ -72,7 +97,10 @@ which can separately be arranged together using
 
 \item{verbose}{logical indicating whether to print verbose output.}
 
-\item{...}{additional arguments are sent to \code{colorjam::rainbowJam()}.}
+\item{...}{additional arguments are passed to
+\code{EnrichedHeatmap::EnrichedHeatmap()} to allow greater
+customization of details. Note that many \code{...} arguments
+are also passed to \code{ComplexHeatmap::Heatmap()}.}
 }
 \description{
 Make multiple coverage heatmaps

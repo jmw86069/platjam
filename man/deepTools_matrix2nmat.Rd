@@ -14,3 +14,6 @@ deepTools_matrix2nmat(x = NULL, filename = NULL, signal_name = NULL,
 \description{
 Import deepTools coverage matrix to normalizedMatrix
 }
+\details{
+This function is under active development.
+}

@@ -1,3 +1,10 @@
+# platjam version 0.0.3.900
+
+## changes
+
+* `nmatlist2heatmaps()` argument anno_df is a data.frame with
+annotations that can be used to order rows in the data.
+
 # platjam version 0.0.2.900
 
 ## changes
