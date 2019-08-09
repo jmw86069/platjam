@@ -335,6 +335,8 @@ nmatlist2heatmaps <- function
  main_heatmap=1,
  anno_df=NULL,
  byCols=NULL,
+ anno_row_marks=NULL,
+ anno_row_labels=NULL,
  hm_nrow=1,
  transform=jamba::log2signed,
  lens=-2,
@@ -387,6 +389,7 @@ nmatlist2heatmaps <- function
          rows <- intersect(rows, rownames(anno_df));
       }
       anno_df <- anno_df[rows,,drop=FALSE];
+      ## Determine a list of color functions, one for each column
       anno_colors_l <- lapply(nameVector(colnames(anno_df)), function(i){
          i1 <- anno_df[[i]];
          if (any(c("integer", "numeric") %in% class(i1))) {
@@ -420,11 +423,44 @@ nmatlist2heatmaps <- function
             anno_df[[jj]] <- i1;
          }
       }
-      AHM <- rowAnnotation(df=anno_df,
+      AHM <- rowAnnotation(df=anno_df[rows,,drop=FALSE],
          name="Annotation",
          col=anno_colors_l);
+      ## Optional row marks
+      anno_rows <- intersect(rows, anno_row_marks);
+      printDebug("anno_rows:", anno_rows);
+      if (length(anno_rows) > 0) {
+         anno_row_which <- match(anno_rows, rows);
+         printDebug("anno_row_which:", anno_row_which);
+         if (length(anno_row_labels) > 0 && all(anno_row_labels %in% colnames(anno_df))) {
+            anno_row_labels <- pasteByRow(
+               anno_df[anno_rows,anno_row_labels,drop=FALSE],
+               sep=" ");
+         } else if (length(anno_row_labels) >= length(anno_rows)) {
+            anno_row_labels <- anno_row_labels[anno_rows];
+         } else {
+            anno_row_labels <- anno_rows;
+         }
+         ## Mark Heatmap
+         MHM <- Heatmap(nameVector(anno_df[rows,1], rows),
+            split=partition[rows],
+            col=anno_colors_l[[1]],
+            use_raster=use_raster,
+            name=colnames(anno_df)[1],
+            show_row_names=FALSE,
+            width=k_width,
+            cluster_rows=FALSE,
+            right_annotation=rowAnnotation(
+               foo=anno_mark(at=anno_row_which,
+                  labels=anno_row_labels)
+            )
+         );
+      } else {
+         MHM <- NULL;
+      }
    } else {
       AHM <- NULL;
+      MHM <- NULL;
    }
    if (length(row_order) == 0 | isTRUE(row_order)) {
       row_order <- order(enriched_score(nmatlist[[main_heatmap]][rows,]),
@@ -465,6 +501,7 @@ nmatlist2heatmaps <- function
             unique(partition));
       }
       PHM <- Heatmap(partition[rows],
+         split=partition[rows],
          use_raster=use_raster,
          col=k_colors,
          name="cluster",
@@ -506,27 +543,19 @@ nmatlist2heatmaps <- function
          length.out=length(nmatlist));
       EH_l3 <- split(EH_l, hm_split);
       ht_l <- lapply(EH_l3, function(EHs){
-         if (length(AHM) > 0) {
-            if (length(partition) > 0) {
-               ht_1 <- grid.grabExpr(
-                  draw(AHM + PHM + Reduce("+", EHs),
-                     main_heatmap=main_heatmap+2));
-            } else {
-               ht_1 <- grid.grabExpr(
-                  draw(AHM + Reduce("+", EHs),
-                     main_heatmap=main_heatmap+1));
-            }
-         } else {
-            if (length(partition) > 0) {
-               ht_1 <- grid.grabExpr(
-                  draw(PHM + Reduce("+", EHs),
-                     main_heatmap=main_heatmap+1));
-            } else {
-               ht_1 <- grid.grabExpr(
-                  draw(Reduce("+", EHs),
-                     main_heatmap=main_heatmap));
-            }
+         HM_temp <- Reduce("+", EHs);
+         main_heatmap_temp <- main_heatmap;
+         if (length(partition) > 0) {
+            HM_temp <- PHM + HM_temp;
+            main_heatmap_temp <- main_heatmap_temp + 1;
          }
+         if (length(AHM) > 0) {
+            HM_temp <- AHM + HM_temp;
+            main_heatmap_temp <- main_heatmap_temp + 1;
+         }
+         ht_1 <- grid.grabExpr(
+            draw(HM_temp,
+               main_heatmap=main_heatmap_temp));
          ht_1;
       });
       if (do_plot) {
@@ -546,25 +575,26 @@ nmatlist2heatmaps <- function
       }
    } else {
       ## Single row layout
-      if (length(AHM) > 0) {
-         if (length(partition) > 0) {
-            draw(AHM + PHM + Reduce("+", EH_l),
-               main_heatmap=main_heatmap+2);
-         } else {
-            draw(AHM + Reduce("+", EH_l),
-               main_heatmap=main_heatmap+1);
-         }
-      } else {
-         if (length(partition) > 0) {
-            draw(PHM + Reduce("+", EH_l),
-               main_heatmap=main_heatmap+1);
-         } else {
-            draw(Reduce("+", EH_l),
-               main_heatmap=main_heatmap);
-         }
+      HM_temp <- Reduce("+", EH_l);
+      main_heatmap_temp <- main_heatmap;
+      if (length(partition) > 0) {
+         HM_temp <- PHM + HM_temp;
+         main_heatmap_temp <- main_heatmap_temp + 1;
       }
+      if (length(AHM) > 0) {
+         HM_temp <- AHM + HM_temp;
+         main_heatmap_temp <- main_heatmap_temp + 1;
+      }
+      if (length(MHM) > 0) {
+         HM_temp <- HM_temp + MHM;
+      }
+      draw(HM_temp,
+         main_heatmap=main_heatmap_temp);
    }
-   invisible(EH_l);
+   invisible(c(list(AHM=AHM),
+      list(PHM=PHM),
+      EH=EH_l,
+      list(MHM=MHM)));
 }
 
 

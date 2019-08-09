@@ -7,7 +7,8 @@
 nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
   k_colors = NULL, k_width = unit(3, "mm"), partition = NULL,
   rows = NULL, row_order = NULL, nmat_colors = NULL,
-  main_heatmap = 1, anno_df = NULL, byCols = NULL, hm_nrow = 1,
+  main_heatmap = 1, anno_df = NULL, byCols = NULL,
+  anno_row_marks = NULL, anno_row_labels = NULL, hm_nrow = 1,
   transform = jamba::log2signed, lens = -2, seed = 123,
   use_raster = TRUE, do_plot = TRUE, return_type = c("heatmaplist",
   "grid"), verbose = FALSE, ...)

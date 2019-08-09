@@ -6,6 +6,9 @@
 annotations that can be used to order rows in the data.
 * `nmatlist2heatmaps()` updated its method to handle proper
 order of user-supplied partition information.
+* `nmatlist2heatmaps()` new arguments to handle row labeling,
+still testing the combination of partitions and row labels
+which appear misaligned.
 
 # platjam version 0.0.2.900
 
