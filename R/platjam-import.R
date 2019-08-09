@@ -464,7 +464,7 @@ nmatlist2heatmaps <- function
                ...),
             unique(partition));
       }
-      PHM <- Heatmap(partition,
+      PHM <- Heatmap(partition[rows],
          use_raster=use_raster,
          col=k_colors,
          name="cluster",
