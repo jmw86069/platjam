@@ -4,6 +4,8 @@
 
 * `nmatlist2heatmaps()` argument anno_df is a data.frame with
 annotations that can be used to order rows in the data.
+* `nmatlist2heatmaps()` updated its method to handle proper
+order of user-supplied partition information.
 
 # platjam version 0.0.2.900
 

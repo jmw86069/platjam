@@ -481,7 +481,7 @@ nmatlist2heatmaps <- function
       s_name <- gsub("_at_", "\nat_", signal_name);
       color <- nmat_colors[[i]];
       EH <- EnrichedHeatmap(log10(1+nmat),
-         split=partition,
+         split=partition[rows],
          pos_line=FALSE,
          use_raster=use_raster,
          col=jamba::getColorRamp(color,
