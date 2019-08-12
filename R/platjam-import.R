@@ -532,6 +532,7 @@ nmatlist2heatmaps <- function
       target_name <- attr(nmat, "target_name");
       s_name <- gsub("_at_", "\nat_", signal_name);
       color <- nmat_colors[[i]];
+      itransform <- transform[[i]];
       EH <- EnrichedHeatmap(itransform(nmat),
          split=partition[rows],
          pos_line=FALSE,
