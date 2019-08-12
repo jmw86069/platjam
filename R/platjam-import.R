@@ -378,13 +378,13 @@ nmatlist2heatmaps <- function
 
    ## Optional transformation of each matrix
    if (length(transform) == 0) {
-      transform <- function(x){x};
+      transform <- list(function(x){x});
    }
    if (!is.list(transform)) {
       transform <- list(transform);
    }
    if (length(transform) < length(nmatlist)) {
-      transform <- rep(list(transform), length.out=length(nmatlist));
+      transform <- rep(transform, length.out=length(nmatlist));
    }
    if (verbose) {
       printDebug("nmatlist2heatmaps(): ",
