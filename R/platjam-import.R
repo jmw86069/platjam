@@ -281,7 +281,9 @@ coverage_matrix2nmat <- function
 #' @param hm_nrow integer number of rows used to display
 #'    the heatmap panels.
 #' @param transform `function` used to transform numeric
-#'    values in each entry in `nmatlist`.
+#'    values in each entry in `nmatlist`. When supplied
+#'    as a `list`, the values are recycled to `length(nmatlist)`
+#'    and applied to each matrix in order.
 #' @param lens numeric value used to scale each heatmap
 #'    color ramp, using `getColorRamp()`.
 #' @param seed numeric value used with `set.seed()` to
@@ -373,6 +375,18 @@ nmatlist2heatmaps <- function
       nmat_colors <- rep(nmat_colors,
          length.out=length(nmatlist));
    }
+
+   ## Optional transformation of each matrix
+   if (length(transform) == 0) {
+      transform <- function(x){x};
+   }
+   if (!is.list(transform)) {
+      transform <- list(transform);
+   }
+   if (length(transform) < length(nmatlist)) {
+      transform <- rep(list(transform), length.out=length(nmatlist));
+   }
+
    ## Optional data.frame with additional annotations
    if (length(anno_df) > 0) {
       if (!igrepHas("data.frame|dataframe|data.table|tibble", class(anno_df))) {
@@ -484,8 +498,9 @@ nmatlist2heatmaps <- function
       } else if (length(names(k_colors)) == 0) {
          names(k_colors) <- seq_len(k_clusters);
       }
+      itransform <- transform[[main_heatmap]];
       partition <- kmeans(
-         transform(nmatlist[[main_heatmap]][rows,]),
+         itransform(nmatlist[[main_heatmap]][rows,]),
          centers=k_clusters)$cluster;
       if (length(k_subset) > 0) {
          partition <- partition[partition %in% k_subset];
@@ -517,7 +532,7 @@ nmatlist2heatmaps <- function
       target_name <- attr(nmat, "target_name");
       s_name <- gsub("_at_", "\nat_", signal_name);
       color <- nmat_colors[[i]];
-      EH <- EnrichedHeatmap(log10(1+nmat),
+      EH <- EnrichedHeatmap(itransform(nmat),
          split=partition[rows],
          pos_line=FALSE,
          use_raster=use_raster,

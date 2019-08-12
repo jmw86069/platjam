@@ -75,7 +75,9 @@ prefix \code{-} will be reverse-sorted.}
 the heatmap panels.}
 
 \item{transform}{\code{function} used to transform numeric
-values in each entry in \code{nmatlist}.}
+values in each entry in \code{nmatlist}. When supplied
+as a \code{list}, the values are recycled to \code{length(nmatlist)}
+and applied to each matrix in order.}
 
 \item{lens}{numeric value used to scale each heatmap
 color ramp, using \code{getColorRamp()}.}

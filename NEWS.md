@@ -1,3 +1,12 @@
+# platjam version 0.0.4.900
+
+## changes
+
+* `nmatlist2heatmaps()` argument `transform` is now applied
+to each heatmap, with `transform` values recycled to the
+`length(nmatlist)`, to allow control over mathematical
+transformation of each numeric matric.
+
 # platjam version 0.0.3.900
 
 ## changes
