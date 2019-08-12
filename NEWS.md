@@ -1,3 +1,10 @@
+# platjam version 0.0.5.900
+
+## changes
+
+* Version bump while debugging logistics with 
+`nmatlist2heatmaps()` argument `transform`.
+
 # platjam version 0.0.4.900
 
 ## changes

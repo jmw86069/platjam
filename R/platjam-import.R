@@ -386,6 +386,11 @@ nmatlist2heatmaps <- function
    if (length(transform) < length(nmatlist)) {
       transform <- rep(list(transform), length.out=length(nmatlist));
    }
+   if (verbose) {
+      printDebug("nmatlist2heatmaps(): ",
+         "transform:");
+      print(transform);
+   }
 
    ## Optional data.frame with additional annotations
    if (length(anno_df) > 0) {
@@ -445,7 +450,9 @@ nmatlist2heatmaps <- function
       printDebug("anno_rows:", anno_rows);
       if (length(anno_rows) > 0) {
          anno_row_which <- match(anno_rows, rows);
-         printDebug("anno_row_which:", anno_row_which);
+         if (verbose) {
+            printDebug("anno_row_which:", anno_row_which);
+         }
          if (length(anno_row_labels) > 0 && all(anno_row_labels %in% colnames(anno_df))) {
             anno_row_labels <- pasteByRow(
                anno_df[anno_rows,anno_row_labels,drop=FALSE],
