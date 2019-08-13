@@ -278,6 +278,19 @@ coverage_matrix2nmat <- function
 #'    `colnames(anno_df)` used to sort the data.frame
 #'    via `jamba::mixedSortDF()`. Any colname with
 #'    prefix `-` will be reverse-sorted.
+#' @param anno_row_marks character vector of `rownames`
+#'    which will be labeled beside the heatmaps, using
+#'    the `ComplexHeatmap::anno_mark()` method. It currently
+#'    requires `anno_df` be defined, since it uses the
+#'    first column in `anno_df` as a one-column heatmap,
+#'    to anchor the labels.
+#' @param anno_row_labels character vector of optional
+#'    character labels to use instead of `rownames`.
+#'    If `NULL` then `anno_row_marks` are used. Or
+#'    `anno_row_labels` may contain a character vector
+#'    of `colnames(anno_df)` which will create labels
+#'    by concatenating each column value separated by
+#'    space `" "`.
 #' @param hm_nrow integer number of rows used to display
 #'    the heatmap panels.
 #' @param transform `function` used to transform numeric
@@ -330,6 +343,7 @@ nmatlist2heatmaps <- function
  k_subset=NULL,
  k_colors=NULL,
  k_width=unit(3, "mm"),
+ k_method=c("euclidean", "pearson", "correlation"),
  partition=NULL,
  rows=NULL,
  row_order=NULL,
@@ -356,6 +370,23 @@ nmatlist2heatmaps <- function
    }
    if (length(main_heatmap) == 0 || main_heatmap > length(nmatlist)) {
       main_heatmap <- 1;
+   }
+   ## k_method
+   kmeans <- stats::kmeans;
+   k_method <- head(k_method, 1);
+   if (jamba::igrepHas("pearson|correlation|spearman", k_method)) {
+      if (!suppressPackageStartupMessages(require(amap))) {
+         k_method <- "euclidean";
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "k_method requires the ",
+            "amap",
+            " package, which is not installed. Setting k_method to ",
+            "euclidean");
+      }
+      kmeans <- amap::Kmeans;
+   }
+   if (length(k_method) == 0 || nchar(k_method) == 0) {
+      k_method <- "euclidean";
    }
    if (length(rows) == 0) {
       ## Make sure rows are present in all nmatlist entries.
@@ -388,9 +419,14 @@ nmatlist2heatmaps <- function
    }
    if (verbose) {
       printDebug("nmatlist2heatmaps(): ",
-         "transform:");
-      print(transform);
+         "str(transform):");
+      print(str(transform));
    }
+
+   ## Define some empty variables
+   PHM <- NULL;
+   AHM <- NULL;
+   MHM <- NULL;
 
    ## Optional data.frame with additional annotations
    if (length(anno_df) > 0) {
@@ -399,6 +435,10 @@ nmatlist2heatmaps <- function
       }
       if (!any(rownames(anno_df) %in% rows)) {
          stop("anno_df must contain rownames present in nmatlist.");
+      }
+      if (verbose) {
+         printDebug("nmatlist2heatmaps(): ",
+            "Preparing anno_df.");
       }
       if (length(byCols) > 0) {
          anno_df <- jamba::mixedSortDF(anno_df, byCols=byCols);
@@ -442,17 +482,18 @@ nmatlist2heatmaps <- function
             anno_df[[jj]] <- i1;
          }
       }
+      if (verbose) {
+         printDebug("nmatlist2heatmaps(): ",
+            "Creating AHM.");
+      }
       AHM <- rowAnnotation(df=anno_df[rows,,drop=FALSE],
          name="Annotation",
          col=anno_colors_l);
+
       ## Optional row marks
       anno_rows <- intersect(rows, anno_row_marks);
-      printDebug("anno_rows:", anno_rows);
       if (length(anno_rows) > 0) {
          anno_row_which <- match(anno_rows, rows);
-         if (verbose) {
-            printDebug("anno_row_which:", anno_row_which);
-         }
          if (length(anno_row_labels) > 0 && all(anno_row_labels %in% colnames(anno_df))) {
             anno_row_labels <- pasteByRow(
                anno_df[anno_rows,anno_row_labels,drop=FALSE],
@@ -461,6 +502,17 @@ nmatlist2heatmaps <- function
             anno_row_labels <- anno_row_labels[anno_rows];
          } else {
             anno_row_labels <- anno_rows;
+         }
+         ## Print optional verbose output
+         if (verbose) {
+            printDebug("nmatlist2heatmaps(): ",
+               "Preparing row mark MHM, top 20 entries are shown:");
+            print(head(
+               data.frame(
+                  anno_rows=anno_rows,
+                  anno_row_which=anno_row_which,
+                  anno_row_labels=anno_row_labels),
+               20));
          }
          ## Mark Heatmap
          MHM <- Heatmap(nameVector(anno_df[rows,1], rows),
@@ -506,10 +558,17 @@ nmatlist2heatmaps <- function
          names(k_colors) <- seq_len(k_clusters);
       }
       itransform <- transform[[main_heatmap]];
+      if (verbose) {
+         printDebug("nmatlist2heatmaps(): ",
+            "Running kmeans.");
+      }
       partition <- kmeans(
          itransform(nmatlist[[main_heatmap]][rows,]),
+         method=k_method,
+         iter.max=20,
          centers=k_clusters)$cluster;
    }
+   ## Partition heatmap sidebar
    if (length(partition) > 0) {
       ## Define colors if not provided
       if (length(k_colors) == 0) {
@@ -519,10 +578,28 @@ nmatlist2heatmaps <- function
             unique(partition));
          k_colors <- k_colors[sort(names(k_colors))];
       }
+
+      ## Optional subset of k-means clusters
       if (length(k_subset) > 0) {
+         if (verbose) {
+            printDebug("nmatlist2heatmaps(): ",
+               "Subsetting partition for k_subset:",
+               k_subset);
+         }
          partition <- partition[partition %in% k_subset];
          rows <- names(partition);
          k_colors <- k_colors[names(k_colors) %in% as.character(k_subset)];
+         ## Subset AHM and MHM if defined
+         if (length(AHM) > 0) {
+            AHM <- AHM[match(rows, rownames(attr(AHM, "matrix"))),];
+         }
+         if (length(MHM) > 0) {
+            MHM <- MHM[match(rows, rownames(attr(MHM, "matrix"))),];
+         }
+      }
+      if (verbose) {
+         printDebug("nmatlist2heatmaps(): ",
+            "creating partition heatmap PHM.");
       }
       PHM <- Heatmap(partition[rows],
          split=partition[rows],

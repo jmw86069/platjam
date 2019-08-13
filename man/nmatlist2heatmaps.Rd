@@ -5,13 +5,13 @@
 \title{Make multiple coverage heatmaps}
 \usage{
 nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
-  k_colors = NULL, k_width = unit(3, "mm"), partition = NULL,
-  rows = NULL, row_order = NULL, nmat_colors = NULL,
-  main_heatmap = 1, anno_df = NULL, byCols = NULL,
-  anno_row_marks = NULL, anno_row_labels = NULL, hm_nrow = 1,
-  transform = jamba::log2signed, lens = -2, seed = 123,
-  use_raster = TRUE, do_plot = TRUE, return_type = c("heatmaplist",
-  "grid"), verbose = FALSE, ...)
+  k_colors = NULL, k_width = unit(3, "mm"), k_method = c("euclidean",
+  "pearson", "correlation"), partition = NULL, rows = NULL,
+  row_order = NULL, nmat_colors = NULL, main_heatmap = 1,
+  anno_df = NULL, byCols = NULL, anno_row_marks = NULL,
+  anno_row_labels = NULL, hm_nrow = 1, transform = jamba::log2signed,
+  lens = -2, seed = 123, use_raster = TRUE, do_plot = TRUE,
+  return_type = c("heatmaplist", "grid"), verbose = FALSE, ...)
 }
 \arguments{
 \item{nmatlist}{\code{list} containing \code{normalizedMatrix} objects,
@@ -70,6 +70,21 @@ may also be subsetted using argument \code{rows}.}
 \code{colnames(anno_df)} used to sort the data.frame
 via \code{jamba::mixedSortDF()}. Any colname with
 prefix \code{-} will be reverse-sorted.}
+
+\item{anno_row_marks}{character vector of \code{rownames}
+which will be labeled beside the heatmaps, using
+the \code{ComplexHeatmap::anno_mark()} method. It currently
+requires \code{anno_df} be defined, since it uses the
+first column in \code{anno_df} as a one-column heatmap,
+to anchor the labels.}
+
+\item{anno_row_labels}{character vector of optional
+character labels to use instead of \code{rownames}.
+If \code{NULL} then \code{anno_row_marks} are used. Or
+\code{anno_row_labels} may contain a character vector
+of \code{colnames(anno_df)} which will create labels
+by concatenating each column value separated by
+space \code{" "}.}
 
 \item{hm_nrow}{integer number of rows used to display
 the heatmap panels.}

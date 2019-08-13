@@ -9,6 +9,10 @@ Therefore, one can supply their own clusters, and
 choose a subset for subsequent drilldown. The
 colors are assigned by total cluster, so the subset
 should retain consistent colors per cluster.
+* `nmatlist2heatmaps()` argument `k_method` allows
+defining different k-means clustering methods, including
+`c("pearson","correlation")` if the `"amap"`
+package is installed.
 
 # platjam version 0.0.5.900
 

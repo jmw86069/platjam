@@ -11,7 +11,8 @@ Imports: jamba,
     colorjam,
     data.table
 Suggests: ComplexHeatmap,
-    EnrichedHeatmap
+    EnrichedHeatmap,
+    amap
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
