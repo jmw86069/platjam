@@ -509,18 +509,20 @@ nmatlist2heatmaps <- function
       partition <- kmeans(
          itransform(nmatlist[[main_heatmap]][rows,]),
          centers=k_clusters)$cluster;
-      if (length(k_subset) > 0) {
-         partition <- partition[partition %in% k_subset];
-         rows <- names(partition);
-         k_colors <- k_colors[as.character(k_subset)];
-      }
    }
    if (length(partition) > 0) {
+      ## Define colors if not provided
       if (length(k_colors) == 0) {
          k_colors <- nameVector(
             colorjam::rainbowJam(length(unique(partition)),
                ...),
             unique(partition));
+         k_colors <- k_colors[sort(names(k_colors))];
+      }
+      if (length(k_subset) > 0) {
+         partition <- partition[partition %in% k_subset];
+         rows <- names(partition);
+         k_colors <- k_colors[names(k_colors) %in% as.character(k_subset)];
       }
       PHM <- Heatmap(partition[rows],
          split=partition[rows],

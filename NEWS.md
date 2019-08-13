@@ -1,3 +1,15 @@
+# platjam version 0.0.6.900
+
+## changes
+
+* `nmatlist2heatmaps()` argument `k_subset` now
+works when `partition` is supplied and k-means
+clustering is not performed inside this function.
+Therefore, one can supply their own clusters, and
+choose a subset for subsequent drilldown. The
+colors are assigned by total cluster, so the subset
+should retain consistent colors per cluster.
+
 # platjam version 0.0.5.900
 
 ## changes
