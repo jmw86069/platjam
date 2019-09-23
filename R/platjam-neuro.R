@@ -46,7 +46,7 @@ frequency_matrix2nmat <- function
    target_index <- which(x_freq >= min(target_frequency) &
          x_freq <= max(target_frequency));
    if (length(target_index) > 0) {
-      upstream_index <- which(freq_index < target_index);
+      upstream_index <- which(freq_index < min(target_index));
    } else {
       upstream_index <- NULL;
    }
@@ -54,7 +54,7 @@ frequency_matrix2nmat <- function
 
    ## Optionally run normScale() on each row
    if (do_scale) {
-      if (length(scale_frequency) == 0) {
+      if (length(scale_frequency) > 0) {
          scale_index <- which(x_freq >= min(scale_frequency) &
                x_freq <= max(scale_frequency));
       } else {
