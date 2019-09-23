@@ -11,7 +11,8 @@ nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
   anno_df = NULL, byCols = NULL, anno_row_marks = NULL,
   anno_row_labels = NULL, hm_nrow = 1, transform = jamba::log2signed,
   lens = -2, seed = 123, use_raster = TRUE, do_plot = TRUE,
-  return_type = c("heatmaplist", "grid"), verbose = FALSE, ...)
+  return_type = c("heatmaplist", "grid"), show_error = FALSE,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{nmatlist}{\code{list} containing \code{normalizedMatrix} objects,
@@ -112,6 +113,12 @@ without actually drawing the heatmaps.}
 data to return: \code{"heatmaplist"} returns the list of heatmaps,
 which can separately be arranged together using
 \code{ComplexHeatmap::draw()} or \code{grid::grid.draw()}.}
+
+\item{show_error}{logical indicating whether to add error
+bars to the profile plot at the top of each heatmap.
+These error bars are calculated by
+\code{EnrichedHeatmap::anno_enriched()} using
+\code{matrixStats::colSds(x)/nrow(x)}.}
 
 \item{verbose}{logical indicating whether to print verbose output.}
 

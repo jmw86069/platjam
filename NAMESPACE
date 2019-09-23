@@ -2,4 +2,6 @@
 
 export(coverage_matrix2nmat)
 export(deepTools_matrix2nmat)
+export(frequency_matrix2nmat)
 export(nmatlist2heatmaps)
+export(rowNormScale)

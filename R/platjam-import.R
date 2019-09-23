@@ -311,6 +311,11 @@ coverage_matrix2nmat <- function
 #'    data to return: `"heatmaplist"` returns the list of heatmaps,
 #'    which can separately be arranged together using
 #'    `ComplexHeatmap::draw()` or `grid::grid.draw()`.
+#' @param show_error logical indicating whether to add error
+#'    bars to the profile plot at the top of each heatmap.
+#'    These error bars are calculated by
+#'    `EnrichedHeatmap::anno_enriched()` using
+#'    `matrixStats::colSds(x)/nrow(x)`.
 #' @param verbose logical indicating whether to print verbose output.
 #' @param ... additional arguments are passed to
 #'    `EnrichedHeatmap::EnrichedHeatmap()` to allow greater
@@ -360,6 +365,7 @@ nmatlist2heatmaps <- function
  use_raster=TRUE,
  do_plot=TRUE,
  return_type=c("heatmaplist", "grid"),
+ show_error=FALSE,
  verbose=FALSE,
  ...)
 {
@@ -383,7 +389,11 @@ nmatlist2heatmaps <- function
             " package, which is not installed. Setting k_method to ",
             "euclidean");
       }
-      kmeans <- amap::Kmeans;
+      if (verbose) {
+         printDebug("nmatlist2heatmaps(): ",
+            "Using amap::Kmeans()");
+      }
+      kmeans <- function(...){amap::Kmeans(..., method=k_method)};
    }
    if (length(k_method) == 0 || nchar(k_method) == 0) {
       k_method <- "euclidean";
@@ -560,13 +570,19 @@ nmatlist2heatmaps <- function
       itransform <- transform[[main_heatmap]];
       if (verbose) {
          printDebug("nmatlist2heatmaps(): ",
-            "Running kmeans.");
+            "Running kmeans, k_clusters:",
+            k_clusters,
+            ", k_method:",
+            k_method);
       }
       partition <- kmeans(
          itransform(nmatlist[[main_heatmap]][rows,]),
-         method=k_method,
          iter.max=20,
          centers=k_clusters)$cluster;
+      if (verbose) {
+         printDebug("table(partition):");
+         print(table(partition));
+      }
    }
    ## Partition heatmap sidebar
    if (length(partition) > 0) {
@@ -627,7 +643,8 @@ nmatlist2heatmaps <- function
             n=10,
             lens=lens[i]),
          top_annotation=HeatmapAnnotation(
-            lines=anno_enriched(gp=gpar(col=k_colors))
+            lines=anno_enriched(gp=gpar(col=k_colors)),
+            show_error=show_error
          ),
          axis_name_gp=gpar(fontsize=8),
          name=signal_name,

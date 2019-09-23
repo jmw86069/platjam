@@ -1,3 +1,22 @@
+# platjam version 0.0.7.900
+
+## changes
+
+* `nmatlist2heatmaps()` new argument `show_error` is
+passed to `EnrichedHeatmap::anno_enriched()` which enables
+shaded error bars using standard error around the profile
+at the top of each heatmap.
+
+## new functions
+
+* `frequency_matrix2nmat()` converts a frequency matrix
+whose colnames represent numeric frequency values, and
+converts to class `"normalizedMatrix"` for use in
+EnrichedHeatmap. It optionally scales each row using
+`rowNormScale()`.
+* `rowNormScale()` applies `jamba::normScale()` to each
+row of a matrix.
+
 # platjam version 0.0.6.900
 
 ## changes
