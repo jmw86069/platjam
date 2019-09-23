@@ -34,6 +34,7 @@ frequency_matrix2nmat <- function
  scale_to=1,
  scale_frequency=NULL,
  apply_floor=TRUE,
+ verbose=FALSE,
  ...)
 {
    ## Purpose is to convert a frequency matrix to normalizedMatrix
@@ -51,6 +52,15 @@ frequency_matrix2nmat <- function
       upstream_index <- NULL;
    }
    downstream_index <- which(freq_index > max(c(0, target_index)));
+   if (verbose) {
+      printDebug("frequency_matrix2nmat(): ",
+         "upstream_index:",
+         upstream_index,
+         ", target_index:",
+         target_index,
+         ", downstream_index:",
+         downstream_index);
+   }
 
    ## Optionally run normScale() on each row
    if (do_scale) {
@@ -60,11 +70,22 @@ frequency_matrix2nmat <- function
       } else {
          scale_index <- freq_index;
       }
+      if (verbose) {
+         printDebug("frequency_matrix2nmat(): ",
+            "scale_index:",
+            scale_index);
+      }
       mat <- rowNormScale(mat,
-         from=scale_from,
-         to=scale_to,
-         col_range=freq_index);
+         from=scale_from - scale_diff,
+         to=scale_to + scale_diff,
+         col_range=scale_index);
       if (apply_floor) {
+         if (verbose) {
+            scale_diff <- (scale_to - scale_from) / 2;
+            printDebug("frequency_matrix2nmat(): ",
+               "scale_diff:",
+               scale_diff);
+         }
          mat <- noiseFloor(mat,
             minimum=scale_from,
             ceiling=scale_to);
