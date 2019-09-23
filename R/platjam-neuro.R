@@ -76,9 +76,12 @@ frequency_matrix2nmat <- function
             scale_index);
       }
       mat <- rowNormScale(mat,
-         from=scale_from - scale_diff,
-         to=scale_to + scale_diff,
+         from=scale_from,
+         to=scale_to,
          col_range=scale_index);
+      attr(mat, "scale_index") <- scale_index;
+      attr(mat, "scale_range") <- c(scale_from,
+         scale_to);
       if (apply_floor) {
          if (verbose) {
             scale_diff <- (scale_to - scale_from) / 2;
@@ -86,9 +89,11 @@ frequency_matrix2nmat <- function
                "scale_diff:",
                scale_diff);
          }
+         attr(mat, "scale_floor") <- c(scale_from - scale_diff,
+            scale_to + scale_diff);
          mat <- noiseFloor(mat,
-            minimum=scale_from,
-            ceiling=scale_to);
+            minimum=scale_from - scale_diff,
+            ceiling=scale_to + scale_diff);
       }
    }
 
