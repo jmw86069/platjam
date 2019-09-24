@@ -1,3 +1,11 @@
+# platjam version 0.0.9.900
+
+## enhancements
+
+* `coverage_matrix2nmat()` now accepts a vector of files as
+input, and will process them and return a list of normalizedMatrix
+objects, ready to go directly into `nmatlist2heatmaps()`.
+
 # platjam version 0.0.8.900
 
 ## bug fixes

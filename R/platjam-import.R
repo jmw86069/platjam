@@ -119,6 +119,34 @@ coverage_matrix2nmat <- function
  ...)
 {
    ## read a matrix file, and convert to format EnrichedHeatmap understands
+
+   ## Interpret vector of filenames as input
+   if (length(filename) == 0 && length(x) > 1 && is.atomic(x)) {
+      if (all(file.exists(x))) {
+         xseq <- nameVector(seq_along(x), names(x));
+         nmatlist <- lapply(xseq, function(i){
+            coverage_matrix2nmat(x=x[i],
+               filename=NULL,
+               signal_name=names(x)[i],
+               target_name=target_name,
+               background=background,
+               smooth=smooth,
+               target_is_single_point=target_is_single_point,
+               signal_is_categorical=signal_is_categorical,
+               mat_grep=mat_grep,
+               upstream_grep=upstream_grep,
+               downstream_grep=downstream_grep,
+               target_grep=target_grep,
+               verbose=verbose,
+               ...);
+         });
+         return(nmatlist);
+      } else {
+         stop("When x is supplied as a vector, it should contain files accessible with file.exists(x).");
+      }
+   }
+
+   ## Other single-entry input types
    if (length(x) == 0) {
       if (length(filename) == 0) {
          stop("Must suppled x as data.frame, or filename.");
@@ -158,6 +186,14 @@ coverage_matrix2nmat <- function
             signal_name <- basename(head(filename, 1));
          }
       }
+   }
+   if (verbose) {
+      jamba::printDebug("matrix2nmat(): ",
+         "signal_name:",
+         signal_name);
+      jamba::printDebug("matrix2nmat(): ",
+         "names(filename):",
+         names(filename));
    }
 
    if (length(signal_name) == 0) {
@@ -634,6 +670,9 @@ nmatlist2heatmaps <- function
       target_name <- attr(nmat, "target_name");
       s_name <- gsub("_at_", "\nat_", signal_name);
       color <- nmat_colors[[i]];
+      if (length(color) == 0 || is.na(color)) {
+         color <- "aquamarine4";
+      }
       itransform <- transform[[i]];
       EH <- EnrichedHeatmap(itransform(nmat),
          split=partition[rows],
