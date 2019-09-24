@@ -1,3 +1,10 @@
+# platjam version 0.0.8.900
+
+## bug fixes
+
+* `nmatlist2heatmaps()` fixed bug in placement of argument
+show_error, now properly placed inside `EnrichedHeatmap::anno_enriched()`.
+
 # platjam version 0.0.7.900
 
 ## changes

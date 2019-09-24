@@ -643,8 +643,8 @@ nmatlist2heatmaps <- function
             n=10,
             lens=lens[i]),
          top_annotation=HeatmapAnnotation(
-            lines=anno_enriched(gp=gpar(col=k_colors)),
-            show_error=show_error
+            lines=anno_enriched(gp=gpar(col=k_colors),
+               show_error=show_error)
          ),
          axis_name_gp=gpar(fontsize=8),
          name=signal_name,
