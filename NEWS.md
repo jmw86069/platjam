@@ -1,3 +1,42 @@
+# platjam version 0.0.10.900
+
+## enhancements
+
+* `nmatlist2heatmaps()` new argument `signal_ceiling` defines
+a numerical ceiling for each input matrix, used to apply the
+color ramp to a defined numeric range. When `signal_ceiling`
+is between 0 and 1, it is assumed to be a quantile, so the
+appropriate quantile value is used as the ceiling. These
+values can be seen when `verbose=TRUE`.
+* `nmatlist2heatmaps()` argument `transform` now accepts text
+string for transformation functions, such as `"log2signed"`,
+`"sqrt"`, `"cubert"`, etc. Any other string will try to
+match a function name in the R search path.
+
+## new functions
+
+* `get_numeric_transform()` is used to apply name-based
+transformations, called from `nmatlist2heatmaps()`.
+
+## UCSC genome browser functions
+
+Some new functions were added to help create UCSC genome
+browser track hubs, which are fairly tedious to build manually.
+
+* `get_track_defaults()` returns default values for tracks,
+including some track snippet templates for composite and
+overlay track types.
+* `parse_ucsc_gokey()` is a parser for a specific track type,
+based upon prominent scientist Dr. Gokey, who defines a straightforward
+format for a series of grouped tracks.
+* `make_ucsc_trackname()` creates a valid UCSC track name, removing
+invalid characters.
+* `assign_track_defaults()` assigns track values to an environment
+which may already contain default values. New values override previous
+values, after which the environment can be used with the `glue`
+package to update a track snippet template for each track in a set.
+
+
 # platjam version 0.0.9.900
 
 ## enhancements

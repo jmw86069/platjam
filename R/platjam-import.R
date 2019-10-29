@@ -329,12 +329,44 @@ coverage_matrix2nmat <- function
 #'    space `" "`.
 #' @param hm_nrow integer number of rows used to display
 #'    the heatmap panels.
-#' @param transform `function` used to transform numeric
-#'    values in each entry in `nmatlist`. When supplied
-#'    as a `list`, the values are recycled to `length(nmatlist)`
-#'    and applied to each matrix in order.
+#' @param transform either `character` string referring to
+#'    a numeric transformation, or a `function` that applies
+#'    a numeric transformation. Valid `character` string values:
+#'    `"log2signed"` applies `jamba::log2signed()` which applies
+#'    `log2(1+x)` transform to the absolute value, then multiplies
+#'    by the original `sign(x)`; `"sqrt"` applies square root;
+#'    `"cubert"` applies cube root `x^(1/3)`; `"qrt"` applies
+#'    fourth root `x^(1/4)`. When there are negative numeric
+#'    values, the transformation is applied to absolute value,
+#'    then multiplied by the original sign. Therefore, the
+#'    transformation is applied to adjust the magnitude of
+#'    the values. These values are passed to `get_numeric_transform()`
+#'    which may have more information.
+#' @param signal_ceiling numeric vector length `length(nmatlist)`
+#'    which applies a maximum numeric value to the
+#'    color ramp for each matrix in `nmatlist`. Every numeric
+#'    value above the `signal_ceiling` will be assigned the
+#'    maximum color. The values in `signal_ceiling` are
+#'    recycled to `length(nmatlist)`, so if one value is
+#'    provided, it will be applied to every matrix.
 #' @param lens numeric value used to scale each heatmap
-#'    color ramp, using `getColorRamp()`.
+#'    color ramp, using `getColorRamp()`. Values above zero
+#'    apply the color gradient more rapidly starting from the
+#'    lowest value, making the color appear more intense for
+#'    lower numeric values. Values below zero apply the color gradient
+#'    less rapidly, which makes lower numeric values appear
+#'    less intense. This adjustment is intended to help
+#'    apply suitable color contrast depending upon the range
+#'    of numeric values. The `lens` values are applied to
+#'    each matrix in `nmatlist`, and so it is recycled to
+#'    `length(nmatlist)` as needed. Note that `signal_ceiling`
+#'    is also intended to help apply the color gradient to
+#'    a suitable numeric range, and the `lens` argument is
+#'    applied relative to the numeric range being used.
+#' @param axis_name_gp x-axis label graphic parameters,
+#'    as output from `grid::gpar()`. For example to define
+#'    the x-axis font size, use the form
+#'    `grid::gpar(fontsize=8)`.
 #' @param seed numeric value used with `set.seed()` to
 #'    set the random seed. Set to `NULL` to avoid running
 #'    `set.seed()`.
@@ -396,6 +428,8 @@ nmatlist2heatmaps <- function
  anno_row_labels=NULL,
  hm_nrow=1,
  transform=jamba::log2signed,
+ signal_ceiling=NULL,
+ axis_name_gp=gpar(fontsize=8),
  lens=-2,
  seed=123,
  use_raster=TRUE,
@@ -458,15 +492,26 @@ nmatlist2heatmaps <- function
       transform <- list(function(x){x});
    }
    if (!is.list(transform)) {
-      transform <- list(transform);
+      if (is.atomic(transform)) {
+         transform <- as.list(transform);
+      } else {
+         transform <- list(transform);
+      }
    }
    if (length(transform) < length(nmatlist)) {
       transform <- rep(transform, length.out=length(nmatlist));
    }
+   ## Accept character string transformations
+   transform <- get_numeric_transform(transform);
    if (verbose) {
       printDebug("nmatlist2heatmaps(): ",
          "str(transform):");
       print(str(transform));
+   }
+
+   ## optional signal_ceiling
+   if (length(signal_ceiling) > 0) {
+      signal_ceiling <- rep(signal_ceiling, length.out=length(nmatlist));
    }
 
    ## Define some empty variables
@@ -664,6 +709,9 @@ nmatlist2heatmaps <- function
 
    ## Iterate each matrix to create heatmaps
    lens <- rep(lens, length.out=length(nmatlist));
+   if (!is.list(axis_name_gp)) {
+      axis_name_gp <- rep(list(axis_name_gp), length.out=length(nmatlist));
+   }
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
       signal_name <- attr(nmat, "signal_name");
@@ -673,19 +721,73 @@ nmatlist2heatmaps <- function
       if (length(color) == 0 || is.na(color)) {
          color <- "aquamarine4";
       }
+      if (verbose) {
+         printDebug("nmatlist2heatmaps(): ",
+            "signal_name:",
+            signal_name,
+            ", target_name:",
+            target_name,
+            ", color:",
+            color,
+            fgText=c(
+               rep(
+                  list("darkorange",
+                     "dodgerblue"),
+                  length.out=6),
+               color));
+      }
       itransform <- transform[[i]];
-      EH <- EnrichedHeatmap(itransform(nmat),
+      imat <- itransform(nmat);
+      iceiling <- signal_ceiling[[i]];
+      if (length(iceiling) > 0 && !is.na(iceiling)) {
+         if (iceiling > 0 && iceiling <= 1) {
+            # apply quantile
+            iquantile <- quantile(abs(imat),
+               probs=iceiling,
+               na.rm=TRUE);
+            if (verbose) {
+               printDebug("nmatlist2heatmaps(): ",
+                  "applied iceiling:",
+                  iceiling,
+                  " as quantile threshold, which defined new ceiling:",
+                  iquantile);
+            }
+            iceiling <- iquantile;
+         }
+         if (verbose) {
+            printDebug("nmatlist2heatmaps(): ",
+               "   Applied ceiling:",
+               iceiling);
+         }
+         if (min(imat, na.rm=TRUE) < 0) {
+            ibreaks <- seq(from=-iceiling,
+               to=iceiling,
+               length=21);
+         } else {
+            ibreaks <- seq(from=0,
+               to=iceiling,
+               length=21);
+         }
+         colramp <- circlize::colorRamp2(
+            breaks=ibreaks,
+            colors=jamba::getColorRamp(color,
+               n=21,
+               lens=lens[[i]]));
+      } else {
+         colramp <- jamba::getColorRamp(color,
+            n=21,
+            lens=lens[[i]]);
+      }
+      EH <- EnrichedHeatmap(imat,
          split=partition[rows],
          pos_line=FALSE,
          use_raster=use_raster,
-         col=jamba::getColorRamp(color,
-            n=10,
-            lens=lens[i]),
+         col=colramp,
          top_annotation=HeatmapAnnotation(
             lines=anno_enriched(gp=gpar(col=k_colors),
                show_error=show_error)
          ),
-         axis_name_gp=gpar(fontsize=8),
+         axis_name_gp=axis_name_gp[[i]],
          name=signal_name,
          column_title=signal_name,
          row_order=row_order,
@@ -822,3 +924,94 @@ deepTools_matrix2nmat <- function
 
 }
 
+
+#' Get appropriate numeric transformation function
+#'
+#' Get appropriate numeric transformation function
+#'
+#' This function recognizes numeric transformation functions by
+#' name, or searches the attached R package environments for
+#' a matching function by name.
+#'
+#' @return `function` or `NULL` when no matching function is
+#'    found, or `list` is returned when the input `transform`
+#'    has multiple values.
+#'
+#' @param transform `character` string or `function`. If
+#'    `length(transform) > 1` then `get_numeric_transform()`
+#'    is called for each value in `transform`. Valid names:
+#'    `"log2signed"` applies `jamba::log2signed()` which applies
+#'    `log2(1+x)` transform to the absolute value, then multiplies
+#'    by the original `sign(x)`;
+#'    `"exp2signed"` applies the inverse of `"log2signed"`, which
+#'    exponentiates numeric values which were previously transformed
+#'    with `log2(1+x)`;
+#'    `"sqrt"` applies square root transform;
+#'    `"cubert"` applies cube root `x^(1/3)`;
+#'    `"qrt"` applies fourth root `x^(1/4)`;
+#'    `"frt"` applies fourth root `x^(1/5)`;
+#'    `"square"` applies `x^2` to absolute value, multiplied by the `sign(x)`;
+#'    `"cube"` applies `x^3`;
+#'    When there are negative numeric
+#'    values, the transformation is applied to absolute value,
+#'    then multiplied by the original sign. Therefore, the
+#'    transformation is applied to adjust the magnitude of
+#'    the values.
+#' @param ... additional arguments are ignored.
+#'
+#' @examples
+#' get_numeric_transform("log2signed")
+#'
+#' @export
+get_numeric_transform <- function
+(transform,
+ ...)
+{
+   #
+   if (length(transform) > 1) {
+      transform <- lapply(transform, function(it){
+         get_numeric_transform(it, ...)
+      });
+      return(transform);
+   }
+   if (is.atomic(it)) {
+      if ("log2signed" %in% it) {
+         it <- jamba::log2signed;
+      } else if ("exp2signed" %in% it) {
+         it <- jamba::exp2signed;
+      } else if ("sqrt" %in% it) {
+         it <- function(x){sign(x)*sqrt(x)};
+      } else if ("square" %in% it) {
+         it <- function(x){sign(x)*(abs(x)^2)};
+      } else if ("cubert" %in% it) {
+         it <- function(x){sign(x)*abs(x)^(1/3)};
+      } else if ("cube" %in% it) {
+         it <- function(x){sign(x)*(abs(x)^3)};
+      } else if ("qrt" %in% it) {
+         it <- function(x){sign(x)*abs(x)^(1/4)};
+      } else if ("frt" %in% it) {
+         it <- function(x){sign(x)*abs(x)^(1/5)};
+      } else {
+         itf <- tryCatch({
+            get(it);
+         }, error=function(e){
+            jamba::printDebug("Error:",
+               "transform name '",
+               it,
+               "' was not recognized, and not available on the search path:\n",
+               search(),
+               sep=", ")
+            NULL;
+         });
+         if (is.function(itf)) {
+            it <- function(x){sign(x)*itf(f)};
+         } else {
+            it <- NULL;
+         }
+      }
+   }
+   if (!is.function(it)) {
+      return(NULL);
+   }
+   return(it);
+}

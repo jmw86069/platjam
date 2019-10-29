@@ -10,6 +10,7 @@ nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
   row_order = NULL, nmat_colors = NULL, main_heatmap = 1,
   anno_df = NULL, byCols = NULL, anno_row_marks = NULL,
   anno_row_labels = NULL, hm_nrow = 1, transform = jamba::log2signed,
+  signal_ceiling = NULL, axis_name_gp = gpar(fontsize = 8),
   lens = -2, seed = 123, use_raster = TRUE, do_plot = TRUE,
   return_type = c("heatmaplist", "grid"), show_error = FALSE,
   verbose = FALSE, ...)
@@ -90,13 +91,47 @@ space \code{" "}.}
 \item{hm_nrow}{integer number of rows used to display
 the heatmap panels.}
 
-\item{transform}{\code{function} used to transform numeric
-values in each entry in \code{nmatlist}. When supplied
-as a \code{list}, the values are recycled to \code{length(nmatlist)}
-and applied to each matrix in order.}
+\item{transform}{either \code{character} string referring to
+a numeric transformation, or a \code{function} that applies
+a numeric transformation. Valid \code{character} string values:
+\code{"log2signed"} applies \code{jamba::log2signed()} which applies
+\code{log2(1+x)} transform to the absolute value, then multiplies
+by the original \code{sign(x)}; \code{"sqrt"} applies square root;
+\code{"cubert"} applies cube root \code{x^(1/3)}; \code{"qrt"} applies
+fourth root \code{x^(1/4)}. When there are negative numeric
+values, the transformation is applied to absolute value,
+then multiplied by the original sign. Therefore, the
+transformation is applied to adjust the magnitude of
+the values. These values are passed to \code{get_numeric_transform()}
+which may have more information.}
+
+\item{signal_ceiling}{numeric vector length \code{length(nmatlist)}
+which applies a maximum numeric value to the
+color ramp for each matrix in \code{nmatlist}. Every numeric
+value above the \code{signal_ceiling} will be assigned the
+maximum color. The values in \code{signal_ceiling} are
+recycled to \code{length(nmatlist)}, so if one value is
+provided, it will be applied to every matrix.}
+
+\item{axis_name_gp}{x-axis label graphic parameters,
+as output from \code{grid::gpar()}. For example to define
+the x-axis font size, use the form
+\code{grid::gpar(fontsize=8)}.}
 
 \item{lens}{numeric value used to scale each heatmap
-color ramp, using \code{getColorRamp()}.}
+color ramp, using \code{getColorRamp()}. Values above zero
+apply the color gradient more rapidly starting from the
+lowest value, making the color appear more intense for
+lower numeric values. Values below zero apply the color gradient
+less rapidly, which makes lower numeric values appear
+less intense. This adjustment is intended to help
+apply suitable color contrast depending upon the range
+of numeric values. The \code{lens} values are applied to
+each matrix in \code{nmatlist}, and so it is recycled to
+\code{length(nmatlist)} as needed. Note that \code{signal_ceiling}
+is also intended to help apply the color gradient to
+a suitable numeric range, and the \code{lens} argument is
+applied relative to the numeric range being used.}
 
 \item{seed}{numeric value used with \code{set.seed()} to
 set the random seed. Set to \code{NULL} to avoid running

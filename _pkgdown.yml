@@ -14,4 +14,8 @@ reference:
   desc: Functions specific to genome data
   contents:
   - has_concept("jam genome functions")
+- title: UCSC genome browser functions
+  desc: Functions related to the UCSC genome browser
+  contents:
+  - has_concept("jam ucsc browser functions")
 
