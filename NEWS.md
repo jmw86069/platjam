@@ -1,3 +1,11 @@
+# platjam version 0.0.11.900
+
+## new functions
+
+* `import_nanostring_rcc()` reads Nanostring RCC files, and produces
+a `SummarizedExperiment` object suitable for use in omics-style
+analyses.
+
 # platjam version 0.0.10.900
 
 ## enhancements
