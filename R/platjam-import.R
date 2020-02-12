@@ -489,20 +489,16 @@ nmatlist2heatmaps <- function
 
    ## Optional transformation of each matrix
    if (length(transform) == 0) {
-      transform <- list(function(x){x});
+      transform <- function(x){x}
    }
-   if (!is.list(transform)) {
-      if (is.atomic(transform)) {
-         transform <- as.list(transform);
-      } else {
-         transform <- list(transform);
-      }
-   }
-   if (length(transform) < length(nmatlist)) {
-      transform <- rep(transform, length.out=length(nmatlist));
-   }
-   ## Accept character string transformations
    transform <- get_numeric_transform(transform);
+   if (!is.list(transform)) {
+      transform <- list(transform);
+   }
+   if (length(transform) != length(nmatlist)) {
+      transform <- rep(transform,
+         length.out=length(nmatlist));
+   }
    if (verbose) {
       printDebug("nmatlist2heatmaps(): ",
          "str(transform):");
