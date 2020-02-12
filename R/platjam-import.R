@@ -974,6 +974,7 @@ get_numeric_transform <- function
       });
       return(transform);
    }
+   it <- transform;
    if (is.atomic(it)) {
       if ("log2signed" %in% it) {
          it <- jamba::log2signed;

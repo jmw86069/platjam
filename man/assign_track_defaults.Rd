@@ -4,9 +4,14 @@
 \alias{assign_track_defaults}
 \title{Assign default UCSC track values to environment}
 \usage{
-assign_track_defaults(env = new.env(), defaults, singlet_only = TRUE,
+assign_track_defaults(
+  env = new.env(),
+  defaults,
+  singlet_only = TRUE,
   track_types = c("track", "superTrack", "parent"),
-  type_mapping = c(description = c("longLabel")), ...)
+  type_mapping = c(description = c("longLabel")),
+  ...
+)
 }
 \arguments{
 \item{env}{\code{environment} in which the default values will be
@@ -48,8 +53,9 @@ by removing invalid track characters, for example for \code{"track"},
 for the track hierarchy to remain valid.
 }
 \seealso{
-Other jam ucsc browser functions: \code{\link{get_track_defaults}},
-  \code{\link{make_ucsc_trackname}},
-  \code{\link{parse_ucsc_gokey}}
+Other jam ucsc browser functions: 
+\code{\link{get_track_defaults}()},
+\code{\link{make_ucsc_trackname}()},
+\code{\link{parse_ucsc_gokey}()}
 }
 \concept{jam ucsc browser functions}

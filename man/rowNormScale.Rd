@@ -4,8 +4,15 @@
 \alias{rowNormScale}
 \title{Normalize and scale data per row}
 \usage{
-rowNormScale(x, from = 0, to = 1, naValue = NA,
-  singletMethod = "min", col_range = NULL, ...)
+rowNormScale(
+  x,
+  from = 0,
+  to = 1,
+  naValue = NA,
+  singletMethod = "min",
+  col_range = NULL,
+  ...
+)
 }
 \description{
 Normalize and scale data per row

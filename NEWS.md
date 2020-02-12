@@ -1,3 +1,10 @@
+# platjam version 0.0.12.900
+
+## bug fixes
+
+* `get_numeric_transform()` bug fixed wrong argument name used inside
+the function. Should also resolve issues with `nmatlist2heatmaps()`.
+
 # platjam version 0.0.11.900
 
 ## new functions

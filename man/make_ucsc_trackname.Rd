@@ -23,8 +23,9 @@ which are considered invalid for a UCSC track name: whitespace
 and non-ASCII characters.
 }
 \seealso{
-Other jam ucsc browser functions: \code{\link{assign_track_defaults}},
-  \code{\link{get_track_defaults}},
-  \code{\link{parse_ucsc_gokey}}
+Other jam ucsc browser functions: 
+\code{\link{assign_track_defaults}()},
+\code{\link{get_track_defaults}()},
+\code{\link{parse_ucsc_gokey}()}
 }
 \concept{jam ucsc browser functions}

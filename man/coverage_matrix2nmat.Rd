@@ -4,12 +4,22 @@
 \alias{coverage_matrix2nmat}
 \title{Import genome coverage matrix files}
 \usage{
-coverage_matrix2nmat(x = NULL, filename = NULL, signal_name = NULL,
-  target_name = "target", background = 0, smooth = FALSE,
-  target_is_single_point = FALSE, signal_is_categorical = FALSE,
-  mat_grep = "[-0-9]+:[-0-9]+", upstream_grep = "^[-]",
-  downstream_grep = "^[^-]", target_grep = "^0$", verbose = FALSE,
-  ...)
+coverage_matrix2nmat(
+  x = NULL,
+  filename = NULL,
+  signal_name = NULL,
+  target_name = "target",
+  background = 0,
+  smooth = FALSE,
+  target_is_single_point = FALSE,
+  signal_is_categorical = FALSE,
+  mat_grep = "[-0-9]+:[-0-9]+",
+  upstream_grep = "^[-]",
+  downstream_grep = "^[^-]",
+  target_grep = "^0$",
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{data.frame} or compatible object containing
@@ -127,7 +137,8 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
 
 }
 \seealso{
-Other jam genome functions: \code{\link{nmatlist2heatmaps}}
+Other jam genome functions: 
+\code{\link{nmatlist2heatmaps}()}
 }
 \concept{jam genome functions}
 \concept{jam import functions}

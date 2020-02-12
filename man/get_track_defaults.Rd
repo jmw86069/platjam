@@ -31,8 +31,9 @@ and composite:
 }
 }
 \seealso{
-Other jam ucsc browser functions: \code{\link{assign_track_defaults}},
-  \code{\link{make_ucsc_trackname}},
-  \code{\link{parse_ucsc_gokey}}
+Other jam ucsc browser functions: 
+\code{\link{assign_track_defaults}()},
+\code{\link{make_ucsc_trackname}()},
+\code{\link{parse_ucsc_gokey}()}
 }
 \concept{jam ucsc browser functions}

@@ -4,10 +4,14 @@
 \alias{parse_ucsc_gokey}
 \title{Parse UCSC tracks that use the Gokey format}
 \usage{
-parse_ucsc_gokey(track_lines,
+parse_ucsc_gokey(
+  track_lines,
   overlay_grep = c("[ -._](plus|minus|F|R|pos|neg)($|[ -._])"),
-  priority = 5000, output_format = c("text", "list"),
-  verbose = FALSE, ...)
+  priority = 5000,
+  output_format = c("text", "list"),
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{track_lines}{character vector containing lines read from
@@ -16,7 +20,7 @@ a track file, or valid path or connection to a track file.}
 \item{overlay_grep}{character vector containing valid regular
 expression patterns used to recognize when a track should
 be considered an overlay coverage track. For example
-\code{track name="trackA F"} and \code{track name="trackA R"} would
+\verb{track name="trackA F"} and \verb{track name="trackA R"} would
 be recognized as forward and reverse strand for a track
 named \code{"trackA"}. Overlay tracks are handled using the UCSC
 \code{"multiWig"} approach, and not the composite track approach.
@@ -29,7 +33,7 @@ start when assigning priority to each track.}
 \item{output_format}{character string indicating the
 output format, where \code{"text"} will return one long character
 string, and \code{"list"} will return a \code{list} with one track
-per list element with class \code{"glue","character"}.}
+per list element with class \verb{"glue","character"}.}
 
 \item{...}{additional arguments are ignored.}
 }
@@ -45,7 +49,7 @@ Parse UCSC tracks that use the Gokey format
 }
 \details{
 Given a text file, or lines from a text file, representing
-the \code{Gokey format}, this function will parse the track
+the \verb{Gokey format}, this function will parse the track
 lines into groups, and return a text string usable in
 a UCSC genome browser track hub.
 
@@ -54,8 +58,9 @@ For example:
 \code{parse_ucsc_gokey("tracks.txt")}
 }
 \seealso{
-Other jam ucsc browser functions: \code{\link{assign_track_defaults}},
-  \code{\link{get_track_defaults}},
-  \code{\link{make_ucsc_trackname}}
+Other jam ucsc browser functions: 
+\code{\link{assign_track_defaults}()},
+\code{\link{get_track_defaults}()},
+\code{\link{make_ucsc_trackname}()}
 }
 \concept{jam ucsc browser functions}

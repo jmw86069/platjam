@@ -4,11 +4,19 @@
 \alias{import_nanostring_rcc}
 \title{Import Nanostring RCC files}
 \usage{
-import_nanostring_rcc(rcc_files = NULL, rcc_path = ".",
-  rcc_pattern = NULL, exclude = NULL, include = NULL, nprobes = -1,
+import_nanostring_rcc(
+  rcc_files = NULL,
+  rcc_path = ".",
+  rcc_pattern = NULL,
+  exclude = NULL,
+  include = NULL,
+  nprobes = -1,
   control_greps = c(POS = "^POS_", NEG = "^NEG_"),
-  return_type = c("SummarizedExperiment", "NanoString"), debug = FALSE,
-  verbose = FALSE, ...)
+  return_type = c("SummarizedExperiment", "NanoString"),
+  debug = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{rcc_files}{character vector of file paths to RCC files,

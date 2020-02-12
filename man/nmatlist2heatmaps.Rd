@@ -4,16 +4,35 @@
 \alias{nmatlist2heatmaps}
 \title{Make multiple coverage heatmaps}
 \usage{
-nmatlist2heatmaps(nmatlist, k_clusters = 0, k_subset = NULL,
-  k_colors = NULL, k_width = unit(3, "mm"), k_method = c("euclidean",
-  "pearson", "correlation"), partition = NULL, rows = NULL,
-  row_order = NULL, nmat_colors = NULL, main_heatmap = 1,
-  anno_df = NULL, byCols = NULL, anno_row_marks = NULL,
-  anno_row_labels = NULL, hm_nrow = 1, transform = jamba::log2signed,
-  signal_ceiling = NULL, axis_name_gp = gpar(fontsize = 8),
-  lens = -2, seed = 123, use_raster = TRUE, do_plot = TRUE,
-  return_type = c("heatmaplist", "grid"), show_error = FALSE,
-  verbose = FALSE, ...)
+nmatlist2heatmaps(
+  nmatlist,
+  k_clusters = 0,
+  k_subset = NULL,
+  k_colors = NULL,
+  k_width = unit(3, "mm"),
+  k_method = c("euclidean", "pearson", "correlation"),
+  partition = NULL,
+  rows = NULL,
+  row_order = NULL,
+  nmat_colors = NULL,
+  main_heatmap = 1,
+  anno_df = NULL,
+  byCols = NULL,
+  anno_row_marks = NULL,
+  anno_row_labels = NULL,
+  hm_nrow = 1,
+  transform = jamba::log2signed,
+  signal_ceiling = NULL,
+  axis_name_gp = gpar(fontsize = 8),
+  lens = -2,
+  seed = 123,
+  use_raster = TRUE,
+  do_plot = TRUE,
+  return_type = c("heatmaplist", "grid"),
+  show_error = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{nmatlist}{\code{list} containing \code{normalizedMatrix} objects,
@@ -195,6 +214,7 @@ nmatlist2heatmaps(nmatlist, k_clusters=4, hm_nrow=2);
 
 }
 \seealso{
-Other jam genome functions: \code{\link{coverage_matrix2nmat}}
+Other jam genome functions: 
+\code{\link{coverage_matrix2nmat}()}
 }
 \concept{jam genome functions}

@@ -4,10 +4,19 @@
 \alias{frequency_matrix2nmat}
 \title{Convert frequency matrix to normalizedMatrix format}
 \usage{
-frequency_matrix2nmat(mat, target_frequency = NULL,
-  target_name = "target", signal_name = "Frequency", do_scale = TRUE,
-  scale_from = 0, scale_to = 1, scale_frequency = NULL,
-  apply_floor = TRUE, verbose = FALSE, ...)
+frequency_matrix2nmat(
+  mat,
+  target_frequency = NULL,
+  target_name = "target",
+  signal_name = "Frequency",
+  do_scale = TRUE,
+  scale_from = 0,
+  scale_to = 1,
+  scale_frequency = NULL,
+  apply_floor = TRUE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{mat}{numeric matrix with frequency represented as

@@ -4,12 +4,22 @@
 \alias{deepTools_matrix2nmat}
 \title{Import deepTools coverage matrix to normalizedMatrix}
 \usage{
-deepTools_matrix2nmat(x = NULL, filename = NULL, signal_name = NULL,
-  target_name = "target", background = 0, smooth = FALSE,
-  target_is_single_point = FALSE, signal_is_categorical = FALSE,
-  mat_grep = "[-0-9]+:[-0-9]+", upstream_grep = "^[-]",
-  downstream_grep = "^[^-]", target_grep = "^0$", verbose = FALSE,
-  ...)
+deepTools_matrix2nmat(
+  x = NULL,
+  filename = NULL,
+  signal_name = NULL,
+  target_name = "target",
+  background = 0,
+  smooth = FALSE,
+  target_is_single_point = FALSE,
+  signal_is_categorical = FALSE,
+  mat_grep = "[-0-9]+:[-0-9]+",
+  upstream_grep = "^[-]",
+  downstream_grep = "^[^-]",
+  target_grep = "^0$",
+  verbose = FALSE,
+  ...
+)
 }
 \description{
 Import deepTools coverage matrix to normalizedMatrix
