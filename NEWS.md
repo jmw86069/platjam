@@ -1,3 +1,12 @@
+# platjam version 0.0.13.900
+
+## Enhancements
+
+* `nmatlist2heatmaps()` altered the logic used to define color ranges
+in numeric columns of `anno_df`, opting to use quantile ranges
+`c(0.005, 0.995)` to help trim extreme values. Also changed `"purple"`
+to `"Purples"` to use the `RColorBrewer` purple color gradient.
+
 # platjam version 0.0.12.900
 
 ## bug fixes

@@ -541,17 +541,25 @@ nmatlist2heatmaps <- function
          if (any(c("integer", "numeric") %in% class(i1))) {
             if (min(i1, na.rm=TRUE) < 0) {
                ## Bi-directional color scale
-               ibreaks1 <- max(abs(i1), na.rm=TRUE);
-               ibreaks <- seq(from=-ibreaks1, to=ibreaks1, length.out=51);
+               #ibreaks1 <- max(abs(i1), na.rm=TRUE);
+               ibreaks1 <- quantile(abs(i1), c(0.995));
+               ibreaks <- seq(from=-ibreaks1,
+                  to=ibreaks1,
+                  length.out=25);
                cBR <- circlize::colorRamp2(breaks=ibreaks,
-                  col=getColorRamp("RdBu_r", n=51));
+                  col=jamba::getColorRamp("RdBu_r", lens=2, n=25));
             } else {
-               ibreaks1 <- max(abs(i1), na.rm=TRUE);
-               ibreaks2 <- min(abs(i1), na.rm=TRUE);
-               imin <- max(c(0, ibreaks2-(ibreaks1 - ibreaks2)*0.2));
-               ibreaks <- seq(from=imin, to=ibreaks1, length.out=15);
+               #ibreaks1 <- max(abs(i1), na.rm=TRUE);
+               #ibreaks2 <- min(abs(i1), na.rm=TRUE);
+               #imin <- max(c(0, ibreaks2-(ibreaks1 - ibreaks2)*0.2));
+               #ibreaks <- seq(from=imin, to=ibreaks1, length.out=15);
+               iminmax <- quantile(rmNA(i1),
+                  c(0.005, 0.995));
+               ibreaks <- seq(from=iminmax[1],
+                  to=iminmax[2],
+                  length.out=15);
                cBR <- circlize::colorRamp2(breaks=ibreaks,
-                  col=getColorRamp("purple", n=15, lens=-1));
+                  col=jamba::getColorRamp("Purples", n=15, lens=2));
             }
          } else {
             i2 <- mixedSort(unique(i1));
