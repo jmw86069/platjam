@@ -537,17 +537,33 @@ nmatlist2heatmaps <- function
       anno_df <- anno_df[rows,,drop=FALSE];
       ## Determine a list of color functions, one for each column
       anno_colors_l <- lapply(nameVector(colnames(anno_df)), function(i){
+         if (verbose) {
+            printDebug("nmatlist2heatmaps(): ",
+               "anno_colors_l colname:", i);
+         }
          i1 <- anno_df[[i]];
          if (any(c("integer", "numeric") %in% class(i1))) {
             if (min(i1, na.rm=TRUE) < 0) {
                ## Bi-directional color scale
                #ibreaks1 <- max(abs(i1), na.rm=TRUE);
                ibreaks1 <- quantile(abs(i1), c(0.995));
-               ibreaks <- seq(from=-ibreaks1,
+               ibreaks <- unique(seq(from=-ibreaks1,
                   to=ibreaks1,
-                  length.out=25);
+                  length.out=25));
+               if (length(ibreaks) <= 1) {
+                  ibreaks <- c(-1, 0, 1);
+               }
+               if (verbose) {
+                  printDebug("nmatlist2heatmaps(): ",
+                     "anno_colors_l colname:", i,
+                     " bi-directional data");
+                  printDebug("nmatlist2heatmaps(): ",
+                     "ibreaks:", ibreaks);
+               }
                cBR <- circlize::colorRamp2(breaks=ibreaks,
-                  col=jamba::getColorRamp("RdBu_r", lens=2, n=25));
+                  col=jamba::getColorRamp("RdBu_r",
+                     lens=2,
+                     n=length(ibreaks)));
             } else {
                #ibreaks1 <- max(abs(i1), na.rm=TRUE);
                #ibreaks2 <- min(abs(i1), na.rm=TRUE);
@@ -558,8 +574,15 @@ nmatlist2heatmaps <- function
                ibreaks <- unique(seq(from=iminmax[1],
                   to=iminmax[2],
                   length.out=15));
-               if (max(ibreaks) == 0) {
+               if (max(ibreaks) == 0 || length(ibreaks) <= 1) {
                   ibreaks <- c(0, 1);
+               }
+               if (verbose) {
+                  printDebug("nmatlist2heatmaps(): ",
+                     "anno_colors_l colname:", i,
+                     " bi-directional data");
+                  printDebug("nmatlist2heatmaps(): ",
+                     "ibreaks:", ibreaks);
                }
                cBR <- circlize::colorRamp2(breaks=ibreaks,
                   col=jamba::getColorRamp("Purples",
