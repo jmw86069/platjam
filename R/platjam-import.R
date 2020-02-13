@@ -555,11 +555,16 @@ nmatlist2heatmaps <- function
                #ibreaks <- seq(from=imin, to=ibreaks1, length.out=15);
                iminmax <- quantile(rmNA(i1),
                   c(0.005, 0.995));
-               ibreaks <- seq(from=iminmax[1],
+               ibreaks <- unique(seq(from=iminmax[1],
                   to=iminmax[2],
-                  length.out=15);
+                  length.out=15));
+               if (max(ibreaks) == 0) {
+                  ibreaks <- c(0, 1);
+               }
                cBR <- circlize::colorRamp2(breaks=ibreaks,
-                  col=jamba::getColorRamp("Purples", n=15, lens=2));
+                  col=jamba::getColorRamp("Purples",
+                     n=length(ibreaks),
+                     lens=2));
             }
          } else {
             i2 <- mixedSort(unique(i1));
