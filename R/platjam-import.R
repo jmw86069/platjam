@@ -1037,15 +1037,16 @@ get_numeric_transform <- function
          it <- function(x){sign(x)*abs(x)^(1/3)};
       } else if ("cube" %in% it) {
          it <- function(x){sign(x)*(abs(x)^3)};
-      } else if ("qrt" %in% it) {
+      } else if (any(c("qrt", "quadrt") %in% it)) {
          it <- function(x){sign(x)*abs(x)^(1/4)};
-      } else if ("frt" %in% it) {
+      } else if (any(c("frt", "fthrt") %in% it)) {
          it <- function(x){sign(x)*abs(x)^(1/5)};
       } else {
          itf <- tryCatch({
             get(it);
          }, error=function(e){
-            jamba::printDebug("Error:",
+            jamba::printDebug("get_numeric_transform(): ",
+               "Error:",
                "transform name '",
                it,
                "' was not recognized, and not available on the search path:\n",
