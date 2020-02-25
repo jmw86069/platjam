@@ -1,3 +1,17 @@
+# platjam version 0.0.14.900
+
+## Bug fixes
+
+* `nmatlist2heatmaps()` fixed bug in handling argument `signal_ceiling`,
+which when the value is between 0 and 1 is treated as a quantile. The
+method now removes zero before the `quantile()` calculation.
+* `nmatlist2heatmaps()` fixed bug that wrongly expanded argument
+`axis_names_gp` as a list without realizing class `"gpar"` is also
+a list. Now `"gpar"` is wrapped in `list()` before expanding to the
+number of coverage matrices.
+* `nmatlist2heatmaps()` fixed bug where argument `axis_name_rot` was
+not defined in the function itself.
+
 # platjam version 0.0.13.900
 
 ## Enhancements

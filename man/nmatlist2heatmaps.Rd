@@ -23,7 +23,8 @@ nmatlist2heatmaps(
   hm_nrow = 1,
   transform = jamba::log2signed,
   signal_ceiling = NULL,
-  axis_name_gp = gpar(fontsize = 8),
+  axis_name_gp = grid::gpar(fontsize = 8),
+  axis_name_rot = 90,
   lens = -2,
   seed = 123,
   use_raster = TRUE,
@@ -136,6 +137,10 @@ provided, it will be applied to every matrix.}
 as output from \code{grid::gpar()}. For example to define
 the x-axis font size, use the form
 \code{grid::gpar(fontsize=8)}.}
+
+\item{axis_name_rot}{numeric value either \code{0} or \code{90} indicating
+whether to rotate the x-axis names, where \code{90} will rotate
+labels, and \code{0} will leave labels horizontal.}
 
 \item{lens}{numeric value used to scale each heatmap
 color ramp, using \code{getColorRamp()}. Values above zero
