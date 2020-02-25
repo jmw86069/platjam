@@ -84,9 +84,9 @@
 #'       use_raster=TRUE,
 #'       col=jamba::getColorRamp(color, n=10),
 #'       top_annotation=HeatmapAnnotation(
-#'          lines=anno_enriched(gp=gpar(col=colorjam::rainbowJam(k)))
+#'          lines=anno_enriched(gp=grid::gpar(col=colorjam::rainbowJam(k)))
 #'       ),
-#'       axis_name_gp=gpar(fontsize=8),
+#'       axis_name_gp=grid::gpar(fontsize=8),
 #'       name=signal_name,
 #'       column_title=signal_name
 #'    );
@@ -370,9 +370,24 @@ coverage_matrix2nmat <- function
 #' @param  axis_name_rot numeric value either `0` or `90` indicating
 #'    whether to rotate the x-axis names, where `90` will rotate
 #'    labels, and `0` will leave labels horizontal.
+#' @param column_title_gp heatmap title graphic parameters,
+#'    as output from `grid::gpar()`. For example to define
+#'    the x-axis font size, use the form
+#'    `grid::gpar(fontsize=8)`. This argument is passed
+#'    directly to `ComplexHeatmap::Heatmap()`.
 #' @param seed numeric value used with `set.seed()` to
 #'    set the random seed. Set to `NULL` to avoid running
 #'    `set.seed()`.
+#' @param ht_gap unit size to specify the gap between multiple heatmaps.
+#'    This argument is passed to `ComplexHeatmap::draw()`. An example
+#'    is `grid::unit(8, "mm")` to specify 8 millimeters.
+#' @param profile_value character string to define the type of numeric
+#'    profile to display at the top of each heatmap. This argument is
+#'    passed to `EnrichedHeatmap::anno_enriched()`. Values: `"mean"` the
+#'    mean profile; `"sum"` the sum; `"abs_sum"` sum of absolute values;
+#'    `"abs_mean"` the mean of absolute values.
+#' @param ylims `vector` of maximum y-axis values for each heatmap profile;
+#'    or `list`
 #' @param use_raster logical indicating whether to create heatmaps
 #'    using raster resizing, almost always recommended `TRUE`.
 #' @param do_plot logical indicating whether to draw the heatmaps,
@@ -415,6 +430,7 @@ coverage_matrix2nmat <- function
 #' @export
 nmatlist2heatmaps <- function
 (nmatlist,
+ panel_groups=NULL,
  k_clusters=0,
  k_subset=NULL,
  k_colors=NULL,
@@ -432,10 +448,15 @@ nmatlist2heatmaps <- function
  hm_nrow=1,
  transform=jamba::log2signed,
  signal_ceiling=NULL,
+ axis_name=NULL,
  axis_name_gp=grid::gpar(fontsize=8),
  axis_name_rot=90,
+ column_title_gp=gpar(fontsize=12),
  lens=-2,
  seed=123,
+ ht_gap=grid::unit(7, "mm"),
+ profile_value=c("mean", "sum", "abs_mean", "abs_sum"),
+ ylims=NULL,
  use_raster=TRUE,
  do_plot=TRUE,
  return_type=c("heatmaplist", "grid"),
@@ -445,12 +466,14 @@ nmatlist2heatmaps <- function
 {
    #
    return_type <- match.arg(return_type);
+   profile_value <- match.arg(profile_value);
    if (length(seed) > 0) {
       set.seed(seed);
    }
    if (length(main_heatmap) == 0 || main_heatmap > length(nmatlist)) {
       main_heatmap <- 1;
    }
+
    ## k_method
    kmeans <- stats::kmeans;
    k_method <- head(k_method, 1);
@@ -482,9 +505,18 @@ nmatlist2heatmaps <- function
       rows <- Reduce("intersect",
          c(list(rows), lapply(nmatlist, rownames)));
    }
+   if (length(panel_groups) > 0) {
+      panel_groups <- rep(panel_groups,
+         length.out=length(nmatlist));
+   }
    if (length(nmat_colors) == 0) {
-      nmat_colors <- colorjam::rainbowJam(length(nmatlist),
-         ...);
+      if (length(panel_groups) > 0) {
+         nmat_colors <- colorjam::group2colors(panel_groups,
+            ...);
+      } else {
+         nmat_colors <- colorjam::rainbowJam(length(nmatlist),
+            ...);
+      }
    }
    if (length(nmat_colors) < length(nmatlist)) {
       nmat_colors <- rep(nmat_colors,
@@ -512,6 +544,13 @@ nmatlist2heatmaps <- function
    ## optional signal_ceiling
    if (length(signal_ceiling) > 0) {
       signal_ceiling <- rep(signal_ceiling,
+         length.out=length(nmatlist));
+   }
+   if (is.list(ylims)) {
+      ylims <- rep(ylims,
+         length.out=length(nmatlist));
+   } else {
+      ylims <- rep(list(ylims),
          length.out=length(nmatlist));
    }
 
@@ -744,21 +783,76 @@ nmatlist2heatmaps <- function
          width=k_width);
    }
 
+   ## panel_groups
+   if (length(panel_groups) > 0) {
+      if (length(tcount(panel_groups, minCount=2)) > 0) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Defining ylims for panel_groups.");
+         ## Make sure we have some duplicated panel_groups
+         itransform <- transform[[main_heatmap]];
+         panel_split <- split(seq_along(nmatlist), panel_groups);
+         panel_ylims <- lapply(panel_split, function(idxs){
+            idx_ranges <- lapply(idxs, function(idx){
+               printDebug(idx);
+               nmat <- nmatlist[[idx]][rows,,drop=FALSE];
+               if (length(unique(partition)) > 1) {
+                  plist <- split(names(partition), partition)
+                  range(
+                     (unlist(lapply(plist, function(prows){
+                     range(colMeans(itransform(nmat[prows,,drop=FALSE]), na.rm=TRUE))
+                  }))))
+               } else {
+                  range(
+                     (colMeans(itransform(nmat), na.rm=TRUE)))
+               }
+            })
+            idx_range <- range(pretty(unlist(idx_ranges)));
+            idx_range;
+         });
+         ylims <- panel_ylims[panel_groups];
+      }
+   }
+
+
    ## Iterate each matrix to create heatmaps
    lens <- rep(lens, length.out=length(nmatlist));
    if ("gpar" %in% class(axis_name_gp)) {
       axis_name_gp <- rep(list(axis_name_gp),
          length.out=length(nmatlist))
-   } else if (!is.list(axis_name_gp) && length(axis_name_gp) > 0) {
-      axis_name_gp <- rep(list(axis_name_gp), length.out=length(nmatlist));
    } else {
-      axis_name_gp <- rep(axis_name_gp, length.out=length(nmatlist));
+      axis_name_gp <- rep(axis_name_gp,
+         length.out=length(nmatlist));
+   }
+   if ("gpar" %in% class(column_title_gp)) {
+      column_title_gp <- rep(list(column_title_gp),
+         length.out=length(nmatlist));
+   } else {
+      column_title_gp <- rep(column_title_gp,
+         length.out=length(nmatlist));
+   }
+   if (is.list(axis_name)) {
+      axis_name <- rep(axis_name,
+         length.out=length(nmatlist));
+   } else {
+      axis_name <- rep(list(axis_name),
+         length.out=length(nmatlist));
+   }
+
+   if (verbose) {
+      jamba::printDebug("nmatlist2heatmaps(): ",
+         "axis_name_gp:");
+      print(axis_name_gp);
    }
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
       signal_name <- attr(nmat, "signal_name");
       target_name <- attr(nmat, "target_name");
       s_name <- gsub("_at_", "\nat_", signal_name);
+      signal_name <- gsub("^[\n ]+|[\n ]+$",
+         "",
+         gsub("\n[\n ]*",
+            "\n",
+            signal_name))
       color <- nmat_colors[[i]];
       if (length(color) == 0 || is.na(color)) {
          color <- "aquamarine4";
@@ -826,6 +920,12 @@ nmatlist2heatmaps <- function
             "axis_name_gp[[i]]:");
          print(axis_name_gp[[i]]);
       }
+      ## Define ylim
+      ylim <- ylims[[i]];
+      if (length(ylim) == 1) {
+         ylim <- sort(c(0, ylim));
+      }
+
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat,
          split=partition[rows],
          pos_line=FALSE,
@@ -833,13 +933,17 @@ nmatlist2heatmaps <- function
          col=colramp,
          top_annotation=ComplexHeatmap::HeatmapAnnotation(
             lines=EnrichedHeatmap::anno_enriched(gp=grid::gpar(col=k_colors),
+               value=profile_value,
+               ylim=ylim,
                show_error=show_error)
          ),
          axis_name_gp=axis_name_gp[[i]],
+         axis_name=axis_name[[i]],
          axis_name_rot=axis_name_rot,
          name=signal_name,
          column_title=signal_name,
          row_order=row_order,
+         column_title_gp=column_title_gp[[i]],
          ...);
       EH;
    });
@@ -864,6 +968,7 @@ nmatlist2heatmaps <- function
          }
          ht_1 <- grid::grid.grabExpr(
             ComplexHeatmap::draw(HM_temp,
+               ht_gap=ht_gap,
                main_heatmap=main_heatmap_temp));
          ht_1;
       });
@@ -898,6 +1003,7 @@ nmatlist2heatmaps <- function
          HM_temp <- HM_temp + MHM;
       }
       ComplexHeatmap::draw(HM_temp,
+         ht_gap=ht_gap,
          main_heatmap=main_heatmap_temp);
    }
    invisible(c(list(AHM=AHM),

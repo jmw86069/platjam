@@ -6,6 +6,7 @@
 \usage{
 nmatlist2heatmaps(
   nmatlist,
+  panel_groups = NULL,
   k_clusters = 0,
   k_subset = NULL,
   k_colors = NULL,
@@ -23,10 +24,15 @@ nmatlist2heatmaps(
   hm_nrow = 1,
   transform = jamba::log2signed,
   signal_ceiling = NULL,
+  axis_name = NULL,
   axis_name_gp = grid::gpar(fontsize = 8),
   axis_name_rot = 90,
+  column_title_gp = gpar(fontsize = 12),
   lens = -2,
   seed = 123,
+  ht_gap = grid::unit(7, "mm"),
+  profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
+  ylims = NULL,
   use_raster = TRUE,
   do_plot = TRUE,
   return_type = c("heatmaplist", "grid"),
@@ -142,6 +148,12 @@ the x-axis font size, use the form
 whether to rotate the x-axis names, where \code{90} will rotate
 labels, and \code{0} will leave labels horizontal.}
 
+\item{column_title_gp}{heatmap title graphic parameters,
+as output from \code{grid::gpar()}. For example to define
+the x-axis font size, use the form
+\code{grid::gpar(fontsize=8)}. This argument is passed
+directly to \code{ComplexHeatmap::Heatmap()}.}
+
 \item{lens}{numeric value used to scale each heatmap
 color ramp, using \code{getColorRamp()}. Values above zero
 apply the color gradient more rapidly starting from the
@@ -160,6 +172,19 @@ applied relative to the numeric range being used.}
 \item{seed}{numeric value used with \code{set.seed()} to
 set the random seed. Set to \code{NULL} to avoid running
 \code{set.seed()}.}
+
+\item{ht_gap}{unit size to specify the gap between multiple heatmaps.
+This argument is passed to \code{ComplexHeatmap::draw()}. An example
+is \code{grid::unit(8, "mm")} to specify 8 millimeters.}
+
+\item{profile_value}{character string to define the type of numeric
+profile to display at the top of each heatmap. This argument is
+passed to \code{EnrichedHeatmap::anno_enriched()}. Values: \code{"mean"} the
+mean profile; \code{"sum"} the sum; \code{"abs_sum"} sum of absolute values;
+\code{"abs_mean"} the mean of absolute values.}
+
+\item{ylims}{\code{vector} of maximum y-axis values for each heatmap profile;
+or \code{list}}
 
 \item{use_raster}{logical indicating whether to create heatmaps
 using raster resizing, almost always recommended \code{TRUE}.}

@@ -1,3 +1,24 @@
+# platjam version 0.0.15.900
+
+## Changes to existing functions
+
+* `nmatlist2heatmaps()` modified `signal_name` to clean up leading/trailing
+whitespace and return `\n`, and repeated return `\n` characters.
+* `nmatlist2heatmaps()` new argument `ht_gap` used to define the gap between
+heatmap panels. This argument is intended to help reduce the overlap of
+the top y-axis profile labels in adjacent profile panels.
+* `nmatlist2heatmaps()` new argument `axis_name`, as either a vector, or
+a list of vectors, used for x-axis labels across each panel.
+* `nmatlist2heatmaps()` new argument `column_title_gp`, as either a
+`grid::gpar` object, or list of gpar objects.
+* `nmatlist2heatmaps()` new argument `profile_value`, passed to
+`EnrichedHeatmap::anno_enriched()` to define the type of numeric summary
+to use for the profile plots.
+* `nmatlist2heatmaps()` new argument `panel_groups`, character vector of
+groups used to apply consistent y-axis ylims values per group. By default
+if `nmat_colors` is not supplied, then `colorjam::group2colors(panel_groups)`
+is used to define group colors.
+
 # platjam version 0.0.14.900
 
 ## Bug fixes

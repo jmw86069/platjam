@@ -118,9 +118,9 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
       use_raster=TRUE,
       col=jamba::getColorRamp(color, n=10),
       top_annotation=HeatmapAnnotation(
-         lines=anno_enriched(gp=gpar(col=colorjam::rainbowJam(k)))
+         lines=anno_enriched(gp=grid::gpar(col=colorjam::rainbowJam(k)))
       ),
-      axis_name_gp=gpar(fontsize=8),
+      axis_name_gp=grid::gpar(fontsize=8),
       name=signal_name,
       column_title=signal_name
    );
