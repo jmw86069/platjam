@@ -1,3 +1,11 @@
+# platjam version 0.0.17.900
+
+## Bug fixes
+
+* Fixed various bugs in `nmatlist2heatmaps()`. No doubt there will
+be more, covering the host of assumptions made for the panel_groups,
+signal_ceiling, and ylims arguments.
+
 # platjam version 0.0.16.900
 
 ## Changes to `nmatlist2heatmaps()`

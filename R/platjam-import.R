@@ -477,7 +477,7 @@ nmatlist2heatmaps <- function
    ## k_method
    kmeans <- stats::kmeans;
    k_method <- head(k_method, 1);
-   if (jamba::igrepHas("pearson|correlation|spearman", k_method)) {
+   if (jamba::igrepHas("pearson|correlation|spearman|maximum|manhattan", k_method)) {
       if (!suppressPackageStartupMessages(require(amap))) {
          k_method <- "euclidean";
          jamba::printDebug("nmatlist2heatmaps(): ",
@@ -490,7 +490,7 @@ nmatlist2heatmaps <- function
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Using amap::Kmeans()");
       }
-      kmeans <- function(...){amap::Kmeans(..., method=k_method)};
+      kmeans <- function(centers,...){amap::Kmeans(..., centers=centers,method=k_method)};
    }
    if (length(k_method) == 0 || nchar(k_method) == 0) {
       k_method <- "euclidean";
@@ -905,7 +905,7 @@ nmatlist2heatmaps <- function
                nmat <- nmatlist[[idx]][rows,,drop=FALSE];
                itransform <- transform[[idx]];
                iceiling <- get_nmat_ceiling(itransform(nmat),
-                  iceiling,
+                  signal_ceiling[[idx]],
                   verbose=verbose>1);
             });
             idx_ceiling <- max(unlist(idx_ceilings), na.rm=TRUE);
@@ -1230,7 +1230,9 @@ get_numeric_transform <- function
    }
    it <- transform;
    if (is.atomic(it)) {
-      if ("log2signed" %in% it) {
+      if ("none" %in% it) {
+         it <- function(x)x;
+      } else if ("log2signed" %in% it) {
          it <- jamba::log2signed;
       } else if ("exp2signed" %in% it) {
          it <- jamba::exp2signed;
