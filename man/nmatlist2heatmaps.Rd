@@ -37,7 +37,7 @@ nmatlist2heatmaps(
   do_plot = TRUE,
   return_type = c("heatmaplist", "grid"),
   show_error = FALSE,
-  verbose = FALSE,
+  verbose = TRUE,
   ...
 )
 }

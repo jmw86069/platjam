@@ -461,7 +461,7 @@ nmatlist2heatmaps <- function
  do_plot=TRUE,
  return_type=c("heatmaplist", "grid"),
  show_error=FALSE,
- verbose=FALSE,
+ verbose=TRUE,
  ...)
 {
    #
@@ -505,6 +505,13 @@ nmatlist2heatmaps <- function
       rows <- Reduce("intersect",
          c(list(rows), lapply(nmatlist, rownames)));
    }
+   if (verbose) {
+      jamba::printDebug("nmatlist2heatmaps(): ",
+         "Recognized ",
+         jamba::formatInt(length(rows)),
+         " rows shared across all matrices.");
+   }
+
    if (length(panel_groups) > 0) {
       panel_groups <- rep(panel_groups,
          length.out=length(nmatlist));
@@ -535,7 +542,7 @@ nmatlist2heatmaps <- function
       transform <- rep(transform,
          length.out=length(nmatlist));
    }
-   if (verbose) {
+   if (verbose > 1) {
       jamba::printDebug("nmatlist2heatmaps(): ",
          "str(transform):");
       print(str(transform));
@@ -550,8 +557,15 @@ nmatlist2heatmaps <- function
       ylims <- rep(ylims,
          length.out=length(nmatlist));
    } else {
-      ylims <- rep(list(ylims),
-         length.out=length(nmatlist));
+      ylims <- lapply(rep(ylims, length.out=length(nmatlist)), function(ylim){
+         range(c(0, 0.001, ylim))
+      });
+   }
+   if (length(ylims) > 0 && verbose) {
+      jamba::printDebug("nmatlist2heatmaps(): ",
+         "recognized ylims: ",
+         paste0("(", jamba::cPaste(ylims), ")"),
+         sep="; ");
    }
 
    ## Define some empty variables
@@ -571,12 +585,25 @@ nmatlist2heatmaps <- function
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Preparing anno_df.");
       }
+      if (!all(rows %in% rownames(anno_df)) && verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Using subset of ",
+            jamba::formatInt(sum(rows %in% rownames(anno_df))),
+            " rows present in rownames(anno_df).");
+      }
       if (length(byCols) > 0) {
-         anno_df <- jamba::mixedSortDF(anno_df, byCols=byCols);
+         anno_df <- jamba::mixedSortDF(anno_df,
+            byCols=byCols);
          rows <- intersect(rownames(anno_df), rows);
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Sorted rows by:",
+               byCols);
+         }
          row_order <- FALSE;
       } else {
-         rows <- intersect(rows, rownames(anno_df));
+         rows <- intersect(rows,
+            rownames(anno_df));
       }
       anno_df <- anno_df[rows,,drop=FALSE];
       ## Determine a list of color functions, one for each column
@@ -597,17 +624,21 @@ nmatlist2heatmaps <- function
                if (length(ibreaks) <= 1) {
                   ibreaks <- c(-1, 0, 1);
                }
+               colBR <- jamba::getColorRamp("RdBu_r",
+                  lens=1,
+                  n=length(ibreaks));
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "anno_colors_l colname:", i,
                      " bi-directional data");
                   jamba::printDebug("nmatlist2heatmaps(): ",
-                     "ibreaks:", ibreaks);
+                     "ibreaks:");
+                  jamba::printDebugI(
+                     jamba::nameVector(colBR, round(digits=2, ibreaks)),
+                     sep=", ");
                }
                cBR <- circlize::colorRamp2(breaks=ibreaks,
-                  col=jamba::getColorRamp("RdBu_r",
-                     lens=2,
-                     n=length(ibreaks)));
+                  col=colBR);
             } else {
                #ibreaks1 <- max(abs(i1), na.rm=TRUE);
                #ibreaks2 <- min(abs(i1), na.rm=TRUE);
@@ -621,17 +652,21 @@ nmatlist2heatmaps <- function
                if (max(ibreaks) == 0 || length(ibreaks) <= 1) {
                   ibreaks <- c(0, 1);
                }
+               colBR <- jamba::getColorRamp("Purples",
+                  n=length(ibreaks),
+                  lens=1);
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "anno_colors_l colname:", i,
                      " bi-directional data");
                   jamba::printDebug("nmatlist2heatmaps(): ",
-                     "ibreaks:", ibreaks);
+                     "ibreaks:");
+                  jamba::printDebugI(
+                     jamba::nameVector(colBR, round(digits=2, ibreaks)),
+                     sep=", ");
                }
                cBR <- circlize::colorRamp2(breaks=ibreaks,
-                  col=jamba::getColorRamp("Purples",
-                     n=length(ibreaks),
-                     lens=2));
+                  col=colBR);
             }
          } else {
             i2 <- mixedSort(unique(i1));
@@ -651,9 +686,9 @@ nmatlist2heatmaps <- function
       }
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
-            "Creating AHM.");
+            "Creating anno_df heatmap AHM.");
       }
-      AHM <- rowAnnotation(df=anno_df[rows,,drop=FALSE],
+      AHM <- ComplexHeatmap::rowAnnotation(df=anno_df[rows,,drop=FALSE],
          name="Annotation",
          col=anno_colors_l);
 
@@ -673,7 +708,9 @@ nmatlist2heatmaps <- function
          ## Print optional verbose output
          if (verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
-               "Preparing row mark MHM, top 20 entries are shown:");
+               "Preparing row marks for ",
+               jamba::formatInt(length(anno_rows)),
+               " anno_rows found in anno_df, top 20 entries are shown:");
             print(head(
                data.frame(
                   anno_rows=anno_rows,
@@ -682,7 +719,7 @@ nmatlist2heatmaps <- function
                20));
          }
          ## Mark Heatmap
-         MHM <- Heatmap(nameVector(anno_df[rows,1], rows),
+         MHM <- ComplexHeatmap::Heatmap(nameVector(anno_df[rows,1], rows),
             split=partition[rows],
             col=anno_colors_l[[1]],
             use_raster=use_raster,
@@ -690,7 +727,7 @@ nmatlist2heatmaps <- function
             show_row_names=FALSE,
             width=k_width,
             cluster_rows=FALSE,
-            right_annotation=rowAnnotation(
+            right_annotation=ComplexHeatmap::rowAnnotation(
                foo=anno_mark(at=anno_row_which,
                   labels=anno_row_labels)
             )
@@ -703,7 +740,12 @@ nmatlist2heatmaps <- function
       MHM <- NULL;
    }
    if (length(row_order) == 0 | isTRUE(row_order)) {
-      row_order <- order(enriched_score(nmatlist[[main_heatmap]][rows,]),
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ", sep="",
+            c("Defining row_order with ",
+               "EnrichedHeatmap::enriched_score()"));
+      }
+      row_order <- order(EnrichedHeatmap::enriched_score(nmatlist[[main_heatmap]][rows,]),
          decreasing=TRUE);
    } else if (isFALSE(row_order)) {
       row_order <- seq_along(rows);
@@ -736,13 +778,27 @@ nmatlist2heatmaps <- function
          itransform(nmatlist[[main_heatmap]][rows,]),
          iter.max=20,
          centers=k_clusters)$cluster;
+      ## Confirm that names(partition) match rows
+      names(partition) <- rows;
       if (verbose) {
-         jamba::printDebug("table(partition):");
-         print(table(partition));
+         k_sizes <- table(partition);
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "k-means cluster sizes: ",
+            paste0("cluster", names(k_sizes), "=", k_sizes), sep=", ");
       }
    }
    ## Partition heatmap sidebar
    if (length(partition) > 0) {
+      ## Make sure to use the partition values with the properly ordered rows
+      if (!all(rows %in% names(partition))) {
+         jamba::printDebug("head(partition):");
+         print(head(partition));
+         jamba::printDebug("head(rows):");
+         print(head(rows));
+         print(table(all(rows) %in% names(partition)));
+         stop("names(partition) must match rownames in nmatlist.");
+      }
+      partition <- partition[rows];
       ## Define colors if not provided
       if (length(k_colors) == 0) {
          k_colors <- nameVector(
@@ -759,23 +815,25 @@ nmatlist2heatmaps <- function
                "Subsetting partition for k_subset:",
                k_subset);
          }
-         partition <- partition[partition %in% k_subset];
+         partition <- partition[as.character(partition) %in% as.character(k_subset)];
          rows <- names(partition);
          k_colors <- k_colors[names(k_colors) %in% as.character(k_subset)];
          ## Subset AHM and MHM if defined
          if (length(AHM) > 0) {
-            AHM <- AHM[match(rows, rownames(attr(AHM, "matrix"))),];
+            AHM <- AHM[rows,];
+            #AHM <- AHM[match(rows, rownames(attr(AHM, "matrix"))),];
          }
          if (length(MHM) > 0) {
-            MHM <- MHM[match(rows, rownames(attr(MHM, "matrix"))),];
+            MHM <- MHM[rows,];
+            #MHM <- MHM[match(rows, rownames(attr(MHM, "matrix"))),];
          }
       }
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "creating partition heatmap PHM.");
       }
-      PHM <- Heatmap(partition[rows],
-         split=partition[rows],
+      PHM <- ComplexHeatmap::Heatmap(partition[rows],
+         row_split=partition[rows],
          use_raster=use_raster,
          col=k_colors,
          name="cluster",
@@ -785,31 +843,84 @@ nmatlist2heatmaps <- function
 
    ## panel_groups
    if (length(panel_groups) > 0) {
+      ## Make sure we have some duplicated panel_groups
       if (length(tcount(panel_groups, minCount=2)) > 0) {
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "Defining ylims for panel_groups.");
-         ## Make sure we have some duplicated panel_groups
-         itransform <- transform[[main_heatmap]];
          panel_split <- split(seq_along(nmatlist), panel_groups);
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Defining ylims for panel_groups.");
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "panel_groups:",
+               paste0("(", jamba::cPaste(panel_split), ")"),
+               sep="; ")
+         }
+         ## Calculate shared ylims per panel_group
          panel_ylims <- lapply(panel_split, function(idxs){
             idx_ranges <- lapply(idxs, function(idx){
-               printDebug(idx);
                nmat <- nmatlist[[idx]][rows,,drop=FALSE];
+               itransform <- transform[[idx]];
                if (length(unique(partition)) > 1) {
+                  if (verbose>1) {
+                     jamba::printDebug("nmatlist2heatmaps(): ",
+                        "Calculating colMeans() for panels (",
+                        jamba::cPaste(idxs),
+                        ") across row clusters.");
+                  }
                   plist <- split(names(partition), partition)
                   range(
-                     (unlist(lapply(plist, function(prows){
-                     range(colMeans(itransform(nmat[prows,,drop=FALSE]), na.rm=TRUE))
-                  }))))
+                     unlist(
+                        lapply(plist, function(prows){
+                           range(colMeans(
+                              itransform(nmat[prows,,drop=FALSE]),
+                              na.rm=TRUE))
+                        })
+                     )
+                  )
                } else {
+                  if (verbose>1) {
+                     jamba::printDebug("nmatlist2heatmaps(): ",
+                        "Calculating colMeans() for panels (",
+                        jamba::cPaste(idxs),
+                        ") across all rows.");
+                  }
                   range(
-                     (colMeans(itransform(nmat), na.rm=TRUE)))
+                     colMeans(
+                        itransform(nmat),
+                        na.rm=TRUE))
                }
             })
             idx_range <- range(pretty(unlist(idx_ranges)));
             idx_range;
          });
          ylims <- panel_ylims[panel_groups];
+         if (length(ylims) > 0 && verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "panel_groups ylims: ",
+               paste0("(", jamba::cPaste(ylims), ")"),
+               sep="; ");
+         }
+         ## Calculate signal ceiling per panel_group
+         panel_ceilings <- lapply(panel_split, function(idxs){
+            idx_ceilings <- lapply(idxs, function(idx){
+               nmat <- nmatlist[[idx]][rows,,drop=FALSE];
+               itransform <- transform[[idx]];
+               iceiling <- get_nmat_ceiling(itransform(nmat),
+                  iceiling,
+                  verbose=verbose>1);
+            });
+            idx_ceiling <- max(unlist(idx_ceilings), na.rm=TRUE);
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Determined signal ceilings for panels (",
+                  jamba::cPaste(idxs),
+                  "), ceilings: (",
+                  jamba::cPaste(round(digits=2, unlist(idx_ceilings))),
+                  "), signal_ceiling=",
+                  round(digits=2, idx_ceiling));
+            }
+            idx_ceiling;
+         })
+         signal_ceiling <- panel_ceilings[panel_groups];
       }
    }
 
@@ -838,11 +949,7 @@ nmatlist2heatmaps <- function
          length.out=length(nmatlist));
    }
 
-   if (verbose) {
-      jamba::printDebug("nmatlist2heatmaps(): ",
-         "axis_name_gp:");
-      print(axis_name_gp);
-   }
+   ## Iterate each heatmap
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
       signal_name <- attr(nmat, "signal_name");
@@ -857,6 +964,8 @@ nmatlist2heatmaps <- function
       if (length(color) == 0 || is.na(color)) {
          color <- "aquamarine4";
       }
+      ## Define ylim
+      ylim <- ylims[[i]];
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "signal_name:",
@@ -865,10 +974,14 @@ nmatlist2heatmaps <- function
             target_name,
             ", color:",
             color,
+            ", ylim=(", jamba::cPaste(round(digits=2, ylim)), ")",
             fgText=c(
-               rep(
-                  list("darkorange",
+               rep(list("darkorange",
                      "dodgerblue"),
+                  length.out=6),
+               NA),
+            bgText=c(
+               rep(list(NA),
                   length.out=6),
                color));
       }
@@ -876,26 +989,7 @@ nmatlist2heatmaps <- function
       imat <- itransform(nmat);
       iceiling <- signal_ceiling[[i]];
       if (length(iceiling) > 0 && !is.na(iceiling)) {
-         if (iceiling > 0 && iceiling <= 1) {
-            # apply quantile
-            imat_values <- setdiff(abs(imat), 0);
-            iquantile <- quantile(imat_values,
-               probs=iceiling,
-               na.rm=TRUE);
-            if (verbose) {
-               jamba::printDebug("nmatlist2heatmaps(): ",
-                  "applied iceiling:",
-                  iceiling,
-                  " as quantile threshold, which defined new ceiling:",
-                  iquantile);
-            }
-            iceiling <- iquantile;
-         }
-         if (verbose) {
-            jamba::printDebug("nmatlist2heatmaps(): ",
-               "   Applied ceiling:",
-               iceiling);
-         }
+         iceiling <- get_nmat_ceiling(imat, iceiling);
          if (min(imat, na.rm=TRUE) < 0) {
             ibreaks <- seq(from=-iceiling,
                to=iceiling,
@@ -915,16 +1009,6 @@ nmatlist2heatmaps <- function
             n=21,
             lens=lens[[i]]);
       }
-      if (verbose) {
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "axis_name_gp[[i]]:");
-         print(axis_name_gp[[i]]);
-      }
-      ## Define ylim
-      ylim <- ylims[[i]];
-      if (length(ylim) == 1) {
-         ylim <- sort(c(0, ylim));
-      }
 
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat,
          split=partition[rows],
@@ -932,7 +1016,8 @@ nmatlist2heatmaps <- function
          use_raster=use_raster,
          col=colramp,
          top_annotation=ComplexHeatmap::HeatmapAnnotation(
-            lines=EnrichedHeatmap::anno_enriched(gp=grid::gpar(col=k_colors),
+            lines=EnrichedHeatmap::anno_enriched(
+               gp=grid::gpar(col=k_colors),
                value=profile_value,
                ylim=ylim,
                show_error=show_error)
@@ -950,7 +1035,12 @@ nmatlist2heatmaps <- function
 
    ## Optional multi-row layout
    if (hm_nrow > 1 && length(nmatlist) > 1) {
-      hm_split <- rep(rep(
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Applying multi-row layout.");
+      }
+      hm_split <- rep(
+         rep(
             seq_len(hm_nrow),
             each=ceiling(length(nmatlist) / hm_nrow)),
          length.out=length(nmatlist));
@@ -991,16 +1081,25 @@ nmatlist2heatmaps <- function
       ## Single row layout
       HM_temp <- Reduce("+", EH_l);
       main_heatmap_temp <- main_heatmap;
+      ht_gap <- rep(ht_gap, length.out=max(c(1, length(nmatlist)-1)));
       if (length(partition) > 0) {
          HM_temp <- PHM + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
+         ht_gap <- grid::unit.c(grid::unit(1, "mm"), ht_gap);
       }
       if (length(AHM) > 0) {
          HM_temp <- AHM + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
+         ht_gap <- grid::unit.c(grid::unit(1, "mm"), ht_gap);
       }
       if (length(MHM) > 0) {
          HM_temp <- HM_temp + MHM;
+         ht_gap <- grid::unit.c(ht_gap, grid::unit(1, "mm"));
+      }
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "ht_gap:");
+         print(ht_gap);
       }
       ComplexHeatmap::draw(HM_temp,
          ht_gap=ht_gap,
@@ -1171,4 +1270,48 @@ get_numeric_transform <- function
       return(NULL);
    }
    return(it);
+}
+
+
+#' Helper function to calculate signal ceiling of numeric matrix
+#'
+#' Helper function to calculate signal ceiling of numeric matrix
+#'
+#' This function is called by `nmatlist2heatmaps()` and is not
+#' intended to be called directly.
+#'
+#' @export
+get_nmat_ceiling <- function
+(imat,
+   iceiling=NULL,
+   verbose=TRUE,
+   ...)
+{
+   if (length(iceiling) == 0) {
+      iceiling <- max(abs(imat), na.rm=TRUE);
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "   Applied max(nmat) ceiling=",
+            round(digits=3, iceiling));
+      }
+   } else if (iceiling > 0 && iceiling <= 1) {
+      # apply quantile
+      imat_values <- setdiff(abs(imat), 0);
+      iquantile <- quantile(imat_values,
+         probs=iceiling,
+         na.rm=TRUE);
+      if (verbose) {
+         jamba::printDebug("get_nmat_ceiling(): ",
+            "Applied quantile=",
+            iceiling,
+            " and defined ceiling=",
+            round(digits=3, iquantile));
+      }
+      iceiling <- iquantile;
+   } else if (verbose) {
+      jamba::printDebug("nmatlist2heatmaps(): ",
+         "   Applied ceiling=",
+         round(digits=3, iceiling));
+   }
+   return(iceiling);
 }

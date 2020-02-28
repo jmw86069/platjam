@@ -1,3 +1,33 @@
+# platjam version 0.0.16.900
+
+## Changes to `nmatlist2heatmaps()`
+
+* Cool new feature: `nmatlist2heatmaps()` argument `panel_group`,
+when it is defined, it calculates a shared `ylims` for each group
+of panels, and a shared `signal_ceiling` for each group of panels.
+The signal ceiling uses the supplied `signal_ceiling` for each panel
+(if supplied) then takes the maximum value for each group of panels.
+So if `signal_ceiling=0.8` it is treated as quantile 0.8, the 0.8
+quantile is calculate for all non-zero values for each panel, then
+each group of panels uses the max for that group.
+* `nmatlist2heatmaps()` the `ht_gap` gap between heatmaps is not
+applied between annotation heatmaps, instead `"1mm"` gap is used
+between annotation heatmaps. The purpose of `ht_gap` is to have
+enough gap between heatmaps so the y-axis profile plot labels
+can be displayed, but there are no y-axis labels for annotations.
+* The default `lens` for `anno_df` numeric columns is now `lens=1`,
+reverting previous change `lens=2` which was causing gradients to
+be darker than expected.
+* The verbose output is now more concise, and TRUE by default. For
+even more detail use `verbose=2`.
+
+## New functions
+
+* `get_nmat_ceiling()` is a simple wrapper function called by
+`nmatlist2heatmaps()` and not intended to be called directly.
+It takes a numeric matrix, and ceiling, and returns what I determines
+to be the appropriate ceiling to use.
+
 # platjam version 0.0.15.900
 
 ## Changes to existing functions
