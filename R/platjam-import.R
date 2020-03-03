@@ -1315,12 +1315,13 @@ get_numeric_transform <- function
 #' @export
 get_nmat_ceiling <- function
 (imat,
-   iceiling=NULL,
-   verbose=TRUE,
-   ...)
+ iceiling=NULL,
+ verbose=TRUE,
+ ...)
 {
-   if (length(iceiling) == 0) {
-      iceiling <- max(abs(imat), na.rm=TRUE);
+   if (length(iceiling) == 0 || any(is.na(iceiling))) {
+      iceiling <- max(abs(imat),
+         na.rm=TRUE);
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "   Applied max(nmat) ceiling=",
