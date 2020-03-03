@@ -7,26 +7,8 @@
 get_numeric_transform(transform, ...)
 }
 \arguments{
-\item{transform}{\code{character} string or \code{function}. If
-\code{length(transform) > 1} then \code{get_numeric_transform()}
-is called for each value in \code{transform}. Valid names:
-\code{"log2signed"} applies \code{jamba::log2signed()} which applies
-\code{log2(1+x)} transform to the absolute value, then multiplies
-by the original \code{sign(x)};
-\code{"exp2signed"} applies the inverse of \code{"log2signed"}, which
-exponentiates numeric values which were previously transformed
-with \code{log2(1+x)};
-\code{"sqrt"} applies square root transform;
-\code{"cubert"} applies cube root \code{x^(1/3)};
-\code{"qrt"} applies fourth root \code{x^(1/4)};
-\code{"frt"} applies fourth root \code{x^(1/5)};
-\code{"square"} applies \code{x^2} to absolute value, multiplied by the \code{sign(x)};
-\code{"cube"} applies \code{x^3};
-When there are negative numeric
-values, the transformation is applied to absolute value,
-then multiplied by the original sign. Therefore, the
-transformation is applied to adjust the magnitude of
-the values.}
+\item{transform}{\code{character} string or \code{function}, or \code{list}
+that may contain \code{character} string or \code{function}.}
 
 \item{...}{additional arguments are ignored.}
 }
@@ -42,8 +24,43 @@ Get appropriate numeric transformation function
 This function recognizes numeric transformation functions by
 name, or searches the attached R package environments for
 a matching function by name.
+
+Recognized transform names:
+\itemize{
+\item \code{"none"} or \code{"linear"} returns the data without change
+\item \code{"log2signed"} applies \code{jamba::log2signed()}, defined as
+\code{log2(1+x)} transform to the absolute value, then multiplies
+by the original \code{sign(x)}
+\item \code{"exp2signed"} applies the inverse of \code{"log2signed"}, which
+exponentiates numeric values which were previously transformed
+with \code{log2(1+x)}. Note that value=0 when exponentiated becomes \code{+1}
+\item \code{"sqrt"} applies square root transform, equivalent to \code{sqrt()}
+\item \code{"cubert"} applies cube root \code{x^(1/3)}
+\item \code{"qrt"} applies fourth root \code{x^(1/4)}
+\item \code{"frt"} or \code{"fthrt"} applies fifth root \code{x^(1/5)}
+\item \code{"square"} applies \code{x^2} to absolute value, multiplied by the \code{sign(x)}
+\item \code{"cube"} applies \code{x^3};
+}
+
+Any other character name is used to find a function with the same
+name, and if the function is found it is used. The function is
+expected to take input \code{x} and return corresponding output with the
+same length as the input. A function such as \code{max()} does not fit
+this criteria, but a function such as \code{log2()} is acceptable.
 }
 \examples{
 get_numeric_transform("log2signed")
+
+transform_list <- get_numeric_transform(
+   c("none",
+   "log2signed",
+   log2,
+   sqrt));
+jamba::sdim(transform_list);
+
+x <- jamba::nameVector(0:16);
+transform_list[[1]](x)
+
+transform_list[[2]](x)
 
 }

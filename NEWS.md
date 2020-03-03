@@ -1,3 +1,12 @@
+# platjam version 0.0.18.900
+
+## Changes to existing functions
+
+* `get_numeric_transform()` was updated to clean up the help
+docs, to accept `"linear"` as a valid name (which does not change
+the input data), and to parse the input `transform` values in
+order to assign reasonable names where possible.
+
 # platjam version 0.0.17.900
 
 ## Bug fixes
