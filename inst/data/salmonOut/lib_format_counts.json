@@ -1,0 +1,21 @@
+{
+    "read_files": "( SW13_none_A-NS50728_1.sickle.sanger.cutadapt.fastq.gz, SW13_none_A-NS50728_2.sickle.sanger.cutadapt.fastq.gz ), ( SW13_none_A-NS50729_1.sickle.sanger.cutadapt.fastq.gz, SW13_none_A-NS50729_2.sickle.sanger.cutadapt.fastq.gz )",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 28143781,
+    "num_assigned_fragments": 28143781,
+    "num_frags_with_consistent_mappings": 24661298,
+    "num_frags_with_inconsistent_or_orphan_mappings": 3482716,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 889,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 24661298,
+    "SF": 1707293,
+    "SR": 1774534,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

@@ -1,0 +1,19 @@
+{
+    "salmon_version": "0.11.2",
+    "index": "/ddn/gs1/shared/fargod/reference_genomes/hg19/hg19gencode/gencode.v28lift37.annotation/gencode.v28lift37.transcripts_quasi-k31.idx",
+    "threads": "60",
+    "libType": "A",
+    "useVBOpt": [],
+    "seqBias": [],
+    "gcBias": [],
+    "mates1": [
+        "SW13_none_A-NS50728_1.sickle.sanger.cutadapt.fastq.gz",
+        "SW13_none_A-NS50729_1.sickle.sanger.cutadapt.fastq.gz"
+    ],
+    "mates2": [
+        "SW13_none_A-NS50728_2.sickle.sanger.cutadapt.fastq.gz",
+        "SW13_none_A-NS50729_2.sickle.sanger.cutadapt.fastq.gz"
+    ],
+    "output": "SW13_none_A-lA-vbo-seq-gc_salmonOut",
+    "auxDir": "aux_info"
+}

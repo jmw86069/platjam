@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • platjam</title>
+<title>Get Salmon root directory — get_salmon_root • platjam</title>
 
 
 <!-- jquery -->
@@ -35,7 +35,9 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Get Salmon root directory — get_salmon_root" />
+<meta property="og:description" content="Get Salmon root directory" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -54,7 +56,7 @@
   </head>
 
   <body>
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -106,20 +108,60 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/jmw86069/platjam/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Get Salmon root directory</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-ngs.R'><code>R/platjam-ngs.R</code></a></small>
+    <div class="hidden name"><code>get_salmon_root.Rd</code></div>
     </div>
 
-  </div>
+    <div class="ref-description">
+    <p>Get Salmon root directory</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>get_salmon_root</span>(<span class='no'>file</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>file</th>
+      <td><p>character path to a Salmon output file, or a vector
+of files.</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>file path to the Salmon root directory, or <code>NA</code> if
+the Salmon root directory could not be found.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function uses the <code>rprojroot</code> package to find the
+root output directory of a Salmon quant analysis, looking
+for the file <code>"cmd_info.json"</code>. If this file is not found,
+this function returns <code>NULL</code>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other jam nextgen sequence functions: 
+<code><a href='get_salmon_meta.html'>get_salmon_meta</a>()</code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>cmdinfopath</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"data"</span>, <span class='st'>"salmonOut"</span>, <span class='st'>"cmd_info.json"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"platjam"</span>);
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/nchar.html'>nchar</a></span>(<span class='no'>cmdinfopath</span>) <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
+   <span class='fu'>get_salmon_root</span>(<span class='no'>cmdinfopath</span>);
+}</div><div class='output co'>#&gt; [1] "/private/var/folders/9z/y1_0kf711fx3lgc68w1k27xr0000gs/T/RtmpgLmpYg/temp_libpath174bc6644e356/platjam/data/salmonOut"</div><div class='input'>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <div id="tocnav">
-      <h2>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-      </ul>
-    </div>
-  </div>
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
+      <li><a href="#see-also">See also</a></li>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
+  </div>
 </div>
 
 

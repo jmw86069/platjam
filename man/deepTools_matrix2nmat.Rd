@@ -27,3 +27,10 @@ Import deepTools coverage matrix to normalizedMatrix
 \details{
 This function is under active development.
 }
+\seealso{
+Other jam import functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{frequency_matrix2nmat}()},
+\code{\link{import_nanostring_rcc}()}
+}
+\concept{jam import functions}

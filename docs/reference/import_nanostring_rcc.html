@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Import deepTools coverage matrix to normalizedMatrix — deepTools_matrix2nmat • platjam</title>
+<title>Import Nanostring RCC files — import_nanostring_rcc • platjam</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Import deepTools coverage matrix to normalizedMatrix — deepTools_matrix2nmat" />
-<meta property="og:description" content="Import deepTools coverage matrix to normalizedMatrix" />
+<meta property="og:title" content="Import Nanostring RCC files — import_nanostring_rcc" />
+<meta property="og:description" content="Import Nanostring RCC files" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -108,47 +108,106 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Import deepTools coverage matrix to normalizedMatrix</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-import.R'><code>R/platjam-import.R</code></a></small>
-    <div class="hidden name"><code>deepTools_matrix2nmat.Rd</code></div>
+    <h1>Import Nanostring RCC files</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-nanostring.R'><code>R/platjam-nanostring.R</code></a></small>
+    <div class="hidden name"><code>import_nanostring_rcc.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Import deepTools coverage matrix to normalizedMatrix</p>
+    <p>Import Nanostring RCC files</p>
     </div>
 
-    <pre class="usage"><span class='fu'>deepTools_matrix2nmat</span>(
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>signal_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>target_name</span> <span class='kw'>=</span> <span class='st'>"target"</span>,
-  <span class='kw'>background</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>smooth</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>target_is_single_point</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>signal_is_categorical</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>mat_grep</span> <span class='kw'>=</span> <span class='st'>"[-0-9]+:[-0-9]+"</span>,
-  <span class='kw'>upstream_grep</span> <span class='kw'>=</span> <span class='st'>"^[-]"</span>,
-  <span class='kw'>downstream_grep</span> <span class='kw'>=</span> <span class='st'>"^[^-]"</span>,
-  <span class='kw'>target_grep</span> <span class='kw'>=</span> <span class='st'>"^0$"</span>,
+    <pre class="usage"><span class='fu'>import_nanostring_rcc</span>(
+  <span class='kw'>rcc_files</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>rcc_path</span> <span class='kw'>=</span> <span class='st'>"."</span>,
+  <span class='kw'>rcc_pattern</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>exclude</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>include</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nprobes</span> <span class='kw'>=</span> -<span class='fl'>1</span>,
+  <span class='kw'>control_greps</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>POS</span> <span class='kw'>=</span> <span class='st'>"^POS_"</span>, <span class='kw'>NEG</span> <span class='kw'>=</span> <span class='st'>"^NEG_"</span>),
+  <span class='kw'>return_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"SummarizedExperiment"</span>, <span class='st'>"NanoString"</span>),
+  <span class='kw'>debug</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>...</span>
 )</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>rcc_files</th>
+      <td><p>character vector of file paths to RCC files,
+or if <code>NULL</code> then the <code>rcc_path</code> and <code>rcc_pattern</code> arguments
+are used to find RCC files.</p></td>
+    </tr>
+    <tr>
+      <th>rcc_path</th>
+      <td><p>character vector of file directories to look
+for RCC files, the files are matched to pattern <code>rcc_pattern</code>.
+Note the <code>rcc_path</code> is only used when <code>rcc_files</code> is not supplied.</p></td>
+    </tr>
+    <tr>
+      <th>rcc_pattern</th>
+      <td><p>character string containing regular expression
+pattern, used to match filenames which should be considered RCC
+files.</p></td>
+    </tr>
+    <tr>
+      <th>exclude</th>
+      <td><p>optional character vector of filenames to exclude from
+import. The filenames may be either a full file path, or
+the basename without the file path.</p></td>
+    </tr>
+    <tr>
+      <th>include</th>
+      <td><p>optional character vector of filenames to include
+during data import. Note that when <code>include</code> is defined, <em>only</em>
+these files are included in the file import, all other files are
+ignored.</p></td>
+    </tr>
+    <tr>
+      <th>debug</th>
+      <td><p>logical indicating whether to send intermediate data
+before full processing, useful for debugging file format errors.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>logical indicating whether to print verbose output.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional arguments are ignored.</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>SummarizedExperiment</code> or <code>NanoString</code> object, based
+upon argument <code>return_type</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is under active development.</p>
+    <p>This function reads one or more Nanostring RCC files,
+and produces a <code>SummarizedExperiment</code> object.</p>
+<p>This function was based upon the function
+<code>NanoStringNorm::read.markup.RCC()</code>, which in our experience
+was problematic because it assumed all files contained identical
+sample annotation content.</p>
+<p>For examples how to curate sample names into proper <code>data.frame</code>
+of experimental factors, see <code><a href='https://rdrr.io/pkg/splicejam/man/curateVtoDF.html'>splicejam::curateVtoDF()</a></code> or
+<code><a href='https://rdrr.io/pkg/splicejam/man/curateDFtoDF.html'>splicejam::curateDFtoDF()</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other jam import functions: 
 <code><a href='coverage_matrix2nmat.html'>coverage_matrix2nmat</a>()</code>,
-<code><a href='frequency_matrix2nmat.html'>frequency_matrix2nmat</a>()</code>,
-<code><a href='import_nanostring_rcc.html'>import_nanostring_rcc</a>()</code></p></div>
+<code><a href='deepTools_matrix2nmat.html'>deepTools_matrix2nmat</a>()</code>,
+<code><a href='frequency_matrix2nmat.html'>frequency_matrix2nmat</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>

@@ -64,3 +64,9 @@ transform_list[[1]](x)
 transform_list[[2]](x)
 
 }
+\seealso{
+Other jam utility functions: 
+\code{\link{get_nmat_ceiling}()},
+\code{\link{rowNormScale}()}
+}
+\concept{jam utility functions}

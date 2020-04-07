@@ -13,3 +13,9 @@ Helper function to calculate signal ceiling of numeric matrix
 This function is called by \code{nmatlist2heatmaps()} and is not
 intended to be called directly.
 }
+\seealso{
+Other jam utility functions: 
+\code{\link{get_numeric_transform}()},
+\code{\link{rowNormScale}()}
+}
+\concept{jam utility functions}

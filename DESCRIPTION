@@ -1,6 +1,6 @@
 Package: platjam
 Title: Platform Jam, biological platform importers.
-Version: 0.0.18.9000
+Version: 0.0.19.9000
 Authors@R: person(given="James M.", family="Ward",
     email="jmw86069@gmail.com", role=c("aut", "cre"))
 Description: Platform data import methods for biological platform
@@ -14,7 +14,9 @@ Imports: jamba,
 Suggests: ComplexHeatmap,
     EnrichedHeatmap,
     amap,
-    XML
+    XML,
+    jsonlite,
+    rprojroot
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

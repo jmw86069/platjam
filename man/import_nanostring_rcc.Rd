@@ -67,3 +67,10 @@ For examples how to curate sample names into proper \code{data.frame}
 of experimental factors, see \code{splicejam::curateVtoDF()} or
 \code{splicejam::curateDFtoDF()}.
 }
+\seealso{
+Other jam import functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{deepTools_matrix2nmat}()},
+\code{\link{frequency_matrix2nmat}()}
+}
+\concept{jam import functions}

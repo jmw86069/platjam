@@ -9,11 +9,54 @@ rowNormScale(
   from = 0,
   to = 1,
   naValue = NA,
+  low = NULL,
+  high = NULL,
   singletMethod = "min",
   col_range = NULL,
   ...
 )
 }
+\arguments{
+\item{x, from, to, naValue, singletMethod}{arguments passed to
+\code{jamba::normScale()}. Note that the default \verb{low,high} values
+use the column range defined by \code{col_range}.}
+
+\item{low}{numeric value or \code{NULL}, passed to \code{jamba::normScale()}
+for each row in \code{x}. When \code{low} is \code{NULL}, it uses the
+minimum value in \code{col_range} for each row.}
+
+\item{high}{numeric value or \code{NULL}, passed to \code{jamba::normScale()}
+for each row in \code{x}. When \code{high} is \code{NULL}, it uses the
+maximum value in \code{col_range} for each row.}
+
+\item{col_range}{integer vector referring to column numbers in
+the input \code{x} matrix to use in \code{jamba::normScale()}. When
+\code{col_range} is \code{NULL}, it uses all columns in \code{x}.}
+
+\item{...}{additional arguments are passed to \code{jamba::normScale()}.}
+}
 \description{
 Normalize and scale data per row
 }
+\details{
+This function essentially calls \code{jamba::normScale()}
+on each row of a numeric matrix. By default, it scales
+values to a fixed numeric range from 0 to 1, where
+the minimum value is set to 0 and the maximum value is
+set to 1. It is much more configurable, see \code{jamba::normScale()}
+help docs.
+}
+\examples{
+m <- matrix(1:9, ncol=3);
+m;
+
+rowNormScale(m);
+rowNormScale(m, from=0, to=10);
+
+}
+\seealso{
+Other jam utility functions: 
+\code{\link{get_nmat_ceiling}()},
+\code{\link{get_numeric_transform}()}
+}
+\concept{jam utility functions}

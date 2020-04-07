@@ -18,4 +18,12 @@ reference:
   desc: Functions related to the UCSC genome browser
   contents:
   - has_concept("jam ucsc browser functions")
+- title: Nextgen sequence functions
+  desc: Functions related to the nextgen sequence data
+  contents:
+  - has_concept("jam nextgen sequence functions")
+- title: Utility functions
+  desc: Extra utility functions
+  contents:
+  - has_concept("jam utility functions")
 

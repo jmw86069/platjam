@@ -1118,6 +1118,8 @@ nmatlist2heatmaps <- function
 #'
 #' This function is under active development.
 #'
+#' @family jam import functions
+#'
 #' @export
 deepTools_matrix2nmat <- function
 (x=NULL,
@@ -1212,6 +1214,8 @@ deepTools_matrix2nmat <- function
 #' @return `function` or `NULL` when no matching function is
 #'    found, or `list` is returned when the input `transform`
 #'    has multiple values.
+#'
+#' @family jam utility functions
 #'
 #' @param transform `character` string or `function`, or `list`
 #'    that may contain `character` string or `function`.
@@ -1311,6 +1315,8 @@ get_numeric_transform <- function
 #'
 #' This function is called by `nmatlist2heatmaps()` and is not
 #' intended to be called directly.
+#'
+#' @family jam utility functions
 #'
 #' @export
 get_nmat_ceiling <- function

@@ -1,3 +1,18 @@
+# platjam version 0.0.19.900
+
+## new functions
+
+* `get_salmon_meta()` is intended to load Salmon transcript
+quantification metadata from several output JSON files, returning
+results in a `data.frame` with one row per Salmon run. It combines
+various measured statistics from `"meta_info.json"`, `"cmd_info.json"`,
+and `"lib_format_counts.json"` so that multiple Salmon runs can be
+directly compared in a table format.
+* `get_salmon_root()` is a wrapper to `rprojroot::find_root()`, intended
+to find the root directory of a Salmon run given any Salmon output
+file. It searches for the root directory that contains the file
+`"cmd_info.json"`.
+
 # platjam version 0.0.18.900
 
 ## Changes to existing functions

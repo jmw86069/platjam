@@ -23,6 +23,8 @@
 #'    is no target indicated in the normalizedMatrix.
 #' @param ... additional arguments are ignored.
 #'
+#' @family jam import functions
+#'
 #' @export
 frequency_matrix2nmat <- function
 (mat,
@@ -114,12 +116,46 @@ frequency_matrix2nmat <- function
 
 #' Normalize and scale data per row
 #'
+#' Normalize and scale data per row
+#'
+#' This function essentially calls `jamba::normScale()`
+#' on each row of a numeric matrix. By default, it scales
+#' values to a fixed numeric range from 0 to 1, where
+#' the minimum value is set to 0 and the maximum value is
+#' set to 1. It is much more configurable, see `jamba::normScale()`
+#' help docs.
+#'
+#' @param x,from,to,naValue,singletMethod arguments passed to
+#'    `jamba::normScale()`. Note that the default `low,high` values
+#'    use the column range defined by `col_range`.
+#' @param low numeric value or `NULL`, passed to `jamba::normScale()`
+#'    for each row in `x`. When `low` is `NULL`, it uses the
+#'    minimum value in `col_range` for each row.
+#' @param high numeric value or `NULL`, passed to `jamba::normScale()`
+#'    for each row in `x`. When `high` is `NULL`, it uses the
+#'    maximum value in `col_range` for each row.
+#' @param col_range integer vector referring to column numbers in
+#'    the input `x` matrix to use in `jamba::normScale()`. When
+#'    `col_range` is `NULL`, it uses all columns in `x`.
+#' @param ... additional arguments are passed to `jamba::normScale()`.
+#'
+#' @family jam utility functions
+#'
+#' @examples
+#' m <- matrix(1:9, ncol=3);
+#' m;
+#'
+#' rowNormScale(m);
+#' rowNormScale(m, from=0, to=10);
+#'
 #' @export
 rowNormScale <- function
 (x,
  from=0,
  to=1,
  naValue=NA,
+ low=NULL,
+ high=NULL,
  singletMethod="min",
  col_range=NULL,
  ...)
@@ -128,9 +164,17 @@ rowNormScale <- function
       col_range <- seq_len(ncol(x));
    }
    t(apply(x, 1, function(i){
-      normScale(i,
-         low=min(i[col_range]),
-         high=max(i[col_range]),
+      if (length(low) == 0) {
+         low <- min(i[col_range], na.rm=TRUE);
+      }
+      if (length(high) == 0) {
+         high <- max(i[col_range], na.rm=TRUE);
+      }
+      jamba::normScale(i,
+         low=low,
+         high=high,
+         from=from,
+         to=to,
          singletMethod=singletMethod,
          naValue=naValue,
          ...);

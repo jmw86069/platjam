@@ -139,6 +139,11 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
 \seealso{
 Other jam genome functions: 
 \code{\link{nmatlist2heatmaps}()}
+
+Other jam import functions: 
+\code{\link{deepTools_matrix2nmat}()},
+\code{\link{frequency_matrix2nmat}()},
+\code{\link{import_nanostring_rcc}()}
 }
 \concept{jam genome functions}
 \concept{jam import functions}

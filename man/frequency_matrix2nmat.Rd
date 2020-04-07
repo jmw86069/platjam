@@ -46,3 +46,10 @@ as columns, and observations as rows. It will optionally
 scale each row to have fixed minimum-to-maximum value
 range, given a range of frequencies to use for scaling.
 }
+\seealso{
+Other jam import functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{deepTools_matrix2nmat}()},
+\code{\link{import_nanostring_rcc}()}
+}
+\concept{jam import functions}

@@ -15,6 +15,8 @@
 #' of experimental factors, see `splicejam::curateVtoDF()` or
 #' `splicejam::curateDFtoDF()`.
 #'
+#' @family jam import functions
+#'
 #' @return `SummarizedExperiment` or `NanoString` object, based
 #' upon argument `return_type`.
 #'
