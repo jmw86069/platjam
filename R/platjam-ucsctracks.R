@@ -413,6 +413,8 @@ priority             {priority}
 
       track             {track}
       parent            {parent}
+      shortLabel        {name}
+      longLabel         {name}
       bigDataUrl        {bigDataUrl}
       type              {type}
       color             {color}

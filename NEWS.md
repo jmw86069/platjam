@@ -1,3 +1,11 @@
+# platjam version 0.0.20.900
+
+## changes to existing functions
+
+* `get_track_defaults()` was modified to include `shortLabel,longLabel`
+in the template for multiWig tracks. Apparently a label is displayed
+and it uses the internal hub number as a prefix by default.
+
 # platjam version 0.0.19.900
 
 ## new functions
