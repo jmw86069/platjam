@@ -143,7 +143,8 @@ parse_ucsc_gokey <- function
    }
    names(track_dfl) <- track_names;
    track_df$name <- track_names;
-   track_df$is_overlay <- (track_names %in% provigrep(overlay_grep, track_names));
+   track_df$is_overlay <- (track_names %in% provigrep(overlay_grep, track_names) &
+         !grepl("[.](bigBed|bb)$", ignore.case=TRUE, track_df$bigDataUrl));
 
    ## apply parent and header values
    track_df$superTrack <- pasteByRow(track_df[,c("group","header")], sep=": ");

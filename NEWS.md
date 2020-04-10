@@ -1,3 +1,10 @@
+# platjam version 0.0.21.900
+
+## changes to existing functions
+
+* `parse_ucsc_gokey()` was updated to recognize bigBed/bb files
+can not become overlay tracks.
+
 # platjam version 0.0.20.900
 
 ## changes to existing functions
