@@ -111,9 +111,11 @@ parse_ucsc_gokey <- function
    ## determine non-track lines
    nontrack <- which(!grepl("^track", track_lines));
    ## non-track lines which are group names
-   nontracki <- nontrack[c(diff(nontrack)>1, TRUE)];
-   ## non-track lines which are header names
-   nontrackh <- nontrack[c(diff(nontrack)==1, FALSE)];
+   is_group <- diff(c(nontrack, Inf)) > 1;
+   has_header <- diff(c(-Inf, nontrack)) == 1;
+   nontracki <- nontrack[is_group];
+   nontrackh <- ifelse(has_header[is_group], nontracki - 1, nontracki);
+
    tracki <- which(grepl("^track", track_lines));
    track_df <- data.frame(tracknum=tracki);
    track_df$headernum <- sapply(track_df$tracknum, function(i){
@@ -145,8 +147,11 @@ parse_ucsc_gokey <- function
    }
    names(track_dfl) <- track_names;
    track_df$name <- track_names;
+
    track_df$is_overlay <- (track_names %in% provigrep(overlay_grep, track_names) &
-         !grepl("[.](bigBed|bb)$", ignore.case=TRUE, track_df$bigDataUrl));
+         !grepl("[.](bigBed|bb)",
+            ignore.case=TRUE,
+            track_lines[track_df$tracknum]));
 
    ## apply parent and header values
    track_df$superTrack <- pasteByRow(track_df[,c("group","header")], sep=": ");

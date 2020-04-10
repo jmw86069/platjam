@@ -9,6 +9,7 @@ parse_ucsc_gokey(
   overlay_grep = c("[ -._](plus|minus|F|R|pos|neg)($|[ -._])"),
   priority = 5000,
   output_format = c("text", "list"),
+  debug = c("none", "df"),
   verbose = FALSE,
   ...
 )
