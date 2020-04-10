@@ -154,13 +154,19 @@ parse_ucsc_gokey <- function
             track_lines[track_df$tracknum]));
 
    ## apply parent and header values
-   track_df$superTrack <- pasteByRow(track_df[,c("group","header")], sep=": ");
-   track_df$superTrack <- ifelse(track_df$is_overlay,
+   #track_df$superTrack <- pasteByRow(track_df[,c("group","header")], sep=": ");
+   track_df$superTrack <- ifelse(track_df$is_overlay & !track_df$group == track_df$header,
       pasteByRow(track_df[,c("group","header")], sep=": "),
       track_df$group);
    track_df$parent <- ifelse(track_df$is_overlay,
       gsub(overlay_grep, "", track_df$name),
       track_df$header);
+   #track_df$superTrack <- ifelse(track_df$superTrack == track_df$parent,
+   #   paste0(track_df$superTrack, " super"),
+   #   track_df$superTrack);
+   track_df$parent <- ifelse(track_df$superTrack == track_df$parent,
+      paste0(track_df$parent, " set"),
+      track_df$parent);
 
    show_env <- function(env){
       unlist(lapply(nameVector(ls(env)), function(i){
