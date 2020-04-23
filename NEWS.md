@@ -1,3 +1,21 @@
+# platjam version 0.0.22.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()` accepts input `nmat_colors` with
+color functions, for example sending output from `circlize::colorRamp2()`.
+* `nmatlist2heatmaps()` when given a single color per matrix,
+when data is determined to have positive and negative values,
+it generates a divergent color ramp using the supplied color,
+and complementary color. To define a specific set of colors,
+supply a three color vector, the middle color will be fixed
+at zero.
+
+## bug fixes
+
+* `nmatlist2heatmaps()` no longer requires `ylims` and uses `ylim=NULL`
+properly.
+
 # platjam version 0.0.21.900
 
 ## changes to existing functions

@@ -553,13 +553,15 @@ nmatlist2heatmaps <- function
       signal_ceiling <- rep(signal_ceiling,
          length.out=length(nmatlist));
    }
-   if (is.list(ylims)) {
-      ylims <- rep(ylims,
-         length.out=length(nmatlist));
-   } else {
-      ylims <- lapply(rep(ylims, length.out=length(nmatlist)), function(ylim){
-         range(c(0, 0.001, ylim))
-      });
+   if (length(ylims) > 0) {
+      if (is.list(ylims)) {
+         ylims <- rep(ylims,
+            length.out=length(nmatlist));
+      } else {
+         ylims <- lapply(rep(ylims, length.out=length(nmatlist)), function(ylim){
+            range(c(0, 0.001, ylim))
+         });
+      }
    }
    if (length(ylims) > 0 && verbose) {
       jamba::printDebug("nmatlist2heatmaps(): ",
@@ -926,6 +928,9 @@ nmatlist2heatmaps <- function
 
 
    ## Iterate each matrix to create heatmaps
+   if (length(lens) == 0) {
+      lens <- 0;
+   }
    lens <- rep(lens, length.out=length(nmatlist));
    if ("gpar" %in% class(axis_name_gp)) {
       axis_name_gp <- rep(list(axis_name_gp),
@@ -950,6 +955,10 @@ nmatlist2heatmaps <- function
    }
 
    ## Iterate each heatmap
+   if (verbose) {
+      jamba::printDebug("nmatlist2heatmaps(): ",
+         "Iterating each heatmap.");
+   }
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
       signal_name <- attr(nmat, "signal_name");
@@ -965,7 +974,11 @@ nmatlist2heatmaps <- function
          color <- "aquamarine4";
       }
       ## Define ylim
-      ylim <- ylims[[i]];
+      if (length(ylims) > 0) {
+         ylim <- ylims[[i]];
+      } else {
+         ylim <- NULL;
+      }
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "signal_name:",
@@ -973,7 +986,7 @@ nmatlist2heatmaps <- function
             ", target_name:",
             target_name,
             ", color:",
-            color,
+            ifelse(is.function(color), color(100), color),
             ", ylim=(", jamba::cPaste(round(digits=2, ylim)), ")",
             fgText=c(
                rep(list("darkorange",
@@ -983,11 +996,22 @@ nmatlist2heatmaps <- function
             bgText=c(
                rep(list(NA),
                   length.out=6),
-               color));
+               ifelse(is.function(color), color(100), list(color))));
       }
       itransform <- transform[[i]];
       imat <- itransform(nmat);
       iceiling <- signal_ceiling[[i]];
+      divergent <- FALSE;
+      if (any(imat >= 0) && any(imat < 0)) {
+         divergent <- TRUE;
+      }
+      if (!is.function(color) && length(color) == 1 && divergent) {
+         hcl <- jamba::col2hcl(color);
+         hcl["H",] <- (180 + hcl["H",]) %% 360;
+         color2 <- jamba::hcl2col(hcl);
+         color <- c(color2, "white", color);
+         divergent <- TRUE;
+      }
       if (length(iceiling) > 0 && !is.na(iceiling)) {
          iceiling <- get_nmat_ceiling(imat, iceiling);
          if (min(imat, na.rm=TRUE) < 0) {
@@ -999,15 +1023,25 @@ nmatlist2heatmaps <- function
                to=iceiling,
                length=21);
          }
-         colramp <- circlize::colorRamp2(
-            breaks=ibreaks,
-            colors=jamba::getColorRamp(color,
-               n=21,
-               lens=lens[[i]]));
+         if (is.function(color)) {
+            colramp <- color;
+         } else {
+            colramp <- circlize::colorRamp2(
+               breaks=ibreaks,
+               colors=jamba::getColorRamp(color,
+                  divergent=divergent,
+                  n=21,
+                  lens=lens[[i]]));
+         }
       } else {
-         colramp <- jamba::getColorRamp(color,
-            n=21,
-            lens=lens[[i]]);
+         if (is.function(color)) {
+            colramp <- color;
+         } else {
+            colramp <- jamba::getColorRamp(color,
+               n=21,
+               divergent=divergent,
+               lens=lens[[i]]);
+         }
       }
 
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat,
