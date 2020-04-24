@@ -481,6 +481,9 @@ nmatlist2heatmaps <- function
  iter.max=20,
  use_raster=TRUE,
  do_plot=TRUE,
+ legend_width=grid::unit(3, "cm"),
+ heatmap_legend_param=NULL,
+ annotation_legend_param=NULL,
  return_type=c("heatmaplist", "grid"),
  show_error=FALSE,
  verbose=TRUE,
@@ -500,6 +503,9 @@ nmatlist2heatmaps <- function
       border <- FALSE;
    }
    border <- rep(border, length.out=length(nmatlist));
+   if (length(legend_width) == 0) {
+      legend_width <- grid::unit(3, "cm");
+   }
 
    ## k_method
    kmeans <- stats::kmeans;
@@ -715,6 +721,28 @@ nmatlist2heatmaps <- function
          }
          cBR;
       });
+      ## annotation_legend_param
+      if (length(annotation_legend_param) == 0) {
+         annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
+            i1 <- anno_df[[i]];
+            if (any(c("integer", "numeric") %in% class(i1))) {
+               list(direction="horizontal",
+                  title=i,
+                  legend_width=legend_width,
+                  title_position="topleft",
+                  border="black",
+                  grid_width=unit(1, "npc"));
+            } else {
+               list(direction="horizontal",
+                  title=i,
+                  legend_width=legend_width,
+                  title_position="topleft",
+                  border="black",
+                  ncol=min(c(length(unique(i1)), 4)),
+                  grid_width=unit(1, "npc"));
+            }
+         });
+      }
       for (jj in 1:ncol(anno_df)) {
          i1 <- anno_df[[jj]];
          if (any(c("character") %in% class(i1))) {
@@ -730,6 +758,7 @@ nmatlist2heatmaps <- function
       ## Annotation heatmap
       AHM <- ComplexHeatmap::rowAnnotation(
          df=anno_df[rows,,drop=FALSE],
+         annotation_legend_param=annotation_legend_param,
          name="Annotation",
          col=anno_colors_l);
 
@@ -1141,6 +1170,14 @@ nmatlist2heatmaps <- function
                lens=lens[[i]]);
          }
       }
+      if (length(heatmap_legend_param) == 0) {
+         legend_width <- grid::unit(3, "cm");
+         heatmap_legend_param <- list(direction="horizontal",
+            legend_width=legend_width,
+            title_position="topleft",
+            border="black",
+            grid_width=unit(1, "npc"));
+      }
 
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
          split=partition[rows],
@@ -1155,6 +1192,7 @@ nmatlist2heatmaps <- function
                ylim=ylim,
                show_error=show_error)
          ),
+         heatmap_legend_param=heatmap_legend_param,
          axis_name_gp=axis_name_gp[[i]],
          axis_name=axis_name[[i]],
          axis_name_rot=axis_name_rot,
@@ -1235,11 +1273,15 @@ nmatlist2heatmaps <- function
          print(ht_gap);
       }
       if (length(title) > 0 || length(caption) > 0) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Preparing HeatmapList grob for grid_with_title()");
          HM_grob <- grid::grid.grabExpr(
             ComplexHeatmap::draw(HM_temp,
                ht_gap=ht_gap,
                main_heatmap=main_heatmap_temp)
          );
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Calling grid_with_title()");
          multienrichjam::grid_with_title(HM_grob,
             title=title,
             caption=caption,
