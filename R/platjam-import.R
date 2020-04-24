@@ -905,18 +905,16 @@ nmatlist2heatmaps <- function
       }
       ##################################
       ## Partition Heatmap
-      p_annotation_legend_param <- list(
-         cluster=list(
-            title="Cluster",
-            title_position="topleft",
-            border="black",
-            ncol=min(c(length(unique(partition[rows])), 4))
-         )
+      p_heatmap_legend_param <- list(
+         title_position="topleft",
+         border="black",
+         ncol=min(c(length(unique(partition[rows])), 4)),
+         grid_width=grid::unit(1, "npc")
       )
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
          #row_split=partition[rows],
          border=FALSE,
-         annotation_legend_param=p_annotation_legend_param,
+         heatmap_legend_param=p_heatmap_legend_param,
          use_raster=use_raster,
          col=k_colors,
          name="cluster",
