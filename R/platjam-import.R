@@ -726,19 +726,21 @@ nmatlist2heatmaps <- function
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
             i1 <- anno_df[[i]];
             if (any(c("integer", "numeric") %in% class(i1))) {
-               list(direction="horizontal",
+               list(
+                  direction="horizontal",
                   title=i,
                   legend_width=legend_width,
                   title_position="topleft",
                   border="black",
                   grid_width=unit(1, "npc"));
             } else {
-               list(direction="horizontal",
+               list(
                   title=i,
                   title_position="topleft",
                   border="black",
-                  ncol=min(c(length(unique(i1)), 4)),
-                  grid_width=unit(1, "npc"));
+                  ncol=min(c(length(unique(i1)), 4))
+               )
+               #   grid_width=unit(1, "npc")
             }
          });
       }
@@ -903,8 +905,18 @@ nmatlist2heatmaps <- function
       }
       ##################################
       ## Partition Heatmap
+      p_annotation_legend_param <- list(
+         cluster=list(
+            title="Cluster",
+            title_position="topleft",
+            border="black",
+            ncol=min(c(length(unique(partition[rows])), 4))
+         )
+      )
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
-         row_split=partition[rows],
+         #row_split=partition[rows],
+         border=FALSE,
+         annotation_legend_param=p_annotation_legend_param,
          use_raster=use_raster,
          col=k_colors,
          name="cluster",
