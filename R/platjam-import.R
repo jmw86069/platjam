@@ -299,6 +299,10 @@ coverage_matrix2nmat <- function
 #'    to colorize each heatmap. When `NULL` then
 #'    `colorjam::rainbowJam()` is used to create colors
 #'    for each heatmap panel.
+#' @param nmat_names `character` vector, or `NULL`, optional,
+#'    used as custom names for each heatmap in `nmatlist`.
+#'    When `nmat_names=NULL` the `signal_name` values are
+#'    used from each `nmatlist` matrix.
 #' @param main_heatmap integer index referring to the
 #'    entry in `nmatlist` to use for clustering and row
 #'    ordering.
@@ -448,6 +452,7 @@ nmatlist2heatmaps <- function
  rows=NULL,
  row_order=NULL,
  nmat_colors=NULL,
+ nmat_names=NULL,
  main_heatmap=1,
  anno_df=NULL,
  byCols=NULL,
@@ -1023,6 +1028,9 @@ nmatlist2heatmaps <- function
       signal_name <- attr(nmat, "signal_name");
       target_name <- attr(nmat, "target_name");
       s_name <- gsub("_at_", "\nat_", signal_name);
+      if (length(nmat_names) > 0) {
+         signal_name <- nmat_names[i];
+      }
 
       ## For now, do not word wrap, let user do that
       if (1 == 2) {

@@ -16,6 +16,7 @@ nmatlist2heatmaps(
   rows = NULL,
   row_order = NULL,
   nmat_colors = NULL,
+  nmat_names = NULL,
   main_heatmap = 1,
   anno_df = NULL,
   byCols = NULL,
@@ -82,6 +83,11 @@ or the order after sorting \code{anno_df}. When
 to colorize each heatmap. When \code{NULL} then
 \code{colorjam::rainbowJam()} is used to create colors
 for each heatmap panel.}
+
+\item{nmat_names}{\code{character} vector, or \code{NULL}, optional,
+used as custom names for each heatmap in \code{nmatlist}.
+When \code{nmat_names=NULL} the \code{signal_name} values are
+used from each \code{nmatlist} matrix.}
 
 \item{main_heatmap}{integer index referring to the
 entry in \code{nmatlist} to use for clustering and row
