@@ -15,6 +15,11 @@ make a divergent color gradient from a single color.
 * `nmatlist2heatmaps()` new argument `nmat_names` used to supply
 custom names for each heatmap, otherwise the attribute
 `"signal_name"` values are used.
+* `nmatlist2heatmaps()` new arguments `title` and `caption` invoke
+a prototype method that calls `multienrichjam::grid_with_title()`
+to position an overall title and caption above and below the
+heatmaps, respectively. When supplied, these sections are displayed
+and the heatmaps are resized accordingly.
 * `nmatlist2heatmaps()` now properly handles `k_subset` to plot
 a subset of clusters provided by `partition` or after `k_clusters`
 is used to create clusters. Mostly useful for follow-up plots

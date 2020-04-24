@@ -447,6 +447,8 @@ coverage_matrix2nmat <- function
 nmatlist2heatmaps <- function
 (nmatlist,
  panel_groups=NULL,
+ title=NULL,
+ caption=NULL,
  k_clusters=0,
  k_subset=NULL,
  k_colors=NULL,
@@ -1232,9 +1234,22 @@ nmatlist2heatmaps <- function
             "ht_gap:");
          print(ht_gap);
       }
-      ComplexHeatmap::draw(HM_temp,
-         ht_gap=ht_gap,
-         main_heatmap=main_heatmap_temp);
+      if (length(title) > 0 || length(caption) > 0) {
+         HM_grob <- grid::grid.grabExpr(
+            ComplexHeatmap::draw(HM_temp,
+               ht_gap=ht_gap,
+               main_heatmap=main_heatmap_temp)
+         );
+         multienrichjam::grid_with_title(HM_grob,
+            title=title,
+            caption=caption,
+            verbose=verbose,
+            ...);
+      } else {
+         ComplexHeatmap::draw(HM_temp,
+            ht_gap=ht_gap,
+            main_heatmap=main_heatmap_temp);
+      }
    }
    invisible(c(list(AHM=AHM),
       list(PHM=PHM),
