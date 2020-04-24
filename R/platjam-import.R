@@ -986,19 +986,27 @@ nmatlist2heatmaps <- function
    if (length(row_order) == 0) {
       row_order <- TRUE;
    }
-   if (is.logical(row_order) && any(row_order)) {
-      if (verbose) {
-         jamba::printDebug("nmatlist2heatmaps(): ", sep="",
-            c("Defining row_order with ",
-               "EnrichedHeatmap::enriched_score()"));
+   if (is.logical(row_order)) {
+      if (any(row_order)) {
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ", sep="",
+               c("Defining row_order with ",
+                  "EnrichedHeatmap::enriched_score()"));
+         }
+         row_order <- order(
+            EnrichedHeatmap::enriched_score(nmatlist[[main_heatmap]][rows,,drop=FALSE]),
+            decreasing=TRUE);
+         names(row_order) <- rows;
+      } else {
+         row_order <- nameVector(rows);
       }
-      row_order <- order(
-         EnrichedHeatmap::enriched_score(nmatlist[[main_heatmap]][rows,,drop=FALSE]),
-         decreasing=TRUE);
-      names(row_order) <- rows;
    }
    if (length(row_order) > 1) {
       row_order <- row_order[rows];
+   }
+   if (any(is.na(row_order))) {
+      jamba::printDebug("Fixed NA row_order by assigning rows.");
+      row_order <- nameVector(rows);
    }
    #} else if (isFALSE(row_order)) {
    #   row_order <- seq_along(rows);
