@@ -33,6 +33,7 @@ nmatlist2heatmaps(
   ht_gap = grid::unit(7, "mm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
   ylims = NULL,
+  border = TRUE,
   iter.max = 20,
   use_raster = TRUE,
   do_plot = TRUE,
@@ -186,6 +187,12 @@ mean profile; \code{"sum"} the sum; \code{"abs_sum"} sum of absolute values;
 
 \item{ylims}{\code{vector} of maximum y-axis values for each heatmap profile;
 or \code{list}}
+
+\item{border}{\code{logical} indicating whether to draw a border around the
+heatmap, which includes all heatmap panels in the event of
+splitting by clustering. The \code{border} can be supplied as a vector,
+so the \code{border} can be applied specifically to each heatmap
+if needed.}
 
 \item{iter.max}{integer value indicating the maximum iterations
 performed by k-means clustering, only relevant when \code{k_clusters}

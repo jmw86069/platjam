@@ -15,6 +15,7 @@ intended to be called directly.
 }
 \seealso{
 Other jam utility functions: 
+\code{\link{color_complement}()},
 \code{\link{get_numeric_transform}()},
 \code{\link{rowNormScale}()}
 }

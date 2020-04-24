@@ -1,5 +1,15 @@
 # platjam version 0.0.23.900
 
+## new functions
+
+* `color_complement()` takes input color, rotates the color hue 180
+degrees to make a complement color. It is unique in that it uses
+warped hue (see `colorjam::h2hw()`) which therefore uses red-yellow-blue
+color wheel instead of red-green-blue, which is much better for
+color operations like these. This function will almost certainly
+be moved into the `colorjam` package. The examples show how to
+make a divergent color gradient from a single color.
+
 ## changes to existing functions
 
 * `nmatlist2heatmaps()` now properly handles `k_subset` to plot
@@ -10,6 +20,9 @@ to drill down into one or more specific clusters.
 cases like `k_subset`, or when `row_order=NULL`; also `row_order=TRUE`
 will enable the default `EnrichedHeatmap::enriched_score()` for
 the `main_heatmap` using only the rows being displayed.
+* `nmatlist2heatmaps()` new argument `border` whether to draw a border
+around the heatmap. It can be supplied as a vector, to control the
+border around each heatmap if needed.
 
 # platjam version 0.0.22.900
 
