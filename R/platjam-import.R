@@ -299,6 +299,10 @@ coverage_matrix2nmat <- function
 #'    to colorize each heatmap. When `NULL` then
 #'    `colorjam::rainbowJam()` is used to create colors
 #'    for each heatmap panel.
+#' @param middle_color `character` R compatible color used
+#'    when creating a divergent color gradient, this color
+#'    is used as the middle color. Usually this color should
+#'    be either `"white"` or `"black"`.
 #' @param nmat_names `character` vector, or `NULL`, optional,
 #'    used as custom names for each heatmap in `nmatlist`.
 #'    When `nmat_names=NULL` the `signal_name` values are
@@ -452,6 +456,7 @@ nmatlist2heatmaps <- function
  rows=NULL,
  row_order=NULL,
  nmat_colors=NULL,
+ middle_color="white",
  nmat_names=NULL,
  main_heatmap=1,
  anno_df=NULL,
@@ -1064,7 +1069,7 @@ nmatlist2heatmaps <- function
       }
       if (!is.function(color) && length(color) == 1 && divergent) {
          color2 <- color_complement(color, ...);
-         color <- c(color2, "white", color);
+         color <- c(color2, middle_color, color);
          divergent <- TRUE;
       }
       if (verbose) {

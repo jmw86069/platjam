@@ -16,6 +16,7 @@ nmatlist2heatmaps(
   rows = NULL,
   row_order = NULL,
   nmat_colors = NULL,
+  middle_color = "white",
   nmat_names = NULL,
   main_heatmap = 1,
   anno_df = NULL,
@@ -83,6 +84,11 @@ or the order after sorting \code{anno_df}. When
 to colorize each heatmap. When \code{NULL} then
 \code{colorjam::rainbowJam()} is used to create colors
 for each heatmap panel.}
+
+\item{middle_color}{\code{character} R compatible color used
+when creating a divergent color gradient, this color
+is used as the middle color. Usually this color should
+be either \code{"white"} or \code{"black"}.}
 
 \item{nmat_names}{\code{character} vector, or \code{NULL}, optional,
 used as custom names for each heatmap in \code{nmatlist}.
