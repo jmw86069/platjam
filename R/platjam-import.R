@@ -452,7 +452,7 @@ nmatlist2heatmaps <- function
  k_clusters=0,
  k_subset=NULL,
  k_colors=NULL,
- k_width=unit(3, "mm"),
+ k_width=unit(5, "mm"),
  k_method=c("euclidean", "pearson", "correlation"),
  partition=NULL,
  rows=NULL,
@@ -505,6 +505,17 @@ nmatlist2heatmaps <- function
    border <- rep(border, length.out=length(nmatlist));
    if (length(legend_width) == 0) {
       legend_width <- grid::unit(3, "cm");
+   }
+
+   if (length(title) > 0 || length(caption) > 0 || hm_nrow > 1) {
+      if (use_raster) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Forced ",
+            c("use_raster=", "FALSE"), sep="",
+            c(" to make it compatible with using '",
+               "title", "' and '", "caption", "'."));
+         use_raster <- FALSE;
+      }
    }
 
    ## k_method
@@ -1146,7 +1157,9 @@ nmatlist2heatmaps <- function
          );
       }
       if (length(iceiling) > 0 && !is.na(iceiling)) {
-         iceiling <- get_nmat_ceiling(imat, iceiling);
+         iceiling <- get_nmat_ceiling(imat,
+            iceiling,
+            verbose=verbose>1);
          if (divergent) {
             ibreaks <- seq(from=-iceiling,
                to=iceiling,
@@ -1525,7 +1538,7 @@ get_nmat_ceiling <- function
       iceiling <- max(abs(imat),
          na.rm=TRUE);
       if (verbose) {
-         jamba::printDebug("nmatlist2heatmaps(): ",
+         jamba::printDebug("get_nmat_ceiling(): ",
             "   Applied max(nmat) ceiling=",
             round(digits=3, iceiling));
       }
@@ -1544,7 +1557,7 @@ get_nmat_ceiling <- function
       }
       iceiling <- iquantile;
    } else if (verbose) {
-      jamba::printDebug("nmatlist2heatmaps(): ",
+      jamba::printDebug("get_nmat_ceiling(): ",
          "   Applied ceiling=",
          round(digits=3, iceiling));
    }

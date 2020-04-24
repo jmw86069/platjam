@@ -15,6 +15,10 @@ make a divergent color gradient from a single color.
 * `nmatlist2heatmaps()` new argument `nmat_names` used to supply
 custom names for each heatmap, otherwise the attribute
 `"signal_name"` values are used.
+* `nmatlist2heatmaps()` fixed error caused by `use_raster=TRUE`
+and any operation that expects to create a grid graphical object,
+such as `multienrichjam::grid_with_title()`, or multi-row output
+specified with `hm_nrow=2`.
 * `nmatlist2heatmaps()` new arguments `heatmap_legend_param` and
 `annotation_legend_param` allow customizing the legends in detail,
 passed to `ComplexHeatmap::Heatmap()`. However, default settings
