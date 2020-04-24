@@ -1123,6 +1123,7 @@ nmatlist2heatmaps <- function
             colramp <- circlize::colorRamp2(
                breaks=ibreaks,
                colors=jamba::getColorRamp(color,
+                  defaultBaseColor=middle_color,
                   divergent=divergent,
                   n=21,
                   lens=lens[[i]]));
@@ -1133,6 +1134,7 @@ nmatlist2heatmaps <- function
          } else {
             colramp <- jamba::getColorRamp(color,
                n=21,
+               defaultBaseColor=middle_color,
                divergent=divergent,
                lens=lens[[i]]);
          }
