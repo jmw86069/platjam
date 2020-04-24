@@ -33,6 +33,7 @@ nmatlist2heatmaps(
   ht_gap = grid::unit(7, "mm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
   ylims = NULL,
+  iter.max = 20,
   use_raster = TRUE,
   do_plot = TRUE,
   return_type = c("heatmaplist", "grid"),
@@ -185,6 +186,10 @@ mean profile; \code{"sum"} the sum; \code{"abs_sum"} sum of absolute values;
 
 \item{ylims}{\code{vector} of maximum y-axis values for each heatmap profile;
 or \code{list}}
+
+\item{iter.max}{integer value indicating the maximum iterations
+performed by k-means clustering, only relevant when \code{k_clusters}
+is non-zero.}
 
 \item{use_raster}{logical indicating whether to create heatmaps
 using raster resizing, almost always recommended \code{TRUE}.}

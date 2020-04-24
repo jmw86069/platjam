@@ -388,6 +388,9 @@ coverage_matrix2nmat <- function
 #'    `"abs_mean"` the mean of absolute values.
 #' @param ylims `vector` of maximum y-axis values for each heatmap profile;
 #'    or `list`
+#' @param iter.max integer value indicating the maximum iterations
+#'    performed by k-means clustering, only relevant when `k_clusters`
+#'    is non-zero.
 #' @param use_raster logical indicating whether to create heatmaps
 #'    using raster resizing, almost always recommended `TRUE`.
 #' @param do_plot logical indicating whether to draw the heatmaps,
@@ -457,6 +460,7 @@ nmatlist2heatmaps <- function
  ht_gap=grid::unit(7, "mm"),
  profile_value=c("mean", "sum", "abs_mean", "abs_sum"),
  ylims=NULL,
+ iter.max=20,
  use_raster=TRUE,
  do_plot=TRUE,
  return_type=c("heatmaplist", "grid"),
@@ -502,9 +506,22 @@ nmatlist2heatmaps <- function
       #rows <- rownames(nmatlist[[main_heatmap]]);
    } else {
       ## Make sure rows are present in all rownames of nmatlist
-      rows <- Reduce("intersect",
-         c(list(rows), lapply(nmatlist, rownames)));
+      if (is.numeric(rows)) {
+         rows <- Reduce("intersect",
+            c(list(rows), lapply(nmatlist, function(im){seq_len(nrow(im))})));
+         rows <- rownames(nmatlist[[1]])[rows];
+      } else {
+         rows <- Reduce("intersect",
+            c(list(rows), lapply(nmatlist, rownames)));
+      }
    }
+   ## row_order must be named by rows
+   if (length(row_order) > 1) {
+      if (length(names(row_order)) == 0) {
+         names(row_order) <- rows;
+      }
+   }
+
    if (verbose) {
       jamba::printDebug("nmatlist2heatmaps(): ",
          "Recognized ",
@@ -642,10 +659,6 @@ nmatlist2heatmaps <- function
                cBR <- circlize::colorRamp2(breaks=ibreaks,
                   col=colBR);
             } else {
-               #ibreaks1 <- max(abs(i1), na.rm=TRUE);
-               #ibreaks2 <- min(abs(i1), na.rm=TRUE);
-               #imin <- max(c(0, ibreaks2-(ibreaks1 - ibreaks2)*0.2));
-               #ibreaks <- seq(from=imin, to=ibreaks1, length.out=15);
                iminmax <- quantile(rmNA(i1),
                   c(0.005, 0.995));
                ibreaks <- unique(seq(from=iminmax[1],
@@ -660,7 +673,7 @@ nmatlist2heatmaps <- function
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "anno_colors_l colname:", i,
-                     " bi-directional data");
+                     " uni-directional data");
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "ibreaks:");
                   jamba::printDebugI(
@@ -671,9 +684,9 @@ nmatlist2heatmaps <- function
                   col=colBR);
             }
          } else {
-            i2 <- mixedSort(unique(i1));
+            i2 <- jamba::mixedSort(unique(i1));
             if (!"factor" %in% class(i2)) {
-               i2 <- factor(i2, levels=mixedSort(i2));
+               i2 <- factor(i2, levels=jamba::mixedSort(i2));
             }
             cBR <- colorjam::group2colors(i2);
          }
@@ -682,7 +695,7 @@ nmatlist2heatmaps <- function
       for (jj in 1:ncol(anno_df)) {
          i1 <- anno_df[[jj]];
          if (any(c("character") %in% class(i1))) {
-            i1 <- factor(i1, levels=mixedSort(unique(i1)));
+            i1 <- factor(i1, levels=jamba::mixedSort(unique(i1)));
             anno_df[[jj]] <- i1;
          }
       }
@@ -690,7 +703,10 @@ nmatlist2heatmaps <- function
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Creating anno_df heatmap AHM.");
       }
-      AHM <- ComplexHeatmap::rowAnnotation(df=anno_df[rows,,drop=FALSE],
+      ##################################
+      ## Annotation heatmap
+      AHM <- ComplexHeatmap::rowAnnotation(
+         df=anno_df[rows,,drop=FALSE],
          name="Annotation",
          col=anno_colors_l);
 
@@ -720,11 +736,12 @@ nmatlist2heatmaps <- function
                   anno_row_labels=anno_row_labels),
                20));
          }
+         ##################################
          ## Mark Heatmap
          MHM <- ComplexHeatmap::Heatmap(nameVector(anno_df[rows,1], rows),
-            split=partition[rows],
+            #split=partition[rows],
             col=anno_colors_l[[1]],
-            use_raster=use_raster,
+            #use_raster=use_raster,
             name=colnames(anno_df)[1],
             show_row_names=FALSE,
             width=k_width,
@@ -740,17 +757,6 @@ nmatlist2heatmaps <- function
    } else {
       AHM <- NULL;
       MHM <- NULL;
-   }
-   if (length(row_order) == 0 | isTRUE(row_order)) {
-      if (verbose) {
-         jamba::printDebug("nmatlist2heatmaps(): ", sep="",
-            c("Defining row_order with ",
-               "EnrichedHeatmap::enriched_score()"));
-      }
-      row_order <- order(EnrichedHeatmap::enriched_score(nmatlist[[main_heatmap]][rows,]),
-         decreasing=TRUE);
-   } else if (isFALSE(row_order)) {
-      row_order <- seq_along(rows);
    }
 
    ## Optional k-means clustering
@@ -778,7 +784,7 @@ nmatlist2heatmaps <- function
       }
       partition <- kmeans(
          itransform(nmatlist[[main_heatmap]][rows,]),
-         iter.max=20,
+         iter.max=iter.max,
          centers=k_clusters)$cluster;
       ## Confirm that names(partition) match rows
       names(partition) <- rows;
@@ -812,28 +818,40 @@ nmatlist2heatmaps <- function
 
       ## Optional subset of k-means clusters
       if (length(k_subset) > 0) {
+         partition <- partition[as.character(partition) %in% as.character(k_subset)];
+         rows <- names(partition);
          if (verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
                "Subsetting partition for k_subset:",
-               k_subset);
+               k_subset,
+               " from ",
+               jamba::formatInt(length(k_colors)),
+               " rows down to ",
+               jamba::formatInt(length(rows)));
          }
-         partition <- partition[as.character(partition) %in% as.character(k_subset)];
-         rows <- names(partition);
          k_colors <- k_colors[names(k_colors) %in% as.character(k_subset)];
          ## Subset AHM and MHM if defined
          if (length(AHM) > 0) {
             AHM <- AHM[rows,];
-            #AHM <- AHM[match(rows, rownames(attr(AHM, "matrix"))),];
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Taking k_subset rows for annotation heatmap.");
+            }
          }
          if (length(MHM) > 0) {
             MHM <- MHM[rows,];
-            #MHM <- MHM[match(rows, rownames(attr(MHM, "matrix"))),];
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Taking k_subset rows for annotation mark heatmap.");
+            }
          }
       }
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "creating partition heatmap PHM.");
       }
+      ##################################
+      ## Partition Heatmap
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
          row_split=partition[rows],
          use_raster=use_raster,
@@ -954,6 +972,27 @@ nmatlist2heatmaps <- function
          length.out=length(nmatlist));
    }
 
+   if (length(row_order) == 0) {
+      row_order <- TRUE;
+   }
+   if (is.logical(row_order) && any(row_order)) {
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ", sep="",
+            c("Defining row_order with ",
+               "EnrichedHeatmap::enriched_score()"));
+      }
+      row_order <- order(
+         EnrichedHeatmap::enriched_score(nmatlist[[main_heatmap]][rows,,drop=FALSE]),
+         decreasing=TRUE);
+   }
+   if (length(row_order) > 1) {
+      row_order <- row_order[rows];
+   }
+   #} else if (isFALSE(row_order)) {
+   #   row_order <- seq_along(rows);
+   #}
+
+   #############################
    ## Iterate each heatmap
    if (verbose) {
       jamba::printDebug("nmatlist2heatmaps(): ",
@@ -964,11 +1003,16 @@ nmatlist2heatmaps <- function
       signal_name <- attr(nmat, "signal_name");
       target_name <- attr(nmat, "target_name");
       s_name <- gsub("_at_", "\nat_", signal_name);
-      signal_name <- gsub("^[\n ]+|[\n ]+$",
-         "",
-         gsub("\n[\n ]*",
-            "\n",
-            signal_name))
+
+      ## For now, do not word wrap, let user do that
+      if (1 == 2) {
+         signal_name <- gsub("^[\n ]+|[\n ]+$",
+            "",
+            gsub("\n[\n ]*",
+               "\n",
+               signal_name))
+      }
+
       color <- nmat_colors[[i]];
       if (length(color) == 0 || is.na(color)) {
          color <- "aquamarine4";
@@ -979,42 +1023,62 @@ nmatlist2heatmaps <- function
       } else {
          ylim <- NULL;
       }
+      itransform <- transform[[i]];
+      imat <- itransform(nmat);
+      iceiling <- signal_ceiling[[i]];
+      divergent <- FALSE;
+      if (any(imat < 0)) {
+         divergent <- TRUE;
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               c("divergent=", TRUE), sep="")
+         }
+      }
+      if (!is.function(color) && length(color) == 1 && divergent) {
+         hcl <- jamba::col2hcl(color);
+         hcl["H",] <- (180 + hcl["H",]) %% 360;
+         hcl["C",] <- jamba::noiseFloor(hcl["C",], minimum=160);
+         color2 <- jamba::hcl2col(hcl);
+         color <- c(color2, "white", color);
+         divergent <- TRUE;
+      }
       if (verbose) {
+         if (length(ylim) == 0) {
+            ylim_txt <- "NULL";
+         } else {
+            ylim_txt <- format(ylim, digits=2);
+         }
+         if (is.function(color)) {
+            if (divergent) {
+               color_txt <- list(color(c(-10000, 0, 10000)));
+            } else {
+               color_txt <- list(color(0, 10000));
+            }
+         } else {
+            color_txt <- color;
+         }
          jamba::printDebug("nmatlist2heatmaps(): ",
             "signal_name:",
             signal_name,
             ", target_name:",
             target_name,
             ", color:",
-            ifelse(is.function(color), color(100), color),
-            ", ylim=(", jamba::cPaste(round(digits=2, ylim)), ")",
+            color_txt,
+            ", ylim=(", jamba::cPaste(ylim_txt), ")",
             fgText=c(
                rep(list("darkorange",
-                     "dodgerblue"),
+                  "dodgerblue"),
                   length.out=6),
                NA),
             bgText=c(
                rep(list(NA),
                   length.out=6),
-               ifelse(is.function(color), color(100), list(color))));
-      }
-      itransform <- transform[[i]];
-      imat <- itransform(nmat);
-      iceiling <- signal_ceiling[[i]];
-      divergent <- FALSE;
-      if (any(imat >= 0) && any(imat < 0)) {
-         divergent <- TRUE;
-      }
-      if (!is.function(color) && length(color) == 1 && divergent) {
-         hcl <- jamba::col2hcl(color);
-         hcl["H",] <- (180 + hcl["H",]) %% 360;
-         color2 <- jamba::hcl2col(hcl);
-         color <- c(color2, "white", color);
-         divergent <- TRUE;
+               color_txt)
+         );
       }
       if (length(iceiling) > 0 && !is.na(iceiling)) {
          iceiling <- get_nmat_ceiling(imat, iceiling);
-         if (min(imat, na.rm=TRUE) < 0) {
+         if (divergent) {
             ibreaks <- seq(from=-iceiling,
                to=iceiling,
                length=21);
@@ -1044,7 +1108,7 @@ nmatlist2heatmaps <- function
          }
       }
 
-      EH <- EnrichedHeatmap::EnrichedHeatmap(imat,
+      EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
          split=partition[rows],
          pos_line=FALSE,
          use_raster=use_raster,
@@ -1061,7 +1125,7 @@ nmatlist2heatmaps <- function
          axis_name_rot=axis_name_rot,
          name=signal_name,
          column_title=signal_name,
-         row_order=row_order,
+         row_order=row_order[rows],
          column_title_gp=column_title_gp[[i]],
          ...);
       EH;

@@ -1,3 +1,16 @@
+# platjam version 0.0.23.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()` now properly handles `k_subset` to plot
+a subset of clusters provided by `partition` or after `k_clusters`
+is used to create clusters. Mostly useful for follow-up plots
+to drill down into one or more specific clusters.
+* `nmatlist2heatmaps()` now properly handles `row_order` for edge
+cases like `k_subset`, or when `row_order=NULL`; also `row_order=TRUE`
+will enable the default `EnrichedHeatmap::enriched_score()` for
+the `main_heatmap` using only the rows being displayed.
+
 # platjam version 0.0.22.900
 
 ## changes to existing functions
