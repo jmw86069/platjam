@@ -735,7 +735,6 @@ nmatlist2heatmaps <- function
             } else {
                list(direction="horizontal",
                   title=i,
-                  legend_width=legend_width,
                   title_position="topleft",
                   border="black",
                   ncol=min(c(length(unique(i1)), 4)),
