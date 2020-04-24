@@ -984,6 +984,7 @@ nmatlist2heatmaps <- function
       row_order <- order(
          EnrichedHeatmap::enriched_score(nmatlist[[main_heatmap]][rows,,drop=FALSE]),
          decreasing=TRUE);
+      names(row_order) <- rows;
    }
    if (length(row_order) > 1) {
       row_order <- row_order[rows];
