@@ -350,7 +350,7 @@ save_salmon_qc_xlsx <- function
          rows=seq_len(nrow(meta_ori_pct_df)+1),
          heights=rep(c(17*5,17),c(1, nrow(meta_ori_pct_df))))
       dfs <- list(meta_qc=meta_qc,
-         meta_qc_adj=meta_adj_df,
+         meta_qc_adj=metam_adj_df,
          meta_ori=meta_ori_df,
          meta_ori_pct=meta_ori_pct_df);
    }
