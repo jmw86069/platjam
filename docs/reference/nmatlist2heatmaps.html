@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.19.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.24.9000</span>
       </span>
     </div>
 
@@ -120,15 +120,19 @@
     <pre class="usage"><span class='fu'>nmatlist2heatmaps</span>(
   <span class='no'>nmatlist</span>,
   <span class='kw'>panel_groups</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>k_clusters</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>k_subset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>k_colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>k_width</span> <span class='kw'>=</span> <span class='fu'>unit</span>(<span class='fl'>3</span>, <span class='st'>"mm"</span>),
+  <span class='kw'>k_width</span> <span class='kw'>=</span> <span class='fu'>unit</span>(<span class='fl'>5</span>, <span class='st'>"mm"</span>),
   <span class='kw'>k_method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"euclidean"</span>, <span class='st'>"pearson"</span>, <span class='st'>"correlation"</span>),
   <span class='kw'>partition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>rows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>row_order</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>nmat_colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>middle_color</span> <span class='kw'>=</span> <span class='st'>"white"</span>,
+  <span class='kw'>nmat_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>main_heatmap</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>anno_df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>byCols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -146,8 +150,13 @@
   <span class='kw'>ht_gap</span> <span class='kw'>=</span> <span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span>(<span class='fl'>7</span>, <span class='st'>"mm"</span>),
   <span class='kw'>profile_value</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"abs_mean"</span>, <span class='st'>"abs_sum"</span>),
   <span class='kw'>ylims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>border</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>20</span>,
   <span class='kw'>use_raster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>do_plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>legend_width</span> <span class='kw'>=</span> <span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span>(<span class='fl'>3</span>, <span class='st'>"cm"</span>),
+  <span class='kw'>heatmap_legend_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>annotation_legend_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>return_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"heatmaplist"</span>, <span class='st'>"grid"</span>),
   <span class='kw'>show_error</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -199,8 +208,8 @@ index of rows to keep from each matrix in <code>nmatlist</code>.</p></td>
       <th>row_order</th>
       <td><p>integer vector used to order rows.
 When <code>TRUE</code> or <code>NULL</code> it uses
-the default for <code>EnrichedHeatmap::EnrichedHeatmap()</code>
-which is the <code>EnrichedHeatmap::enriched_score()</code>
+the default for <code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html'>EnrichedHeatmap::EnrichedHeatmap()</a></code>
+which is the <code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/enriched_score.html'>EnrichedHeatmap::enriched_score()</a></code>
 for the matrix <code>main_heatmap</code>. When <code>FALSE</code> the
 rows are ordered by the order they appear in <code>rows</code>,
 which is either the order they appear in <code>nmatlist</code>
@@ -213,6 +222,20 @@ or the order after sorting <code>anno_df</code>. When
 to colorize each heatmap. When <code>NULL</code> then
 <code><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>colorjam::rainbowJam()</a></code> is used to create colors
 for each heatmap panel.</p></td>
+    </tr>
+    <tr>
+      <th>middle_color</th>
+      <td><p><code>character</code> R compatible color used
+when creating a divergent color gradient, this color
+is used as the middle color. Usually this color should
+be either <code>"white"</code> or <code>"black"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>nmat_names</th>
+      <td><p><code>character</code> vector, or <code>NULL</code>, optional,
+used as custom names for each heatmap in <code>nmatlist</code>.
+When <code>nmat_names=NULL</code> the <code>signal_name</code> values are
+used from each <code>nmatlist</code> matrix.</p></td>
     </tr>
     <tr>
       <th>main_heatmap</th>
@@ -342,7 +365,7 @@ is <code><a href='https://rdrr.io/r/grid/unit.html'>grid::unit(8, "mm")</a></cod
       <th>profile_value</th>
       <td><p>character string to define the type of numeric
 profile to display at the top of each heatmap. This argument is
-passed to <code>EnrichedHeatmap::anno_enriched()</code>. Values: <code>"mean"</code> the
+passed to <code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html'>EnrichedHeatmap::anno_enriched()</a></code>. Values: <code>"mean"</code> the
 mean profile; <code>"sum"</code> the sum; <code>"abs_sum"</code> sum of absolute values;
 <code>"abs_mean"</code> the mean of absolute values.</p></td>
     </tr>
@@ -350,6 +373,20 @@ mean profile; <code>"sum"</code> the sum; <code>"abs_sum"</code> sum of absolute
       <th>ylims</th>
       <td><p><code>vector</code> of maximum y-axis values for each heatmap profile;
 or <code>list</code></p></td>
+    </tr>
+    <tr>
+      <th>border</th>
+      <td><p><code>logical</code> indicating whether to draw a border around the
+heatmap, which includes all heatmap panels in the event of
+splitting by clustering. The <code>border</code> can be supplied as a vector,
+so the <code>border</code> can be applied specifically to each heatmap
+if needed.</p></td>
+    </tr>
+    <tr>
+      <th>iter.max</th>
+      <td><p>integer value indicating the maximum iterations
+performed by k-means clustering, only relevant when <code>k_clusters</code>
+is non-zero.</p></td>
     </tr>
     <tr>
       <th>use_raster</th>
@@ -374,7 +411,7 @@ which can separately be arranged together using
       <td><p>logical indicating whether to add error
 bars to the profile plot at the top of each heatmap.
 These error bars are calculated by
-<code>EnrichedHeatmap::anno_enriched()</code> using
+<code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html'>EnrichedHeatmap::anno_enriched()</a></code> using
 <code>matrixStats::colSds(x)/nrow(x)</code>.</p></td>
     </tr>
     <tr>
@@ -384,7 +421,7 @@ These error bars are calculated by
     <tr>
       <th>...</th>
       <td><p>additional arguments are passed to
-<code>EnrichedHeatmap::EnrichedHeatmap()</code> to allow greater
+<code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html'>EnrichedHeatmap::EnrichedHeatmap()</a></code> to allow greater
 customization of details. Note that many <code>...</code> arguments
 are also passed to <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html'>ComplexHeatmap::Heatmap()</a></code>.</p></td>
     </tr>
@@ -414,11 +451,35 @@ and to enable optional multi-row heatmap layout.</p>
    <span class='st'>""</span>,
    <span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='no'>cov_files</span>));
 <span class='no'>nmatlist</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>cov_files</span>, <span class='no'>coverage_matrix2nmat</span>);
-<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>);</div><div class='output co'>#&gt; ##  (<span style='color: #00BBBB;font-weight: bold;'>11:40:01</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #0000BB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #0000BB;'> rows shared across all matrices.</span><span> </div><div class='output co'>#&gt; <span class='warning'>Warning: 'x' is NULL so the result will be NULL</span></div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>11:40:02</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #0000BB;'>Defining row_order with </span><span style='color: #00BBBB;'>EnrichedHeatmap::enriched_score()</span><span> </div><div class='output co'>#&gt; <span class='error'>Error in loadNamespace(name): there is no package called ‘EnrichedHeatmap’</span></div><div class='input'>
+<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>);</div><div class='output co'>#&gt; ##  (<span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #00BBBB;'> rows shared across all matrices.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Defining row_order with </span><span style='color: #555555;'>EnrichedHeatmap::enriched_score()</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Iterating each heatmap.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>tss_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #BBBBBB;background-color: #BB0000;'>#D0445E</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>h3k4me1_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #000000;background-color: #BBBB00;'>#FD8600</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>ht_gap:</span><span> 
+#&gt; [1] 7mm</div><div class='img'><img src='nmatlist2heatmaps-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># k-means clusters</span>
-<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>, <span class='kw'>k_clusters</span><span class='kw'>=</span><span class='fl'>4</span>);</div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>11:40:02</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #0000BB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #0000BB;'> rows shared across all matrices.</span><span> </div><div class='output co'>#&gt; <span class='warning'>Warning: 'x' is NULL so the result will be NULL</span></div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>11:40:02</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #0000BB;'>Defining row_order with </span><span style='color: #00BBBB;'>EnrichedHeatmap::enriched_score()</span><span> </div><div class='output co'>#&gt; <span class='error'>Error in loadNamespace(name): there is no package called ‘EnrichedHeatmap’</span></div><div class='input'>
+<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>, <span class='kw'>k_clusters</span><span class='kw'>=</span><span class='fl'>4</span>);</div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #00BBBB;'> rows shared across all matrices.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Running kmeans, k_clusters:</span><span style='color: #BB0000;'>4</span><span style='color: #00BBBB;'>, k_method:</span><span style='color: #BB0000;'>euclidean</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>k-means cluster sizes: </span><span style='color: #BB0000;'>cluster1=26</span><span>, </span><span style='color: #555555;'>cluster2=18</span><span>, </span><span style='color: #BB0000;'>cluster3=14</span><span>, </span><span style='color: #555555;'>cluster4=62</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>creating partition heatmap PHM.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Defining row_order with </span><span style='color: #555555;'>EnrichedHeatmap::enriched_score()</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Iterating each heatmap.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>tss_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #BBBBBB;background-color: #BB0000;'>#D0445E</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>h3k4me1_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #000000;background-color: #BBBB00;'>#FD8600</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>ht_gap:</span><span> 
+#&gt; [1] 1mm 7mm</div><div class='img'><img src='nmatlist2heatmaps-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># multiple rows</span>
-<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>, <span class='kw'>k_clusters</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>hm_nrow</span><span class='kw'>=</span><span class='fl'>2</span>);</div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>11:40:02</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #0000BB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #0000BB;'> rows shared across all matrices.</span><span> </div><div class='output co'>#&gt; <span class='warning'>Warning: 'x' is NULL so the result will be NULL</span></div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>11:40:02</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #0000BB;'>Defining row_order with </span><span style='color: #00BBBB;'>EnrichedHeatmap::enriched_score()</span><span> </div><div class='output co'>#&gt; <span class='error'>Error in loadNamespace(name): there is no package called ‘EnrichedHeatmap’</span></div><div class='input'>
+<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>, <span class='kw'>k_clusters</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>hm_nrow</span><span class='kw'>=</span><span class='fl'>2</span>);</div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Forced </span><span style='color: #BB0000;'>use_raster=</span><span style='color: #555555;'>FALSE</span><span style='color: #00BBBB;'> to make it compatible with using '</span><span style='color: #555555;'>title</span><span style='color: #00BBBB;'>' and '</span><span style='color: #555555;'>caption</span><span style='color: #00BBBB;'>'.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #00BBBB;'> rows shared across all matrices.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Running kmeans, k_clusters:</span><span style='color: #BB0000;'>4</span><span style='color: #00BBBB;'>, k_method:</span><span style='color: #BB0000;'>euclidean</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>k-means cluster sizes: </span><span style='color: #BB0000;'>cluster1=26</span><span>, </span><span style='color: #555555;'>cluster2=18</span><span>, </span><span style='color: #BB0000;'>cluster3=14</span><span>, </span><span style='color: #555555;'>cluster4=62</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>creating partition heatmap PHM.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Defining row_order with </span><span style='color: #555555;'>EnrichedHeatmap::enriched_score()</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Iterating each heatmap.</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>tss_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #BBBBBB;background-color: #BB0000;'>#D0445E</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>h3k4me1_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #000000;background-color: #BBBB00;'>#FD8600</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
+#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Applying multi-row layout.</span><span> </div><div class='img'><img src='nmatlist2heatmaps-3.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

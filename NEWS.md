@@ -1,3 +1,19 @@
+# platjam version 0.0.24.900
+
+## new functions
+
+* `save_salmon_qc_xlsx()` saves output from `get_salmon_meta()`
+in a convenient Excel `.xlsx` format, with four worksheets showing
+different aspects of data quality. It returns a `list` of
+`data.frame` summaries invisibly, for further review.
+* `applyXlsxConditionalFormatByColumn()` applies conditional
+formatting using values in each column, rather than using
+a fixed range for all columns. This function will become
+part of `jamba::writeOpenxlsx()` and
+`jamba::applyXlsxConditionalFormat()` in the near future.
+* `set_xlsx_colwidths()` and `set_xlsx_rowheights()` define
+fixed column width and row height, respectively, for `.xlsx` files.
+
 # platjam version 0.0.23.900
 
 ## new functions

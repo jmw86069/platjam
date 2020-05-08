@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.19.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.24.9000</span>
       </span>
     </div>
 
@@ -221,7 +221,7 @@ region is defined.</p></td>
 
     <p><code>normalizedMatrix</code> numeric matrix, where additiona
 metadata is stored in the object attributes. See
-<code>EnrichedHeatmap::as.normalizedMatrix()</code> for more
+<code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/as.normalizedMatrix.html'>EnrichedHeatmap::as.normalizedMatrix()</a></code> for more
 details about the metadata. The <code>rownames</code> are defined
 by the first colname which does not match
 <code>mat_grep</code>, which by default is <code>"Gene ID"</code>,
@@ -232,7 +232,7 @@ otherwise rownames are <code>NULL</code>.</p>
 and returns an object of class
 <code>normalizedMatrix</code> compatible for use by the
 package <code>"EnrichedHeatmap"</code>.</p>
-<p>There is a conversion function <code>EnrichedHeatmap::as.normalizedMatrix()</code>,
+<p>There is a conversion function <code><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/as.normalizedMatrix.html'>EnrichedHeatmap::as.normalizedMatrix()</a></code>,
 however this function does not call that function, in
 favor of defining the attributes directly. In future, this
 function may change to call that function.</p>
@@ -260,13 +260,13 @@ function may change to call that function.</p>
    <span class='no'>k</span> <span class='kw'>&lt;-</span> <span class='fl'>6</span>;
    <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>);
    <span class='no'>partition</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/kmeans.html'>kmeans</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fl'>1</span>+<span class='no'>nmat</span>), <span class='kw'>centers</span><span class='kw'>=</span><span class='no'>k</span>)$<span class='no'>cluster</span>;
-   <span class='no'>EH</span> <span class='kw'>&lt;-</span> <span class='fu'>EnrichedHeatmap</span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fl'>1</span>+<span class='no'>nmat</span>),
+   <span class='no'>EH</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html'>EnrichedHeatmap</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fl'>1</span>+<span class='no'>nmat</span>),
       <span class='kw'>split</span><span class='kw'>=</span><span class='no'>partition</span>,
       <span class='kw'>pos_line</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
       <span class='kw'>use_raster</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
       <span class='kw'>col</span><span class='kw'>=</span><span class='kw pkg'>jamba</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/jamba/man/getColorRamp.html'>getColorRamp</a></span>(<span class='no'>color</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='fl'>10</span>),
       <span class='kw'>top_annotation</span><span class='kw'>=</span><span class='fu'>HeatmapAnnotation</span>(
-         <span class='kw'>lines</span><span class='kw'>=</span><span class='fu'>anno_enriched</span>(<span class='kw'>gp</span><span class='kw'>=</span><span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span>(<span class='kw'>col</span><span class='kw'>=</span><span class='kw pkg'>colorjam</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>rainbowJam</a></span>(<span class='no'>k</span>)))
+         <span class='kw'>lines</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html'>anno_enriched</a></span>(<span class='kw'>gp</span><span class='kw'>=</span><span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span>(<span class='kw'>col</span><span class='kw'>=</span><span class='kw pkg'>colorjam</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>rainbowJam</a></span>(<span class='no'>k</span>)))
       ),
       <span class='kw'>axis_name_gp</span><span class='kw'>=</span><span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span>(<span class='kw'>fontsize</span><span class='kw'>=</span><span class='fl'>8</span>),
       <span class='kw'>name</span><span class='kw'>=</span><span class='no'>signal_name</span>,
@@ -281,7 +281,7 @@ function may change to call that function.</p>
       <span class='kw'>width</span><span class='kw'>=</span><span class='fu'>unit</span>(<span class='fl'>3</span>, <span class='st'>"mm"</span>));
    <span class='fu'>draw</span>(<span class='no'>PHM</span> + <span class='no'>EH</span>, <span class='kw'>main_heatmap</span><span class='kw'>=</span><span class='fl'>2</span>);
 }
-}</div><div class='output co'>#&gt; ##  (<span style='color: #00BBBB;font-weight: bold;'>11:39:58</span><span>) 07Apr2020:  </span><span style='color: #BB0000;'>signal_name: </span><span style='color: #0000BB;'>h3k4me1_coverage.matrix</span><span> </div><div class='output co'>#&gt; <span class='warning'>Warning: there is no package called ‘EnrichedHeatmap’</span></div><div class='input'>
+}</div><div class='output co'>#&gt; ##  (<span style='color: #00BBBB;font-weight: bold;'>15:25:40</span><span>) 08May2020:  </span><span style='color: #BB0000;'>signal_name: </span><span style='color: #00BBBB;'>h3k4me1_coverage.matrix</span><span> </div><div class='img'><img src='coverage_matrix2nmat-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

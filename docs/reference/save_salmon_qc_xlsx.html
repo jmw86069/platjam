@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Parse UCSC tracks that use the Gokey format — parse_ucsc_gokey • platjam</title>
+<title>Save Salmon QC to Xlsx — save_salmon_qc_xlsx • platjam</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Parse UCSC tracks that use the Gokey format — parse_ucsc_gokey" />
-<meta property="og:description" content="Parse UCSC tracks that use the Gokey format" />
+<meta property="og:title" content="Save Salmon QC to Xlsx — save_salmon_qc_xlsx" />
+<meta property="og:description" content="Save Salmon QC to Xlsx" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -108,92 +108,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Parse UCSC tracks that use the Gokey format</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-ucsctracks.R'><code>R/platjam-ucsctracks.R</code></a></small>
-    <div class="hidden name"><code>parse_ucsc_gokey.Rd</code></div>
+    <h1>Save Salmon QC to Xlsx</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-ngs.R'><code>R/platjam-ngs.R</code></a></small>
+    <div class="hidden name"><code>save_salmon_qc_xlsx.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Parse UCSC tracks that use the Gokey format</p>
+    <p>Save Salmon QC to Xlsx</p>
     </div>
 
-    <pre class="usage"><span class='fu'>parse_ucsc_gokey</span>(
-  <span class='no'>track_lines</span>,
-  <span class='kw'>overlay_grep</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"[ -._](plus|minus|F|R|pos|neg)($|[ -._])"</span>),
-  <span class='kw'>priority</span> <span class='kw'>=</span> <span class='fl'>5000</span>,
-  <span class='kw'>output_format</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"text"</span>, <span class='st'>"list"</span>),
-  <span class='kw'>debug</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"df"</span>),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+    <pre class="usage"><span class='fu'>save_salmon_qc_xlsx</span>(
+  <span class='no'>metajsons</span>,
+  <span class='kw'>salmon_qc_xlsx</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>adj_target_reads</span> <span class='kw'>=</span> <span class='fl'>7.5e+07</span>,
   <span class='no'>...</span>
 )</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>track_lines</th>
-      <td><p>character vector containing lines read from
-a track file, or valid path or connection to a track file.</p></td>
-    </tr>
-    <tr>
-      <th>overlay_grep</th>
-      <td><p>character vector containing valid regular
-expression patterns used to recognize when a track should
-be considered an overlay coverage track. For example
-<code>track name="trackA F"</code> and <code>track name="trackA R"</code> would
-be recognized as forward and reverse strand for a track
-named <code>"trackA"</code>. Overlay tracks are handled using the UCSC
-<code>"multiWig"</code> approach, and not the composite track approach.
-To disable overlay_grep, use <code>overlay_grep="^$"</code>. To enable
-overlay_grep for all tracks, use <code>overlay_grep="$"</code>.</p></td>
-    </tr>
-    <tr>
-      <th>priority</th>
-      <td><p>integer value indicating the priority to
-start when assigning priority to each track.</p></td>
-    </tr>
-    <tr>
-      <th>output_format</th>
-      <td><p>character string indicating the
-output format, where <code>"text"</code> will return one long character
-string, and <code>"list"</code> will return a <code>list</code> with one track
-per list element with class <code>"glue","character"</code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>additional arguments are ignored.</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>by default a character string suitable to <code><a href='https://rdrr.io/r/base/cat.html'>cat()</a></code>
-directly into a text file, when <code>output_format="text"</code>.
-When <code>output_format="list"</code> it returns a
-list of <code>glue</code> objects, which can be concatenated into
-one character string with <code><a href='https://rdrr.io/r/base/funprog.html'>Reduce("+", trackline_list)</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Given a text file, or lines from a text file, representing
-the <code>Gokey format</code>, this function will parse the track
-lines into groups, and return a text string usable in
-a UCSC genome browser track hub.</p>
-<p>For example:</p>
-<p><code>parse_ucsc_gokey("tracks.txt")</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other jam ucsc browser functions: 
-<code><a href='assign_track_defaults.html'>assign_track_defaults</a>()</code>,
-<code><a href='get_track_defaults.html'>get_track_defaults</a>()</code>,
-<code><a href='make_ucsc_trackname.html'>make_ucsc_trackname</a>()</code></p></div>
+    <div class='dont-index'><p>Other jam nextgen sequence functions: 
+<code><a href='get_salmon_meta.html'>get_salmon_meta</a>()</code>,
+<code><a href='get_salmon_root.html'>get_salmon_root</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 

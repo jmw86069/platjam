@@ -32,6 +32,7 @@ if (nchar(cmdinfopath) > 0) {
 }
 \seealso{
 Other jam nextgen sequence functions: 
-\code{\link{get_salmon_meta}()}
+\code{\link{get_salmon_meta}()},
+\code{\link{save_salmon_qc_xlsx}()}
 }
 \concept{jam nextgen sequence functions}
