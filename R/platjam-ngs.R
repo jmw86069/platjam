@@ -297,14 +297,14 @@ save_salmon_qc_xlsx <- function
          heights=rep(c(17*5,17),c(1, nrow(metam_adj_df))))
 
       ## Salmon orientation
-      ori_means <- colMeans(meta_ori_pct_df[,-1]);
+      ori_means <- colMeans(meta_ori_pct_df[,-1,drop=FALSE]);
       ori_int <- (ori_means == 0 | ori_means >= 10);
       writeOpenxlsx(file=salmon_qc_xlsx,
          x=meta_ori_df,
          sheetName="Orientation",
          colorSub=colorSub1,
-         intColumns=unname(which(ori_means) + 1),
-         numColumns=unname(which(!ori_means) + 1),
+         intColumns=unname(which(ori_int) + 1),
+         numColumns=unname(which(!ori_int) + 1),
          numFormat="#,##0.0",
          append=TRUE,
          doConditional=FALSE);
