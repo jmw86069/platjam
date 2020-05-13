@@ -260,7 +260,6 @@ save_salmon_qc_xlsx <- function
          x=meta_qc,
          sheet="Raw_QC",
          dryrun=FALSE,
-         verbose=TRUE,
          numColumns=seq(from=2, to=ncol(meta_qc))
       )
       set_xlsx_colwidths(salmon_qc_xlsx,
@@ -400,7 +399,7 @@ applyXlsxConditionalFormatByColumn <- function
       x_rule <- c(x_range, x_mid)[c(1,3,2)];
       if (verbose || dryrun) {
          printDebug("applyXlsxConditionalFormatByColumn(): ",
-            paste0(colnames(meta_qc)[i],": "),
+            paste0(colnames(x)[i],": "),
             format(x_rule,
                digits=1,
                big.mark=",",

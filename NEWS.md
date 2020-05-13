@@ -1,3 +1,11 @@
+# platjam version 0.0.25.900
+
+## bug fixes
+
+* `applyXlsxConditionalFormatByColumn()` fixed bug in verbose
+output that referred to nonexistent object. Also removed `verbose=TRUE`
+from calling function `save_salmon_qc_xlsx()`.
+
 # platjam version 0.0.24.900
 
 ## new functions
