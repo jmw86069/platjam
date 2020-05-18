@@ -740,14 +740,15 @@ nmatlist2heatmaps <- function
             if (length(unique(i1)) <= 10) {
                ## display distinct steps
                list(
-                  direction="horizontal",
-                  title=i,
+                  #direction="horizontal",
                   #at=unique(rmNA(i1)),
-                  legend_width=legend_width,
+                  #legend_width=legend_width,
+                  #grid_width=unit(1, "npc"),
+                  title=i,
                   title_position="topleft",
                   color_bar="discrete",
-                  border="black",
-                  grid_width=unit(1, "npc"));
+                  border="black"
+               );
             } else if (any(c("integer", "numeric") %in% class(i1))) {
                ## display continuous color gradient
                list(
