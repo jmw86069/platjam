@@ -31,7 +31,7 @@ nmatlist2heatmaps(
   axis_name = NULL,
   axis_name_gp = grid::gpar(fontsize = 8),
   axis_name_rot = 90,
-  column_title_gp = gpar(fontsize = 12),
+  column_title_gp = grid::gpar(fontsize = 12),
   lens = -2,
   seed = 123,
   ht_gap = grid::unit(7, "mm"),

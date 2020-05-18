@@ -471,7 +471,7 @@ nmatlist2heatmaps <- function
  axis_name=NULL,
  axis_name_gp=grid::gpar(fontsize=8),
  axis_name_rot=90,
- column_title_gp=gpar(fontsize=12),
+ column_title_gp=grid::gpar(fontsize=12),
  lens=-2,
  seed=123,
  ht_gap=grid::unit(7, "mm"),
@@ -634,7 +634,7 @@ nmatlist2heatmaps <- function
 
    ## Optional data.frame with additional annotations
    if (length(anno_df) > 0) {
-      if (!igrepHas("data.frame|dataframe|data.table|tibble", class(anno_df))) {
+      if (!jamba::igrepHas("data.frame|dataframe|data.table|tibble", class(anno_df))) {
          stop("anno_df must be data.frame, DataFrame, data.table, or tibble.");
       }
       if (!any(rownames(anno_df) %in% rows)) {
@@ -1031,6 +1031,12 @@ nmatlist2heatmaps <- function
             idx_ceiling;
          })
          signal_ceiling <- panel_ceilings[panel_groups];
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "panel_ceilings[panel_groups]: ",
+               paste0("(", jamba::cPaste(panel_ceilings[panel_groups]), ")"),
+               sep="; ");
+         }
       }
    }
 
