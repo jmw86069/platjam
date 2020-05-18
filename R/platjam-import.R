@@ -1312,7 +1312,8 @@ nmatlist2heatmaps <- function
             "ht_gap:");
          print(ht_gap);
       }
-      if (length(title) > 0 || length(caption) > 0) {
+      if (do_plot &&
+            (length(title) > 0 || length(caption) > 0)) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Preparing HeatmapList grob for grid_with_title()");
          HM_grob <- grid::grid.grabExpr(
@@ -1328,15 +1329,23 @@ nmatlist2heatmaps <- function
             verbose=verbose,
             ...);
       } else {
-         ComplexHeatmap::draw(HM_temp,
-            ht_gap=ht_gap,
-            main_heatmap=main_heatmap_temp);
+         if (do_plot) {
+            ComplexHeatmap::draw(HM_temp,
+               ht_gap=ht_gap,
+               main_heatmap=main_heatmap_temp);
+         }
       }
    }
-   invisible(c(list(AHM=AHM),
-      list(PHM=PHM),
-      EH=EH_l,
-      list(MHM=MHM)));
+   ret_list <- list(AHM=AHM,
+      PHM=PHM,
+      EH_l=EH_l,
+      MHM=MHM,
+      draw=list(
+         HM_temp=HM_temp,
+         ht_gap=ht_gap,
+         main_heatmap=main_heatmap_temp)
+   );
+   invisible(ret_list);
 }
 
 
