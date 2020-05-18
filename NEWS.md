@@ -1,3 +1,16 @@
+# platjam version 0.0.26.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()` now treats annotation columns in `anno_df`
+as bi-directional when the max value is <= 50, which helps in cases
+that have values `c(-1, 0, 1)` and sometimes only `c(0, 1)`.
+The end result is more numeric columns will have the same color
+gradient (blue-white-red).
+* `nmatlist2heatmaps()` displays legend with distinct color steps
+for `anno_df` columns with 10 or fewer distinct values, which is
+mostly helpful with a small number of integer values.
+
 # platjam version 0.0.25.900
 
 ## bug fixes

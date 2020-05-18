@@ -671,9 +671,9 @@ nmatlist2heatmaps <- function
             jamba::printDebug("nmatlist2heatmaps(): ",
                "anno_colors_l colname:", i);
          }
-         i1 <- anno_df[[i]];
+         i1 <- jamba::rmNA(anno_df[[i]]);
          if (any(c("integer", "numeric") %in% class(i1))) {
-            if (min(i1, na.rm=TRUE) < 0 || max(i1, na.rm=TRUE) < 50) {
+            if (min(i1, na.rm=TRUE) < 0 || max(abs(i1), na.rm=TRUE) < 50) {
                ## Bi-directional color scale
                #ibreaks1 <- max(abs(i1), na.rm=TRUE);
                ibreaks1 <- quantile(abs(i1), c(0.995));
@@ -700,7 +700,7 @@ nmatlist2heatmaps <- function
                cBR <- circlize::colorRamp2(breaks=ibreaks,
                   col=colBR);
             } else {
-               iminmax <- quantile(rmNA(i1),
+               iminmax <- quantile(i1,
                   c(0.005, 0.995));
                ibreaks <- unique(seq(from=iminmax[1],
                   to=iminmax[2],
