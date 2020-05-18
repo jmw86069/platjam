@@ -673,7 +673,7 @@ nmatlist2heatmaps <- function
          }
          i1 <- anno_df[[i]];
          if (any(c("integer", "numeric") %in% class(i1))) {
-            if (min(i1, na.rm=TRUE) < 0) {
+            if (min(i1, na.rm=TRUE) < 0 || max(i1, na.rm=TRUE) < 50) {
                ## Bi-directional color scale
                #ibreaks1 <- max(abs(i1), na.rm=TRUE);
                ibreaks1 <- quantile(abs(i1), c(0.995));
@@ -684,7 +684,8 @@ nmatlist2heatmaps <- function
                   ibreaks <- c(-1, 0, 1);
                }
                colBR <- jamba::getColorRamp("RdBu_r",
-                  lens=1,
+                  lens=8,
+                  trimRamp=c(2, 2),
                   n=length(ibreaks));
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
@@ -735,8 +736,20 @@ nmatlist2heatmaps <- function
       ## annotation_legend_param
       if (length(annotation_legend_param) == 0) {
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
-            i1 <- anno_df[[i]];
-            if (any(c("integer", "numeric") %in% class(i1))) {
+            i1 <- jamba::rmNA(anno_df[[i]]);
+            if (length(unique(i1)) <= 10) {
+               ## display distinct steps
+               list(
+                  direction="horizontal",
+                  title=i,
+                  #at=unique(rmNA(i1)),
+                  legend_width=legend_width,
+                  title_position="topleft",
+                  color_bar="discrete",
+                  border="black",
+                  grid_width=unit(1, "npc"));
+            } else if (any(c("integer", "numeric") %in% class(i1))) {
+               ## display continuous color gradient
                list(
                   direction="horizontal",
                   title=i,
@@ -823,6 +836,7 @@ nmatlist2heatmaps <- function
       MHM <- NULL;
    }
 
+   ##################################
    ## Optional k-means clustering
    if (length(k_clusters) > 0 && k_clusters > 0) {
       if (length(k_colors) == 0) {
@@ -859,6 +873,7 @@ nmatlist2heatmaps <- function
             paste0("cluster", names(k_sizes), "=", k_sizes), sep=", ");
       }
    }
+   ##################################
    ## Partition heatmap sidebar
    if (length(partition) > 0) {
       ## Make sure to use the partition values with the properly ordered rows
@@ -932,6 +947,7 @@ nmatlist2heatmaps <- function
          width=k_width);
    }
 
+   ##################################
    ## panel_groups
    if (length(panel_groups) > 0) {
       ## Make sure we have some duplicated panel_groups

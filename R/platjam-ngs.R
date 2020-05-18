@@ -284,7 +284,6 @@ save_salmon_qc_xlsx <- function
          x=metam_adj_df,
          sheet="Adjusted_QC",
          dryrun=FALSE,
-         verbose=TRUE,
          numColumns=seq(from=2, to=ncol(metam_adj_df))
       )
       set_xlsx_colwidths(salmon_qc_xlsx,
