@@ -764,6 +764,7 @@ nmatlist2heatmaps <- function
             a_num <- length(unique(i1));
             a_ncol <- min(c(ceiling(length(unique(i1)) / 3), 4))
             a_nrow <- ceiling(a_num / a_ncol);
+            i_title <- jamba::cPaste(strwrap(i, 15), sep="\n");
             if (a_num <= 10) {
                ## display distinct steps
                if (verbose) {
@@ -772,7 +773,7 @@ nmatlist2heatmaps <- function
                      " discrete numeric color legend");
                }
                list(
-                  title=i,
+                  title=i_title,
                   title_position="topleft",
                   at=sort(unique(i1)),
                   color_bar="discrete",
