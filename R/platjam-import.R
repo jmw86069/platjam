@@ -487,7 +487,7 @@ nmatlist2heatmaps <- function
  annotation_legend_param=NULL,
  return_type=c("heatmaplist", "grid"),
  show_error=FALSE,
- verbose=TRUE,
+ verbose=FALSE,
  ...)
 {
    #
@@ -728,8 +728,18 @@ nmatlist2heatmaps <- function
          } else {
             i2 <- jamba::mixedSort(unique(i1));
             if (all(isColor(i2))) {
+               if (verbose) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "anno_colors_l colname:", i,
+                     " pre-defined colors");
+               }
                cBR <- jamba::nameVector(i2);
             } else if (!"factor" %in% class(i2)) {
+               if (verbose) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "anno_colors_l colname:", i,
+                     " categorical data");
+               }
                i2 <- factor(i2, levels=jamba::mixedSort(i2));
                cBR <- colorjam::group2colors(i2);
             }
@@ -738,22 +748,37 @@ nmatlist2heatmaps <- function
       });
       ## annotation_legend_param
       if (length(annotation_legend_param) == 0) {
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Defining annotation_legend_param.");
+         }
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
-            if (length(unique(i1)) <= 10) {
+            a_num <- length(unique(i1));
+            a_ncol <- min(c(ceiling(length(unique(i1)) / 3), 4))
+            a_nrow <- ceiling(a_num / a_ncol);
+            if (a_num <= 10) {
                ## display distinct steps
+               if (verbose) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "annotation_legend_param colname:", i,
+                     " discrete numeric color legend");
+               }
                list(
-                  #direction="horizontal",
-                  #at=unique(rmNA(i1)),
-                  #legend_width=legend_width,
-                  #grid_width=unit(1, "npc"),
                   title=i,
                   title_position="topleft",
+                  at=sort(unique(i1)),
                   color_bar="discrete",
-                  border="black"
+                  border="black",
+                  nrow=a_nrow
                );
             } else if (any(c("integer", "numeric") %in% class(i1))) {
                ## display continuous color gradient
+               if (verbose) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "annotation_legend_param colname:", i,
+                     " continuous color legend");
+               }
                list(
                   direction="horizontal",
                   title=i,
@@ -762,11 +787,16 @@ nmatlist2heatmaps <- function
                   border="black",
                   grid_width=unit(1, "npc"));
             } else {
+               if (verbose) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "annotation_legend_param colname:", i,
+                     " discrete categorical color legend");
+               }
                list(
                   title=i,
                   title_position="topleft",
                   border="black",
-                  ncol=min(c(length(unique(i1)), 4))
+                  nrow=a_nrow
                )
                #   grid_width=unit(1, "npc")
             }
