@@ -746,6 +746,13 @@ nmatlist2heatmaps <- function
          }
          cBR;
       });
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "sdim(anno_colors_l):");
+         print(sdim(anno_colors_l));
+         str(anno_colors_l);
+      }
+
       ## annotation_legend_param
       if (length(annotation_legend_param) == 0) {
          if (verbose) {

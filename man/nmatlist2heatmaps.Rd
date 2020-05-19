@@ -46,7 +46,7 @@ nmatlist2heatmaps(
   annotation_legend_param = NULL,
   return_type = c("heatmaplist", "grid"),
   show_error = FALSE,
-  verbose = TRUE,
+  verbose = FALSE,
   ...
 )
 }
