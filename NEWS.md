@@ -2,6 +2,10 @@
 
 ## changes to existing functions
 
+* `nmatlist2heatmaps()` new default `transform="none"`, previously
+was `jamba::log2signed()` which enforced log2 transformation.
+Frankly not sure which is best, might depend upon the range of
+data, which depends upon the type of coverage signal being used.
 * `nmatlist2heatmaps()` now treats annotation columns in `anno_df`
 as bi-directional when the max value is <= 50, which helps in cases
 that have values `c(-1, 0, 1)` and sometimes only `c(0, 1)`.
@@ -10,6 +14,10 @@ gradient (blue-white-red).
 * `nmatlist2heatmaps()` displays legend with distinct color steps
 for `anno_df` columns with 10 or fewer distinct values, which is
 mostly helpful with a small number of integer values.
+* `nmatlist2heatmaps()` uses `nrow` for discrete annotation
+color layout instead of `ncol` -- jokergoo::ComplexHeatmap 
+kindly updated the package to handle both, but nrow is more
+definitive in this use case.
 
 # platjam version 0.0.25.900
 

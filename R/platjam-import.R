@@ -466,7 +466,8 @@ nmatlist2heatmaps <- function
  anno_row_marks=NULL,
  anno_row_labels=NULL,
  hm_nrow=1,
- transform=jamba::log2signed,
+ transform="none",
+ #transform=jamba::log2signed,
  signal_ceiling=NULL,
  axis_name=NULL,
  axis_name_gp=grid::gpar(fontsize=8),
@@ -934,10 +935,13 @@ nmatlist2heatmaps <- function
       }
       ##################################
       ## Partition Heatmap
+      p_num <- length(unique(partition[rows]));
+      p_ncol <- min(c(p_num, 4));
+      p_nrow <- ceiling(p_num / p_ncol);
       p_heatmap_legend_param <- list(
          title_position="topleft",
          border="black",
-         ncol=min(c(length(unique(partition[rows])), 4))
+         nrow=p_nrow
       )
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
          #row_split=partition[rows],

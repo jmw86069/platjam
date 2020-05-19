@@ -26,7 +26,7 @@ nmatlist2heatmaps(
   anno_row_marks = NULL,
   anno_row_labels = NULL,
   hm_nrow = 1,
-  transform = jamba::log2signed,
+  transform = "none",
   signal_ceiling = NULL,
   axis_name = NULL,
   axis_name_gp = grid::gpar(fontsize = 8),
