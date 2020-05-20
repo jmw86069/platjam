@@ -10,3 +10,9 @@ or a categorical variable.
 Allow for multiple samples to be present in the same file, then
 create one `normalizedMatrix` for each sample with consistent
 rownames and colnames.
+
+## Genome coverage profile methods
+
+* Similar to `nmatlist2heatmaps()` except that it focuses on
+just the profile plots, including optional error bars and
+statistical testing by position.

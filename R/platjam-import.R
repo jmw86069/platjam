@@ -324,6 +324,11 @@ coverage_matrix2nmat <- function
 #'    prefix `-` will be reverse-sorted.
 #' @param legend_max_ncol integer number indicating the maximum
 #'    number of columns allowed for a categorical color legend.
+#' @param legend_base_nrow integer number indicating the base
+#'    number of rows used for a categorical color legend, before
+#'    additional columns are added. Once the number of elements
+#'    exceeds `(legend_max_ncol * legend_base_nrow)` then
+#'    rows are added, but columns never exceed `legend_max_ncol`.
 #' @param anno_row_marks character vector of `rownames`
 #'    which will be labeled beside the heatmaps, using
 #'    the `ComplexHeatmap::anno_mark()` method. It currently
@@ -373,6 +378,10 @@ coverage_matrix2nmat <- function
 #'    is also intended to help apply the color gradient to
 #'    a suitable numeric range, and the `lens` argument is
 #'    applied relative to the numeric range being used.
+#' @param anno_lens numeric value used to scale the annotation
+#'    heatmap color scales, see `lens` for details. Values
+#'    higher than 1 make the color gradient more intense,
+#'    values below -1 make the color gradient less intense.
 #' @param axis_name_gp x-axis label graphic parameters,
 #'    as output from `grid::gpar()`. For example to define
 #'    the x-axis font size, use the form
@@ -468,6 +477,7 @@ nmatlist2heatmaps <- function
  anno_row_marks=NULL,
  anno_row_labels=NULL,
  legend_max_ncol=2,
+ legend_base_nrow=5,
  hm_nrow=1,
  transform="none",
  #transform=jamba::log2signed,
@@ -477,6 +487,7 @@ nmatlist2heatmaps <- function
  axis_name_rot=90,
  column_title_gp=grid::gpar(fontsize=12),
  lens=-2,
+ anno_lens=8,
  seed=123,
  ht_gap=grid::unit(7, "mm"),
  profile_value=c("mean", "sum", "abs_mean", "abs_sum"),
@@ -688,7 +699,7 @@ nmatlist2heatmaps <- function
                   ibreaks <- c(-1, 0, 1);
                }
                colBR <- jamba::getColorRamp("RdBu_r",
-                  lens=8,
+                  lens=anno_lens,
                   trimRamp=c(2, 2),
                   n=length(ibreaks));
                if (verbose) {
@@ -714,7 +725,7 @@ nmatlist2heatmaps <- function
                }
                colBR <- jamba::getColorRamp("Purples",
                   n=length(ibreaks),
-                  lens=1);
+                  lens=anno_lens);
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "anno_colors_l colname:", i,
@@ -768,7 +779,7 @@ nmatlist2heatmaps <- function
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
             a_num <- length(unique(i1));
-            a_ncol <- min(c(ceiling(a_num / 5), legend_max_ncol))
+            a_ncol <- min(c(ceiling(a_num / legend_base_nrow), legend_max_ncol));
             a_nrow <- ceiling(a_num / a_ncol);
             i_title <- jamba::cPaste(strwrap(i, width=15), sep="\n");
             if (a_num <= 10) {
@@ -867,9 +878,7 @@ nmatlist2heatmaps <- function
          ##################################
          ## Mark Heatmap
          MHM <- ComplexHeatmap::Heatmap(nameVector(anno_df[rows,1], rows),
-            #split=partition[rows],
             col=anno_colors_l[[1]],
-            #use_raster=use_raster,
             name=colnames(anno_df)[1],
             show_row_names=FALSE,
             width=k_width,
@@ -983,7 +992,7 @@ nmatlist2heatmaps <- function
       ##################################
       ## Partition Heatmap
       p_num <- length(unique(partition[rows]));
-      p_ncol <- min(c(ceiling(a_num / 5), legend_max_ncol));
+      p_ncol <- min(c(ceiling(a_num / legend_base_nrow), legend_max_ncol));
       p_nrow <- ceiling(p_num / p_ncol);
       p_heatmap_legend_param <- list(
          title_position="topleft",
@@ -991,7 +1000,6 @@ nmatlist2heatmaps <- function
          nrow=p_nrow
       )
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
-         #row_split=partition[rows],
          border=FALSE,
          heatmap_legend_param=p_heatmap_legend_param,
          use_raster=use_raster,
@@ -1027,7 +1035,10 @@ nmatlist2heatmaps <- function
                         jamba::cPaste(idxs),
                         ") across row clusters.");
                   }
-                  plist <- split(names(partition), partition)
+                  ## jamba::rmNULL() removes empty elements if factor levels
+                  ## are not present in the rows of data being used
+                  plist <- jamba::rmNULL(split(names(partition),
+                     partition));
                   range(
                      unlist(
                         lapply(plist, function(prows){
@@ -1096,7 +1107,8 @@ nmatlist2heatmaps <- function
    if (length(lens) == 0) {
       lens <- 0;
    }
-   lens <- rep(lens, length.out=length(nmatlist));
+   lens <- rep(lens,
+      length.out=length(nmatlist));
    if ("gpar" %in% class(axis_name_gp)) {
       axis_name_gp <- rep(list(axis_name_gp),
          length.out=length(nmatlist))
@@ -1276,6 +1288,11 @@ nmatlist2heatmaps <- function
             grid_width=unit(1, "npc"));
       }
 
+      ## if partition is a factor, call factor() which forces
+      ## it to drop any missing factor levels
+      if (is.factor(partition[rows])) {
+         partition <- factor(partition[rows]);
+      }
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
          split=partition[rows],
          pos_line=FALSE,
