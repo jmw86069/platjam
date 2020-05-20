@@ -768,6 +768,7 @@ nmatlist2heatmaps <- function
                   jamba::rmNA(
                      #naValue="NA",
                      i2));
+               cBR <- jamba::rmNA(cBR);
             }
          }
          cBR;
