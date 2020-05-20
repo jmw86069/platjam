@@ -329,6 +329,11 @@ coverage_matrix2nmat <- function
 #'    additional columns are added. Once the number of elements
 #'    exceeds `(legend_max_ncol * legend_base_nrow)` then
 #'    rows are added, but columns never exceed `legend_max_ncol`.
+#' @param legend_max_labels `integer` to define the maximum labels
+#'    to display as a color legend; when `anno_df` columns contain
+#'    more than this number of categorical colors, the legend is
+#'    not displayed (because it would prevent display of the
+#'    heatmaps at all).
 #' @param anno_row_marks character vector of `rownames`
 #'    which will be labeled beside the heatmaps, using
 #'    the `ComplexHeatmap::anno_mark()` method. It currently
@@ -478,6 +483,7 @@ nmatlist2heatmaps <- function
  anno_row_labels=NULL,
  legend_max_ncol=2,
  legend_base_nrow=5,
+ legend_max_labels=40,
  hm_nrow=1,
  transform="none",
  #transform=jamba::log2signed,
@@ -776,6 +782,17 @@ nmatlist2heatmaps <- function
             jamba::printDebug("nmatlist2heatmaps(): ",
                "Defining annotation_legend_param.");
          }
+         ## list show_legend
+         annotation_show_legend <- lapply(nameVector(colnames(anno_df)), function(i){
+            i1 <- jamba::rmNA(anno_df[[i]]);
+            a_num <- length(unique(i1));
+            if (a_num <= legend_max_labels) {
+               TRUE
+            } else {
+               FALSE
+            }
+         });
+         ## list of annotation_legend_param
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
             a_num <- length(unique(i1));
@@ -846,6 +863,7 @@ nmatlist2heatmaps <- function
       AHM <- ComplexHeatmap::rowAnnotation(
          df=anno_df[rows,,drop=FALSE],
          annotation_legend_param=annotation_legend_param,
+         show_legend=annotation_show_legend,
          name="Annotation",
          col=anno_colors_l);
 

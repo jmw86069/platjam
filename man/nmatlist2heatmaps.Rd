@@ -26,6 +26,8 @@ nmatlist2heatmaps(
   anno_row_marks = NULL,
   anno_row_labels = NULL,
   legend_max_ncol = 2,
+  legend_base_nrow = 5,
+  legend_max_labels = 40,
   hm_nrow = 1,
   transform = "none",
   signal_ceiling = NULL,
@@ -34,6 +36,7 @@ nmatlist2heatmaps(
   axis_name_rot = 90,
   column_title_gp = grid::gpar(fontsize = 12),
   lens = -2,
+  anno_lens = 8,
   seed = 123,
   ht_gap = grid::unit(7, "mm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
@@ -137,6 +140,18 @@ space \code{" "}.}
 \item{legend_max_ncol}{integer number indicating the maximum
 number of columns allowed for a categorical color legend.}
 
+\item{legend_base_nrow}{integer number indicating the base
+number of rows used for a categorical color legend, before
+additional columns are added. Once the number of elements
+exceeds \code{(legend_max_ncol * legend_base_nrow)} then
+rows are added, but columns never exceed \code{legend_max_ncol}.}
+
+\item{legend_max_labels}{\code{integer} to define the maximum labels
+to display as a color legend; when \code{anno_df} columns contain
+more than this number of categorical colors, the legend is
+not displayed (because it would prevent display of the
+heatmaps at all).}
+
 \item{hm_nrow}{integer number of rows used to display
 the heatmap panels.}
 
@@ -191,6 +206,11 @@ each matrix in \code{nmatlist}, and so it is recycled to
 is also intended to help apply the color gradient to
 a suitable numeric range, and the \code{lens} argument is
 applied relative to the numeric range being used.}
+
+\item{anno_lens}{numeric value used to scale the annotation
+heatmap color scales, see \code{lens} for details. Values
+higher than 1 make the color gradient more intense,
+values below -1 make the color gradient less intense.}
 
 \item{seed}{numeric value used with \code{set.seed()} to
 set the random seed. Set to \code{NULL} to avoid running
