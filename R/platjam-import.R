@@ -783,7 +783,7 @@ nmatlist2heatmaps <- function
                "Defining annotation_legend_param.");
          }
          ## list show_legend
-         annotation_show_legend <- lapply(nameVector(colnames(anno_df)), function(i){
+         annotation_show_legend <- sapply(nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
             a_num <- length(unique(i1));
             if (a_num <= legend_max_labels) {
