@@ -746,7 +746,7 @@ nmatlist2heatmaps <- function
                   col=colBR);
             }
          } else {
-            i2 <- jamba::mixedSort(unique(i1));
+            i2 <- jamba::mixedSort(unique(jamba::rmNA(i1)));
             if (all(isColor(i2))) {
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
