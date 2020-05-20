@@ -737,13 +737,16 @@ nmatlist2heatmaps <- function
                      " pre-defined colors");
                }
                cBR <- jamba::nameVector(i2);
-            } else if (!"factor" %in% class(i2)) {
+            } else {
+               if (!"factor" %in% class(i2)) {
+                  i2 <- factor(i2,
+                     levels=jamba::mixedSort(i2));
+               }
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "anno_colors_l colname:", i,
                      " categorical data");
                }
-               i2 <- factor(i2, levels=jamba::mixedSort(i2));
                cBR <- colorjam::group2colors(i2);
             }
          }
