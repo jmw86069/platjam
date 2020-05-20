@@ -25,6 +25,7 @@ nmatlist2heatmaps(
   byCols = NULL,
   anno_row_marks = NULL,
   anno_row_labels = NULL,
+  legend_max_ncol = 2,
   hm_nrow = 1,
   transform = "none",
   signal_ceiling = NULL,
@@ -132,6 +133,9 @@ If \code{NULL} then \code{anno_row_marks} are used. Or
 of \code{colnames(anno_df)} which will create labels
 by concatenating each column value separated by
 space \code{" "}.}
+
+\item{legend_max_ncol}{integer number indicating the maximum
+number of columns allowed for a categorical color legend.}
 
 \item{hm_nrow}{integer number of rows used to display
 the heatmap panels.}

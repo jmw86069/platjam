@@ -322,6 +322,8 @@ coverage_matrix2nmat <- function
 #'    `colnames(anno_df)` used to sort the data.frame
 #'    via `jamba::mixedSortDF()`. Any colname with
 #'    prefix `-` will be reverse-sorted.
+#' @param legend_max_ncol integer number indicating the maximum
+#'    number of columns allowed for a categorical color legend.
 #' @param anno_row_marks character vector of `rownames`
 #'    which will be labeled beside the heatmaps, using
 #'    the `ComplexHeatmap::anno_mark()` method. It currently
@@ -465,6 +467,7 @@ nmatlist2heatmaps <- function
  byCols=NULL,
  anno_row_marks=NULL,
  anno_row_labels=NULL,
+ legend_max_ncol=2,
  hm_nrow=1,
  transform="none",
  #transform=jamba::log2signed,
@@ -762,15 +765,18 @@ nmatlist2heatmaps <- function
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
             a_num <- length(unique(i1));
-            a_ncol <- min(c(ceiling(length(unique(i1)) / 3), 4))
+            a_ncol <- min(c(ceiling(a_num / 5), legend_max_ncol))
             a_nrow <- ceiling(a_num / a_ncol);
-            i_title <- jamba::cPaste(strwrap(i, 15), sep="\n");
+            i_title <- jamba::cPaste(strwrap(i, width=15), sep="\n");
             if (a_num <= 10) {
                ## display distinct steps
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "annotation_legend_param colname:", i,
-                     " discrete numeric color legend");
+                     " discrete numeric color legend, a_num:",
+                     a_num,
+                     ", a_nrow:",
+                     a_nrow);
                }
                list(
                   title=i_title,
@@ -974,7 +980,7 @@ nmatlist2heatmaps <- function
       ##################################
       ## Partition Heatmap
       p_num <- length(unique(partition[rows]));
-      p_ncol <- min(c(p_num, 4));
+      p_ncol <- min(c(ceiling(a_num / 5), legend_max_ncol));
       p_nrow <- ceiling(p_num / p_ncol);
       p_heatmap_legend_param <- list(
          title_position="topleft",
