@@ -764,7 +764,10 @@ nmatlist2heatmaps <- function
                      "anno_colors_l colname:", i,
                      " categorical data");
                }
-               cBR <- colorjam::group2colors(i2);
+               cBR <- colorjam::group2colors(
+                  jamba::rmNA(
+                     #naValue="NA",
+                     i2));
             }
          }
          cBR;
