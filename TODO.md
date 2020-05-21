@@ -16,3 +16,10 @@ rownames and colnames.
 * Similar to `nmatlist2heatmaps()` except that it focuses on
 just the profile plots, including optional error bars and
 statistical testing by position.
+
+## Custom x-axis range
+
+* Ability to specify a custom subset range for the x-axis.
+Note that matrices in `nmatlist` are not required to share
+the same x-axis range, so this function would probably
+need to be applied to individual `normalizedMatrix` entries.

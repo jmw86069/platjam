@@ -1012,7 +1012,7 @@ nmatlist2heatmaps <- function
       ##################################
       ## Partition Heatmap
       p_num <- length(unique(partition[rows]));
-      p_ncol <- min(c(ceiling(a_num / legend_base_nrow), legend_max_ncol));
+      p_ncol <- min(c(ceiling(p_num / legend_base_nrow), legend_max_ncol));
       p_nrow <- ceiling(p_num / p_ncol);
       p_heatmap_legend_param <- list(
          title_position="topleft",
