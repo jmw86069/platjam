@@ -1469,17 +1469,17 @@ nmatlist2heatmaps <- function
       main_heatmap_temp <- main_heatmap;
       ht_gap <- rep(ht_gap, length.out=max(c(1, length(nmatlist)-1)));
       if (length(partition) > 0) {
-         HM_temp <- PHM + HM_temp;
+         HM_temp <- PHM[rows,] + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
          ht_gap <- grid::unit.c(grid::unit(1, "mm"), ht_gap);
       }
       if (length(AHM) > 0) {
-         HM_temp <- AHM + HM_temp;
+         HM_temp <- AHM[rows,] + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
          ht_gap <- grid::unit.c(grid::unit(1, "mm"), ht_gap);
       }
       if (length(MHM) > 0) {
-         HM_temp <- HM_temp + MHM;
+         HM_temp <- HM_temp + MHM[rows,];
          ht_gap <- grid::unit.c(ht_gap, grid::unit(1, "mm"));
       }
       if (verbose) {
