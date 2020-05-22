@@ -757,7 +757,7 @@ nmatlist2heatmaps <- function
          print(table(all(rows) %in% names(partition)));
          stop("names(partition) must match rownames in nmatlist.");
       }
-      partition <- partition[rows];
+      partition <- partition[match(rows, names(partition))];
       if (!is.factor(partition)) {
          partition <- factor(partition,
             levels=jamba::mixedSort(unique(partition)));
@@ -767,10 +767,10 @@ nmatlist2heatmaps <- function
       ## Define colors if not provided
       if (length(k_colors) == 0) {
          k_colors <- nameVector(
-            colorjam::rainbowJam(length(unique(partition)),
+            colorjam::rainbowJam(length(levels(partition)),
                ...),
-            unique(partition));
-         k_colors <- k_colors[sort(names(k_colors))];
+            levels(partition));
+         k_colors <- k_colors[jamba::mixedSort(names(k_colors))];
       }
 
       ## Optional subset of k-means clusters
@@ -819,7 +819,7 @@ nmatlist2heatmaps <- function
       }
       ##################################
       ## Partition Heatmap
-      p_num <- length(unique(partition[rows]));
+      p_num <- length(levels(partition[rows]));
       p_ncol <- min(c(ceiling(p_num / legend_base_nrow), legend_max_ncol));
       p_nrow <- ceiling(p_num / p_ncol);
       p_heatmap_legend_param <- list(
@@ -868,8 +868,7 @@ nmatlist2heatmaps <- function
          }
          row_order <- FALSE;
       } else {
-         rows <- intersect(rows,
-            rownames(anno_df));
+         rows <- rows[rows %in% rownames(anno_df)];
       }
       anno_df <- anno_df[rows,,drop=FALSE];
       ## Determine a list of color functions, one for each column
@@ -1045,7 +1044,8 @@ nmatlist2heatmaps <- function
       for (jj in 1:ncol(anno_df)) {
          i1 <- anno_df[[jj]];
          if (any(c("character") %in% class(i1))) {
-            i1 <- factor(i1, levels=jamba::mixedSort(unique(i1)));
+            i1 <- factor(i1,
+               levels=jamba::mixedSort(unique(i1)));
             anno_df[[jj]] <- i1;
          }
       }
@@ -1063,7 +1063,7 @@ nmatlist2heatmaps <- function
          col=anno_colors_l);
 
       ## Optional row marks
-      anno_rows <- intersect(rows, anno_row_marks);
+      anno_rows <- rows[rows %in% anno_row_marks];
       if (length(anno_rows) > 0) {
          anno_row_which <- match(anno_rows, rows);
          if (length(anno_row_labels) > 0 && all(anno_row_labels %in% colnames(anno_df))) {
@@ -1435,11 +1435,11 @@ nmatlist2heatmaps <- function
          HM_temp <- Reduce("+", EHs);
          main_heatmap_temp <- main_heatmap;
          if (length(partition) > 0) {
-            HM_temp <- PHM + HM_temp;
+            HM_temp <- PHM[rows,] + HM_temp;
             main_heatmap_temp <- main_heatmap_temp + 1;
          }
          if (length(AHM) > 0) {
-            HM_temp <- AHM + HM_temp;
+            HM_temp <- AHM[rows,] + HM_temp;
             main_heatmap_temp <- main_heatmap_temp + 1;
          }
          ht_1 <- grid::grid.grabExpr(
