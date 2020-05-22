@@ -760,7 +760,7 @@ nmatlist2heatmaps <- function
       partition <- partition[match(rows, names(partition))];
       if (!is.factor(partition)) {
          partition <- factor(partition,
-            levels=jamba::mixedSort(unique(partition)));
+            levels=sort(unique(partition)));
       } else {
          partition <- factor(partition);
       }
@@ -770,7 +770,7 @@ nmatlist2heatmaps <- function
             colorjam::rainbowJam(length(levels(partition)),
                ...),
             levels(partition));
-         k_colors <- k_colors[jamba::mixedSort(names(k_colors))];
+         k_colors <- k_colors[sort(names(k_colors))];
       }
 
       ## Optional subset of k-means clusters
