@@ -1405,7 +1405,7 @@ nmatlist2heatmaps <- function
          border=border[[i]],
          top_annotation=ComplexHeatmap::HeatmapAnnotation(
             lines=EnrichedHeatmap::anno_enriched(
-               gp=grid::gpar(col=k_colors),
+               gp=grid::gpar(col=k_colors[levels(partition)]),
                value=profile_value,
                ylim=ylim,
                show_error=show_error)
