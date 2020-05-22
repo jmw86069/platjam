@@ -835,6 +835,7 @@ nmatlist2heatmaps <- function
          name="cluster",
          show_row_names=FALSE,
          width=k_width);
+      PHM_rows <- rows;
    }
 
 
@@ -1061,6 +1062,7 @@ nmatlist2heatmaps <- function
          show_legend=annotation_show_legend,
          name="Annotation",
          col=anno_colors_l);
+      AHM_rows <- rows;
 
       ## Optional row marks
       anno_rows <- rows[rows %in% anno_row_marks];
@@ -1101,6 +1103,7 @@ nmatlist2heatmaps <- function
                   labels=anno_row_labels)
             )
          );
+         MHM_rows <- rows;
       } else {
          MHM <- NULL;
       }
@@ -1435,11 +1438,11 @@ nmatlist2heatmaps <- function
          HM_temp <- Reduce("+", EHs);
          main_heatmap_temp <- main_heatmap;
          if (length(partition) > 0) {
-            HM_temp <- PHM[rows,] + HM_temp;
+            HM_temp <- PHM[match(rows, PHM_rows),] + HM_temp;
             main_heatmap_temp <- main_heatmap_temp + 1;
          }
          if (length(AHM) > 0) {
-            HM_temp <- AHM[rows,] + HM_temp;
+            HM_temp <- AHM[match(rows, AHM_rows),] + HM_temp;
             main_heatmap_temp <- main_heatmap_temp + 1;
          }
          ht_1 <- grid::grid.grabExpr(
@@ -1469,17 +1472,17 @@ nmatlist2heatmaps <- function
       main_heatmap_temp <- main_heatmap;
       ht_gap <- rep(ht_gap, length.out=max(c(1, length(nmatlist)-1)));
       if (length(partition) > 0) {
-         HM_temp <- PHM[rows,] + HM_temp;
+         HM_temp <- PHM[match(rows, PHM_rows),] + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
          ht_gap <- grid::unit.c(grid::unit(1, "mm"), ht_gap);
       }
       if (length(AHM) > 0) {
-         HM_temp <- AHM[rows,] + HM_temp;
+         HM_temp <- AHM[match(rows, AHM_rows),] + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
          ht_gap <- grid::unit.c(grid::unit(1, "mm"), ht_gap);
       }
       if (length(MHM) > 0) {
-         HM_temp <- HM_temp + MHM[rows,];
+         HM_temp <- HM_temp + MHM[match(rows, MHM_rows),];
          ht_gap <- grid::unit.c(ht_gap, grid::unit(1, "mm"));
       }
       if (verbose) {
