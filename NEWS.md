@@ -1,5 +1,13 @@
 # platjam version 0.0.28.900
 
+## bug fixes
+
+* `nmatlist2heatmaps()` does more work to validate `rows`
+with respect to rownames of `nmatlist`, `rownames(anno_df)`,
+and `names(partition)` to ensure everything is properly
+synchronized. The smallest common set of `rows` will be
+used.
+
 ## changes to existing functions
 
 * `nmatlist2heatmaps()` now allows `partition` and `k_clusters`

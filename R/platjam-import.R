@@ -570,22 +570,32 @@ nmatlist2heatmaps <- function
    if (length(k_method) == 0 || nchar(k_method) == 0) {
       k_method <- "euclidean";
    }
+   nmat_rows <- rows <- Reduce("intersect",
+      lapply(nmatlist, rownames));
    if (length(rows) == 0) {
       ## Make sure rows are present in all nmatlist entries.
-      rows <- Reduce("intersect",
-         lapply(nmatlist, rownames));
-      #rows <- rownames(nmatlist[[main_heatmap]]);
+      rows <- nmat_rows;
    } else {
       ## Make sure rows are present in all rownames of nmatlist
       if (is.numeric(rows)) {
-         rows <- Reduce("intersect",
-            c(list(rows), lapply(nmatlist, function(im){seq_len(nrow(im))})));
-         rows <- rownames(nmatlist[[1]])[rows];
+         rows <- rmNA(nmat_rows[rows]);
       } else {
-         rows <- Reduce("intersect",
-            c(list(rows), lapply(nmatlist, rownames)));
+         rows <- rows[rows %in% nmat_rows];
       }
    }
+   ## Also optionally subset rows by rownames(anno_df)
+   if (length(anno_df) > 0) {
+      rows <- rows[rows %in%  rownames(anno_df)];
+   }
+   if (length(partition) > 0) {
+      if (length(names(partition)) > 0) {
+         rows <- rows[rows %in% names(partition)];
+         partition <- partition[match(rows, names(partition))];
+      } else {
+         stop("names(partition) must match rownames in nmatlist.");
+      }
+   }
+
    ## row_order must be named by rows
    if (length(row_order) > 1) {
       if (length(names(row_order)) == 0) {
@@ -980,7 +990,7 @@ nmatlist2heatmaps <- function
          ## list of annotation_legend_param
          annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
-            a_num <- length(unique(i1));
+            a_num <- length(setdiff(unique(i1), c("", NA)));
             a_ncol <- min(c(ceiling(a_num / legend_base_nrow), legend_max_ncol));
             a_nrow <- ceiling(a_num / a_ncol);
             i_title <- jamba::cPaste(strwrap(i, width=15), sep="\n");
