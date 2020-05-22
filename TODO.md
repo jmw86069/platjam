@@ -1,5 +1,26 @@
 # TODO for platjam
 
+## Dynamic ylims
+
+* The detected ylim range should include the additional
+range when show_error=TRUE. This change involves calculating
+the error bars during the ylim calculations, not too
+computationally intensive, but it must replicate the
+method used by EnrichedHeatmap.
+
+## Custom color substition (colorSub)
+
+* `nmatlist2heatmaps()` should allow optional `colorSub`
+argument as a named vector of colors. Any categorical column
+all of whose values match `names(colorSub)` will use colors
+in `colorSub` instead of generating its own new categorical
+colors. This option will help allow colors to be consistent.
+
+## Allow both partition and kmeans clustering
+
+* Currently kmeans clustering overrides partition, but we
+want the option to cluster and partition.
+
 ## Genome coverage matrix methods
 
 * `nmatlist2heatmaps()` argument for `data.frame` of annotations,

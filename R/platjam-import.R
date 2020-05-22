@@ -322,6 +322,15 @@ coverage_matrix2nmat <- function
 #'    `colnames(anno_df)` used to sort the data.frame
 #'    via `jamba::mixedSortDF()`. Any colname with
 #'    prefix `-` will be reverse-sorted.
+#' @param color_sub `character vector` of R colors to be used
+#'    as categorical colors, whose names match items to be
+#'    colored. This argument is intended for `anno_df`,
+#'    for any column in `anno_df` where all values in that
+#'    column are also in `names(color_sub)` will be colorized
+#'    using `color_sub` instead of generating new colors.
+#'    Also colors for partition and kmeans clusters, usually
+#'    defined with `k_colors` can be defined in color_sub,
+#'    if `names(color_sub)` match the partition labels.
 #' @param legend_max_ncol integer number indicating the maximum
 #'    number of columns allowed for a categorical color legend.
 #' @param legend_base_nrow integer number indicating the base
@@ -479,6 +488,7 @@ nmatlist2heatmaps <- function
  main_heatmap=1,
  anno_df=NULL,
  byCols=NULL,
+ color_sub=NULL,
  anno_row_marks=NULL,
  anno_row_labels=NULL,
  legend_max_ncol=2,
@@ -495,7 +505,7 @@ nmatlist2heatmaps <- function
  lens=-2,
  anno_lens=8,
  seed=123,
- ht_gap=grid::unit(7, "mm"),
+ ht_gap=grid::unit(3, "mm"),
  profile_value=c("mean", "sum", "abs_mean", "abs_sum"),
  ylims=NULL,
  border=TRUE,
@@ -653,6 +663,172 @@ nmatlist2heatmaps <- function
    AHM <- NULL;
    MHM <- NULL;
 
+   ##################################
+   ## Optional k-means clustering
+   if (length(k_clusters) > 0 && k_clusters > 0) {
+      if (length(k_colors) == 0) {
+         k_colors <- colorjam::group2colors(
+            seq_len(k_clusters),
+            colorSub=color_sub);
+      } else if (length(k_colors) < k_clusters) {
+         ## Expand the given colors using color2gradient()
+         k_multiplier <- ceiling(k_clusters / length(k_colors));
+         k_colors <- jamba::nameVector(
+            rev(head(
+               jamba::color2gradient(k_colors,
+                  n=k_multiplier,
+                  gradientWtFactor=1/3),
+               k_clusters)),
+            seq_len(k_clusters));
+      } else if (length(names(k_colors)) == 0) {
+         names(k_colors) <- rev(seq_len(k_clusters));
+      }
+      itransform <- transform[[main_heatmap]];
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "Running kmeans, k_clusters:",
+            k_clusters,
+            ", k_method:",
+            k_method);
+      }
+      kpartition <- kmeans(
+         itransform(nmatlist[[main_heatmap]][rows,]),
+         iter.max=iter.max,
+         centers=k_clusters)$cluster;
+      ## Confirm that names(partition) match rows
+      names(kpartition) <- rows;
+      if (verbose) {
+         k_sizes <- table(kpartition);
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "k-means cluster sizes: ",
+            paste0("cluster", names(k_sizes), "=", k_sizes), sep=", ");
+      }
+
+      ## Optionally combine with user-defined partition
+      if (length(partition) == 0) {
+         partition <- kpartition;
+      } else {
+         if (!all(rows %in% names(partition))) {
+            jamba::printDebug("head(partition):");
+            print(head(partition));
+            jamba::printDebug("head(rows):");
+            print(head(rows));
+            print(table(all(rows) %in% names(partition)));
+            stop("names(partition) must match rownames in nmatlist.");
+         }
+         partition_df <- data.frame(partition=partition[rows],
+            kpartition=kpartition[rows]);
+         partition <- jamba::nameVector(
+            jamba::pasteByRowOrdered(partition_df,
+               sep=" - "),
+            rows);
+         k_colors <- colorjam::group2colors(levels(partition),
+            colorSub=color_sub);
+         jamba::printDebug("k_colors:");
+         print(k_colors);
+         jamba::printDebugI(nameVector(k_colors));
+         if (verbose) {
+            k_sizes <- table(partition);
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Combined partition and k-means cluster sizes: ",
+               paste0("partition_cluster", names(k_sizes), "=", k_sizes), sep=", ");
+         }
+      }
+   }
+   ##################################
+   ## Partition heatmap sidebar
+   if (length(partition) > 0) {
+      ## Make sure to use the partition values with the properly ordered rows
+      if (!all(rows %in% names(partition))) {
+         jamba::printDebug("head(partition):");
+         print(head(partition));
+         jamba::printDebug("head(rows):");
+         print(head(rows));
+         print(table(all(rows) %in% names(partition)));
+         stop("names(partition) must match rownames in nmatlist.");
+      }
+      partition <- partition[rows];
+      if (!is.factor(partition)) {
+         partition <- factor(partition,
+            levels=jamba::mixedSort(unique(partition)));
+      } else {
+         partition <- factor(partition);
+      }
+      ## Define colors if not provided
+      if (length(k_colors) == 0) {
+         k_colors <- nameVector(
+            colorjam::rainbowJam(length(unique(partition)),
+               ...),
+            unique(partition));
+         k_colors <- k_colors[sort(names(k_colors))];
+      }
+
+      ## Optional subset of k-means clusters
+      if (length(k_subset) > 0) {
+         if (!any(as.character(partition) %in% as.character(k_subset))) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Warning: k_subset was supplied but does not match any partition values.");
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "head(levels(partition), 20):",
+               paste0("'", head(levels(partition), 20), "'"));
+         }
+         partition_keep <- (as.character(partition) %in% as.character(k_subset));
+         partition <- factor(partition[partition_keep],
+            levels=intersect(as.character(k_subset),
+               levels(partition)));
+         rows <- names(partition);
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Subsetting partition for k_subset:",
+               k_subset,
+               " from ",
+               jamba::formatInt(length(k_colors)),
+               " rows down to ",
+               jamba::formatInt(length(rows)));
+         }
+         k_colors <- k_colors[names(k_colors) %in% as.character(k_subset)];
+         ## Subset AHM and MHM if defined
+         if (length(AHM) > 0) {
+            AHM <- AHM[rows,];
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Taking k_subset rows for annotation heatmap.");
+            }
+         }
+         if (length(MHM) > 0) {
+            MHM <- MHM[rows,];
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Taking k_subset rows for annotation mark heatmap.");
+            }
+         }
+      }
+      if (verbose) {
+         jamba::printDebug("nmatlist2heatmaps(): ",
+            "creating partition heatmap PHM.");
+      }
+      ##################################
+      ## Partition Heatmap
+      p_num <- length(unique(partition[rows]));
+      p_ncol <- min(c(ceiling(p_num / legend_base_nrow), legend_max_ncol));
+      p_nrow <- ceiling(p_num / p_ncol);
+      p_heatmap_legend_param <- list(
+         title_position="topleft",
+         border="black",
+         nrow=p_nrow
+      )
+      PHM <- ComplexHeatmap::Heatmap(partition[rows],
+         border=FALSE,
+         heatmap_legend_param=p_heatmap_legend_param,
+         use_raster=use_raster,
+         col=k_colors,
+         name="cluster",
+         show_row_names=FALSE,
+         width=k_width);
+   }
+
+
+   ##########################################################
    ## Optional data.frame with additional annotations
    if (length(anno_df) > 0) {
       if (!jamba::igrepHas("data.frame|dataframe|data.table|tibble", class(anno_df))) {
@@ -754,6 +930,14 @@ nmatlist2heatmaps <- function
                      " pre-defined colors");
                }
                cBR <- jamba::nameVector(i2);
+            } else if (length(color_sub) > 0 && all(i2 %in% names(color_sub))) {
+               color_match <- match(i2, names(color_sub));
+               if (verbose) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "anno_colors_l colname:", i,
+                     " categorical data using color_sub");
+               }
+               cBR <- color_sub[color_match];
             } else {
                if (!"factor" %in% class(i2)) {
                   i2 <- factor(i2,
@@ -765,9 +949,8 @@ nmatlist2heatmaps <- function
                      " categorical data");
                }
                cBR <- colorjam::group2colors(
-                  jamba::rmNA(
-                     #naValue="NA",
-                     i2));
+                  i2,
+                  colorSub=color_sub);
                cBR <- jamba::rmNA(cBR);
             }
          }
@@ -916,118 +1099,6 @@ nmatlist2heatmaps <- function
       MHM <- NULL;
    }
 
-   ##################################
-   ## Optional k-means clustering
-   if (length(k_clusters) > 0 && k_clusters > 0) {
-      if (length(k_colors) == 0) {
-         k_colors <- jamba::nameVector(
-            colorjam::rainbowJam(k_clusters,
-               ...),
-            seq_len(k_clusters));
-      } else if (length(k_colors) < k_clusters) {
-         k_colors <- jamba::nameVector(
-            rep(k_colors,
-               length.out=k_clusters),
-            seq_len(k_clusters));
-      } else if (length(names(k_colors)) == 0) {
-         names(k_colors) <- seq_len(k_clusters);
-      }
-      itransform <- transform[[main_heatmap]];
-      if (verbose) {
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "Running kmeans, k_clusters:",
-            k_clusters,
-            ", k_method:",
-            k_method);
-      }
-      partition <- kmeans(
-         itransform(nmatlist[[main_heatmap]][rows,]),
-         iter.max=iter.max,
-         centers=k_clusters)$cluster;
-      ## Confirm that names(partition) match rows
-      names(partition) <- rows;
-      if (verbose) {
-         k_sizes <- table(partition);
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "k-means cluster sizes: ",
-            paste0("cluster", names(k_sizes), "=", k_sizes), sep=", ");
-      }
-   }
-   ##################################
-   ## Partition heatmap sidebar
-   if (length(partition) > 0) {
-      ## Make sure to use the partition values with the properly ordered rows
-      if (!all(rows %in% names(partition))) {
-         jamba::printDebug("head(partition):");
-         print(head(partition));
-         jamba::printDebug("head(rows):");
-         print(head(rows));
-         print(table(all(rows) %in% names(partition)));
-         stop("names(partition) must match rownames in nmatlist.");
-      }
-      partition <- partition[rows];
-      ## Define colors if not provided
-      if (length(k_colors) == 0) {
-         k_colors <- nameVector(
-            colorjam::rainbowJam(length(unique(partition)),
-               ...),
-            unique(partition));
-         k_colors <- k_colors[sort(names(k_colors))];
-      }
-
-      ## Optional subset of k-means clusters
-      if (length(k_subset) > 0) {
-         partition <- partition[as.character(partition) %in% as.character(k_subset)];
-         rows <- names(partition);
-         if (verbose) {
-            jamba::printDebug("nmatlist2heatmaps(): ",
-               "Subsetting partition for k_subset:",
-               k_subset,
-               " from ",
-               jamba::formatInt(length(k_colors)),
-               " rows down to ",
-               jamba::formatInt(length(rows)));
-         }
-         k_colors <- k_colors[names(k_colors) %in% as.character(k_subset)];
-         ## Subset AHM and MHM if defined
-         if (length(AHM) > 0) {
-            AHM <- AHM[rows,];
-            if (verbose) {
-               jamba::printDebug("nmatlist2heatmaps(): ",
-                  "Taking k_subset rows for annotation heatmap.");
-            }
-         }
-         if (length(MHM) > 0) {
-            MHM <- MHM[rows,];
-            if (verbose) {
-               jamba::printDebug("nmatlist2heatmaps(): ",
-                  "Taking k_subset rows for annotation mark heatmap.");
-            }
-         }
-      }
-      if (verbose) {
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "creating partition heatmap PHM.");
-      }
-      ##################################
-      ## Partition Heatmap
-      p_num <- length(unique(partition[rows]));
-      p_ncol <- min(c(ceiling(p_num / legend_base_nrow), legend_max_ncol));
-      p_nrow <- ceiling(p_num / p_ncol);
-      p_heatmap_legend_param <- list(
-         title_position="topleft",
-         border="black",
-         nrow=p_nrow
-      )
-      PHM <- ComplexHeatmap::Heatmap(partition[rows],
-         border=FALSE,
-         heatmap_legend_param=p_heatmap_legend_param,
-         use_raster=use_raster,
-         col=k_colors,
-         name="cluster",
-         show_row_names=FALSE,
-         width=k_width);
-   }
 
    ##################################
    ## panel_groups

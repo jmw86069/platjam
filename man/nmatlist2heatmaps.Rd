@@ -23,6 +23,7 @@ nmatlist2heatmaps(
   main_heatmap = 1,
   anno_df = NULL,
   byCols = NULL,
+  color_sub = NULL,
   anno_row_marks = NULL,
   anno_row_labels = NULL,
   legend_max_ncol = 2,
@@ -38,7 +39,7 @@ nmatlist2heatmaps(
   lens = -2,
   anno_lens = 8,
   seed = 123,
-  ht_gap = grid::unit(7, "mm"),
+  ht_gap = grid::unit(3, "mm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
   ylims = NULL,
   border = TRUE,
@@ -121,6 +122,16 @@ may also be subsetted using argument \code{rows}.}
 \code{colnames(anno_df)} used to sort the data.frame
 via \code{jamba::mixedSortDF()}. Any colname with
 prefix \code{-} will be reverse-sorted.}
+
+\item{color_sub}{\verb{character vector} of R colors to be used
+as categorical colors, whose names match items to be
+colored. This argument is intended for \code{anno_df},
+for any column in \code{anno_df} where all values in that
+column are also in \code{names(color_sub)} will be colorized
+using \code{color_sub} instead of generating new colors.
+Also colors for partition and kmeans clusters, usually
+defined with \code{k_colors} can be defined in color_sub,
+if \code{names(color_sub)} match the partition labels.}
 
 \item{anno_row_marks}{character vector of \code{rownames}
 which will be labeled beside the heatmaps, using

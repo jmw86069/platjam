@@ -1,3 +1,31 @@
+# platjam version 0.0.28.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()` now allows `partition` and `k_clusters`
+to be combined, so rows can be both partitioned, and kmeans
+clustered. Labels are created `"partition - cluster_number"`
+and are ordered by partition then kmeans cluster number. So
+if `partition` is a factor with ordered levels, that level
+will be preserved in the output.
+* `nmatlist2heatmaps()` new argument `color_sub` which allows
+defined categorical colors by sending a named vector. Any column
+in `anno_df` all of whose values are in `names(color_sub)` will
+be colored accordingly.
+* `nmatlist2heatmaps()` will use `k_subset` to re-order
+partitions, in addition to plotting only the subset of
+row partitions. The code was change to handle the
+sequence of operations: kmeans, partitioning, k_subset,
+then anno_df, marked rows.
+* `nmatlist2heatmaps()` changed the default `ht_gap` down to 3 mm.
+
+# platjam version 0.0.27.900
+
+## changes to existing functions
+
+* Numerous small bug fixes in `nmatlist2heatmaps()`, mostly in
+handling annotation categorical color legends.
+
 # platjam version 0.0.26.900
 
 ## changes to existing functions
