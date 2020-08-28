@@ -701,31 +701,33 @@ nmatlist2heatmaps <- function
             ", k_method:",
             k_method);
       }
-      kpartition <- kmeans(
-         itransform(nmatlist[[main_heatmap]][rows,]),
-         iter.max=iter.max,
-         centers=k_clusters)$cluster;
-      ## Confirm that names(partition) match rows
-      names(kpartition) <- rows;
-      if (verbose) {
-         k_sizes <- table(kpartition);
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "k-means cluster sizes: ",
-            paste0("cluster", names(k_sizes), "=", k_sizes), sep=", ");
-      }
 
-      ## Optionally combine with user-defined partition
+      ## 28aug2020 update to kmeans cluster within partitions
       if (length(partition) == 0) {
+         kpartition <- kmeans(
+            itransform(nmatlist[[main_heatmap]][rows,]),
+            iter.max=iter.max,
+            centers=k_clusters)$cluster;
+         ## Confirm that names(partition) match rows
+         names(kpartition) <- rows;
          partition <- kpartition;
-      } else {
-         if (!all(rows %in% names(partition))) {
-            jamba::printDebug("head(partition):");
-            print(head(partition));
-            jamba::printDebug("head(rows):");
-            print(head(rows));
-            print(table(all(rows) %in% names(partition)));
-            stop("names(partition) must match rownames in nmatlist.");
+         if (verbose) {
+            k_sizes <- table(kpartition);
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "k-means cluster sizes: ",
+               paste0("cluster", names(k_sizes), "=", k_sizes), sep=", ");
          }
+      } else {
+         partition_rows_list <- split(rows, partition[rows]);
+         kpartitions_list <- lapply(partition_rows_list, function(prows){
+            kpartition <- kmeans(
+               itransform(nmatlist[[main_heatmap]][prows,]),
+               iter.max=iter.max,
+               centers=k_clusters)$cluster;
+            names(kpartition) <- prows;
+            kpartition;
+         })
+         kpartition <- unlist(unname(kpartitions_list))[rows];
          partition_df <- data.frame(partition=partition[rows],
             kpartition=kpartition[rows]);
          partition <- jamba::nameVector(
@@ -734,14 +736,39 @@ nmatlist2heatmaps <- function
             rows);
          k_colors <- colorjam::group2colors(levels(partition),
             colorSub=color_sub);
-         jamba::printDebug("k_colors:");
-         print(k_colors);
-         jamba::printDebugI(nameVector(k_colors));
-         if (verbose) {
-            k_sizes <- table(partition);
-            jamba::printDebug("nmatlist2heatmaps(): ",
-               "Combined partition and k-means cluster sizes: ",
-               paste0("partition_cluster", names(k_sizes), "=", k_sizes), sep=", ");
+      }
+
+      ## comment out the old method
+      if (1 == 2) {
+         ## Optionally combine with user-defined partition
+         if (length(partition) == 0) {
+            partition <- kpartition;
+         } else {
+            if (!all(rows %in% names(partition))) {
+               jamba::printDebug("head(partition):");
+               print(head(partition));
+               jamba::printDebug("head(rows):");
+               print(head(rows));
+               print(table(all(rows) %in% names(partition)));
+               stop("names(partition) must match rownames in nmatlist.");
+            }
+            partition_df <- data.frame(partition=partition[rows],
+               kpartition=kpartition[rows]);
+            partition <- jamba::nameVector(
+               jamba::pasteByRowOrdered(partition_df,
+                  sep=" - "),
+               rows);
+            k_colors <- colorjam::group2colors(levels(partition),
+               colorSub=color_sub);
+            jamba::printDebug("k_colors:");
+            print(k_colors);
+            jamba::printDebugI(nameVector(k_colors));
+            if (verbose) {
+               k_sizes <- table(partition);
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Combined partition and k-means cluster sizes: ",
+                  paste0("partition_cluster", names(k_sizes), "=", k_sizes), sep=", ");
+            }
          }
       }
    }

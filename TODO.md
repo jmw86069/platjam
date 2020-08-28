@@ -1,6 +1,24 @@
-# TODO for platjam
+# TODO for platjam 28aug2020
 
-## Dynamic ylims
+## k-means and partitioning, correct the order
+
+Currently k-means clustering and partitioning works together,
+but the k-means is performed on everything, then clusters are
+divided by partition.
+
+The effect when partitioning by "up" and "down" is that some
+k-means clusters are dominated by the "up" and "down" such
+that cluster 1 has 95% members from "up", very few from down.
+For k=4, it ends up making 8 clusters, which are mostly just
+4 proper clusters, and 4 junk clusters (the "up" cluster with few
+"down" members).
+
+Would be better to k-means within each partition, to make proper
+subclusters for each partition.
+
+# TODO for platjam 22may2020
+
+## Dynamic ylims (DONE)
 
 * The detected ylim range should include the additional
 range when show_error=TRUE. This change involves calculating
@@ -8,7 +26,7 @@ the error bars during the ylim calculations, not too
 computationally intensive, but it must replicate the
 method used by EnrichedHeatmap.
 
-## Custom color substition (colorSub)
+## Custom color substition (colorSub) (DONE)
 
 * `nmatlist2heatmaps()` should allow optional `colorSub`
 argument as a named vector of colors. Any categorical column
@@ -16,12 +34,12 @@ all of whose values match `names(colorSub)` will use colors
 in `colorSub` instead of generating its own new categorical
 colors. This option will help allow colors to be consistent.
 
-## Allow both partition and kmeans clustering
+## Allow both partition and kmeans clustering (DONE)
 
 * Currently kmeans clustering overrides partition, but we
 want the option to cluster and partition.
 
-## Genome coverage matrix methods
+## Genome coverage matrix methods (DONE)
 
 * `nmatlist2heatmaps()` argument for `data.frame` of annotations,
 used to display alongside heatmaps, and/or used to sort the heatmap
