@@ -2,6 +2,14 @@
 
 ## bug fixes
 
+* `nmatlist2heatmaps()` bug with no `k_clusters`,
+no `partition`, and no `k_colors` would fail during
+profile plot because it had NULL color.
+
+# platjam version 0.0.28.900
+
+## bug fixes
+
 * `nmatlist2heatmaps()` does more work to validate `rows`
 with respect to rownames of `nmatlist`, `rownames(anno_df)`,
 and `names(partition)` to ensure everything is properly

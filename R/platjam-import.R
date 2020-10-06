@@ -1424,6 +1424,14 @@ nmatlist2heatmaps <- function
       if (is.factor(partition[rows])) {
          partition <- factor(partition[rows]);
       }
+      use_colors <- k_colors[levels(partition)];
+      if (length(use_colors) == 0) {
+         use_colors <- k_colors[unique(partition)];
+         if (length(use_colors) == 0) {
+            n <- max(c(1, length(unique(partition))));
+            use_colors <- colorjam::rainbowJam(n);
+         }
+      }
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
          split=partition[rows],
          pos_line=FALSE,
@@ -1432,7 +1440,7 @@ nmatlist2heatmaps <- function
          border=border[[i]],
          top_annotation=ComplexHeatmap::HeatmapAnnotation(
             lines=EnrichedHeatmap::anno_enriched(
-               gp=grid::gpar(col=k_colors[levels(partition)]),
+               gp=grid::gpar(col=use_colors),
                value=profile_value,
                ylim=ylim,
                show_error=show_error)
