@@ -477,7 +477,7 @@ nmatlist2heatmaps <- function
  k_clusters=0,
  k_subset=NULL,
  k_colors=NULL,
- k_width=unit(5, "mm"),
+ k_width=grid::unit(5, "mm"),
  k_method=c("euclidean", "pearson", "correlation"),
  partition=NULL,
  rows=NULL,
@@ -1416,7 +1416,7 @@ nmatlist2heatmaps <- function
             legend_width=legend_width,
             title_position="topleft",
             border="black",
-            grid_width=unit(1, "npc"));
+            grid_width=grid::unit(1, "npc"));
       }
 
       ## if partition is a factor, call factor() which forces

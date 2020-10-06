@@ -12,7 +12,7 @@ nmatlist2heatmaps(
   k_clusters = 0,
   k_subset = NULL,
   k_colors = NULL,
-  k_width = unit(5, "mm"),
+  k_width = grid::unit(5, "mm"),
   k_method = c("euclidean", "pearson", "correlation"),
   partition = NULL,
   rows = NULL,
