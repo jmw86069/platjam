@@ -1,4 +1,13 @@
-# platjam version 0.0.28.900
+# platjam 0.0.31.900
+
+## updates
+
+* `nmatlist2heatmaps()` updated so `ylims` will take
+priority over `panel_groups=TRUE` which defines its own
+ylims ranges.
+
+
+# platjam 0.0.28.900
 
 ## bug fixes
 
@@ -6,7 +15,7 @@
 no `partition`, and no `k_colors` would fail during
 profile plot because it had NULL color.
 
-# platjam version 0.0.28.900
+# platjam 0.0.28.900
 
 ## bug fixes
 
@@ -35,14 +44,14 @@ sequence of operations: kmeans, partitioning, k_subset,
 then anno_df, marked rows.
 * `nmatlist2heatmaps()` changed the default `ht_gap` down to 3 mm.
 
-# platjam version 0.0.27.900
+# platjam 0.0.27.900
 
 ## changes to existing functions
 
 * Numerous small bug fixes in `nmatlist2heatmaps()`, mostly in
 handling annotation categorical color legends.
 
-# platjam version 0.0.26.900
+# platjam 0.0.26.900
 
 ## changes to existing functions
 
@@ -63,7 +72,7 @@ color layout instead of `ncol` -- jokergoo::ComplexHeatmap
 kindly updated the package to handle both, but nrow is more
 definitive in this use case.
 
-# platjam version 0.0.25.900
+# platjam 0.0.25.900
 
 ## bug fixes
 
@@ -71,7 +80,7 @@ definitive in this use case.
 output that referred to nonexistent object. Also removed `verbose=TRUE`
 from calling function `save_salmon_qc_xlsx()`.
 
-# platjam version 0.0.24.900
+# platjam 0.0.24.900
 
 ## new functions
 
@@ -87,7 +96,7 @@ part of `jamba::writeOpenxlsx()` and
 * `set_xlsx_colwidths()` and `set_xlsx_rowheights()` define
 fixed column width and row height, respectively, for `.xlsx` files.
 
-# platjam version 0.0.23.900
+# platjam 0.0.23.900
 
 ## new functions
 
@@ -129,7 +138,7 @@ the `main_heatmap` using only the rows being displayed.
 around the heatmap. It can be supplied as a vector, to control the
 border around each heatmap if needed.
 
-# platjam version 0.0.22.900
+# platjam 0.0.22.900
 
 ## changes to existing functions
 
@@ -147,14 +156,14 @@ at zero.
 * `nmatlist2heatmaps()` no longer requires `ylims` and uses `ylim=NULL`
 properly.
 
-# platjam version 0.0.21.900
+# platjam 0.0.21.900
 
 ## changes to existing functions
 
 * `parse_ucsc_gokey()` was updated to recognize bigBed/bb files
 can not become overlay tracks.
 
-# platjam version 0.0.20.900
+# platjam 0.0.20.900
 
 ## changes to existing functions
 
@@ -162,7 +171,7 @@ can not become overlay tracks.
 in the template for multiWig tracks. Apparently a label is displayed
 and it uses the internal hub number as a prefix by default.
 
-# platjam version 0.0.19.900
+# platjam 0.0.19.900
 
 ## new functions
 
@@ -177,7 +186,7 @@ to find the root directory of a Salmon run given any Salmon output
 file. It searches for the root directory that contains the file
 `"cmd_info.json"`.
 
-# platjam version 0.0.18.900
+# platjam 0.0.18.900
 
 ## Changes to existing functions
 
@@ -186,7 +195,7 @@ docs, to accept `"linear"` as a valid name (which does not change
 the input data), and to parse the input `transform` values in
 order to assign reasonable names where possible.
 
-# platjam version 0.0.17.900
+# platjam 0.0.17.900
 
 ## Bug fixes
 
@@ -194,7 +203,7 @@ order to assign reasonable names where possible.
 be more, covering the host of assumptions made for the panel_groups,
 signal_ceiling, and ylims arguments.
 
-# platjam version 0.0.16.900
+# platjam 0.0.16.900
 
 ## Changes to `nmatlist2heatmaps()`
 
@@ -224,7 +233,7 @@ even more detail use `verbose=2`.
 It takes a numeric matrix, and ceiling, and returns what I determines
 to be the appropriate ceiling to use.
 
-# platjam version 0.0.15.900
+# platjam 0.0.15.900
 
 ## Changes to existing functions
 
@@ -245,7 +254,7 @@ groups used to apply consistent y-axis ylims values per group. By default
 if `nmat_colors` is not supplied, then `colorjam::group2colors(panel_groups)`
 is used to define group colors.
 
-# platjam version 0.0.14.900
+# platjam 0.0.14.900
 
 ## Bug fixes
 
@@ -259,7 +268,7 @@ number of coverage matrices.
 * `nmatlist2heatmaps()` fixed bug where argument `axis_name_rot` was
 not defined in the function itself.
 
-# platjam version 0.0.13.900
+# platjam 0.0.13.900
 
 ## Enhancements
 
@@ -268,14 +277,14 @@ in numeric columns of `anno_df`, opting to use quantile ranges
 `c(0.005, 0.995)` to help trim extreme values. Also changed `"purple"`
 to `"Purples"` to use the `RColorBrewer` purple color gradient.
 
-# platjam version 0.0.12.900
+# platjam 0.0.12.900
 
 ## bug fixes
 
 * `get_numeric_transform()` bug fixed wrong argument name used inside
 the function. Should also resolve issues with `nmatlist2heatmaps()`.
 
-# platjam version 0.0.11.900
+# platjam 0.0.11.900
 
 ## new functions
 
@@ -283,7 +292,7 @@ the function. Should also resolve issues with `nmatlist2heatmaps()`.
 a `SummarizedExperiment` object suitable for use in omics-style
 analyses.
 
-# platjam version 0.0.10.900
+# platjam 0.0.10.900
 
 ## enhancements
 
@@ -322,7 +331,7 @@ values, after which the environment can be used with the `glue`
 package to update a track snippet template for each track in a set.
 
 
-# platjam version 0.0.9.900
+# platjam 0.0.9.900
 
 ## enhancements
 
@@ -330,14 +339,14 @@ package to update a track snippet template for each track in a set.
 input, and will process them and return a list of normalizedMatrix
 objects, ready to go directly into `nmatlist2heatmaps()`.
 
-# platjam version 0.0.8.900
+# platjam 0.0.8.900
 
 ## bug fixes
 
 * `nmatlist2heatmaps()` fixed bug in placement of argument
 show_error, now properly placed inside `EnrichedHeatmap::anno_enriched()`.
 
-# platjam version 0.0.7.900
+# platjam 0.0.7.900
 
 ## changes
 
@@ -356,7 +365,7 @@ EnrichedHeatmap. It optionally scales each row using
 * `rowNormScale()` applies `jamba::normScale()` to each
 row of a matrix.
 
-# platjam version 0.0.6.900
+# platjam 0.0.6.900
 
 ## changes
 
@@ -372,14 +381,14 @@ defining different k-means clustering methods, including
 `c("pearson","correlation")` if the `"amap"`
 package is installed.
 
-# platjam version 0.0.5.900
+# platjam 0.0.5.900
 
 ## changes
 
 * Version bump while debugging logistics with 
 `nmatlist2heatmaps()` argument `transform`.
 
-# platjam version 0.0.4.900
+# platjam 0.0.4.900
 
 ## changes
 
@@ -388,7 +397,7 @@ to each heatmap, with `transform` values recycled to the
 `length(nmatlist)`, to allow control over mathematical
 transformation of each numeric matric.
 
-# platjam version 0.0.3.900
+# platjam 0.0.3.900
 
 ## changes
 
@@ -400,7 +409,7 @@ order of user-supplied partition information.
 still testing the combination of partitions and row labels
 which appear misaligned.
 
-# platjam version 0.0.2.900
+# platjam 0.0.2.900
 
 ## changes
 
@@ -408,14 +417,14 @@ which appear misaligned.
 resolving an issue with installing on R-3.5.0 when the
 package said it required R-3.5.1 (and did not).
 
-# platjam version 0.0.2.900
+# platjam 0.0.2.900
 
 ## new function
 
 * `nmatlist2heatmaps()` creates multiple coverage heatmaps
 as the result of importing data with `coverage_matrix2nmat()`.
 
-# platjam version 0.0.1.900
+# platjam 0.0.1.900
 
 Initial release.
 

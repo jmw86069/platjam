@@ -1195,7 +1195,9 @@ nmatlist2heatmaps <- function
             idx_range <- range(pretty(unlist(idx_ranges)));
             idx_range;
          });
-         ylims <- panel_ylims[panel_groups];
+         if (length(ylims) == 0) {
+            ylims <- panel_ylims[panel_groups];
+         }
          if (length(ylims) > 0 && verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
                "panel_groups ylims: ",
@@ -1306,22 +1308,13 @@ nmatlist2heatmaps <- function
          signal_name <- nmat_names[i];
       }
 
-      ## For now, do not word wrap, let user do that
-      if (1 == 2) {
-         signal_name <- gsub("^[\n ]+|[\n ]+$",
-            "",
-            gsub("\n[\n ]*",
-               "\n",
-               signal_name))
-      }
-
       color <- nmat_colors[[i]];
       if (length(color) == 0 || is.na(color)) {
          color <- "aquamarine4";
       }
       ## Define ylim
       if (length(ylims) > 0) {
-         ylim <- ylims[[i]];
+         ylim <- sort(ylims[[i]]);
       } else {
          ylim <- NULL;
       }
@@ -1357,19 +1350,19 @@ nmatlist2heatmaps <- function
             color_txt <- color;
          }
          jamba::printDebug("nmatlist2heatmaps(): ",
-            "signal_name:",
+            "signal_name:\n'",
             signal_name,
-            ", target_name:",
+            "',\ntarget_name:",
             target_name,
-            ", color:",
+            ",\ncolor:",
             color_txt,
-            ", ylim=(", jamba::cPaste(ylim_txt), ")",
+            ",\nylim=(", jamba::cPaste(ylim_txt), ")",
             fgText=c(
                rep(list("darkorange",
                   "dodgerblue"),
                   length.out=6),
                NA),
-            bgText=c(
+            bgText=as.list(
                rep(list(NA),
                   length.out=6),
                color_txt)
