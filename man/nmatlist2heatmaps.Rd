@@ -29,6 +29,7 @@ nmatlist2heatmaps(
   legend_max_ncol = 2,
   legend_base_nrow = 5,
   legend_max_labels = 40,
+  show_heatmap_legend = TRUE,
   hm_nrow = 1,
   transform = "none",
   signal_ceiling = NULL,

@@ -1,3 +1,13 @@
+# platjam 0.0.32.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()` new argument `show_heatmap_legend` is
+recycled to the `length(nmatlist)` to allow hiding legends
+for certain heatmaps. This update is intended when heatmaps
+are grouped by `panel_groups` which allows multiple heatmaps
+to have the same shared numeric color mapping.
+
 # platjam 0.0.31.900
 
 ## updates

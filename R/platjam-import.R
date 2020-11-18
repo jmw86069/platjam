@@ -494,6 +494,7 @@ nmatlist2heatmaps <- function
  legend_max_ncol=2,
  legend_base_nrow=5,
  legend_max_labels=40,
+ show_heatmap_legend=TRUE,
  hm_nrow=1,
  transform="none",
  #transform=jamba::log2signed,
@@ -523,6 +524,8 @@ nmatlist2heatmaps <- function
    #
    return_type <- match.arg(return_type);
    profile_value <- match.arg(profile_value);
+   show_heatmap_legend <- rep(show_heatmap_legend,
+      length.out=length(nmatlist));
    if (length(seed) > 0) {
       set.seed(seed);
    }
@@ -849,10 +852,14 @@ nmatlist2heatmaps <- function
       p_num <- length(levels(partition[rows]));
       p_ncol <- min(c(ceiling(p_num / legend_base_nrow), legend_max_ncol));
       p_nrow <- ceiling(p_num / p_ncol);
+      p_at <- jamba::mixedSort(unique(partition[rows]));
+      p_labels <- gsub("\n", " ", p_at);
       p_heatmap_legend_param <- list(
          title_position="topleft",
          border="black",
-         nrow=p_nrow
+         nrow=p_nrow,
+         at=p_at,
+         labels=p_labels
       )
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
          border=FALSE,
@@ -1023,6 +1030,13 @@ nmatlist2heatmaps <- function
             i_title <- jamba::cPaste(strwrap(i, width=15), sep="\n");
             if (a_num <= 10) {
                ## display distinct steps
+               if (is.numeric(i1)) {
+                  i1_at <- sort(unique(i1));
+                  i1_labels <- jamba::formatInt(i1_at);
+               } else {
+                  i1_at <- jamba::mixedSort(unique(i1));
+                  i1_labels <- gsub("\n", " ", i1_at);
+               }
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
                      "annotation_legend_param colname:", i,
@@ -1034,7 +1048,8 @@ nmatlist2heatmaps <- function
                list(
                   title=i_title,
                   title_position="topleft",
-                  at=sort(unique(i1)),
+                  at=i1_at,
+                  labels=i1_labels,
                   color_bar="discrete",
                   border="black",
                   nrow=a_nrow
@@ -1049,6 +1064,7 @@ nmatlist2heatmaps <- function
                list(
                   direction="horizontal",
                   title=i,
+                  labels_rot=90,
                   legend_width=legend_width,
                   title_position="topleft",
                   border="black",
@@ -1059,9 +1075,18 @@ nmatlist2heatmaps <- function
                      "annotation_legend_param colname:", i,
                      " discrete categorical color legend");
                }
+               if (is.numeric(i1)) {
+                  i1_at <- sort(unique(i1));
+                  i1_labels <- jamba::formatInt(i1_at);
+               } else {
+                  i1_at <- jamba::mixedSort(unique(i1));
+                  i1_labels <- gsub("\n", " ", i1_at);
+               }
                list(
                   title=i,
                   title_position="topleft",
+                  at=i1_at,
+                  labels=i1_labels,
                   border="black",
                   nrow=a_nrow
                )
@@ -1293,6 +1318,28 @@ nmatlist2heatmaps <- function
    #   row_order <- seq_along(rows);
    #}
 
+   # expand heatmap_legend_param to each heatmap
+   if (length(heatmap_legend_param) == 0) {
+      legend_width <- grid::unit(3, "cm");
+      heatmap_legend_param_1 <- list(direction="horizontal",
+         legend_width=legend_width,
+         title_position="topleft",
+         border="black",
+         grid_width=grid::unit(1, "npc"));
+      heatmap_legend_param <- rep(list(heatmap_legend_param_1),
+         length.out=length(nmatlist));
+   }
+   if (any(c("legend_width", "border", "direction", "title_position") %in% names(heatmap_legend_param)) ||
+         length(heatmap_legend_param) != length(nmatlist)) {
+      if (any(c("legend_width", "border", "direction", "title_position") %in% names(heatmap_legend_param))) {
+         heatmap_legend_param <- rep(list(heatmap_legend_param),
+            length.out=length(nmatlist));
+      } else {
+         heatmap_legend_param <- rep(heatmap_legend_param,
+            length.out=length(nmatlist));
+      }
+   }
+
    #############################
    ## Iterate each heatmap
    if (verbose) {
@@ -1403,14 +1450,6 @@ nmatlist2heatmaps <- function
                lens=lens[[i]]);
          }
       }
-      if (length(heatmap_legend_param) == 0) {
-         legend_width <- grid::unit(3, "cm");
-         heatmap_legend_param <- list(direction="horizontal",
-            legend_width=legend_width,
-            title_position="topleft",
-            border="black",
-            grid_width=grid::unit(1, "npc"));
-      }
 
       ## if partition is a factor, call factor() which forces
       ## it to drop any missing factor levels
@@ -1438,7 +1477,8 @@ nmatlist2heatmaps <- function
                ylim=ylim,
                show_error=show_error)
          ),
-         heatmap_legend_param=heatmap_legend_param,
+         show_heatmap_legend=show_heatmap_legend[[i]],
+         heatmap_legend_param=heatmap_legend_param[[i]],
          axis_name_gp=axis_name_gp[[i]],
          axis_name=axis_name[[i]],
          axis_name_rot=axis_name_rot,
