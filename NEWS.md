@@ -1,3 +1,17 @@
+# platjam 0.0.33.900
+
+## bug fixes
+
+* `nmatlist2heatmaps()` encountered an error when displaying
+heatmap legend with `direction="horizontal"` which appears
+to be specific to R version R-3.6.1, and is not present
+in R-4.0.0 and above. Specifically I believe this error
+is from `grid` package version `3.6.1` and how the function
+`unit.arithmetic()` is called by ComplexHeatmap. Nonetheless,
+the workaround is to force `direction="vertical"` when
+`grid` package version is below `4.0.0`.
+
+
 # platjam 0.0.32.900
 
 ## changes to existing functions

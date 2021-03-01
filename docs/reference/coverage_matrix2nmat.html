@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Import genome coverage matrix files — coverage_matrix2nmat" />
 <meta property="og:description" content="Import genome coverage matrix files" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.24.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.33.9000</span>
       </span>
     </div>
 
@@ -90,7 +93,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jmw86069/platjam">
+  <a href="http://github.com/jmw86069/platjam/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -109,7 +112,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Import genome coverage matrix files</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-import.R'><code>R/platjam-import.R</code></a></small>
+    <small class="dont-index">Source: <a href='http://github.com/jmw86069/platjam/blob/master/R/platjam-import.R'><code>R/platjam-import.R</code></a></small>
     <div class="hidden name"><code>coverage_matrix2nmat.Rd</code></div>
     </div>
 
@@ -117,22 +120,22 @@
     <p>Import genome coverage matrix files</p>
     </div>
 
-    <pre class="usage"><span class='fu'>coverage_matrix2nmat</span>(
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>signal_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>target_name</span> <span class='kw'>=</span> <span class='st'>"target"</span>,
-  <span class='kw'>background</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>smooth</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>target_is_single_point</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>signal_is_categorical</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>mat_grep</span> <span class='kw'>=</span> <span class='st'>"[-0-9]+:[-0-9]+"</span>,
-  <span class='kw'>upstream_grep</span> <span class='kw'>=</span> <span class='st'>"^[-]"</span>,
-  <span class='kw'>downstream_grep</span> <span class='kw'>=</span> <span class='st'>"^[^-]"</span>,
-  <span class='kw'>target_grep</span> <span class='kw'>=</span> <span class='st'>"^0$"</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>coverage_matrix2nmat</span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  filename <span class='op'>=</span> <span class='cn'>NULL</span>,
+  signal_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  target_name <span class='op'>=</span> <span class='st'>"target"</span>,
+  background <span class='op'>=</span> <span class='fl'>0</span>,
+  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  target_is_single_point <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  signal_is_categorical <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  mat_grep <span class='op'>=</span> <span class='st'>"[-0-9]+:[-0-9]+"</span>,
+  upstream_grep <span class='op'>=</span> <span class='st'>"^[-]"</span>,
+  downstream_grep <span class='op'>=</span> <span class='st'>"^[^-]"</span>,
+  target_grep <span class='op'>=</span> <span class='st'>"^0$"</span>,
+  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -190,7 +193,7 @@ default pattern expects the format <code>"-200:-100"</code>.</p></td>
       <td><p>character regular expression pattern
 used to identify upstream colnames from values that
 match <code>mat_grep</code>. The default assumes any region
-beginning <code><a href='https://rdrr.io/r/base/Arithmetic.html'>"-"</a></code> is negative and upstream the central
+beginning <code>"-"</code> is negative and upstream the central
 target region.</p></td>
     </tr>
     <tr>
@@ -247,53 +250,48 @@ function may change to call that function.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## There is a small example file to use for testing</span>
-<span class='no'>cov_file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"data"</span>, <span class='st'>"tss_coverage.matrix"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"platjam"</span>);
-<span class='no'>cov_file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"data"</span>, <span class='st'>"h3k4me1_coverage.matrix"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"platjam"</span>);
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>cov_file</span>) <span class='kw'>&gt;</span> <span class='fl'>0</span>) {
-   <span class='no'>nmat</span> <span class='kw'>&lt;-</span> <span class='fu'>coverage_matrix2nmat</span>(<span class='no'>cov_file</span>);
-   <span class='kw pkg'>jamba</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/jamba/man/printDebug.html'>printDebug</a></span>(<span class='st'>"signal_name: "</span>,
-      <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>nmat</span>, <span class='st'>"signal_name"</span>));
+<span class='va'>cov_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"data"</span>, <span class='st'>"tss_coverage.matrix"</span>, package<span class='op'>=</span><span class='st'>"platjam"</span><span class='op'>)</span>;
+<span class='va'>cov_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"data"</span>, <span class='st'>"h3k4me1_coverage.matrix"</span>, package<span class='op'>=</span><span class='st'>"platjam"</span><span class='op'>)</span>;
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>cov_file</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+   <span class='va'>nmat</span> <span class='op'>&lt;-</span> <span class='fu'>coverage_matrix2nmat</span><span class='op'>(</span><span class='va'>cov_file</span><span class='op'>)</span>;
+   <span class='fu'>jamba</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/jamba/man/printDebug.html'>printDebug</a></span><span class='op'>(</span><span class='st'>"signal_name: "</span>,
+      <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>nmat</span>, <span class='st'>"signal_name"</span><span class='op'>)</span><span class='op'>)</span>;
 
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/message.html'>suppressPackageStartupMessages</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>EnrichedHeatmap</span>))) {
-   <span class='no'>color</span> <span class='kw'>&lt;-</span> <span class='st'>"red3"</span>;
-   <span class='no'>signal_name</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>nmat</span>, <span class='st'>"signal_name"</span>);
-   <span class='no'>k</span> <span class='kw'>&lt;-</span> <span class='fl'>6</span>;
-   <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>);
-   <span class='no'>partition</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/kmeans.html'>kmeans</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fl'>1</span>+<span class='no'>nmat</span>), <span class='kw'>centers</span><span class='kw'>=</span><span class='no'>k</span>)$<span class='no'>cluster</span>;
-   <span class='no'>EH</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html'>EnrichedHeatmap</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fl'>1</span>+<span class='no'>nmat</span>),
-      <span class='kw'>split</span><span class='kw'>=</span><span class='no'>partition</span>,
-      <span class='kw'>pos_line</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
-      <span class='kw'>use_raster</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
-      <span class='kw'>col</span><span class='kw'>=</span><span class='kw pkg'>jamba</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/jamba/man/getColorRamp.html'>getColorRamp</a></span>(<span class='no'>color</span>, <span class='kw'>n</span><span class='kw'>=</span><span class='fl'>10</span>),
-      <span class='kw'>top_annotation</span><span class='kw'>=</span><span class='fu'>HeatmapAnnotation</span>(
-         <span class='kw'>lines</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html'>anno_enriched</a></span>(<span class='kw'>gp</span><span class='kw'>=</span><span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span>(<span class='kw'>col</span><span class='kw'>=</span><span class='kw pkg'>colorjam</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>rainbowJam</a></span>(<span class='no'>k</span>)))
-      ),
-      <span class='kw'>axis_name_gp</span><span class='kw'>=</span><span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span>(<span class='kw'>fontsize</span><span class='kw'>=</span><span class='fl'>8</span>),
-      <span class='kw'>name</span><span class='kw'>=</span><span class='no'>signal_name</span>,
-      <span class='kw'>column_title</span><span class='kw'>=</span><span class='no'>signal_name</span>
-   );
-   <span class='no'>PHM</span> <span class='kw'>&lt;-</span> <span class='fu'>Heatmap</span>(<span class='no'>partition</span>,
-      <span class='kw'>use_raster</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
-      <span class='kw'>col</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='kw pkg'>colorjam</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>rainbowJam</a></span>(<span class='no'>k</span>),
-         <span class='kw'>names</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span>(<span class='no'>k</span>))),
-      <span class='kw'>name</span><span class='kw'>=</span><span class='st'>"partition"</span>,
-      <span class='kw'>show_row_names</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
-      <span class='kw'>width</span><span class='kw'>=</span><span class='fu'>unit</span>(<span class='fl'>3</span>, <span class='st'>"mm"</span>));
-   <span class='fu'>draw</span>(<span class='no'>PHM</span> + <span class='no'>EH</span>, <span class='kw'>main_heatmap</span><span class='kw'>=</span><span class='fl'>2</span>);
-}
-}</div><div class='output co'>#&gt; ##  (<span style='color: #00BBBB;font-weight: bold;'>15:25:40</span><span>) 08May2020:  </span><span style='color: #BB0000;'>signal_name: </span><span style='color: #00BBBB;'>h3k4me1_coverage.matrix</span><span> </div><div class='img'><img src='coverage_matrix2nmat-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/message.html'>suppressPackageStartupMessages</a></span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/jokergoo/EnrichedHeatmap'>EnrichedHeatmap</a></span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+   <span class='va'>color</span> <span class='op'>&lt;-</span> <span class='st'>"red3"</span>;
+   <span class='va'>signal_name</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>nmat</span>, <span class='st'>"signal_name"</span><span class='op'>)</span>;
+   <span class='va'>k</span> <span class='op'>&lt;-</span> <span class='fl'>6</span>;
+   <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span>;
+   <span class='va'>partition</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/kmeans.html'>kmeans</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>nmat</span><span class='op'>)</span>, centers<span class='op'>=</span><span class='va'>k</span><span class='op'>)</span><span class='op'>$</span><span class='va'>cluster</span>;
+   <span class='va'>EH</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html'>EnrichedHeatmap</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>nmat</span><span class='op'>)</span>,
+      split<span class='op'>=</span><span class='va'>partition</span>,
+      pos_line<span class='op'>=</span><span class='cn'>FALSE</span>,
+      use_raster<span class='op'>=</span><span class='cn'>TRUE</span>,
+      col<span class='op'>=</span><span class='fu'>jamba</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/jamba/man/getColorRamp.html'>getColorRamp</a></span><span class='op'>(</span><span class='va'>color</span>, n<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>,
+      top_annotation<span class='op'>=</span><span class='fu'>HeatmapAnnotation</span><span class='op'>(</span>
+         lines<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html'>anno_enriched</a></span><span class='op'>(</span>gp<span class='op'>=</span><span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span><span class='op'>(</span>col<span class='op'>=</span><span class='fu'>colorjam</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>rainbowJam</a></span><span class='op'>(</span><span class='va'>k</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+      <span class='op'>)</span>,
+      axis_name_gp<span class='op'>=</span><span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span><span class='op'>(</span>fontsize<span class='op'>=</span><span class='fl'>8</span><span class='op'>)</span>,
+      name<span class='op'>=</span><span class='va'>signal_name</span>,
+      column_title<span class='op'>=</span><span class='va'>signal_name</span>
+   <span class='op'>)</span>;
+   <span class='va'>PHM</span> <span class='op'>&lt;-</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>partition</span>,
+      use_raster<span class='op'>=</span><span class='cn'>TRUE</span>,
+      col<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span><span class='op'>(</span><span class='fu'>colorjam</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/colorjam/man/rainbowJam.html'>rainbowJam</a></span><span class='op'>(</span><span class='va'>k</span><span class='op'>)</span>,
+         names<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_len</a></span><span class='op'>(</span><span class='va'>k</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>,
+      name<span class='op'>=</span><span class='st'>"partition"</span>,
+      show_row_names<span class='op'>=</span><span class='cn'>FALSE</span>,
+      width<span class='op'>=</span><span class='fu'>unit</span><span class='op'>(</span><span class='fl'>3</span>, <span class='st'>"mm"</span><span class='op'>)</span><span class='op'>)</span>;
+   <span class='fu'>draw</span><span class='op'>(</span><span class='va'>PHM</span> <span class='op'>+</span> <span class='va'>EH</span>, main_heatmap<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>;
+<span class='op'>}</span>
+<span class='op'>}</span>
+</div><div class='output co'>#&gt; ##  (<span style='color: #00D7D7;font-weight: bold;'>17:46:31</span><span>) 01Mar2021:  </span><span style='color: #FF8700;'>signal_name: </span><span style='color: #00AFFF;'>h3k4me1_coverage.matrix</span><span> </div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘S4Vectors’ was built under R version 3.6.3</span></div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘IRanges’ was built under R version 3.6.2</span></div><div class='img'><img src='coverage_matrix2nmat-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -304,7 +302,7 @@ function may change to call that function.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

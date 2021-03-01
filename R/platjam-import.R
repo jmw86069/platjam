@@ -1321,7 +1321,14 @@ nmatlist2heatmaps <- function
    # expand heatmap_legend_param to each heatmap
    if (length(heatmap_legend_param) == 0) {
       legend_width <- grid::unit(3, "cm");
-      heatmap_legend_param_1 <- list(direction="horizontal",
+      # force direction="vertical" for grid version below 4.0
+      if (compareVersion("3.99", as.character(packageVersion("grid"))) > 0) {
+         heatmap_legend_direction <- "vertical";
+      } else {
+         heatmap_legend_direction <- "horizontal";
+      }
+      heatmap_legend_param_1 <- list(
+         direction=heatmap_legend_direction,
          legend_width=legend_width,
          title_position="topleft",
          border="black",
@@ -1464,6 +1471,28 @@ nmatlist2heatmaps <- function
             use_colors <- colorjam::rainbowJam(n);
          }
       }
+      # New 01mar2021: check heatmap_legend_param direction for grid version < 4
+      if ("direction" %in% names(heatmap_legend_param[[i]])) {
+         if (compareVersion("3.99", as.character(packageVersion("grid"))) > 0) {
+            if (!"vertical" %in% heatmap_legend_param[[i]]$direction) {
+               heatmap_legend_param[[i]]$direction <- "vertical";
+               if (verbose > 1) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     c("Forced heatmap_legend_param direction '", "vertical", "'"),
+                     sep="",
+                     fgText=c("darkorange2", "red"))
+               }
+            }
+            if ("grid_width" %in% names(heatmap_legend_param[[i]])) {
+               if (verbose > 1) {
+                  jamba::printDebug("nmatlist2heatmaps(): ",
+                     "Forced grid_width=grid::unit(0.5 'cm')");
+               }
+               heatmap_legend_param[[i]]$grid_width <- grid::unit(0.5, "cm");
+            }
+         }
+      }
+
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
          split=partition[rows],
          pos_line=FALSE,

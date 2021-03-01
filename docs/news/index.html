@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -53,7 +57,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -67,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.24.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.33.9000</span>
       </span>
     </div>
 
@@ -88,7 +92,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jmw86069/platjam">
+  <a href="http://github.com/jmw86069/platjam/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -106,18 +110,532 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/jmw86069/platjam/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      <small>Source: <a href='http://github.com/jmw86069/platjam/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="platjam-0033900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.33.900">
+<a href="#platjam-0033900" class="anchor"></a>platjam 0.0.33.900</h1>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> encountered an error when displaying heatmap legend with <code>direction="horizontal"</code> which appears to be specific to R version R-3.6.1, and is not present in R-4.0.0 and above. Specifically I believe this error is from <code>grid</code> package version <code>3.6.1</code> and how the function <code>unit.arithmetic()</code> is called by ComplexHeatmap. Nonetheless, the workaround is to force <code>direction="vertical"</code> when <code>grid</code> package version is below <code>4.0.0</code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0032900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.32.900">
+<a href="#platjam-0032900" class="anchor"></a>platjam 0.0.32.900</h1>
+<div id="changes-to-existing-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>show_heatmap_legend</code> is recycled to the <code><a href="https://rdrr.io/r/base/length.html">length(nmatlist)</a></code> to allow hiding legends for certain heatmaps. This update is intended when heatmaps are grouped by <code>panel_groups</code> which allows multiple heatmaps to have the same shared numeric color mapping.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0031900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.31.900">
+<a href="#platjam-0031900" class="anchor"></a>platjam 0.0.31.900</h1>
+<div id="updates" class="section level2">
+<h2 class="hasAnchor">
+<a href="#updates" class="anchor"></a>updates</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> updated so <code>ylims</code> will take priority over <code>panel_groups=TRUE</code> which defines its own ylims ranges.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0028900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.28.900">
+<a href="#platjam-0028900" class="anchor"></a>platjam 0.0.28.900</h1>
+<div id="bug-fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-1" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> bug with no <code>k_clusters</code>, no <code>partition</code>, and no <code>k_colors</code> would fail during profile plot because it had NULL color.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0028900-1" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.28.900">
+<a href="#platjam-0028900-1" class="anchor"></a>platjam 0.0.28.900</h1>
+<div id="bug-fixes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-2" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> does more work to validate <code>rows</code> with respect to rownames of <code>nmatlist</code>, <code><a href="https://rdrr.io/r/base/colnames.html">rownames(anno_df)</a></code>, and <code><a href="https://rdrr.io/r/base/names.html">names(partition)</a></code> to ensure everything is properly synchronized. The smallest common set of <code>rows</code> will be used.</li>
+</ul>
+</div>
+<div id="changes-to-existing-functions-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-1" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> now allows <code>partition</code> and <code>k_clusters</code> to be combined, so rows can be both partitioned, and kmeans clustered. Labels are created <code>"partition - cluster_number"</code> and are ordered by partition then kmeans cluster number. So if <code>partition</code> is a factor with ordered levels, that level will be preserved in the output.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>color_sub</code> which allows defined categorical colors by sending a named vector. Any column in <code>anno_df</code> all of whose values are in <code><a href="https://rdrr.io/r/base/names.html">names(color_sub)</a></code> will be colored accordingly.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> will use <code>k_subset</code> to re-order partitions, in addition to plotting only the subset of row partitions. The code was change to handle the sequence of operations: kmeans, partitioning, k_subset, then anno_df, marked rows.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> changed the default <code>ht_gap</code> down to 3 mm.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0027900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.27.900">
+<a href="#platjam-0027900" class="anchor"></a>platjam 0.0.27.900</h1>
+<div id="changes-to-existing-functions-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-2" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>Numerous small bug fixes in <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code>, mostly in handling annotation categorical color legends.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0026900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.26.900">
+<a href="#platjam-0026900" class="anchor"></a>platjam 0.0.26.900</h1>
+<div id="changes-to-existing-functions-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-3" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new default <code>transform="none"</code>, previously was <code><a href="https://rdrr.io/pkg/jamba/man/log2signed.html">jamba::log2signed()</a></code> which enforced log2 transformation. Frankly not sure which is best, might depend upon the range of data, which depends upon the type of coverage signal being used.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> now treats annotation columns in <code>anno_df</code> as bi-directional when the max value is &lt;= 50, which helps in cases that have values <code><a href="https://rdrr.io/r/base/c.html">c(-1, 0, 1)</a></code> and sometimes only <code><a href="https://rdrr.io/r/base/c.html">c(0, 1)</a></code>. The end result is more numeric columns will have the same color gradient (blue-white-red).</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> displays legend with distinct color steps for <code>anno_df</code> columns with 10 or fewer distinct values, which is mostly helpful with a small number of integer values.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> uses <code>nrow</code> for discrete annotation color layout instead of <code>ncol</code> – jokergoo::ComplexHeatmap kindly updated the package to handle both, but nrow is more definitive in this use case.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0025900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.25.900">
+<a href="#platjam-0025900" class="anchor"></a>platjam 0.0.25.900</h1>
+<div id="bug-fixes-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-3" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/applyXlsxConditionalFormatByColumn.html">applyXlsxConditionalFormatByColumn()</a></code> fixed bug in verbose output that referred to nonexistent object. Also removed <code>verbose=TRUE</code> from calling function <code><a href="../reference/save_salmon_qc_xlsx.html">save_salmon_qc_xlsx()</a></code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0024900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.24.900">
+<a href="#platjam-0024900" class="anchor"></a>platjam 0.0.24.900</h1>
+<div id="new-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/save_salmon_qc_xlsx.html">save_salmon_qc_xlsx()</a></code> saves output from <code><a href="../reference/get_salmon_meta.html">get_salmon_meta()</a></code> in a convenient Excel <code>.xlsx</code> format, with four worksheets showing different aspects of data quality. It returns a <code>list</code> of <code>data.frame</code> summaries invisibly, for further review.</li>
+<li>
+<code><a href="../reference/applyXlsxConditionalFormatByColumn.html">applyXlsxConditionalFormatByColumn()</a></code> applies conditional formatting using values in each column, rather than using a fixed range for all columns. This function will become part of <code><a href="https://rdrr.io/pkg/jamba/man/writeOpenxlsx.html">jamba::writeOpenxlsx()</a></code> and <code><a href="https://rdrr.io/pkg/jamba/man/applyXlsxConditionalFormat.html">jamba::applyXlsxConditionalFormat()</a></code> in the near future.</li>
+<li>
+<code><a href="../reference/set_xlsx_colwidths.html">set_xlsx_colwidths()</a></code> and <code><a href="../reference/set_xlsx_rowheights.html">set_xlsx_rowheights()</a></code> define fixed column width and row height, respectively, for <code>.xlsx</code> files.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0023900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.23.900">
+<a href="#platjam-0023900" class="anchor"></a>platjam 0.0.23.900</h1>
+<div id="new-functions-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-1" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/color_complement.html">color_complement()</a></code> takes input color, rotates the color hue 180 degrees to make a complement color. It is unique in that it uses warped hue (see <code><a href="https://rdrr.io/pkg/colorjam/man/h2hw.html">colorjam::h2hw()</a></code>) which therefore uses red-yellow-blue color wheel instead of red-green-blue, which is much better for color operations like these. This function will almost certainly be moved into the <code>colorjam</code> package. The examples show how to make a divergent color gradient from a single color.</li>
+</ul>
+</div>
+<div id="changes-to-existing-functions-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-4" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>nmat_names</code> used to supply custom names for each heatmap, otherwise the attribute <code>"signal_name"</code> values are used.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> fixed error caused by <code>use_raster=TRUE</code> and any operation that expects to create a grid graphical object, such as <code><a href="https://rdrr.io/pkg/multienrichjam/man/grid_with_title.html">multienrichjam::grid_with_title()</a></code>, or multi-row output specified with <code>hm_nrow=2</code>.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new arguments <code>heatmap_legend_param</code> and <code>annotation_legend_param</code> allow customizing the legends in detail, passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">ComplexHeatmap::Heatmap()</a></code>. However, default settings show color gradients horizontally, which may save some screen space.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new arguments <code>title</code> and <code>caption</code> invoke a prototype method that calls <code><a href="https://rdrr.io/pkg/multienrichjam/man/grid_with_title.html">multienrichjam::grid_with_title()</a></code> to position an overall title and caption above and below the heatmaps, respectively. When supplied, these sections are displayed and the heatmaps are resized accordingly.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> now properly handles <code>k_subset</code> to plot a subset of clusters provided by <code>partition</code> or after <code>k_clusters</code> is used to create clusters. Mostly useful for follow-up plots to drill down into one or more specific clusters.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> now properly handles <code>row_order</code> for edge cases like <code>k_subset</code>, or when <code>row_order=NULL</code>; also <code>row_order=TRUE</code> will enable the default <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/enriched_score.html">EnrichedHeatmap::enriched_score()</a></code> for the <code>main_heatmap</code> using only the rows being displayed.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>border</code> whether to draw a border around the heatmap. It can be supplied as a vector, to control the border around each heatmap if needed.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0022900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.22.900">
+<a href="#platjam-0022900" class="anchor"></a>platjam 0.0.22.900</h1>
+<div id="changes-to-existing-functions-5" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-5" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> accepts input <code>nmat_colors</code> with color functions, for example sending output from <code><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html">circlize::colorRamp2()</a></code>.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> when given a single color per matrix, when data is determined to have positive and negative values, it generates a divergent color ramp using the supplied color, and complementary color. To define a specific set of colors, supply a three color vector, the middle color will be fixed at zero.</li>
+</ul>
+</div>
+<div id="bug-fixes-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-4" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> no longer requires <code>ylims</code> and uses <code>ylim=NULL</code> properly.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0021900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.21.900">
+<a href="#platjam-0021900" class="anchor"></a>platjam 0.0.21.900</h1>
+<div id="changes-to-existing-functions-6" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-6" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/parse_ucsc_gokey.html">parse_ucsc_gokey()</a></code> was updated to recognize bigBed/bb files can not become overlay tracks.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0020900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.20.900">
+<a href="#platjam-0020900" class="anchor"></a>platjam 0.0.20.900</h1>
+<div id="changes-to-existing-functions-7" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-7" class="anchor"></a>changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/get_track_defaults.html">get_track_defaults()</a></code> was modified to include <code>shortLabel,longLabel</code> in the template for multiWig tracks. Apparently a label is displayed and it uses the internal hub number as a prefix by default.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0019900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.19.900">
+<a href="#platjam-0019900" class="anchor"></a>platjam 0.0.19.900</h1>
+<div id="new-functions-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-2" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/get_salmon_meta.html">get_salmon_meta()</a></code> is intended to load Salmon transcript quantification metadata from several output JSON files, returning results in a <code>data.frame</code> with one row per Salmon run. It combines various measured statistics from <code>"meta_info.json"</code>, <code>"cmd_info.json"</code>, and <code>"lib_format_counts.json"</code> so that multiple Salmon runs can be directly compared in a table format.</li>
+<li>
+<code><a href="../reference/get_salmon_root.html">get_salmon_root()</a></code> is a wrapper to <code><a href="https://rprojroot.r-lib.org//reference/find_root.html">rprojroot::find_root()</a></code>, intended to find the root directory of a Salmon run given any Salmon output file. It searches for the root directory that contains the file <code>"cmd_info.json"</code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0018900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.18.900">
+<a href="#platjam-0018900" class="anchor"></a>platjam 0.0.18.900</h1>
+<div id="changes-to-existing-functions-8" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-8" class="anchor"></a>Changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/get_numeric_transform.html">get_numeric_transform()</a></code> was updated to clean up the help docs, to accept <code>"linear"</code> as a valid name (which does not change the input data), and to parse the input <code>transform</code> values in order to assign reasonable names where possible.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0017900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.17.900">
+<a href="#platjam-0017900" class="anchor"></a>platjam 0.0.17.900</h1>
+<div id="bug-fixes-5" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-5" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Fixed various bugs in <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code>. No doubt there will be more, covering the host of assumptions made for the panel_groups, signal_ceiling, and ylims arguments.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0016900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.16.900">
+<a href="#platjam-0016900" class="anchor"></a>platjam 0.0.16.900</h1>
+<div id="changes-to-nmatlist2heatmaps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-nmatlist2heatmaps" class="anchor"></a>Changes to <code>nmatlist2heatmaps()</code>
+</h2>
+<ul>
+<li>Cool new feature: <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument <code>panel_group</code>, when it is defined, it calculates a shared <code>ylims</code> for each group of panels, and a shared <code>signal_ceiling</code> for each group of panels. The signal ceiling uses the supplied <code>signal_ceiling</code> for each panel (if supplied) then takes the maximum value for each group of panels. So if <code>signal_ceiling=0.8</code> it is treated as quantile 0.8, the 0.8 quantile is calculate for all non-zero values for each panel, then each group of panels uses the max for that group.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> the <code>ht_gap</code> gap between heatmaps is not applied between annotation heatmaps, instead <code>"1mm"</code> gap is used between annotation heatmaps. The purpose of <code>ht_gap</code> is to have enough gap between heatmaps so the y-axis profile plot labels can be displayed, but there are no y-axis labels for annotations.</li>
+<li>The default <code>lens</code> for <code>anno_df</code> numeric columns is now <code>lens=1</code>, reverting previous change <code>lens=2</code> which was causing gradients to be darker than expected.</li>
+<li>The verbose output is now more concise, and TRUE by default. For even more detail use <code>verbose=2</code>.</li>
+</ul>
+</div>
+<div id="new-functions-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-3" class="anchor"></a>New functions</h2>
+<ul>
+<li>
+<code><a href="../reference/get_nmat_ceiling.html">get_nmat_ceiling()</a></code> is a simple wrapper function called by <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> and not intended to be called directly. It takes a numeric matrix, and ceiling, and returns what I determines to be the appropriate ceiling to use.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0015900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.15.900">
+<a href="#platjam-0015900" class="anchor"></a>platjam 0.0.15.900</h1>
+<div id="changes-to-existing-functions-9" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-to-existing-functions-9" class="anchor"></a>Changes to existing functions</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> modified <code>signal_name</code> to clean up leading/trailing whitespace and return <code>\n</code>, and repeated return <code>\n</code> characters.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>ht_gap</code> used to define the gap between heatmap panels. This argument is intended to help reduce the overlap of the top y-axis profile labels in adjacent profile panels.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>axis_name</code>, as either a vector, or a list of vectors, used for x-axis labels across each panel.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>column_title_gp</code>, as either a <code><a href="https://rdrr.io/r/grid/gpar.html">grid::gpar</a></code> object, or list of gpar objects.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>profile_value</code>, passed to <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html">EnrichedHeatmap::anno_enriched()</a></code> to define the type of numeric summary to use for the profile plots.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>panel_groups</code>, character vector of groups used to apply consistent y-axis ylims values per group. By default if <code>nmat_colors</code> is not supplied, then <code><a href="https://rdrr.io/pkg/colorjam/man/group2colors.html">colorjam::group2colors(panel_groups)</a></code> is used to define group colors.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0014900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.14.900">
+<a href="#platjam-0014900" class="anchor"></a>platjam 0.0.14.900</h1>
+<div id="bug-fixes-6" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-6" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> fixed bug in handling argument <code>signal_ceiling</code>, which when the value is between 0 and 1 is treated as a quantile. The method now removes zero before the <code><a href="https://rdrr.io/r/stats/quantile.html">quantile()</a></code> calculation.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> fixed bug that wrongly expanded argument <code>axis_names_gp</code> as a list without realizing class <code>"gpar"</code> is also a list. Now <code>"gpar"</code> is wrapped in <code><a href="https://rdrr.io/r/base/list.html">list()</a></code> before expanding to the number of coverage matrices.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> fixed bug where argument <code>axis_name_rot</code> was not defined in the function itself.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0013900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.13.900">
+<a href="#platjam-0013900" class="anchor"></a>platjam 0.0.13.900</h1>
+<div id="enhancements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements" class="anchor"></a>Enhancements</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> altered the logic used to define color ranges in numeric columns of <code>anno_df</code>, opting to use quantile ranges <code><a href="https://rdrr.io/r/base/c.html">c(0.005, 0.995)</a></code> to help trim extreme values. Also changed <code>"purple"</code> to <code>"Purples"</code> to use the <code>RColorBrewer</code> purple color gradient.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0012900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.12.900">
+<a href="#platjam-0012900" class="anchor"></a>platjam 0.0.12.900</h1>
+<div id="bug-fixes-7" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-7" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/get_numeric_transform.html">get_numeric_transform()</a></code> bug fixed wrong argument name used inside the function. Should also resolve issues with <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0011900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.11.900">
+<a href="#platjam-0011900" class="anchor"></a>platjam 0.0.11.900</h1>
+<div id="new-functions-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-4" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/import_nanostring_rcc.html">import_nanostring_rcc()</a></code> reads Nanostring RCC files, and produces a <code>SummarizedExperiment</code> object suitable for use in omics-style analyses.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-0010900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.10.900">
+<a href="#platjam-0010900" class="anchor"></a>platjam 0.0.10.900</h1>
+<div id="enhancements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-1" class="anchor"></a>enhancements</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>signal_ceiling</code> defines a numerical ceiling for each input matrix, used to apply the color ramp to a defined numeric range. When <code>signal_ceiling</code> is between 0 and 1, it is assumed to be a quantile, so the appropriate quantile value is used as the ceiling. These values can be seen when <code>verbose=TRUE</code>.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument <code>transform</code> now accepts text string for transformation functions, such as <code>"log2signed"</code>, <code>"sqrt"</code>, <code>"cubert"</code>, etc. Any other string will try to match a function name in the R search path.</li>
+</ul>
+</div>
+<div id="new-functions-5" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-5" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/get_numeric_transform.html">get_numeric_transform()</a></code> is used to apply name-based transformations, called from <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code>.</li>
+</ul>
+</div>
+<div id="ucsc-genome-browser-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ucsc-genome-browser-functions" class="anchor"></a>UCSC genome browser functions</h2>
+<p>Some new functions were added to help create UCSC genome browser track hubs, which are fairly tedious to build manually.</p>
+<ul>
+<li>
+<code><a href="../reference/get_track_defaults.html">get_track_defaults()</a></code> returns default values for tracks, including some track snippet templates for composite and overlay track types.</li>
+<li>
+<code><a href="../reference/parse_ucsc_gokey.html">parse_ucsc_gokey()</a></code> is a parser for a specific track type, based upon prominent scientist Dr. Gokey, who defines a straightforward format for a series of grouped tracks.</li>
+<li>
+<code><a href="../reference/make_ucsc_trackname.html">make_ucsc_trackname()</a></code> creates a valid UCSC track name, removing invalid characters.</li>
+<li>
+<code><a href="../reference/assign_track_defaults.html">assign_track_defaults()</a></code> assigns track values to an environment which may already contain default values. New values override previous values, after which the environment can be used with the <code>glue</code> package to update a track snippet template for each track in a set.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-009900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.9.900">
+<a href="#platjam-009900" class="anchor"></a>platjam 0.0.9.900</h1>
+<div id="enhancements-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#enhancements-2" class="anchor"></a>enhancements</h2>
+<ul>
+<li>
+<code><a href="../reference/coverage_matrix2nmat.html">coverage_matrix2nmat()</a></code> now accepts a vector of files as input, and will process them and return a list of normalizedMatrix objects, ready to go directly into <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-008900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.8.900">
+<a href="#platjam-008900" class="anchor"></a>platjam 0.0.8.900</h1>
+<div id="bug-fixes-8" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-8" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> fixed bug in placement of argument show_error, now properly placed inside <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html">EnrichedHeatmap::anno_enriched()</a></code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-007900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.7.900">
+<a href="#platjam-007900" class="anchor"></a>platjam 0.0.7.900</h1>
+<div id="changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes" class="anchor"></a>changes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new argument <code>show_error</code> is passed to <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html">EnrichedHeatmap::anno_enriched()</a></code> which enables shaded error bars using standard error around the profile at the top of each heatmap.</li>
+</ul>
+</div>
+<div id="new-functions-6" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-6" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/frequency_matrix2nmat.html">frequency_matrix2nmat()</a></code> converts a frequency matrix whose colnames represent numeric frequency values, and converts to class <code>"normalizedMatrix"</code> for use in EnrichedHeatmap. It optionally scales each row using <code><a href="../reference/rowNormScale.html">rowNormScale()</a></code>.</li>
+<li>
+<code><a href="../reference/rowNormScale.html">rowNormScale()</a></code> applies <code><a href="https://rdrr.io/pkg/jamba/man/normScale.html">jamba::normScale()</a></code> to each row of a matrix.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-006900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.6.900">
+<a href="#platjam-006900" class="anchor"></a>platjam 0.0.6.900</h1>
+<div id="changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-1" class="anchor"></a>changes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument <code>k_subset</code> now works when <code>partition</code> is supplied and k-means clustering is not performed inside this function. Therefore, one can supply their own clusters, and choose a subset for subsequent drilldown. The colors are assigned by total cluster, so the subset should retain consistent colors per cluster.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument <code>k_method</code> allows defining different k-means clustering methods, including <code><a href="https://rdrr.io/r/base/c.html">c("pearson","correlation")</a></code> if the <code>"amap"</code> package is installed.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-005900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.5.900">
+<a href="#platjam-005900" class="anchor"></a>platjam 0.0.5.900</h1>
+<div id="changes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-2" class="anchor"></a>changes</h2>
+<ul>
+<li>Version bump while debugging logistics with <code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument <code>transform</code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-004900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.4.900">
+<a href="#platjam-004900" class="anchor"></a>platjam 0.0.4.900</h1>
+<div id="changes-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-3" class="anchor"></a>changes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument <code>transform</code> is now applied to each heatmap, with <code>transform</code> values recycled to the <code><a href="https://rdrr.io/r/base/length.html">length(nmatlist)</a></code>, to allow control over mathematical transformation of each numeric matric.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-003900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.3.900">
+<a href="#platjam-003900" class="anchor"></a>platjam 0.0.3.900</h1>
+<div id="changes-4" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-4" class="anchor"></a>changes</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> argument anno_df is a data.frame with annotations that can be used to order rows in the data.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> updated its method to handle proper order of user-supplied partition information.</li>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> new arguments to handle row labeling, still testing the combination of partitions and row labels which appear misaligned.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-002900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.2.900">
+<a href="#platjam-002900" class="anchor"></a>platjam 0.0.2.900</h1>
+<div id="changes-5" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-5" class="anchor"></a>changes</h2>
+<ul>
+<li>The package itself allows installation on R-3.0.0 and higher, resolving an issue with installing on R-3.5.0 when the package said it required R-3.5.1 (and did not).</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-002900-1" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.2.900">
+<a href="#platjam-002900-1" class="anchor"></a>platjam 0.0.2.900</h1>
+<div id="new-function" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-function" class="anchor"></a>new function</h2>
+<ul>
+<li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> creates multiple coverage heatmaps as the result of importing data with <code><a href="../reference/coverage_matrix2nmat.html">coverage_matrix2nmat()</a></code>.</li>
+</ul>
+</div>
+</div>
+    <div id="platjam-001900" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.1.900">
+<a href="#platjam-001900" class="anchor"></a>platjam 0.0.1.900</h1>
+<p>Initial release.</p>
+<div id="new-functions-7" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-functions-7" class="anchor"></a>new functions</h2>
+<ul>
+<li>
+<code><a href="../reference/coverage_matrix2nmat.html">coverage_matrix2nmat()</a></code> imports genome coverage matrix file and converts to class <code>normalizedMatrix</code> for use in the amazing <code>"EnrichedHeatmap"</code> package.</li>
+</ul>
+</div>
+</div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <div id="tocnav">
-      <h2>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-      </ul>
-    </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 
 </div>
@@ -129,7 +647,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

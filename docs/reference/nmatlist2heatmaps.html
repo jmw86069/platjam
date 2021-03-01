@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Make multiple coverage heatmaps — nmatlist2heatmaps" />
 <meta property="og:description" content="Make multiple coverage heatmaps" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.24.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.33.9000</span>
       </span>
     </div>
 
@@ -90,7 +93,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jmw86069/platjam">
+  <a href="http://github.com/jmw86069/platjam/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -109,7 +112,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Make multiple coverage heatmaps</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jmw86069/platjam/blob/master/R/platjam-import.R'><code>R/platjam-import.R</code></a></small>
+    <small class="dont-index">Source: <a href='http://github.com/jmw86069/platjam/blob/master/R/platjam-import.R'><code>R/platjam-import.R</code></a></small>
     <div class="hidden name"><code>nmatlist2heatmaps.Rd</code></div>
     </div>
 
@@ -117,51 +120,57 @@
     <p>Make multiple coverage heatmaps</p>
     </div>
 
-    <pre class="usage"><span class='fu'>nmatlist2heatmaps</span>(
-  <span class='no'>nmatlist</span>,
-  <span class='kw'>panel_groups</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>k_clusters</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>k_subset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>k_colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>k_width</span> <span class='kw'>=</span> <span class='fu'>unit</span>(<span class='fl'>5</span>, <span class='st'>"mm"</span>),
-  <span class='kw'>k_method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"euclidean"</span>, <span class='st'>"pearson"</span>, <span class='st'>"correlation"</span>),
-  <span class='kw'>partition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>rows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>row_order</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nmat_colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>middle_color</span> <span class='kw'>=</span> <span class='st'>"white"</span>,
-  <span class='kw'>nmat_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>main_heatmap</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>anno_df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>byCols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>anno_row_marks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>anno_row_labels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>hm_nrow</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>transform</span> <span class='kw'>=</span> <span class='kw pkg'>jamba</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/jamba/man/log2signed.html'>log2signed</a></span>,
-  <span class='kw'>signal_ceiling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>axis_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>axis_name_gp</span> <span class='kw'>=</span> <span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span>(<span class='kw'>fontsize</span> <span class='kw'>=</span> <span class='fl'>8</span>),
-  <span class='kw'>axis_name_rot</span> <span class='kw'>=</span> <span class='fl'>90</span>,
-  <span class='kw'>column_title_gp</span> <span class='kw'>=</span> <span class='fu'>gpar</span>(<span class='kw'>fontsize</span> <span class='kw'>=</span> <span class='fl'>12</span>),
-  <span class='kw'>lens</span> <span class='kw'>=</span> -<span class='fl'>2</span>,
-  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>,
-  <span class='kw'>ht_gap</span> <span class='kw'>=</span> <span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span>(<span class='fl'>7</span>, <span class='st'>"mm"</span>),
-  <span class='kw'>profile_value</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"abs_mean"</span>, <span class='st'>"abs_sum"</span>),
-  <span class='kw'>ylims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>border</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>iter.max</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>use_raster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>do_plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>legend_width</span> <span class='kw'>=</span> <span class='kw pkg'>grid</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span>(<span class='fl'>3</span>, <span class='st'>"cm"</span>),
-  <span class='kw'>heatmap_legend_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>annotation_legend_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>return_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"heatmaplist"</span>, <span class='st'>"grid"</span>),
-  <span class='kw'>show_error</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>nmatlist2heatmaps</span><span class='op'>(</span>
+  <span class='va'>nmatlist</span>,
+  panel_groups <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  caption <span class='op'>=</span> <span class='cn'>NULL</span>,
+  k_clusters <span class='op'>=</span> <span class='fl'>0</span>,
+  k_subset <span class='op'>=</span> <span class='cn'>NULL</span>,
+  k_colors <span class='op'>=</span> <span class='cn'>NULL</span>,
+  k_width <span class='op'>=</span> <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='st'>"mm"</span><span class='op'>)</span>,
+  k_method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"euclidean"</span>, <span class='st'>"pearson"</span>, <span class='st'>"correlation"</span><span class='op'>)</span>,
+  partition <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rows <span class='op'>=</span> <span class='cn'>NULL</span>,
+  row_order <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nmat_colors <span class='op'>=</span> <span class='cn'>NULL</span>,
+  middle_color <span class='op'>=</span> <span class='st'>"white"</span>,
+  nmat_names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  main_heatmap <span class='op'>=</span> <span class='fl'>1</span>,
+  anno_df <span class='op'>=</span> <span class='cn'>NULL</span>,
+  byCols <span class='op'>=</span> <span class='cn'>NULL</span>,
+  color_sub <span class='op'>=</span> <span class='cn'>NULL</span>,
+  anno_row_marks <span class='op'>=</span> <span class='cn'>NULL</span>,
+  anno_row_labels <span class='op'>=</span> <span class='cn'>NULL</span>,
+  legend_max_ncol <span class='op'>=</span> <span class='fl'>2</span>,
+  legend_base_nrow <span class='op'>=</span> <span class='fl'>5</span>,
+  legend_max_labels <span class='op'>=</span> <span class='fl'>40</span>,
+  show_heatmap_legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  hm_nrow <span class='op'>=</span> <span class='fl'>1</span>,
+  transform <span class='op'>=</span> <span class='st'>"none"</span>,
+  signal_ceiling <span class='op'>=</span> <span class='cn'>NULL</span>,
+  axis_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  axis_name_gp <span class='op'>=</span> <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>,
+  axis_name_rot <span class='op'>=</span> <span class='fl'>90</span>,
+  column_title_gp <span class='op'>=</span> <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/gpar.html'>gpar</a></span><span class='op'>(</span>fontsize <span class='op'>=</span> <span class='fl'>12</span><span class='op'>)</span>,
+  lens <span class='op'>=</span> <span class='op'>-</span><span class='fl'>2</span>,
+  anno_lens <span class='op'>=</span> <span class='fl'>8</span>,
+  seed <span class='op'>=</span> <span class='fl'>123</span>,
+  ht_gap <span class='op'>=</span> <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='st'>"mm"</span><span class='op'>)</span>,
+  profile_value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"sum"</span>, <span class='st'>"abs_mean"</span>, <span class='st'>"abs_sum"</span><span class='op'>)</span>,
+  ylims <span class='op'>=</span> <span class='cn'>NULL</span>,
+  border <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  iter.max <span class='op'>=</span> <span class='fl'>20</span>,
+  use_raster <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  do_plot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_width <span class='op'>=</span> <span class='fu'>grid</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/grid/unit.html'>unit</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='st'>"cm"</span><span class='op'>)</span>,
+  heatmap_legend_param <span class='op'>=</span> <span class='cn'>NULL</span>,
+  annotation_legend_param <span class='op'>=</span> <span class='cn'>NULL</span>,
+  return_type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"heatmaplist"</span>, <span class='st'>"grid"</span><span class='op'>)</span>,
+  show_error <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -259,7 +268,19 @@ may also be subsetted using argument <code>rows</code>.</p></td>
       <td><p>character vector of  values in
 <code><a href='https://rdrr.io/r/base/colnames.html'>colnames(anno_df)</a></code> used to sort the data.frame
 via <code><a href='https://rdrr.io/pkg/jamba/man/mixedSortDF.html'>jamba::mixedSortDF()</a></code>. Any colname with
-prefix <code>-</code> will be reverse-sorted.</p></td>
+prefix <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code> will be reverse-sorted.</p></td>
+    </tr>
+    <tr>
+      <th>color_sub</th>
+      <td><p><code>character vector</code> of R colors to be used
+as categorical colors, whose names match items to be
+colored. This argument is intended for <code>anno_df</code>,
+for any column in <code>anno_df</code> where all values in that
+column are also in <code><a href='https://rdrr.io/r/base/names.html'>names(color_sub)</a></code> will be colorized
+using <code>color_sub</code> instead of generating new colors.
+Also colors for partition and kmeans clusters, usually
+defined with <code>k_colors</code> can be defined in color_sub,
+if <code><a href='https://rdrr.io/r/base/names.html'>names(color_sub)</a></code> match the partition labels.</p></td>
     </tr>
     <tr>
       <th>anno_row_marks</th>
@@ -279,6 +300,27 @@ If <code>NULL</code> then <code>anno_row_marks</code> are used. Or
 of <code><a href='https://rdrr.io/r/base/colnames.html'>colnames(anno_df)</a></code> which will create labels
 by concatenating each column value separated by
 space <code>" "</code>.</p></td>
+    </tr>
+    <tr>
+      <th>legend_max_ncol</th>
+      <td><p>integer number indicating the maximum
+number of columns allowed for a categorical color legend.</p></td>
+    </tr>
+    <tr>
+      <th>legend_base_nrow</th>
+      <td><p>integer number indicating the base
+number of rows used for a categorical color legend, before
+additional columns are added. Once the number of elements
+exceeds <code>(legend_max_ncol * legend_base_nrow)</code> then
+rows are added, but columns never exceed <code>legend_max_ncol</code>.</p></td>
+    </tr>
+    <tr>
+      <th>legend_max_labels</th>
+      <td><p><code>integer</code> to define the maximum labels
+to display as a color legend; when <code>anno_df</code> columns contain
+more than this number of categorical colors, the legend is
+not displayed (because it would prevent display of the
+heatmaps at all).</p></td>
     </tr>
     <tr>
       <th>hm_nrow</th>
@@ -348,6 +390,13 @@ each matrix in <code>nmatlist</code>, and so it is recycled to
 is also intended to help apply the color gradient to
 a suitable numeric range, and the <code>lens</code> argument is
 applied relative to the numeric range being used.</p></td>
+    </tr>
+    <tr>
+      <th>anno_lens</th>
+      <td><p>numeric value used to scale the annotation
+heatmap color scales, see <code>lens</code> for details. Values
+higher than 1 make the color gradient more intense,
+values below -1 make the color gradient less intense.</p></td>
     </tr>
     <tr>
       <th>seed</th>
@@ -444,53 +493,27 @@ and to enable optional multi-row heatmap layout.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## There is a small example file to use for testing</span>
-<span class='no'>cov_file1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"data"</span>, <span class='st'>"tss_coverage.matrix"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"platjam"</span>);
-<span class='no'>cov_file2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"data"</span>, <span class='st'>"h3k4me1_coverage.matrix"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"platjam"</span>);
-<span class='no'>cov_files</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>cov_file1</span>, <span class='no'>cov_file2</span>);
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>cov_files</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span>(<span class='st'>"[.]matrix"</span>,
+<span class='va'>cov_file1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"data"</span>, <span class='st'>"tss_coverage.matrix"</span>, package<span class='op'>=</span><span class='st'>"platjam"</span><span class='op'>)</span>;
+<span class='va'>cov_file2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"data"</span>, <span class='st'>"h3k4me1_coverage.matrix"</span>, package<span class='op'>=</span><span class='st'>"platjam"</span><span class='op'>)</span>;
+<span class='va'>cov_files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>cov_file1</span>, <span class='va'>cov_file2</span><span class='op'>)</span>;
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>cov_files</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='op'>(</span><span class='st'>"[.]matrix"</span>,
    <span class='st'>""</span>,
-   <span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='no'>cov_files</span>));
-<span class='no'>nmatlist</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>cov_files</span>, <span class='no'>coverage_matrix2nmat</span>);
-<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>);</div><div class='output co'>#&gt; ##  (<span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #00BBBB;'> rows shared across all matrices.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Defining row_order with </span><span style='color: #555555;'>EnrichedHeatmap::enriched_score()</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Iterating each heatmap.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>tss_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #BBBBBB;background-color: #BB0000;'>#D0445E</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>h3k4me1_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #000000;background-color: #BBBB00;'>#FD8600</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:46</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>ht_gap:</span><span> 
-#&gt; [1] 7mm</div><div class='img'><img src='nmatlist2heatmaps-1.png' alt='' width='700' height='433' /></div><div class='input'>
+   <span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span><span class='op'>(</span><span class='va'>cov_files</span><span class='op'>)</span><span class='op'>)</span>;
+<span class='va'>nmatlist</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>cov_files</span>, <span class='va'>coverage_matrix2nmat</span><span class='op'>)</span>;
+<span class='fu'>nmatlist2heatmaps</span><span class='op'>(</span><span class='va'>nmatlist</span><span class='op'>)</span>;
+</div><div class='img'><img src='nmatlist2heatmaps-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># k-means clusters</span>
-<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>, <span class='kw'>k_clusters</span><span class='kw'>=</span><span class='fl'>4</span>);</div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #00BBBB;'> rows shared across all matrices.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Running kmeans, k_clusters:</span><span style='color: #BB0000;'>4</span><span style='color: #00BBBB;'>, k_method:</span><span style='color: #BB0000;'>euclidean</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>k-means cluster sizes: </span><span style='color: #BB0000;'>cluster1=26</span><span>, </span><span style='color: #555555;'>cluster2=18</span><span>, </span><span style='color: #BB0000;'>cluster3=14</span><span>, </span><span style='color: #555555;'>cluster4=62</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>creating partition heatmap PHM.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Defining row_order with </span><span style='color: #555555;'>EnrichedHeatmap::enriched_score()</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Iterating each heatmap.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>tss_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #BBBBBB;background-color: #BB0000;'>#D0445E</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:48</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>h3k4me1_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #000000;background-color: #BBBB00;'>#FD8600</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>ht_gap:</span><span> 
-#&gt; [1] 1mm 7mm</div><div class='img'><img src='nmatlist2heatmaps-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>nmatlist2heatmaps</span><span class='op'>(</span><span class='va'>nmatlist</span>, k_clusters<span class='op'>=</span><span class='fl'>4</span><span class='op'>)</span>;
+</div><div class='img'><img src='nmatlist2heatmaps-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># multiple rows</span>
-<span class='fu'>nmatlist2heatmaps</span>(<span class='no'>nmatlist</span>, <span class='kw'>k_clusters</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>hm_nrow</span><span class='kw'>=</span><span class='fl'>2</span>);</div><div class='output co'>#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Forced </span><span style='color: #BB0000;'>use_raster=</span><span style='color: #555555;'>FALSE</span><span style='color: #00BBBB;'> to make it compatible with using '</span><span style='color: #555555;'>title</span><span style='color: #00BBBB;'>' and '</span><span style='color: #555555;'>caption</span><span style='color: #00BBBB;'>'.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Recognized </span><span style='color: #BB0000;'>120</span><span style='color: #00BBBB;'> rows shared across all matrices.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Running kmeans, k_clusters:</span><span style='color: #BB0000;'>4</span><span style='color: #00BBBB;'>, k_method:</span><span style='color: #BB0000;'>euclidean</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>k-means cluster sizes: </span><span style='color: #BB0000;'>cluster1=26</span><span>, </span><span style='color: #555555;'>cluster2=18</span><span>, </span><span style='color: #BB0000;'>cluster3=14</span><span>, </span><span style='color: #555555;'>cluster4=62</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>creating partition heatmap PHM.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Defining row_order with </span><span style='color: #555555;'>EnrichedHeatmap::enriched_score()</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Iterating each heatmap.</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>tss_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #BBBBBB;background-color: #BB0000;'>#D0445E</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BBBB00;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>signal_name:</span><span style='color: #BBBB00;'>h3k4me1_coverage.matrix</span><span style='color: #00BBBB;'>, target_name:</span><span style='color: #BBBB00;'>target</span><span style='color: #00BBBB;'>, color:</span><span style='color: #000000;background-color: #BBBB00;'>#FD8600</span><span style='color: #BBBB00;'>, ylim=(</span><span style='color: #00BBBB;'>NULL</span><span style='color: #BBBB00;'>)</span><span> 
-#&gt; ##  (</span><span style='color: #00BBBB;font-weight: bold;'>15:25:49</span><span>) 08May2020:  </span><span style='color: #BB0000;'>nmatlist2heatmaps(): </span><span style='color: #00BBBB;'>Applying multi-row layout.</span><span> </div><div class='img'><img src='nmatlist2heatmaps-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>nmatlist2heatmaps</span><span class='op'>(</span><span class='va'>nmatlist</span>, k_clusters<span class='op'>=</span><span class='fl'>4</span>, hm_nrow<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>;
+</div><div class='output co'>#&gt; ##  (<span style='color: #00D7D7;font-weight: bold;'>17:46:45</span><span>) 01Mar2021:  </span><span style='color: #FF8700;'>nmatlist2heatmaps(): </span><span style='color: #00AFFF;'>Forced </span><span style='color: #FF8700;'>use_raster=</span><span style='color: #FFAF5F;'>FALSE</span><span style='color: #00AFFF;'> to make it compatible with using '</span><span style='color: #87D7FF;'>title</span><span style='color: #00AFFF;'>' and '</span><span style='color: #87D7FF;'>caption</span><span style='color: #00AFFF;'>'.</span><span> </div><div class='output co'>#&gt; <span class='error'>Error in nmatlist2heatmaps(nmatlist, k_clusters = 4, hm_nrow = 2): object 'HM_temp' not found</span></div><div class='img'><img src='nmatlist2heatmaps-3.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -501,7 +524,7 @@ and to enable optional multi-row heatmap layout.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
