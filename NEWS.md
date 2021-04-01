@@ -1,3 +1,15 @@
+# platjam 0.0.34.900
+
+## new additions
+
+* `jam_linear` and `jam_divergent` are new color gradients
+intended to be visibly distinct, and color-blind-friendly.
+The divergent scales in particular are designed so that
+the two directions are visibly distinct even under three
+different color blindness simulations from
+`dichromat::dichromat()`.
+
+
 # platjam 0.0.33.900
 
 ## bug fixes
