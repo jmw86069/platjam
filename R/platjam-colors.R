@@ -191,12 +191,8 @@ make_jam_divergent <- function
  n=21,
  ...)
 {
-   #if (!all(linear1 %in% names(jam_linear))) {
-   #   stop("linear1 must be values in names(jam_linear)")
-   #}
-   #if (!all(linear2 %in% names(jam_linear))) {
-   #   stop("linear2 must be values in names(jam_linear)")
-   #}
+   # determine the number of entries being requested
+   # by using the max length of these arguments
    n_out <- max(c(
       length(linear1),
       length(linear2),
@@ -366,6 +362,7 @@ showDichromat <- function
    }
    return(invisible(x_set));
 }
+
 
 #' Create two-step linear gradient
 #'

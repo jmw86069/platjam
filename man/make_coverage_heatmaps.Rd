@@ -7,9 +7,11 @@
 make_coverage_heatmaps(config_df, anno_df = NULL, ...)
 }
 \description{
-Make coverage heatmaps using a simple set of config options
+(IN DEV) Make coverage heatmaps using a simple set of config options
 }
 \details{
+This function is still in development and is not yet active.
+
 This function is intended as a wrapper function which calls
 \code{nmatlist2heatmaps()} in a more organized way.
 
