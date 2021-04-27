@@ -1268,7 +1268,7 @@ nmatlist2heatmaps <- function
       }
    }
 
-
+   #############################################
    ## Iterate each matrix to create heatmaps
    if (length(lens) == 0) {
       lens <- 0;
@@ -1326,6 +1326,7 @@ nmatlist2heatmaps <- function
    #   row_order <- seq_along(rows);
    #}
 
+   ###############################################
    # expand heatmap_legend_param to each heatmap
    if (length(heatmap_legend_param) == 0) {
       heatmap_legend_direction <- "horizontal";
@@ -1506,8 +1507,10 @@ nmatlist2heatmaps <- function
       EH;
    });
 
-   ## Optional multi-row layout
+   ######################################
+   ## Layout heatmap panels
    if (hm_nrow > 1 && length(nmatlist) > 1) {
+      ## Optional multi-row layout
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Applying multi-row layout.");
@@ -1551,6 +1554,7 @@ nmatlist2heatmaps <- function
          EH_l <- ht_l;
       }
    } else {
+      ################################
       ## Single row layout
       HM_temp <- Reduce("+", EH_l);
       main_heatmap_temp <- main_heatmap;
@@ -1577,19 +1581,27 @@ nmatlist2heatmaps <- function
       if (do_plot &&
             (length(title) > 0 || length(caption) > 0)) {
          jamba::printDebug("nmatlist2heatmaps(): ",
-            "Preparing HeatmapList grob for grid_with_title()");
-         HM_grob <- grid::grid.grabExpr(
-            ComplexHeatmap::draw(HM_temp,
-               ht_gap=ht_gap,
-               main_heatmap=main_heatmap_temp)
-         );
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "Calling grid_with_title()");
-         multienrichjam::grid_with_title(HM_grob,
-            title=title,
-            caption=caption,
-            verbose=verbose,
-            ...);
+            "Preparing ComplexHeatmap::draw(HeatmapList)");
+         ComplexHeatmap::draw(HM_temp,
+            column_title=title,
+            ht_gap=ht_gap,
+            main_heatmap=main_heatmap_temp)
+         if (FALSE) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Preparing HeatmapList grob for grid_with_title()");
+            HM_grob <- grid::grid.grabExpr(
+               ComplexHeatmap::draw(HM_temp,
+                  ht_gap=ht_gap,
+                  main_heatmap=main_heatmap_temp)
+            );
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Calling grid_with_title()");
+            multienrichjam::grid_with_title(HM_grob,
+               title=title,
+               caption=caption,
+               verbose=verbose,
+               ...);
+         }
       } else {
          if (do_plot) {
             ComplexHeatmap::draw(HM_temp,
