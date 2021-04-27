@@ -1320,7 +1320,6 @@ nmatlist2heatmaps <- function
 
    # expand heatmap_legend_param to each heatmap
    if (length(heatmap_legend_param) == 0) {
-      legend_width <- grid::unit(3, "cm");
       heatmap_legend_direction <- "horizontal";
       # force direction="vertical" for grid version below 4.0
       #if (compareVersion("3.99", as.character(packageVersion("grid"))) > 0) {
