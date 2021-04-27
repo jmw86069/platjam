@@ -542,7 +542,7 @@ nmatlist2heatmaps <- function
       legend_width <- grid::unit(3, "cm");
    }
 
-   if (length(title) > 0 || length(caption) > 0 || hm_nrow > 1) {
+   if (FALSE && (length(title) > 0 || length(caption) > 0 || hm_nrow > 1)) {
       if (use_raster) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Forced ",
