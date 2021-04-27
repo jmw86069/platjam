@@ -39,6 +39,7 @@ nmatlist2heatmaps(
   column_title_gp = grid::gpar(fontsize = 12),
   lens = -2,
   anno_lens = 8,
+  pos_line = FALSE,
   seed = 123,
   ht_gap = grid::unit(3, "mm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),

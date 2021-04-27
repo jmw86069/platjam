@@ -14,6 +14,9 @@ different color blindness simulations from
 * `nmatlist2heatmaps()` changes that forced heatmap legend direction
 to be `"vertical" were reverted, since Dr. Gu updated
 `ComplexHeatmap` to fix the issue with `grid` on R version 3.6.*.
+* `nmatlist2heatmaps()`:
+
+   * new argument `pos_line` to control display of lines around the target region
 
 # platjam 0.0.33.900
 
