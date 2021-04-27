@@ -158,9 +158,9 @@ coverage_matrix2nmat <- function
                "Importing data from filename:",
                filename);
          }
-         x <- as.data.frame(
-            data.table::fread(head(filename, 1),
-               sep="\t"));
+         x <- data.table::fread(head(filename, 1),
+            sep="\t",
+            data.table=FALSE);
          if (length(signal_name) == 0) {
             if (length(names(filename)) > 0 && nchar(head(names(filename), 1)) > 0) {
                signal_name <- head(names(filename), 1);
@@ -176,9 +176,9 @@ coverage_matrix2nmat <- function
             x);
       }
       filename <- x;
-      x <- as.data.frame(
-         data.table::fread(head(filename, 1),
-            sep="\t"));
+      x <- data.table::fread(head(filename, 1),
+         data.table=FALSE,
+         sep="\t");
       if (length(signal_name) == 0) {
          if (length(names(filename)) > 0 && nchar(head(names(filename), 1)) > 0) {
             signal_name <- head(names(filename), 1);
@@ -573,7 +573,7 @@ nmatlist2heatmaps <- function
    if (length(k_method) == 0 || nchar(k_method) == 0) {
       k_method <- "euclidean";
    }
-   nmat_rows <- rows <- Reduce("intersect",
+   nmat_rows <- Reduce("intersect",
       lapply(nmatlist, rownames));
    if (length(rows) == 0) {
       ## Make sure rows are present in all nmatlist entries.

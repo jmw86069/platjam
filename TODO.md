@@ -1,6 +1,20 @@
 # TODO for platjam 28aug2020
 
 
+## Specific usability
+
+* For `panel_groups`:
+
+   * when all heatmaps in a set of panels share the
+   same color gradient, the color legend should be displayed once per group,
+   and should be labeled using the `panel_groups` value.
+   * make the `ht_gap` between adjacent heatmaps in the same group smaller;
+   hide y-axis labels on the profile plot for all but the last panel in
+   an adjacent set. For example using
+   `EnrichedHeatmap::anno_enriched(... yaxis=FALSE)`
+
+
+
 ## Big picture - make it easy to use
 
 Make coverage heatmaps easier for other scientists.
