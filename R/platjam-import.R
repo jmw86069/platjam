@@ -1509,7 +1509,10 @@ nmatlist2heatmaps <- function
 
    ######################################
    ## Layout heatmap panels
+   ##
+   HM_drawn <- NULL;
    if (hm_nrow > 1 && length(nmatlist) > 1) {
+      ######################################
       ## Optional multi-row layout
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
@@ -1582,7 +1585,7 @@ nmatlist2heatmaps <- function
             (length(title) > 0 || length(caption) > 0)) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Preparing ComplexHeatmap::draw(HeatmapList)");
-         ComplexHeatmap::draw(HM_temp,
+         HM_drawn <- ComplexHeatmap::draw(HM_temp,
             column_title=title,
             ht_gap=ht_gap,
             main_heatmap=main_heatmap_temp)
@@ -1604,7 +1607,7 @@ nmatlist2heatmaps <- function
          }
       } else {
          if (do_plot) {
-            ComplexHeatmap::draw(HM_temp,
+            HM_drawn <- ComplexHeatmap::draw(HM_temp,
                ht_gap=ht_gap,
                main_heatmap=main_heatmap_temp);
          }
@@ -1619,6 +1622,10 @@ nmatlist2heatmaps <- function
          ht_gap=ht_gap,
          main_heatmap=main_heatmap_temp)
    );
+   # return HM_drawn with the heatmap as drawn
+   if (length(HM_drawn) > 0) {
+      ret_list$HM_drawn <- HM_drawn;
+   }
    invisible(ret_list);
 }
 

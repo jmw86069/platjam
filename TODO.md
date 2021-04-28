@@ -14,6 +14,13 @@
    `EnrichedHeatmap::anno_enriched(... yaxis=FALSE)`
 
 
+## Visual enhancements
+
+* `anno_df` should probably use `Heatmap()` and not `HeatmapAnnotation()`
+so that it can enable `use_raster=TRUE`.
+* Color legend for the profile plot should use lines instead of boxes
+to indicate colors (if possible).
+
 
 ## Big picture - make it easy to use
 

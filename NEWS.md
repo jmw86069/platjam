@@ -17,6 +17,9 @@ to be `"vertical" were reverted, since Dr. Gu updated
 * `nmatlist2heatmaps()`:
 
    * new argument `pos_line` to control display of lines around the target region
+   * return values include `HM_drawn` which is the object returned
+   after `ComplexHeatmap::draw()`, and which contains all the column and
+   row orders for each heatmap.
 
 # platjam 0.0.33.900
 
