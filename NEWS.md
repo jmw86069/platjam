@@ -1,3 +1,25 @@
+# platjam 0.0.35.900
+
+## changes to existing functions
+
+* `parse_ucsc_gokey()` was updated to improve the method of
+naming supergroup and group tracks, so the supergroup
+name will persist for every group it should contain.
+* `nmatlist2heatmaps()` new argument `trim_legend_title` will
+trim heatmap legend title to remove any text following
+a newline. For example, the heatmap label may contain multiple
+lines of text which are useful to the heatmap, but less useful
+to the color legend. In that case, only the first line of text
+is used as the heatmap legend title.
+
+
+## new functions
+
+* `nmathm_row_order()` returns the rowname order of the heatmap
+produced by `nmatlist2heatmaps()`. When rows are partitioned,
+the output is a `list` of rowname vectors.
+
+
 # platjam 0.0.34.900
 
 ## new additions

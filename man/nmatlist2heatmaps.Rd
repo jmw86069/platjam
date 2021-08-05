@@ -49,6 +49,7 @@ nmatlist2heatmaps(
   use_raster = TRUE,
   do_plot = TRUE,
   legend_width = grid::unit(3, "cm"),
+  trim_legend_title = TRUE,
   heatmap_legend_param = NULL,
   annotation_legend_param = NULL,
   return_type = c("heatmaplist", "grid"),

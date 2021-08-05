@@ -82,3 +82,69 @@ make_coverage_heatmaps <- function
  ...)
 {
 }
+
+
+
+#' Row order for nmatlist coverage heatmap
+#'
+#' Row order for nmatlist coverage heatmap
+#'
+#' This function is a simple wrapper function to return the
+#' row order for the output of `nmatlist2heatmaps()`.
+#' It traverses the `ComplexHeatmap::Heatmap` object,
+#' including optional row slices when the rows are
+#' partitioned. It returns the actual character
+#' vector of rownames, optionally split into a `list`.
+#'
+#' When the heatmap is fully drawn, for example with
+#' `nmatlist2heatmaps(..., do_plot=TRUE)`, the output
+#' object includes an element `"HM_drawn"` which also contains
+#' the row order as displayed in that heatmap. Otherwise,
+#' the output contains element `"draw"` with the heatmap
+#' that would be drawn by `ComplexHeatmap::draw()`. In
+#' this case the row order has not yet been defined,
+#' however this function will evaluate the relevant
+#' criteria to determine the row order that would be
+#' rendered. And note that this process takes slightly
+#' more time, but much less time than rendering the
+#' entire set of heatmaps.
+#'
+#' @return `list` of rownames, where each list represents one
+#'    `row_slice` used in the heatmap, as defined by
+#'    `nmatlist2heatmaps()` arguments `partition` or
+#'    `k_clusters`.
+#'
+#' @param HM `list` output from `nmatlist2heatmaps()` that
+#'    is expected to contain at least one list element
+#'    named `"HM_drawn"` or `"draw"`, with `"HM_drawn"`
+#'    used first if present. Either object is also expected
+#'    to contain slotName ht_list which represents the
+#'    HeatmapList. Among the heatmaps in the HeatmapList,
+#'    the first with class `"Heatmap"` that is not named
+#'    "cluster" will be used, since "cluster" is the name
+#'    of the heatmap used to represent k-means or other
+#'    clustering output to partition rows.
+#' @param ... additional arguments are ignored.
+#'
+#' @export
+nmathm_row_order <- function
+(HM,
+ ...)
+{
+   # HM <- nmathm;
+   if ("HM_drawn" %in% names(HM)) {
+      HM <- HM[["HM_drawn"]];
+   } else if ("draw" %in% names(HM)) {
+      HM <- HM$draw$HM_temp;
+   }
+
+   if (!"ht_list" %in% slotNames(HM)) {
+      stop("Input HM does not contain 'ht_list'.");
+   }
+
+   hmsdim <- sdim(HM@ht_list);
+   hmwhich <- which(hmsdim$class %in% "Heatmap" & !rownames(hmsdim) %in% "cluster");
+   hmwhich1 <- head(hmwhich, 1);
+   row_order <- multienrichjam::heatmap_row_order(HM@ht_list[[hmwhich1]]);
+   return(row_order);
+}

@@ -515,6 +515,7 @@ nmatlist2heatmaps <- function
  use_raster=TRUE,
  do_plot=TRUE,
  legend_width=grid::unit(3, "cm"),
+ trim_legend_title=TRUE,
  heatmap_legend_param=NULL,
  annotation_legend_param=NULL,
  return_type=c("heatmaplist", "grid"),
@@ -1344,6 +1345,13 @@ nmatlist2heatmaps <- function
          grid_width=grid::unit(1, "npc"));
       heatmap_legend_param <- rep(list(heatmap_legend_param_1),
          length.out=length(nmatlist));
+      # iterate each heatmap_legend_param entry and add a specific title
+      if (trim_legend_title) {
+         for (ihlp in seq_along(heatmap_legend_param)) {
+            heatmap_legend_param[[ihlp]]$title <- gsub("\n.*", "",
+               attr(nmatlist[[ihlp]], "signal_name"));
+         }
+      }
    }
    if (any(c("legend_width", "border", "direction", "title_position") %in% names(heatmap_legend_param)) ||
          length(heatmap_legend_param) != length(nmatlist)) {

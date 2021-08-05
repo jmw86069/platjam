@@ -110,24 +110,59 @@ parse_ucsc_gokey <- function
 
    ## determine non-track lines
    nontrack <- which(!grepl("^track", track_lines));
-   ## non-track lines which are group names
-   is_group <- diff(c(nontrack, Inf)) > 1;
-   has_header <- diff(c(-Inf, nontrack)) == 1;
-   nontracki <- nontrack[is_group];
-   nontrackh <- ifelse(has_header[is_group], nontracki - 1, nontracki);
 
-   tracki <- which(grepl("^track", track_lines));
-   track_df <- data.frame(tracknum=tracki);
-   track_df$headernum <- sapply(track_df$tracknum, function(i){
-      max(nontracki[nontracki < i])
-   })
-   track_df$groupnum <- sapply(track_df$tracknum, function(i){
-      max(nontrackh[nontrackh < i])
-   })
-   track_df$header <- gsub("[ ]+", " ", track_lines[track_df$headernum]);
-   track_df$group <- gsub("[ ]+", " ", track_lines[track_df$groupnum]);
+   ## determine supergroups
+   supergroup_lines <- nontrack[diff(c(nontrack, Inf)) == 1];
+   supergroup_labels <- jamba::makeNames(track_lines[supergroup_lines],
+      suffix="_set");
+   group_lines <- setdiff(nontrack, supergroup_lines);
 
-   ## split each line into data.frame
+   ## split tracks by supergroup
+   track_seq <- setdiff(seq_along(track_lines),
+      supergroup_lines);
+   track_supergroup <- split(track_seq,
+      cut(track_seq,
+         breaks=c(supergroup_lines, Inf),
+         labels=supergroup_labels))
+   track_supergroup
+
+   track_supergroup_dfs <- lapply(jamba::nameVectorN(track_supergroup), function(isupergroup_label){
+      i_lines <- track_supergroup[[isupergroup_label]];
+      igroup_lines <- intersect(group_lines, i_lines);
+      igroup_labels <- jamba::makeNames(track_lines[igroup_lines],
+         suffix="_set");
+      itrack_seq <- setdiff(i_lines, igroup_lines)
+      itrack_group <- split(itrack_seq,
+         cut(itrack_seq,
+            breaks=c(igroup_lines, Inf),
+            labels=igroup_labels));
+      data.frame(group=isupergroup_label,
+         header=rep(names(itrack_group), lengths(itrack_group)),
+         tracknum=unlist(itrack_group))
+   })
+   track_df <- jamba::rbindList(track_supergroup_dfs)
+
+   # Old workflow is disabled for now
+   if (FALSE) {
+      ## non-track lines which are group names
+      is_group <- diff(c(nontrack, Inf)) > 1;
+      has_header <- diff(c(-Inf, nontrack)) == 1;
+      nontracki <- nontrack[is_group];
+      nontrackh <- ifelse(has_header[is_group], nontracki - 1, nontracki);
+
+      tracki <- which(grepl("^track", track_lines));
+      track_df <- data.frame(tracknum=tracki);
+      track_df$headernum <- sapply(track_df$tracknum, function(i){
+         max(nontracki[nontracki < i])
+      })
+      track_df$groupnum <- sapply(track_df$tracknum, function(i){
+         max(nontrackh[nontrackh < i])
+      })
+      track_df$header <- gsub("[ ]+", " ", track_lines[track_df$headernum]);
+      track_df$group <- gsub("[ ]+", " ", track_lines[track_df$groupnum]);
+   }
+
+   ## convert each track line to data.frame
    track_dfl <- lapply(track_lines[track_df$tracknum], function(i){
       j <- gsub(" ([a-zA-Z]+)=", "!!\\1!", i);
       k <- tail(rbindList(strsplit(gsub('"', '', strsplit(j, "!!")[[1]]), "!")), -1);
@@ -149,7 +184,7 @@ parse_ucsc_gokey <- function
    track_df$name <- track_names;
 
    track_df$is_overlay <- (track_names %in% provigrep(overlay_grep, track_names) &
-         !grepl("[.](bigBed|bb)",
+         !grepl("[.](bigBed|bb|bed)",
             ignore.case=TRUE,
             track_lines[track_df$tracknum]));
 
@@ -161,9 +196,12 @@ parse_ucsc_gokey <- function
    track_df$parent <- ifelse(track_df$is_overlay,
       gsub(overlay_grep, "", track_df$name),
       track_df$header);
-   #track_df$superTrack <- ifelse(track_df$superTrack == track_df$parent,
-   #   paste0(track_df$superTrack, " super"),
-   #   track_df$superTrack);
+
+   ## If the superTrack and parent have the same name, append " super" to the superTrack
+   track_df$superTrack_2 <- ifelse(track_df$superTrack == track_df$parent,
+      paste0(track_df$superTrack, " super"),
+      track_df$superTrack);
+   ## If the superTrack and parent have the same name, append " set" to the parent
    track_df$parent <- ifelse(track_df$superTrack == track_df$parent,
       paste0(track_df$parent, " set"),
       track_df$parent);

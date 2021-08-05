@@ -1,3 +1,14 @@
+# TODO for platjam 12may2021
+
+## UCSC track hub
+
+* new arguments for bigBed tracks
+
+   * scoreFilter=0, scoreFilterLimits="0:1000"
+   * minGrayLevel=4
+   * spectrum="off", scoreMin=0, scoreMax=1000
+
+
 # TODO for platjam 28aug2020
 
 
