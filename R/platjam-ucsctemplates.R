@@ -30,9 +30,9 @@ get_track_defaults <- function
    overlay_header <- "
 
 track                {superTrack}
+superTrack           on show
 shortLabel           {shortLabel}
 longLabel            {longLabel}
-superTrack           on show
 configurable         on
 priority             {priority}
 
@@ -48,6 +48,7 @@ priority             {priority}
    shortLabel             {shortLabel}
    longLabel              {longLabel}
    showSubtrackColorOnUi  on
+   centerLabelsDense      {centerLabelsDense}
    alwaysZero             {alwaysZero}
    graphTypeDefault       {graphTypeDefault}
    maxHeightPixels        {maxHeightPixels}
@@ -76,7 +77,8 @@ priority             {priority}
       aggregate="transparentOverlay",
       alwaysZero="on",
       graphTypeDefault="bar",
-      maxHeightPixels="100:30:5",
+      centerLabelsDense="on",
+      maxHeightPixels="100:66:5",
       windowingFunction="mean+whiskers",
       autoScale="on",
       visibility="full"
@@ -110,7 +112,7 @@ priority          {priority}
    compositeTrack       on
    type                 {type}
    configurable         on
-   centerLabelsDense    on
+   centerLabelsDense    {centerLabelsDense}
    dragAndDrop          on
    maxHeightPixels      {maxHeightPixels}
    transformFunc        {transformFunc}
@@ -152,6 +154,7 @@ priority          {priority}
       maxHeightPixels="100:35:5",
       transformFunc="NONE",
       gridDefault="on",
+      centerLabelsDense="on",
       autoScale="on",
       alwaysZero="on",
       viewLimits="",

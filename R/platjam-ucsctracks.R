@@ -206,6 +206,10 @@ parse_ucsc_gokey <- function
       paste0(track_df$parent, " set"),
       track_df$parent);
 
+   ## add track url and isbed flag
+   track_df$url <- sapply(track_dfl[track_df$name], function(idf){idf$bigDataUrl});
+   track_df$isbed <- grepl("[.](bed|bb|bigbed)$", ignore.case=TRUE, track_urls)
+
    show_env <- function(env){
       unlist(lapply(nameVector(ls(env)), function(i){
          get(i, envir=env)
