@@ -232,11 +232,18 @@ parse_ucsc_gokey <- function
       priority <- priority + 100;
       track_dfh <- track_dfhs[[hname]];
       track_env <- new.env();
+      track_urls <- sapply(track_dfl[track_dfh$name], function(idf){idf$bigDataUrl});
+      track_isbed <- grepl("[.](bed|bb|bigbed)$", ignore.case=TRUE, track_urls)
       if (any(track_dfh$is_overlay)) {
          default_values <- default_env$overlay_defaults;
          tmpl_header <- default_env$overlay_header;
          tmpl_parent <- default_env$overlay_parent;
          tmpl_track <- default_env$overlay_track;
+      } else if (any(track_isbed)) {
+         default_values <- default_env$composite_bed_defaults;
+         tmpl_header <- default_env$composite_bed_header;
+         tmpl_parent <- default_env$composite_bed_parent;
+         tmpl_track <- default_env$composite_bed_track;
       } else {
          default_values <- default_env$composite_defaults;
          tmpl_header <- default_env$composite_header;

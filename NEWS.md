@@ -1,3 +1,10 @@
+# platjam 0.0.36.900
+
+## changes to existing functions
+
+* `parse_ucsc_gokey()` handles bigBed tracks with specific composite
+track templates and relevant default values.
+
 # platjam 0.0.35.900
 
 ## changes to existing functions

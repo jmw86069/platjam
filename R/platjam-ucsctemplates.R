@@ -85,10 +85,15 @@ priority             {priority}
    composite_header <- "
 
 track             {superTrack}
+compositeTrack    on
 shortLabel        {shortLabel}
 longLabel         {longLabel}
 superTrack        on show
 configurable      on
+subGroup1         view Views \
+   COV=Coverage \
+   JUNC=Junctions \
+   PEAK=Peaks
 visibility        {visibility}
 priority          {priority}
 
@@ -99,10 +104,11 @@ priority          {priority}
 
    track                {parent}
    parent               {superTrack} on
-   compositeTrack       on show
-   type                 {type}
    shortLabel           {shortLabel}
    longLabel            {longLabel}
+   view                 {view}
+   compositeTrack       on
+   type                 {type}
    configurable         on
    centerLabelsDense    on
    dragAndDrop          on
@@ -141,9 +147,81 @@ priority          {priority}
 
    composite_defaults <- list(
       visibility="full",
+      view="COV",
       type="bigwig",
       maxHeightPixels="100:35:5",
       transformFunc="NONE",
+      gridDefault="on",
+      autoScale="on",
+      alwaysZero="on",
+      viewLimits="",
+      smoothingWindow="off",
+      windowingFunction="mean+whiskers"
+   );
+
+   composite_bed_header <- "
+
+track             {superTrack}
+compositeTrack    on
+shortLabel        {shortLabel}
+longLabel         {longLabel}
+superTrack        on show
+configurable      on
+subGroup1         view Views \
+   COV=Coverage \
+   JUNC=Junctions \
+   PEAK=Peaks
+visibility        {visibility}
+priority          {priority}
+
+";
+
+   composite_bed_parent <- "
+
+   track                {parent}
+   parent               {superTrack} on
+   shortLabel           {shortLabel}
+   longLabel            {longLabel}
+   view                 {view}
+   visibility           {visibility}
+   type                 {type}
+   allButtonPair        {allButtonPair}
+   centerLabelsDense    {centerLabelsDense}
+   dragAndDrop          {dragAndDrop}
+   thickDrawItem        {thickDrawItem}
+   scoreFilter          {scoreFilter}
+   scoreFilterLimits    {scoreFilterLimits}
+   viewUi               {viewUi}
+   priority             {priority}
+
+";
+
+   composite_bed_track <- "
+
+      track                {track}
+      parent               {parent} on
+      bigDataUrl           {bigDataUrl}
+      shortLabel           {shortLabel}
+      longLabel            {longLabel}
+      type                 {type}
+      visibility           {visibility}
+      scoreFilter          {scoreFilter}
+      color                {color}
+      priority             {priority}
+
+";
+
+   composite_bed_defaults <- list(
+      visibility="pack",
+      view="JUNC",
+      type="bigBed 12",
+      allButtonPair="on",
+      centerLabelsDense="on",
+      dragAndDrop="on",
+      thickDrawItem="on",
+      scoreFilter="5",
+      scoreFilterLimits="1:1000",
+      viewUi="on",
       gridDefault="on",
       autoScale="on",
       alwaysZero="on",
