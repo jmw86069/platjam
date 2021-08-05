@@ -92,9 +92,9 @@ shortLabel        {shortLabel}
 longLabel         {longLabel}
 superTrack        on show
 configurable      on
-subGroup1         view Views \\
-   COV=Coverage \\
-   JUNC=Junctions \\
+subGroup1         view Views \\\
+   COV=Coverage \\\
+   JUNC=Junctions \\\
    PEAK=Peaks
 visibility        {visibility}
 priority          {priority}
@@ -170,9 +170,9 @@ shortLabel        {shortLabel}
 longLabel         {longLabel}
 superTrack        on show
 configurable      on
-subGroup1         view Views \\
-   COV=Coverage \\
-   JUNC=Junctions \\
+subGroup1         view Views \\\
+   COV=Coverage \\\
+   JUNC=Junctions \\\
    PEAK=Peaks
 visibility        {visibility}
 priority          {priority}
