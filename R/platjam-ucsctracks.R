@@ -95,7 +95,6 @@ parse_ucsc_gokey <- function
 {
    #
    output_format <- match.arg(output_format);
-   debug <- match.arg(debug);
 
    # check if track_lines is a file
    if (length(track_lines) == 1) {
