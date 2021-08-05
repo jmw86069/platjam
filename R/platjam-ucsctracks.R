@@ -78,6 +78,9 @@
 #'    output format, where `"text"` will return one long character
 #'    string, and `"list"` will return a `list` with one track
 #'    per list element with class `"glue","character"`.
+#' @param debug `character` indicating type of debug output: `df`
+#'    returns the intermediate `track_df` data.frame; `pri` prints
+#'    priority during track parsing; `none` does no debug.
 #' @param ... additional arguments are ignored.
 #'
 #' @export
@@ -86,7 +89,7 @@ parse_ucsc_gokey <- function
  overlay_grep=c("[ -._](plus|minus|F|R|pos|neg)($|[ -._])"),
  priority=5000,
  output_format=c("text", "list"),
- debug=c("none", "df"),
+ debug=c("none"),
  verbose=FALSE,
  ...)
 {

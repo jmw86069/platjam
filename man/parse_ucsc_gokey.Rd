@@ -9,7 +9,7 @@ parse_ucsc_gokey(
   overlay_grep = c("[ -._](plus|minus|F|R|pos|neg)($|[ -._])"),
   priority = 5000,
   output_format = c("text", "list"),
-  debug = c("none", "df"),
+  debug = c("none"),
   verbose = FALSE,
   ...
 )
@@ -35,6 +35,10 @@ start when assigning priority to each track.}
 output format, where \code{"text"} will return one long character
 string, and \code{"list"} will return a \code{list} with one track
 per list element with class \verb{"glue","character"}.}
+
+\item{debug}{\code{character} indicating type of debug output: \code{df}
+returns the intermediate \code{track_df} data.frame; \code{pri} prints
+priority during track parsing; \code{none} does no debug.}
 
 \item{...}{additional arguments are ignored.}
 }
