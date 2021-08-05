@@ -207,8 +207,16 @@ parse_ucsc_gokey <- function
       track_df$parent);
 
    ## add track url and isbed flag
-   track_df$url <- sapply(track_dfl[track_df$name], function(idf){idf$bigDataUrl});
-   track_df$isbed <- grepl("[.](bed|bb|bigbed)$", ignore.case=TRUE, track_urls)
+   if ("df" %in% debug) {
+      print(head(track_dfl, 2));
+      print(head(track_df$name, 2));
+   }
+   track_df$url <- sapply(track_dfl[track_df$name], function(idf){
+      idf$bigDataUrl
+   });
+   track_df$isbed <- grepl("[.](bed|bb|bigbed)$",
+      ignore.case=TRUE,
+      track_df$url);
 
    show_env <- function(env){
       unlist(lapply(nameVector(ls(env)), function(i){
@@ -236,14 +244,12 @@ parse_ucsc_gokey <- function
       priority <- priority + 100;
       track_dfh <- track_dfhs[[hname]];
       track_env <- new.env();
-      track_urls <- sapply(track_dfl[track_dfh$name], function(idf){idf$bigDataUrl});
-      track_isbed <- grepl("[.](bed|bb|bigbed)$", ignore.case=TRUE, track_urls)
       if (any(track_dfh$is_overlay)) {
          default_values <- default_env$overlay_defaults;
          tmpl_header <- default_env$overlay_header;
          tmpl_parent <- default_env$overlay_parent;
          tmpl_track <- default_env$overlay_track;
-      } else if (any(track_isbed)) {
+      } else if (any(track_dfh$isbed)) {
          default_values <- default_env$composite_bed_defaults;
          tmpl_header <- default_env$composite_bed_header;
          tmpl_parent <- default_env$composite_bed_parent;
