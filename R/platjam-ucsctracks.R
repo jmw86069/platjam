@@ -219,9 +219,15 @@ parse_ucsc_gokey <- function
       track_df$url);
 
    show_env <- function(env){
-      unlist(lapply(nameVector(ls(env)), function(i){
+      ls_names <- ls(envir=env);
+      ls_values <- lapply(nameVector(ls_names), function(i){
          get(i, envir=env)
-      }))
+      });
+      ls_df <- data.frame(
+         name=format(justify="left", names(ls_values)),
+         value=format(justify="left", unlist(ls_values)));
+      print(ls_df);
+      invisible(ls_df);
    }
 
    ## Get track defaults and templates
@@ -245,16 +251,28 @@ parse_ucsc_gokey <- function
       track_dfh <- track_dfhs[[hname]];
       track_env <- new.env();
       if (any(track_dfh$is_overlay)) {
+         if (verbose) {
+            jamba::printDebug("parse_ucsc_gokey(): ",
+               "recognized overlay bigWig tracks");
+         }
          default_values <- default_env$overlay_defaults;
          tmpl_header <- default_env$overlay_header;
          tmpl_parent <- default_env$overlay_parent;
          tmpl_track <- default_env$overlay_track;
       } else if (any(track_dfh$isbed)) {
+         if (verbose) {
+            jamba::printDebug("parse_ucsc_gokey(): ",
+               "recognized bigBed tracks");
+         }
          default_values <- default_env$composite_bed_defaults;
          tmpl_header <- default_env$composite_bed_header;
          tmpl_parent <- default_env$composite_bed_parent;
          tmpl_track <- default_env$composite_bed_track;
       } else {
+         if (verbose) {
+            jamba::printDebug("parse_ucsc_gokey(): ",
+               "recognized composite bigWig tracks");
+         }
          default_values <- default_env$composite_defaults;
          tmpl_header <- default_env$composite_header;
          tmpl_parent <- default_env$composite_parent;

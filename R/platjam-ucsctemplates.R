@@ -240,7 +240,11 @@ priority          {priority}
       "composite_header",
       "composite_parent",
       "composite_track",
-      "composite_defaults");
+      "composite_defaults"
+      "composite_bed_header",
+      "composite_bed_parent",
+      "composite_bed_track",
+      "composite_bed_defaults");
    for (default_name in default_names) {
       assign(default_name,
          value=get(default_name),
