@@ -256,6 +256,9 @@ parse_ucsc_gokey <- function
    for (hname in names(track_dfhs)) {
       priority <- get("priority", envir=pri_env);
       priority <- priority + 100;
+      assign("priority",
+         value=priority,
+         envir=pri_env);
       if ("pri" %in% debug) jamba::printDebug("100 priority:", priority)
       track_dfh <- track_dfhs[[hname]];
       track_env <- new.env();
@@ -355,8 +358,9 @@ parse_ucsc_gokey <- function
             envir=pri_env);
       }
       priority <- get("priority", envir=pri_env);
+      if ("pri" %in% debug) jamba::printDebug("floor 100 priority (before):", priority)
       priority <- floor((priority + 100) / 1000) * 1000;
-      if ("pri" %in% debug) jamba::printDebug("floor 100 priority:", priority)
+      if ("pri" %in% debug) jamba::printDebug("floor 100 priority  (after):", priority)
       assign("priority",
          value=priority,
          envir=pri_env);
