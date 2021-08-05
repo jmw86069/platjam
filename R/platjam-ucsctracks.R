@@ -350,9 +350,12 @@ parse_ucsc_gokey <- function
          }
          priority <- floor((priority + 10) / 10) * 10;
          if ("pri" %in% debug) jamba::printDebug("floor 10 priority:", priority)
+         assign("priority",
+            value=priority,
+            envir=pri_env);
       }
-      if ("pri" %in% debug) jamba::printDebug("floor 100 priority:", priority)
       priority <- floor((priority + 100) / 1000) * 1000;
+      if ("pri" %in% debug) jamba::printDebug("floor 100 priority:", priority)
       assign("priority",
          value=priority,
          envir=pri_env);
