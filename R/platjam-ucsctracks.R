@@ -247,7 +247,7 @@ parse_ucsc_gokey <- function
 
    track_dfhs <- split(track_df, track_df$superTrack);
    for (hname in names(track_dfhs)) {
-      priority <- priority + 100;
+      priority <<- priority + 100;
       track_dfh <- track_dfhs[[hname]];
       track_env <- new.env();
       if (any(track_dfh$is_overlay)) {
@@ -296,7 +296,7 @@ parse_ucsc_gokey <- function
       ## split track_dfh by parent (+/- strand)
       track_dfhps <- split(track_dfh, track_dfh$parent);
       for (pname in names(track_dfhps)) {
-         priority <- priority + 10;
+         priority <<- priority + 10;
          track_dfhp <- track_dfhps[[pname]];
          track_env <- new.env();
          assign_track_defaults(track_env, default_values);
@@ -316,7 +316,7 @@ parse_ucsc_gokey <- function
          ###############################################
          ## split track_dfhp by parent (+/- strand)
          for (irow in seq_len(nrow(track_dfhp))) {
-            priority <- priority + 2;
+            priority <<- priority + 2;
             track_dfhpt <- track_dfhp[irow,,drop=FALSE];
             track <- track_dfhpt$name;
             track_env <- new.env();
@@ -337,9 +337,9 @@ parse_ucsc_gokey <- function
                list(new_trackline)
             )
          }
-         priority <- floor((priority + 10) / 10) * 10;
+         priority <<- floor((priority + 10) / 10) * 10;
       }
-      priority <- floor((priority + 100) / 1000) * 1000;
+      priority <<- floor((priority + 100) / 1000) * 1000;
    }
    if ("text" %in% output_format) {
       trackline_list <- do.call(paste, trackline_list);
