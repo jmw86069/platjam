@@ -240,7 +240,7 @@ priority          {priority}
       "composite_header",
       "composite_parent",
       "composite_track",
-      "composite_defaults"
+      "composite_defaults",
       "composite_bed_header",
       "composite_bed_parent",
       "composite_bed_track",
