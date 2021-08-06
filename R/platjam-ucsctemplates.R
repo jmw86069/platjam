@@ -174,7 +174,7 @@ subGroup1         view Views \\\
    COV=Coverage \\\
    JUNC=Junctions \\\
    PEAK=Peaks
-visibility        full
+visibility        {visibility}
 priority          {priority}
 
 ";
@@ -207,7 +207,7 @@ priority          {priority}
       shortLabel           {shortLabel}
       longLabel            {longLabel}
       type                 {type}
-      visibility           {visibility}
+      visibility           full
       scoreFilter          {scoreFilter}
       color                {color}
       priority             {priority}
