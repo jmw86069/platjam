@@ -1,3 +1,11 @@
+# platjam 0.0.37.900
+
+## changes to existing functions
+
+* `get_track_defaults()` was updated to adjust the default bigBed
+track settings, so the default display is `"pack"` but can be adjusted
+as needed.
+
 # platjam 0.0.36.900
 
 ## changes to existing functions

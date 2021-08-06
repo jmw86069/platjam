@@ -1,8 +1,15 @@
-# TODO for platjam 12may2021
+# TODO for platjam
 
 ## UCSC track hub
 
-* new arguments for bigBed tracks
+* Add example for `parse_ucsc_gokey()` showing three kinds of tracks
+as input
+
+   1. bigWig with pos/neg or F/R or some track grouping -> multiWig overlay
+   2. bigWig without grouping -> composite tracks
+   3. bigBed -> composite Tracks
+
+* COMPLETE:new arguments for bigBed tracks
 
    * scoreFilter=0, scoreFilterLimits="0:1000"
    * minGrayLevel=4

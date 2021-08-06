@@ -168,13 +168,13 @@ track             {superTrack}
 compositeTrack    on
 shortLabel        {shortLabel}
 longLabel         {longLabel}
-superTrack        on show
+type              {type}
 configurable      on
 subGroup1         view Views \\\
    COV=Coverage \\\
    JUNC=Junctions \\\
    PEAK=Peaks
-visibility        {visibility}
+visibility        full
 priority          {priority}
 
 ";
@@ -186,7 +186,7 @@ priority          {priority}
    shortLabel           {shortLabel}
    longLabel            {longLabel}
    view                 {view}
-   visibility           {visibility}
+   visibility           full
    type                 {type}
    allButtonPair        {allButtonPair}
    centerLabelsDense    {centerLabelsDense}
