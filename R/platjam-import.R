@@ -462,6 +462,19 @@ coverage_matrix2nmat <- function
 #'    is non-zero.
 #' @param use_raster logical indicating whether to create heatmaps
 #'    using raster resizing, almost always recommended `TRUE`.
+#' @param raster_by_magick `logical` passed to `ComplexHeatmap::Heatmap()`,
+#'    to enable ImageMagick use during rasterization. By default this
+#'    option is `TRUE` and is only disabled when the R package
+#'    `"magick"` is not installed, or not properly configured.
+#'    If you see a warning "instalilng 'magick' will improve rasterization"
+#'    then check the R package with `library(magick)` and see if
+#'    there are error messages. When `"magick"` is not available,
+#'    the rasterization is substantially slower, and may produce
+#'    files much larger than normal.
+#' @param raster_quality `logical` passed to `ComplexHeatmap::Heatmap()`,
+#'    used when `use_raster=TRUE` and defines the level of detail retained,
+#'    and is used only when `raster_by_magick=FALSE`. Using larger numbers
+#'    decreases speed substantially.
 #' @param do_plot logical indicating whether to draw the heatmaps,
 #'    where `FALSE` will return the data used to create heatmaps
 #'    without actually drawing the heatmaps.
@@ -546,6 +559,8 @@ nmatlist2heatmaps <- function
  border=TRUE,
  iter.max=20,
  use_raster=TRUE,
+ raster_quality=1,
+ raster_by_magick=TRUE,
  do_plot=TRUE,
  legend_width=grid::unit(3, "cm"),
  trim_legend_title=TRUE,
@@ -910,6 +925,8 @@ nmatlist2heatmaps <- function
          border=FALSE,
          heatmap_legend_param=p_heatmap_legend_param,
          use_raster=use_raster,
+         raster_quality=raster_quality,
+         raster_by_magick=raster_by_magick,
          col=k_colors,
          name="cluster",
          show_row_names=FALSE,
@@ -945,6 +962,9 @@ nmatlist2heatmaps <- function
                   anno_df[jamba::rmNA(match(rows, rownames(anno_df))),, drop=FALSE],
                   row_rank_JAM=row_rank),
                byCols=c(byCols, "row_rank_JAM"));
+            anno_df <- anno_df[,setdiff(
+               colnames(anno_df),
+               "row_rank_JAM"), drop=FALSE];
          } else {
             anno_df <- jamba::mixedSortDF(anno_df,
                byCols=byCols);
@@ -1573,6 +1593,8 @@ nmatlist2heatmaps <- function
          split=partition[rows],
          pos_line=pos_line[[i]],
          use_raster=use_raster,
+         raster_quality=raster_quality,
+         raster_by_magick=raster_by_magick,
          col=colramp,
          border=border[[i]],
          top_annotation=top_annotation,

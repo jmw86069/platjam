@@ -31,6 +31,9 @@ child function `get_nmat_ceiling()` which controls the logic:
 * Argument `row_order` is intended to work alongside `byCols`, so the
 sort of `anno_df` will also inlude sort for row order within each subset
 of `anno_df` as applicable.
+* New arguments `raster_quality` and `raster_by_magick` passed to
+`ComplexHeatmap::Heatmap()`.
+
 
 
 # platjam 0.0.37.900

@@ -49,6 +49,8 @@ nmatlist2heatmaps(
   border = TRUE,
   iter.max = 20,
   use_raster = TRUE,
+  raster_quality = 1,
+  raster_by_magick = TRUE,
   do_plot = TRUE,
   legend_width = grid::unit(3, "cm"),
   trim_legend_title = TRUE,
@@ -294,6 +296,21 @@ is non-zero.}
 
 \item{use_raster}{logical indicating whether to create heatmaps
 using raster resizing, almost always recommended \code{TRUE}.}
+
+\item{raster_quality}{\code{logical} passed to \code{ComplexHeatmap::Heatmap()},
+used when \code{use_raster=TRUE} and defines the level of detail retained,
+and is used only when \code{raster_by_magick=FALSE}. Using larger numbers
+decreases speed substantially.}
+
+\item{raster_by_magick}{\code{logical} passed to \code{ComplexHeatmap::Heatmap()},
+to enable ImageMagick use during rasterization. By default this
+option is \code{TRUE} and is only disabled when the R package
+\code{"magick"} is not installed, or not properly configured.
+If you see a warning "instalilng 'magick' will improve rasterization"
+then check the R package with \code{library(magick)} and see if
+there are error messages. When \code{"magick"} is not available,
+the rasterization is substantially slower, and may produce
+files much larger than normal.}
 
 \item{do_plot}{logical indicating whether to draw the heatmaps,
 where \code{FALSE} will return the data used to create heatmaps
