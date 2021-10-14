@@ -1,3 +1,35 @@
+# platjam 0.0.38.900
+
+## changes to `nmatlist2heatmaps()`
+
+A series of changes was made to `nmatlist2heatmaps()`:
+
+* New argument `top_annotation` to customize the annotation appearing
+above each heatmap. It takes several forms:
+
+   1. `TRUE` uses the default `ComplexHeatmap::HeatmapAnnotation(EnrichedHeatmap::anno_enriched())`
+   with some platjam-specific customizations, mainly to match the profile line
+   colors to the `partition` and `k_colors` arguments for consistency.
+   2. `FALSE` hides the annotation
+   3. `HeatmapAnnotation` uses the function as provided
+   4. `list` of any combination of the above, recycled to `length(nmatlist)`.
+   The `list` input can be used for specific plots above each matrix,
+   which can also specify the data used for those plots. Note option
+   3 above uses the closed form `EnrichedHeatmap::anno_enriched()` in order
+   to be applied to the appropriate data matrix for each heatmap.
+
+* New argument `top_anno_height` which is a `grid::unit` object specifying
+the height of the `top_annotation` - only used when `top_annotation` is
+not supplied in custom form.
+* Help text for argument `signal_ceiling` includes reference to the
+child function `get_nmat_ceiling()` which controls the logic:
+
+   * `signal_ceiling` above `1` applies the strict numeric value
+   * `signal_ceiling` between `0` and `1` applies a `quantile(x, probs=signal_ceiling)`
+   * `signal_ceiling=NULL` uses the maximum absolute value
+
+
+
 # platjam 0.0.37.900
 
 ## changes to existing functions

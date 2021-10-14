@@ -26,6 +26,8 @@ nmatlist2heatmaps(
   color_sub = NULL,
   anno_row_marks = NULL,
   anno_row_labels = NULL,
+  top_annotation = NULL,
+  top_anno_height = grid::unit(3, "cm"),
   legend_max_ncol = 2,
   legend_base_nrow = 5,
   legend_max_labels = 40,
@@ -151,6 +153,26 @@ of \code{colnames(anno_df)} which will create labels
 by concatenating each column value separated by
 space \code{" "}.}
 
+\item{top_annotation}{\code{HeatmapAnnotation} or \code{logical} or \code{list}:
+\itemize{
+\item \code{TRUE} to use the default approach
+\code{EnrichedHeatmap::anno_enriched()}
+\item \code{FALSE} to prevent the display of top annotation
+\item \code{HeatmapAnnotation} which should be in the form
+\code{ComplexHeatmap::HeatmapAnnotation(EnrichedHeatmap::anno_enriched())}
+or equivalent. This form is required for the annotation
+function to be called on each coverage matrix heatmap.
+\item \code{list} of objects suitable to be passed as a
+\code{top_annotation} argument for each coverage heatmap,
+in order of \code{nmatlist}.
+}}
+
+\item{top_anno_height}{\code{unit} object to define the default
+height of the \code{top_annotation}. When \code{top_annotation}
+is not defined, the default method uses
+\code{EnrichedHeatmap::anno_enriched()} with
+\code{height=top_anno_height}.}
+
 \item{legend_max_ncol}{integer number indicating the maximum
 number of columns allowed for a categorical color legend.}
 
@@ -161,7 +183,7 @@ exceeds \code{(legend_max_ncol * legend_base_nrow)} then
 rows are added, but columns never exceed \code{legend_max_ncol}.}
 
 \item{legend_max_labels}{\code{integer} to define the maximum labels
-to display as a color legend; when \code{anno_df} columns contain
+to display as a color legend. When any \code{anno_df} column contains
 more than this number of categorical colors, the legend is
 not displayed (because it would prevent display of the
 heatmaps at all).}
@@ -183,13 +205,30 @@ transformation is applied to adjust the magnitude of
 the values. These values are passed to \code{get_numeric_transform()}
 which may have more information.}
 
-\item{signal_ceiling}{numeric vector length \code{length(nmatlist)}
-which applies a maximum numeric value to the
-color ramp for each matrix in \code{nmatlist}. Every numeric
-value above the \code{signal_ceiling} will be assigned the
-maximum color. The values in \code{signal_ceiling} are
-recycled to \code{length(nmatlist)}, so if one value is
-provided, it will be applied to every matrix.}
+\item{signal_ceiling}{\code{numeric} vector whose values are recycled
+to length \code{length(nmatlist)}. The signal_ceiling
+applies a maximum numeric value to the
+color ramp for each matrix in \code{nmatlist}. The value is
+passed to \code{get_nmat_ceiling()}, which recognizes three
+numeric forms:
+\itemize{
+\item \code{signal_ceiling > 1}: this specific numeric value
+is applied as the ceiling
+\item \code{signal_ceiling > 0} and \code{signal_ceiling <= 1}: this numeric
+value is interpreted as a quantile threshold, for example
+\code{signal_ceiling=0.75} would calculate ceiling \code{quantile(x, probs=0.75)}.
+\item \code{signal_ceiling} is \code{NULL}: the maximum absolute value of each
+matrix is used as the ceiling.
+}
+
+Note that the ceiling is only applied to color scale and
+not to the underlying data, which is useful to know because any
+clustering and row ordering steps will use the full data
+as needed.
+
+If data needs to be strictly controlled to a
+numeric ceiling, that processing should take place
+on \code{nmatlist} before calling \code{nmatlist2heatmaps()}.}
 
 \item{axis_name_gp}{x-axis label graphic parameters,
 as output from \code{grid::gpar()}. For example to define

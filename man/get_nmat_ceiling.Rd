@@ -12,6 +12,20 @@ Helper function to calculate signal ceiling of numeric matrix
 \details{
 This function is called by \code{nmatlist2heatmaps()} and is not
 intended to be called directly.
+
+It takes a \code{normalizedMatrix} or \code{numeric} matrix object, and
+a ceiling value \code{iceiling} and determines an appropriate numeric
+ceiling with the following rules:
+\itemize{
+\item if \code{iceiling} is \code{NULL}, it returns the highest absolute value in \code{imat}
+\item if \code{iceiling > 0} and \code{iceiling <= 1}, it calculates \code{quantile(abs(imat), probs=iceiline)}
+using only non-zero values
+\item otherwise \code{iceiling} is used as a numerical ceiling
+}
+
+In all cases, \code{iceiling} is rounded to 3 digits with \code{round(iceiling, digits=3)}
+
+Also in all cases, \code{na.rm=TRUE} is used, to prevent returning \code{NA}.
 }
 \seealso{
 Other jam utility functions: 

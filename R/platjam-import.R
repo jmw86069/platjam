@@ -339,7 +339,7 @@ coverage_matrix2nmat <- function
 #'    exceeds `(legend_max_ncol * legend_base_nrow)` then
 #'    rows are added, but columns never exceed `legend_max_ncol`.
 #' @param legend_max_labels `integer` to define the maximum labels
-#'    to display as a color legend; when `anno_df` columns contain
+#'    to display as a color legend. When any `anno_df` column contains
 #'    more than this number of categorical colors, the legend is
 #'    not displayed (because it would prevent display of the
 #'    heatmaps at all).
@@ -356,6 +356,22 @@ coverage_matrix2nmat <- function
 #'    of `colnames(anno_df)` which will create labels
 #'    by concatenating each column value separated by
 #'    space `" "`.
+#' @param top_annotation `HeatmapAnnotation` or `logical` or `list`:
+#'    * `TRUE` to use the default approach
+#'    `EnrichedHeatmap::anno_enriched()`
+#'    * `FALSE` to prevent the display of top annotation
+#'    * `HeatmapAnnotation` which should be in the form
+#'    `ComplexHeatmap::HeatmapAnnotation(EnrichedHeatmap::anno_enriched())`
+#'    or equivalent. This form is required for the annotation
+#'    function to be called on each coverage matrix heatmap.
+#'    * `list` of objects suitable to be passed as a
+#'    `top_annotation` argument for each coverage heatmap,
+#'    in order of `nmatlist`.
+#' @param top_anno_height `unit` object to define the default
+#'    height of the `top_annotation`. When `top_annotation`
+#'    is not defined, the default method uses
+#'    `EnrichedHeatmap::anno_enriched()` with
+#'    `height=top_anno_height`.
 #' @param hm_nrow integer number of rows used to display
 #'    the heatmap panels.
 #' @param transform either `character` string referring to
@@ -371,13 +387,28 @@ coverage_matrix2nmat <- function
 #'    transformation is applied to adjust the magnitude of
 #'    the values. These values are passed to `get_numeric_transform()`
 #'    which may have more information.
-#' @param signal_ceiling numeric vector length `length(nmatlist)`
-#'    which applies a maximum numeric value to the
-#'    color ramp for each matrix in `nmatlist`. Every numeric
-#'    value above the `signal_ceiling` will be assigned the
-#'    maximum color. The values in `signal_ceiling` are
-#'    recycled to `length(nmatlist)`, so if one value is
-#'    provided, it will be applied to every matrix.
+#' @param signal_ceiling `numeric` vector whose values are recycled
+#'    to length `length(nmatlist)`. The signal_ceiling
+#'    applies a maximum numeric value to the
+#'    color ramp for each matrix in `nmatlist`. The value is
+#'    passed to `get_nmat_ceiling()`, which recognizes three
+#'    numeric forms:
+#'    * `signal_ceiling > 1`: this specific numeric value
+#'    is applied as the ceiling
+#'    * `signal_ceiling > 0` and `signal_ceiling <= 1`: this numeric
+#'    value is interpreted as a quantile threshold, for example
+#'    `signal_ceiling=0.75` would calculate ceiling `quantile(x, probs=0.75)`.
+#'    * `signal_ceiling` is `NULL`: the maximum absolute value of each
+#'    matrix is used as the ceiling.
+#'
+#'    Note that the ceiling is only applied to color scale and
+#'    not to the underlying data, which is useful to know because any
+#'    clustering and row ordering steps will use the full data
+#'    as needed.
+#'
+#'    If data needs to be strictly controlled to a
+#'    numeric ceiling, that processing should take place
+#'    on `nmatlist` before calling `nmatlist2heatmaps()`.
 #' @param lens numeric value used to scale each heatmap
 #'    color ramp, using `getColorRamp()`. Values above zero
 #'    apply the color gradient more rapidly starting from the
@@ -491,6 +522,8 @@ nmatlist2heatmaps <- function
  color_sub=NULL,
  anno_row_marks=NULL,
  anno_row_labels=NULL,
+ top_annotation=NULL,
+ top_anno_height=grid::unit(3, "cm"),
  legend_max_ncol=2,
  legend_base_nrow=5,
  legend_max_labels=40,
@@ -1364,12 +1397,27 @@ nmatlist2heatmaps <- function
       }
    }
 
+   ## Handle top_annotation provided as a custom list
+   top_annotation_list <- NULL;
+   if (is.list(top_annotation)) {
+      top_annotation_list <- top_annotation;
+      if (!all(names(nmatlist) %in% names(top_annotation_list))) {
+         if (length(top_annotation_list) != length(nmatlist)) {
+            top_annotation_list <- rep(top_annotation_list,
+               length.out=length(nmatlist));
+            names(top_annotation_list) <- names(nmatlist);
+         }
+      }
+      top_annotation_list <- top_annotation_list[names(nmatlist)];
+   }
+
    #############################
    ## Iterate each heatmap
    if (verbose) {
       jamba::printDebug("nmatlist2heatmaps(): ",
          "Iterating each heatmap.");
    }
+
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
       signal_name <- attr(nmat, "signal_name");
@@ -1489,19 +1537,33 @@ nmatlist2heatmaps <- function
          }
       }
 
+      ######################################
+      # process top_annotation
+      if (length(top_annotation_list) > 0) {
+         top_annotation <- top_annotation_list[[i]];
+      }
+      if (length(top_annotation) > 0 && is.logical(top_annotation) && !top_annotation) {
+         top_annotation <- NULL;
+      } else {
+         top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+            lines=EnrichedHeatmap::anno_enriched(
+               gp=grid::gpar(col=use_colors),
+               value=profile_value,
+               ylim=ylim,
+               height=top_anno_height,
+               show_error=show_error)
+         )
+      }
+
+      ######################################
+      # create coverage heatmap
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
          split=partition[rows],
          pos_line=pos_line[[i]],
          use_raster=use_raster,
          col=colramp,
          border=border[[i]],
-         top_annotation=ComplexHeatmap::HeatmapAnnotation(
-            lines=EnrichedHeatmap::anno_enriched(
-               gp=grid::gpar(col=use_colors),
-               value=profile_value,
-               ylim=ylim,
-               show_error=show_error)
-         ),
+         top_annotation=top_annotation,
          show_heatmap_legend=show_heatmap_legend[[i]],
          heatmap_legend_param=heatmap_legend_param[[i]],
          axis_name_gp=axis_name_gp[[i]],
@@ -1841,6 +1903,20 @@ get_numeric_transform <- function
 #'
 #' This function is called by `nmatlist2heatmaps()` and is not
 #' intended to be called directly.
+#'
+#' It takes a `normalizedMatrix` or `numeric` matrix object, and
+#' a ceiling value `iceiling` and determines an appropriate numeric
+#' ceiling with the following rules:
+#'
+#' * if `iceiling` is `NULL`, it returns the highest absolute value in `imat`
+#' * if `iceiling > 0` and `iceiling <= 1`, it calculates `quantile(abs(imat), probs=iceiline)`
+#' using only non-zero values
+#' * otherwise `iceiling` is used as a numerical ceiling
+#'
+#' In all cases, `iceiling` is rounded to 3 digits with `round(iceiling, digits=3)`
+#'
+#' Also in all cases, `na.rm=TRUE` is used, to prevent returning `NA`.
+#'
 #'
 #' @family jam utility functions
 #'
