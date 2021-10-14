@@ -817,6 +817,9 @@ nmatlist2heatmaps <- function
          }
       }
    }
+   # End k-means clustering
+   ##################################
+
    ##################################
    ## Partition heatmap sidebar
    if (length(partition) > 0) {
@@ -935,9 +938,18 @@ nmatlist2heatmaps <- function
             " rows present in rownames(anno_df).");
       }
       if (length(byCols) > 0) {
-         anno_df <- jamba::mixedSortDF(anno_df,
-            byCols=byCols);
-         rows <- intersect(rownames(anno_df), rows);
+         if (is.numeric(row_order)) {
+            row_rank <- match(rows, rows[row_order]);
+            anno_df <- jamba::mixedSortDF(
+               data.frame(check.names=FALSE,
+                  anno_df[jamba::rmNA(match(rows, rownames(anno_df))),, drop=FALSE],
+                  row_rank_JAM=row_rank),
+               byCols=c(byCols, "row_rank_JAM"));
+         } else {
+            anno_df <- jamba::mixedSortDF(anno_df,
+               byCols=byCols);
+         }
+         rows <- rownames(anno_df)[rownames(anno_df) %in% rows];
          if (verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
                "Sorted rows by:",
@@ -947,7 +959,7 @@ nmatlist2heatmaps <- function
       } else {
          rows <- rows[rows %in% rownames(anno_df)];
       }
-      anno_df <- anno_df[rows,,drop=FALSE];
+      anno_df <- anno_df[match(rows, rownames(anno_df)),, drop=FALSE];
       ## Determine a list of color functions, one for each column
       anno_colors_l <- lapply(nameVector(colnames(anno_df)), function(i){
          if (verbose) {

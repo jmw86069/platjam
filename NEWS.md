@@ -28,6 +28,9 @@ child function `get_nmat_ceiling()` which controls the logic:
    * `signal_ceiling` between `0` and `1` applies a `quantile(x, probs=signal_ceiling)`
    * `signal_ceiling=NULL` uses the maximum absolute value
 
+* Argument `row_order` is intended to work alongside `byCols`, so the
+sort of `anno_df` will also inlude sort for row order within each subset
+of `anno_df` as applicable.
 
 
 # platjam 0.0.37.900
