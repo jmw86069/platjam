@@ -1692,7 +1692,7 @@ nmatlist2heatmaps <- function
          length.out=max(c(1, length(nmatlist)-1)));
       if (length(panel_groups) > 0) {
          ht_gap_adjust <- head(
-            (panel_groups != tail(c(panel_groups, "blahblah"), -1)) + 0.5,
+            (panel_groups != tail(c(panel_groups, "blahblah"), -1)) * 2.5 + 0.5,
             -1);
          ht_gap <- ht_gap * ht_gap_adjust;
       }
