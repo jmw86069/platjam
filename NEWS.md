@@ -34,6 +34,12 @@ of `anno_df` as applicable.
 * New arguments `raster_quality` and `raster_by_magick` passed to
 `ComplexHeatmap::Heatmap()`.
 
+## new functions
+
+* `zoom_nmatlist()` and `zoom_nmat()` are intended to help zoom into
+a particular range of coverage matrix data, where the stored coverage
+is wider than desired for the heatmap figure.
+
 
 
 # platjam 0.0.37.900

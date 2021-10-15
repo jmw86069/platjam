@@ -148,3 +148,86 @@ nmathm_row_order <- function
    row_order <- multienrichjam::heatmap_row_order(HM@ht_list[[hmwhich1]]);
    return(row_order);
 }
+
+
+#' Zoom the x-axis range for a list of normalizedMatrix coverage data
+#'
+#' Zoom the x-axis range for a list of normalizedMatrix coverage data
+#'
+#' @export
+zoom_nmatlist <- function
+(nmatlist,
+   upstream_length=500,
+   downstream_length=500,
+   ...)
+{
+   #
+   new_nmatlist <- lapply(nmatlist, function(nmat){
+      zoom_nmat(nmat,
+         upstream_length=upstream_length,
+         downstream_length=downstream_length,
+         ...)
+   })
+   return(new_nmatlist);
+}
+
+
+#' Zoom the x-axis range for a normalizedMatrix coverage data
+#'
+#' Zoom the x-axis range for a normalizedMatrix coverage data
+#'
+#' This function is typically called by `zoom_nmatlist()` but can
+#' be called on an individual `normalizedMatrix` object.
+#'
+#' @export
+zoom_nmat <- function
+(nmat,
+   upstream_length=500,
+   downstream_length=500,
+   ...)
+{
+   # detect bin size
+   bin_width <- NULL;
+   if (length(attr(nmat, "upstream_index")) > 0) {
+      bin_width <- round(attr(nmat, "extend")[1] /  length(attr(nmat, "upstream_index")))
+      upstream_start <- rev(seq_along(attr(nmat, "upstream_index")) * bin_width);
+   } else {
+      upstream_start <- NULL;
+   }
+   upstream_keep <- (upstream_start <= upstream_length)
+   new_extend1 <- max(upstream_start[upstream_keep], na.rm=TRUE);
+
+   if (length(attr(nmat, "downstream_index")) > 0) {
+      if (length(bin_width) == 0) {
+         bin_width <- round(attr(nmat, "extend")[2] /  length(attr(nmat, "downstream_index")))
+      }
+      downstream_end <- seq_along(attr(nmat, "downstream_index")) * bin_width;
+   } else {
+      downstream_end <- NULL;
+   }
+   downstream_keep <- (downstream_end <= downstream_length)
+   new_extend2 <- max(downstream_end[downstream_keep], na.rm=TRUE);
+   new_extend <- c(new_extend1, new_extend2);
+
+   target_keep <- rep(TRUE, length(attr(nmat, "target")));
+
+   column_set <- c(attr(nmat, "upstream_index"),
+      attr(nmat, "target"),
+      attr(nmat, "downstream_index"))
+   column_keep <- column_set[c(upstream_keep,
+      target_keep,
+      downstream_keep)];
+
+   new_nmat <- nmat[, column_keep, drop=FALSE];
+   attr_keep <- setdiff(names(attributes(nmat)),
+      c("dim", "dimnames"));
+   attributes(new_nmat)[attr_keep] <- attributes(nmat)[attr_keep];
+   attr(new_nmat, "upstream_index") <- seq_len(sum(upstream_keep));
+   attr(new_nmat, "downstream_index") <- tail(seq_len(ncol(new_nmat)), sum(downstream_keep));
+   attr(new_nmat, "target") <- setdiff(seq_len(ncol(new_nmat)),
+      c(attr(new_nmat, "upstream_index"),
+         attr(new_nmat, "downstream_index")));
+   attr(new_nmat, "extend") <- new_extend;
+   return(new_nmat);
+}
+
