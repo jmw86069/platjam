@@ -1687,7 +1687,15 @@ nmatlist2heatmaps <- function
       ## Single row layout
       HM_temp <- Reduce("+", EH_l);
       main_heatmap_temp <- main_heatmap;
-      ht_gap <- rep(ht_gap, length.out=max(c(1, length(nmatlist)-1)));
+
+      ht_gap <- rep(ht_gap,
+         length.out=max(c(1, length(nmatlist)-1)));
+      if (length(panel_groups) > 0) {
+         ht_gap_adjust <- head(
+            (panel_groups != tail(c(panel_groups, "blahblah"), -1)) + 0.5,
+            -1);
+         ht_gap <- ht_gap * ht_gap_adjust;
+      }
       if (length(partition) > 0) {
          HM_temp <- PHM[match(rows, PHM_rows),] + HM_temp;
          main_heatmap_temp <- main_heatmap_temp + 1;
