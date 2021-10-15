@@ -1,5 +1,11 @@
 # TODO for platjam
 
+## `nmatlist2heatmaps()`
+
+* Optionally draw y-axis horizontal abline at y=0
+when data contains positive/negative values.
+
+
 ## UCSC track hub
 
 * Add example for `parse_ucsc_gokey()` showing three kinds of tracks
@@ -23,11 +29,11 @@ as input
 
 * For `panel_groups`:
 
-   * when all heatmaps in a set of panels share the
+   * COMPLETE: when all heatmaps in a set of panels share the
    same color gradient, the color legend should be displayed once per group,
    and should be labeled using the `panel_groups` value.
-   * make the `ht_gap` between adjacent heatmaps in the same group smaller;
-   hide y-axis labels on the profile plot for all but the last panel in
+   * make the `ht_gap` between adjacent heatmaps in the same group smaller
+   * COMPLETE: hide y-axis labels on the profile plot for all but the last panel in
    an adjacent set. For example using
    `EnrichedHeatmap::anno_enriched(... yaxis=FALSE)`
 
