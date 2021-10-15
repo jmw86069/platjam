@@ -1594,11 +1594,16 @@ nmatlist2heatmaps <- function
       if (length(top_annotation) > 0 && is.logical(top_annotation) && !top_annotation) {
          top_annotation <- NULL;
       } else {
+         top_axis <- TRUE;
+         if (length(panel_groups) > 0) {
+            top_axis <- (panel_groups != tail(c(panel_groups, "blahblah"), -1))
+         }
          top_annotation <- ComplexHeatmap::HeatmapAnnotation(
             lines=EnrichedHeatmap::anno_enriched(
                gp=grid::gpar(col=use_colors),
                value=profile_value,
                ylim=ylim,
+               axis=top_axis,
                height=top_anno_height,
                show_error=show_error)
          )

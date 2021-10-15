@@ -37,6 +37,16 @@ of `anno_df` as applicable.
 zoom of the coordinate range being displayed. These arguments are
 passed to `zoom_nmatlist()` if either is not `NULL`.
 
+* New behavior when `panel_groups` are supplied:
+
+   * `heatmap_annotation_param` will automatically hide duplicate color legends,
+   and will use the `panel_groups` value for the color legend title.
+   * `top_annotation` default axis will be hidden except for the last
+   in each set of adjacent duplicated panel_groups. For example,
+   `panel_groups=c("A", "A", "B", "B", "A", "A")` will display y-axis for
+   entries `c(2, 4, 6)`.
+   * In future, heatmap panels may have slightly wider gap between
+   different panel_groups values.
 
 ## new functions
 
