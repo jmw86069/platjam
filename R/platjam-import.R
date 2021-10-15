@@ -518,6 +518,8 @@ nmatlist2heatmaps <- function
  panel_groups=NULL,
  title=NULL,
  caption=NULL,
+ upstream_length=NULL,
+ downstream_length=NULL,
  k_clusters=0,
  k_subset=NULL,
  k_colors=NULL,
@@ -574,8 +576,6 @@ nmatlist2heatmaps <- function
    #
    return_type <- match.arg(return_type);
    profile_value <- match.arg(profile_value);
-   show_heatmap_legend <- rep(show_heatmap_legend,
-      length.out=length(nmatlist));
    if (length(seed) > 0) {
       set.seed(seed);
    }
@@ -591,15 +591,15 @@ nmatlist2heatmaps <- function
       legend_width <- grid::unit(3, "cm");
    }
 
-   if (FALSE && (length(title) > 0 || length(caption) > 0 || hm_nrow > 1)) {
-      if (use_raster) {
+   ## optional coordinate range zoom for coverage data
+   if (length(upstream_length) > 0 || length(downstream_length) > 0) {
+      if (verbose > 1) {
          jamba::printDebug("nmatlist2heatmaps(): ",
-            "Forced ",
-            c("use_raster=", "FALSE"), sep="",
-            c(" to make it compatible with using '",
-               "title", "' and '", "caption", "'."));
-         use_raster <- FALSE;
+            "call zoom_nmatlist()");
       }
+      nmatlist <- zoom_nmatlist(nmatlist=nmatlist,
+         upstream_length=upstream_length,
+         downstream_length=downstream_length);
    }
 
    ## k_method
@@ -1244,6 +1244,14 @@ nmatlist2heatmaps <- function
    if (length(panel_groups) > 0) {
       ## Make sure we have some duplicated panel_groups
       if (length(tcount(panel_groups, minCount=2)) > 0) {
+         if (length(show_heatmap_legend) <= 1) {
+            if (length(show_heatmap_legend) == 0) {
+               show_heatmap_legend <- TRUE;
+            }
+            show_heatmap_legend <- ifelse(duplicated(panel_groups),
+               FALSE,
+               show_heatmap_legend);
+         }
          panel_split <- split(seq_along(nmatlist), panel_groups);
          if (verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
@@ -1333,6 +1341,13 @@ nmatlist2heatmaps <- function
          }
       }
    }
+   if (length(show_heatmap_legend) == 0) {
+      show_heatmap_legend <- TRUE;
+   }
+   if (length(show_heatmap_legend) != length(nmatlist)) {
+      show_heatmap_legend <- rep(show_heatmap_legend,
+         length.out=length(nmatlist));
+   }
 
    #############################################
    ## Iterate each matrix to create heatmaps
@@ -1395,28 +1410,30 @@ nmatlist2heatmaps <- function
    ###############################################
    # expand heatmap_legend_param to each heatmap
    if (length(heatmap_legend_param) == 0) {
+      # prototype default heatmap legend
       heatmap_legend_direction <- "horizontal";
-      # force direction="vertical" for grid version below 4.0
-      #if (compareVersion("3.99", as.character(packageVersion("grid"))) > 0) {
-      #   heatmap_legend_direction <- "vertical";
-      #} else {
-      #   heatmap_legend_direction <- "horizontal";
-      #}
       heatmap_legend_param_1 <- list(
          direction=heatmap_legend_direction,
          legend_width=legend_width,
          title_position="topleft",
          border="black",
          grid_width=grid::unit(1, "npc"));
-      heatmap_legend_param <- rep(list(heatmap_legend_param_1),
-         length.out=length(nmatlist));
-      # iterate each heatmap_legend_param entry and add a specific title
-      if (trim_legend_title) {
-         for (ihlp in seq_along(heatmap_legend_param)) {
-            heatmap_legend_param[[ihlp]]$title <- gsub("\n.*", "",
-               attr(nmatlist[[ihlp]], "signal_name"));
+
+      heatmap_legend_param <- lapply(seq_along(nmatlist), function(ipanel){
+         hlp_1 <- heatmap_legend_param_1;
+         if (length(panel_groups) > 0) {
+            hlp_1$title <- panel_groups[[ipanel]];
+         } else {
+            hlp_1$title <- attr(nmatlist[[ipanel]], "signal_name");
          }
-      }
+         if (trim_legend_title) {
+            hlp_1$title <- gsub("\n.*",
+               "",
+               hlp_1$title)
+         }
+         hlp_1;
+      })
+      names(heatmap_legend_param) <- names(nmatlist);
    }
    if (any(c("legend_width", "border", "direction", "title_position") %in% names(heatmap_legend_param)) ||
          length(heatmap_legend_param) != length(nmatlist)) {

@@ -33,12 +33,21 @@ sort of `anno_df` will also inlude sort for row order within each subset
 of `anno_df` as applicable.
 * New arguments `raster_quality` and `raster_by_magick` passed to
 `ComplexHeatmap::Heatmap()`.
+* New arguments `upstream_length`, `downstream_length` used for optional
+zoom of the coordinate range being displayed. These arguments are
+passed to `zoom_nmatlist()` if either is not `NULL`.
+
 
 ## new functions
 
 * `zoom_nmatlist()` and `zoom_nmat()` are intended to help zoom into
 a particular range of coverage matrix data, where the stored coverage
-is wider than desired for the heatmap figure.
+is wider than desired for the heatmap figure. They filter the columns
+in each `normalizedMatrix` and adjust the attributes stored in:
+   * `attr(nmat, "upstream_index")` - the column index positions upstream the target region
+   * `attr(nmat, "downstream_index")` - the column index positions downstream the target region
+   * `attr(nmat, "target_index")` - the column index positions representing the target region
+   * `attr(nmat, "extend")` - the genomic distance upstream and downstream the target region
 
 
 

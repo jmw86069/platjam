@@ -9,6 +9,8 @@ nmatlist2heatmaps(
   panel_groups = NULL,
   title = NULL,
   caption = NULL,
+  upstream_length = NULL,
+  downstream_length = NULL,
   k_clusters = 0,
   k_subset = NULL,
   k_colors = NULL,

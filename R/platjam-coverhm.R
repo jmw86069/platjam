@@ -6,6 +6,7 @@
 # Ultimately a helper function will call nmatlist2heatmaps()
 # to make the customization easier for non-R-programmers.
 
+
 #' Make coverage heatmaps
 #'
 #' (IN DEV) Make coverage heatmaps using a simple set of config options
@@ -30,7 +31,7 @@
 #' or a comma-delimited series of colors to use as a color gradient.
 #' See below for details.
 #' * ceiling: `numeric` used to define the maximum numeric value
-#' applied to the color gradient
+#' applied to the color gradient, default=0.7
 #' * ylim: `numeric` used to define a fixed y-axis range used for the
 #' profile plot atop each heatmap. When this value is absent or `NA`
 #' the maximum y-axis value for the `group` is used.
@@ -154,6 +155,22 @@ nmathm_row_order <- function
 #'
 #' Zoom the x-axis range for a list of normalizedMatrix coverage data
 #'
+#' This function filters the matrix columns by distance, and updates
+#' important associated attributes:
+#'
+#' * `attr(nmat, "upstream_index")` - the column index positions upstream the target region
+#' * `attr(nmat, "downstream_index")` - the column index positions downstream the target region
+#' * `attr(nmat, "target_index")` - the column index positions representing the target region
+#' * `attr(nmat, "extend")` - the genomic distance upstream and downstream the target region
+#'
+#' @param nmatlist `list` of `normalizedMatrix` objects. Each
+#'    `normalizedMatrix` is passed to `zoom_nmat()`.
+#' @param upstream_length,downstream_length `numeric` vector whose
+#'    values are recycled to length `length(nmatlist)`. Each value is
+#'    passed to `zoom_nmat()` so each matrix can be zoomed to independent
+#'    ranges.
+#' @param ... additional arguments are passed to `zoom_nmat()`.
+#'
 #' @export
 zoom_nmatlist <- function
 (nmatlist,
@@ -162,12 +179,17 @@ zoom_nmatlist <- function
    ...)
 {
    #
-   new_nmatlist <- lapply(nmatlist, function(nmat){
-      zoom_nmat(nmat,
-         upstream_length=upstream_length,
-         downstream_length=downstream_length,
+   upstream_length <- rep(upstream_length,
+      length.out=length(nmatlist));
+   downstream_length <- rep(downstream_length,
+      length.out=length(nmatlist));
+   new_nmatlist <- lapply(seq_along(nmatlist), function(inmat){
+      zoom_nmat(nmatlist[[inmat]],
+         upstream_length=upstream_length[[inmat]],
+         downstream_length=downstream_length[[inmat]],
          ...)
    })
+   names(new_nmatlist) <- names(nmatlist);
    return(new_nmatlist);
 }
 
@@ -179,6 +201,28 @@ zoom_nmatlist <- function
 #' This function is typically called by `zoom_nmatlist()` but can
 #' be called on an individual `normalizedMatrix` object.
 #'
+#' This function filters the matrix columns by distance, and updates
+#' important associated attributes:
+#'
+#' * `attr(nmat, "upstream_index")` - the column index positions upstream the target region
+#' * `attr(nmat, "downstream_index")` - the column index positions downstream the target region
+#' * `attr(nmat, "target_index")` - the column index positions representing the target region
+#' * `attr(nmat, "extend")` - the genomic distance upstream and downstream the target region
+#'
+#' @param nmat `normalizedMatrix` object, where the length extended from
+#'    the target region is stored in `attr(nmat, "extend")` as a two-element
+#'    integer vector representing upstream, and downstream length.
+#'    Each column indicated in `attr(nmat, "upstream_index")` is expected
+#'    to represent equal-sized bins spanning that range. Columns are
+#'    retained if the farthest distance of the column is less
+#'    than `upstream_length`.
+#' @param upstream_length,downstream_length `numeric` coordinate maximum
+#'    range from the target center region. When either value is `NULL`
+#'    no threshold is applied, which is equivalent to `Inf`.
+#'    The values are forced positive `abs(upstream_length)` as these
+#'    are absolute magnitude length from the target region.
+#' @param ... additional arguments are ignored.
+#'
 #' @export
 zoom_nmat <- function
 (nmat,
@@ -186,6 +230,16 @@ zoom_nmat <- function
    downstream_length=500,
    ...)
 {
+   #
+   if (length(upstream_length) == 0) {
+      upstream_length <- Inf;
+   }
+   upstream_length <- abs(upstream_length);
+   if (length(downstream_length) == 0) {
+      downstream_length <- Inf;
+   }
+   downstream_length <- abs(downstream_length);
+
    # detect bin size
    bin_width <- NULL;
    if (length(attr(nmat, "upstream_index")) > 0) {
@@ -209,10 +263,10 @@ zoom_nmat <- function
    new_extend2 <- max(downstream_end[downstream_keep], na.rm=TRUE);
    new_extend <- c(new_extend1, new_extend2);
 
-   target_keep <- rep(TRUE, length(attr(nmat, "target")));
+   target_keep <- rep(TRUE, length(attr(nmat, "target_index")));
 
    column_set <- c(attr(nmat, "upstream_index"),
-      attr(nmat, "target"),
+      attr(nmat, "target_index"),
       attr(nmat, "downstream_index"))
    column_keep <- column_set[c(upstream_keep,
       target_keep,
@@ -224,7 +278,7 @@ zoom_nmat <- function
    attributes(new_nmat)[attr_keep] <- attributes(nmat)[attr_keep];
    attr(new_nmat, "upstream_index") <- seq_len(sum(upstream_keep));
    attr(new_nmat, "downstream_index") <- tail(seq_len(ncol(new_nmat)), sum(downstream_keep));
-   attr(new_nmat, "target") <- setdiff(seq_len(ncol(new_nmat)),
+   attr(new_nmat, "target_index") <- setdiff(seq_len(ncol(new_nmat)),
       c(attr(new_nmat, "upstream_index"),
          attr(new_nmat, "downstream_index")));
    attr(new_nmat, "extend") <- new_extend;

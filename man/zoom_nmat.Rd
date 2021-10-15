@@ -6,10 +6,36 @@
 \usage{
 zoom_nmat(nmat, upstream_length = 500, downstream_length = 500, ...)
 }
+\arguments{
+\item{nmat}{\code{normalizedMatrix} object, where the length extended from
+the target region is stored in \code{attr(nmat, "extend")} as a two-element
+integer vector representing upstream, and downstream length.
+Each column indicated in \code{attr(nmat, "upstream_index")} is expected
+to represent equal-sized bins spanning that range. Columns are
+retained if the farthest distance of the column is less
+than \code{upstream_length}.}
+
+\item{upstream_length, downstream_length}{\code{numeric} coordinate maximum
+range from the target center region. When either value is \code{NULL}
+no threshold is applied, which is equivalent to \code{Inf}.
+The values are forced positive \code{abs(upstream_length)} as these
+are absolute magnitude length from the target region.}
+
+\item{...}{additional arguments are ignored.}
+}
 \description{
 Zoom the x-axis range for a normalizedMatrix coverage data
 }
 \details{
 This function is typically called by \code{zoom_nmatlist()} but can
 be called on an individual \code{normalizedMatrix} object.
+
+This function filters the matrix columns by distance, and updates
+important associated attributes:
+\itemize{
+\item \code{attr(nmat, "upstream_index")} - the column index positions upstream the target region
+\item \code{attr(nmat, "downstream_index")} - the column index positions downstream the target region
+\item \code{attr(nmat, "target_index")} - the column index positions representing the target region
+\item \code{attr(nmat, "extend")} - the genomic distance upstream and downstream the target region
+}
 }

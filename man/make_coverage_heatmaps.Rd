@@ -30,7 +30,7 @@ is not defined, each heatmap is defined as its own \code{group}.
 or a comma-delimited series of colors to use as a color gradient.
 See below for details.
 \item ceiling: \code{numeric} used to define the maximum numeric value
-applied to the color gradient
+applied to the color gradient, default=0.7
 \item ylim: \code{numeric} used to define a fixed y-axis range used for the
 profile plot atop each heatmap. When this value is absent or \code{NA}
 the maximum y-axis value for the \code{group} is used.

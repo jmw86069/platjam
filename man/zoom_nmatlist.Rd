@@ -6,6 +6,27 @@
 \usage{
 zoom_nmatlist(nmatlist, upstream_length = 500, downstream_length = 500, ...)
 }
+\arguments{
+\item{nmatlist}{\code{list} of \code{normalizedMatrix} objects. Each
+\code{normalizedMatrix} is passed to \code{zoom_nmat()}.}
+
+\item{upstream_length, downstream_length}{\code{numeric} vector whose
+values are recycled to length \code{length(nmatlist)}. Each value is
+passed to \code{zoom_nmat()} so each matrix can be zoomed to independent
+ranges.}
+
+\item{...}{additional arguments are passed to \code{zoom_nmat()}.}
+}
 \description{
 Zoom the x-axis range for a list of normalizedMatrix coverage data
+}
+\details{
+This function filters the matrix columns by distance, and updates
+important associated attributes:
+\itemize{
+\item \code{attr(nmat, "upstream_index")} - the column index positions upstream the target region
+\item \code{attr(nmat, "downstream_index")} - the column index positions downstream the target region
+\item \code{attr(nmat, "target_index")} - the column index positions representing the target region
+\item \code{attr(nmat, "extend")} - the genomic distance upstream and downstream the target region
+}
 }
