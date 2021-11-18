@@ -130,20 +130,24 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
          names=as.character(seq_len(k))),
       name="partition",
       show_row_names=FALSE,
-      width=unit(3, "mm"));
+      width=grid::unit(3, "mm"));
    draw(PHM + EH, main_heatmap=2);
 }
 }
 
 }
 \seealso{
-Other jam genome functions: 
-\code{\link{nmatlist2heatmaps}()}
+Other jam coverage heatmap functions: 
+\code{\link{get_nmat_ceiling}()},
+\code{\link{nmathm_row_order}()},
+\code{\link{nmatlist2heatmaps}()},
+\code{\link{zoom_nmatlist}()},
+\code{\link{zoom_nmat}()}
 
 Other jam import functions: 
 \code{\link{deepTools_matrix2nmat}()},
 \code{\link{frequency_matrix2nmat}()},
 \code{\link{import_nanostring_rcc}()}
 }
-\concept{jam genome functions}
+\concept{jam coverage heatmap functions}
 \concept{jam import functions}

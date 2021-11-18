@@ -28,9 +28,11 @@ In all cases, \code{iceiling} is rounded to 3 digits with \code{round(iceiling, 
 Also in all cases, \code{na.rm=TRUE} is used, to prevent returning \code{NA}.
 }
 \seealso{
-Other jam utility functions: 
-\code{\link{color_complement}()},
-\code{\link{get_numeric_transform}()},
-\code{\link{rowNormScale}()}
+Other jam coverage heatmap functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{nmathm_row_order}()},
+\code{\link{nmatlist2heatmaps}()},
+\code{\link{zoom_nmatlist}()},
+\code{\link{zoom_nmat}()}
 }
-\concept{jam utility functions}
+\concept{jam coverage heatmap functions}

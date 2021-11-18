@@ -39,3 +39,12 @@ important associated attributes:
 \item \code{attr(nmat, "extend")} - the genomic distance upstream and downstream the target region
 }
 }
+\seealso{
+Other jam coverage heatmap functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{get_nmat_ceiling}()},
+\code{\link{nmathm_row_order}()},
+\code{\link{nmatlist2heatmaps}()},
+\code{\link{zoom_nmatlist}()}
+}
+\concept{jam coverage heatmap functions}

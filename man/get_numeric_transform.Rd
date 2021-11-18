@@ -67,7 +67,6 @@ transform_list[[2]](x)
 \seealso{
 Other jam utility functions: 
 \code{\link{color_complement}()},
-\code{\link{get_nmat_ceiling}()},
 \code{\link{rowNormScale}()}
 }
 \concept{jam utility functions}

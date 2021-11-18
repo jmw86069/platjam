@@ -86,7 +86,6 @@ jamba::showColors(rc_ramps2, groupCellnotes=TRUE, groupByColors=FALSE);
 }
 \seealso{
 Other jam utility functions: 
-\code{\link{get_nmat_ceiling}()},
 \code{\link{get_numeric_transform}()},
 \code{\link{rowNormScale}()}
 }

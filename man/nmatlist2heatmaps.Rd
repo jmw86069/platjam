@@ -16,6 +16,7 @@ nmatlist2heatmaps(
   k_colors = NULL,
   k_width = grid::unit(5, "mm"),
   k_method = c("euclidean", "pearson", "correlation"),
+  k_heatmap = main_heatmap,
   partition = NULL,
   rows = NULL,
   row_order = NULL,
@@ -30,6 +31,7 @@ nmatlist2heatmaps(
   anno_row_labels = NULL,
   top_annotation = NULL,
   top_anno_height = grid::unit(3, "cm"),
+  top_axis_side = c("right"),
   legend_max_ncol = 2,
   legend_base_nrow = 5,
   legend_max_labels = 40,
@@ -79,15 +81,27 @@ values, and can be removed using this mechanism.}
 \item{k_colors}{vector of R colors, or \code{NULL} to use
 the output of \code{colorjam::rainbowJam(k_clusters)}.}
 
-\item{k_width}{unit width of the k-means cluster color
+\item{k_width}{\code{unit} width of the k-means cluster color
 bar, used with \code{k_clusters}.}
 
-\item{partition}{vector used to split rows of each
-matrix in \code{nmatlist}, named by rownames. This
+\item{k_method}{\code{character} string indicating the distance
+used by k-means, where the common default is
+\code{"euclidean"}, however a useful alternative for
+sequence coverage data is \code{"correlation"} as implemented
+in \code{amap::Kmeans()}.}
+
+\item{k_heatmap}{\code{integer} indicating which one or more
+\code{normalizedMatrix} objects in \code{nmatlist} will be used
+for k-means clustering, when \code{k_clusters} is defined
+more than 1.}
+
+\item{partition}{\code{character} or \code{factor} vector used to split rows
+of each matrix in \code{nmatlist}, named by rownames. This
 value is ignored when \code{k_clusters} is supplied.}
 
-\item{rows}{vector of \code{rownames} or integer vector with
-index of rows to keep from each matrix in \code{nmatlist}.}
+\item{rows}{\code{character} vector of \code{rownames(nmatlist)} or
+\code{integer} vector with index of rows to keep from each
+matrix in \code{nmatlist}.}
 
 \item{row_order}{integer vector used to order rows.
 When \code{TRUE} or \code{NULL} it uses
@@ -176,6 +190,18 @@ height of the \code{top_annotation}. When \code{top_annotation}
 is not defined, the default method uses
 \code{EnrichedHeatmap::anno_enriched()} with
 \code{height=top_anno_height}.}
+
+\item{top_axis_side}{\code{character} value indicating which side
+of the top annotation to place the y-axis labels.
+When there is one value, it is repeated to \code{length(nmatlist)},
+otherwise it is mainly used when \code{panel_groups} are
+provided, in which case only one top annotation is
+label per contiguous set of panels in the same panel group.
+In that case \code{"left"} will label the left side of the
+first panel in each group, \code{"right"} will label the
+right side of the last panel in each group.
+Values:
+"left", "right", "both", "none", "all".}
 
 \item{legend_max_ncol}{integer number indicating the maximum
 number of columns allowed for a categorical color legend.}
@@ -273,7 +299,7 @@ values below -1 make the color gradient less intense.}
 set the random seed. Set to \code{NULL} to avoid running
 \code{set.seed()}.}
 
-\item{ht_gap}{unit size to specify the gap between multiple heatmaps.
+\item{ht_gap}{\code{unit} size to specify the gap between multiple heatmaps.
 This argument is passed to \code{ComplexHeatmap::draw()}. An example
 is \code{grid::unit(8, "mm")} to specify 8 millimeters.}
 
@@ -352,6 +378,7 @@ and to enable optional multi-row heatmap layout.
 }
 \examples{
 ## There is a small example file to use for testing
+library(jamba)
 cov_file1 <- system.file("data", "tss_coverage.matrix", package="platjam");
 cov_file2 <- system.file("data", "h3k4me1_coverage.matrix", package="platjam");
 cov_files <- c(cov_file1, cov_file2);
@@ -361,15 +388,78 @@ names(cov_files) <- gsub("[.]matrix",
 nmatlist <- lapply(cov_files, coverage_matrix2nmat);
 nmatlist2heatmaps(nmatlist);
 
-# k-means clusters
-nmatlist2heatmaps(nmatlist, k_clusters=4);
+# sometimes data transform can be helpful
+nmatlist2heatmaps(nmatlist,
+   transform=c("log2signed", "sqrt"));
 
-# multiple rows
-nmatlist2heatmaps(nmatlist, k_clusters=4, hm_nrow=2);
+# k-means clusters, default uses euclidean distance
+nmatlist2heatmaps(nmatlist, k_clusters=4,
+   transform=c("log2signed", "sqrt"));
+
+# k-means clusters, "correlation" or "pearson" sometimes works better
+nmatlist2heatmaps(nmatlist,
+   k_clusters=4,
+   k_method="pearson",
+   transform=c("log2signed", "sqrt"));
+
+# example showing usage of top_axis_side
+# and panel_groups
+nmatlist2 <- nmatlist[c(1, 1, 1, 2, 2, 2)];
+names(nmatlist2) <- jamba::makeNames(names(nmatlist2))
+for (iname in names(nmatlist2)) {
+   attr(nmatlist2[[iname]], "signal_name") <- gsub("coverage", "cov", iname);
+}
+# top_axis_side="left"
+# assumes 12x7 figure size
+nmatlist2heatmaps(nmatlist2,
+   signal_ceiling=0.8,
+   nmat_colors=rep(c("firebrick", "tomato"), each=3),
+   panel_groups=rep(c("tss", "h3k4me1"), each=3),
+   ht_gap=grid::unit(4, "mm"),
+   top_axis_side="left",
+   transform=rep(c("log2signed", "sqrt"), each=3));
+
+# top_axis_side="both"
+nmatlist2heatmaps(nmatlist2,
+   panel_groups=rep(c("tss", "h3k4me1"), each=3),
+   ht_gap=grid::unit(6, "mm"),
+   top_axis_side="both",
+   transform=rep(c("log2signed", "sqrt"), each=3));
+
+# multiple heatmap rows
+nmatlist2heatmaps(nmatlist2,
+   k_clusters=4,
+   k_method="pearson",
+   hm_nrow=2,
+   panel_groups=rep(c("tss", "h3k4me1"), each=3),
+   ht_gap=grid::unit(6, "mm"),
+   top_axis_side="both",
+   top_anno_height=grid::unit(0.8, "cm"),
+   transform=rep(c("log2signed", "sqrt"), each=3));
+
+# invent anno_df data.frame of additional annotations
+anno_df <- data.frame(
+   tss_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[1]])),
+   h3k4me1_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[2]]))
+);
+rownames(anno_df) <- rownames(nmatlist[[1]]);
+nmatlist2heatmaps(nmatlist,
+   title="k-means clustering across both heatmaps",
+   k_clusters=4,
+   k_method="pearson",
+   k_heatmap=c(1, 2),
+   ht_gap=grid::unit(6, "mm"),
+   top_axis_side="left",
+   anno_df=anno_df,
+   transform=rep(c("log2signed", "sqrt"), each=3));
 
 }
 \seealso{
-Other jam genome functions: 
-\code{\link{coverage_matrix2nmat}()}
+Other jam coverage heatmap functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{get_nmat_ceiling}()},
+\code{\link{nmathm_row_order}()},
+\code{\link{zoom_nmatlist}()},
+\code{\link{zoom_nmat}()}
 }
-\concept{jam genome functions}
+\concept{jam coverage heatmap functions}

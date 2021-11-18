@@ -76,7 +76,6 @@
 #' # jam_divergent
 #' showColors(jam_divergent)
 #'
-#' @export
 make_coverage_heatmaps <- function
 (config_df,
  anno_df=NULL,
@@ -109,6 +108,8 @@ make_coverage_heatmaps <- function
 #' rendered. And note that this process takes slightly
 #' more time, but much less time than rendering the
 #' entire set of heatmaps.
+#'
+#' @family jam coverage heatmap functions
 #'
 #' @return `list` of rownames, where each list represents one
 #'    `row_slice` used in the heatmap, as defined by
@@ -163,6 +164,8 @@ nmathm_row_order <- function
 #' * `attr(nmat, "target_index")` - the column index positions representing the target region
 #' * `attr(nmat, "extend")` - the genomic distance upstream and downstream the target region
 #'
+#' @family jam coverage heatmap functions
+#'
 #' @param nmatlist `list` of `normalizedMatrix` objects. Each
 #'    `normalizedMatrix` is passed to `zoom_nmat()`.
 #' @param upstream_length,downstream_length `numeric` vector whose
@@ -208,6 +211,8 @@ zoom_nmatlist <- function
 #' * `attr(nmat, "downstream_index")` - the column index positions downstream the target region
 #' * `attr(nmat, "target_index")` - the column index positions representing the target region
 #' * `attr(nmat, "extend")` - the genomic distance upstream and downstream the target region
+#'
+#' @family jam coverage heatmap functions
 #'
 #' @param nmat `normalizedMatrix` object, where the length extended from
 #'    the target region is stored in `attr(nmat, "extend")` as a two-element

@@ -2,6 +2,8 @@
 
 ## `nmatlist2heatmaps()`
 
+* when `transform` is used, alter the y-axis numeric labels,
+and color legend numeric labels accordingly.
 * Optionally draw y-axis horizontal abline at y=0
 when data contains positive/negative values.
 

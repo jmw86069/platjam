@@ -50,3 +50,12 @@ rendered. And note that this process takes slightly
 more time, but much less time than rendering the
 entire set of heatmaps.
 }
+\seealso{
+Other jam coverage heatmap functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{get_nmat_ceiling}()},
+\code{\link{nmatlist2heatmaps}()},
+\code{\link{zoom_nmatlist}()},
+\code{\link{zoom_nmat}()}
+}
+\concept{jam coverage heatmap functions}

@@ -27,9 +27,4 @@ the color rules. It is an extension to
 in applying colors to the data range, rather than using
 a pre-defined fixed range across all columns.
 }
-\seealso{
-Other jam export functions: 
-\code{\link{set_xlsx_colwidths}()},
-\code{\link{set_xlsx_rowheights}()}
-}
 \concept{jam export functions}

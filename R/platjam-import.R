@@ -12,7 +12,7 @@
 #' favor of defining the attributes directly. In future, this
 #' function may change to call that function.
 #'
-#' @family jam genome functions
+#' @family jam coverage heatmap functions
 #' @family jam import functions
 #'
 #' @return `normalizedMatrix` numeric matrix, where additiona
@@ -96,7 +96,7 @@
 #'          names=as.character(seq_len(k))),
 #'       name="partition",
 #'       show_row_names=FALSE,
-#'       width=unit(3, "mm"));
+#'       width=grid::unit(3, "mm"));
 #'    draw(PHM + EH, main_heatmap=2);
 #' }
 #' }
@@ -279,13 +279,23 @@ coverage_matrix2nmat <- function
 #'    values, and can be removed using this mechanism.
 #' @param k_colors vector of R colors, or `NULL` to use
 #'    the output of `colorjam::rainbowJam(k_clusters)`.
-#' @param k_width unit width of the k-means cluster color
+#' @param k_width `unit` width of the k-means cluster color
 #'    bar, used with `k_clusters`.
-#' @param partition vector used to split rows of each
-#'    matrix in `nmatlist`, named by rownames. This
+#' @param k_method `character` string indicating the distance
+#'    used by k-means, where the common default is
+#'    `"euclidean"`, however a useful alternative for
+#'    sequence coverage data is `"correlation"` as implemented
+#'    in `amap::Kmeans()`.
+#' @param k_heatmap `integer` indicating which one or more
+#'    `normalizedMatrix` objects in `nmatlist` will be used
+#'    for k-means clustering, when `k_clusters` is defined
+#'    more than 1.
+#' @param partition `character` or `factor` vector used to split rows
+#'    of each matrix in `nmatlist`, named by rownames. This
 #'    value is ignored when `k_clusters` is supplied.
-#' @param rows vector of `rownames` or integer vector with
-#'    index of rows to keep from each matrix in `nmatlist`.
+#' @param rows `character` vector of `rownames(nmatlist)` or
+#'    `integer` vector with index of rows to keep from each
+#'    matrix in `nmatlist`.
 #' @param row_order integer vector used to order rows.
 #'    When `TRUE` or `NULL` it uses
 #'    the default for `EnrichedHeatmap::EnrichedHeatmap()`
@@ -372,6 +382,18 @@ coverage_matrix2nmat <- function
 #'    is not defined, the default method uses
 #'    `EnrichedHeatmap::anno_enriched()` with
 #'    `height=top_anno_height`.
+#' @param top_axis_side `character` value indicating which side
+#'    of the top annotation to place the y-axis labels.
+#'    When there is one value, it is repeated to `length(nmatlist)`,
+#'    otherwise it is mainly used when `panel_groups` are
+#'    provided, in which case only one top annotation is
+#'    label per contiguous set of panels in the same panel group.
+#'    In that case `"left"` will label the left side of the
+#'    first panel in each group, `"right"` will label the
+#'    right side of the last panel in each group.
+#'    Values:
+#'    "left", "right", "both", "none", "all".
+#'
 #' @param hm_nrow integer number of rows used to display
 #'    the heatmap panels.
 #' @param transform either `character` string referring to
@@ -442,7 +464,7 @@ coverage_matrix2nmat <- function
 #' @param seed numeric value used with `set.seed()` to
 #'    set the random seed. Set to `NULL` to avoid running
 #'    `set.seed()`.
-#' @param ht_gap unit size to specify the gap between multiple heatmaps.
+#' @param ht_gap `unit` size to specify the gap between multiple heatmaps.
 #'    This argument is passed to `ComplexHeatmap::draw()`. An example
 #'    is `grid::unit(8, "mm")` to specify 8 millimeters.
 #' @param profile_value character string to define the type of numeric
@@ -493,10 +515,13 @@ coverage_matrix2nmat <- function
 #'    customization of details. Note that many `...` arguments
 #'    are also passed to `ComplexHeatmap::Heatmap()`.
 #'
-#' @family jam genome functions
+#' @family jam coverage heatmap functions
+#'
+#' @importFrom jamba tcount
 #'
 #' @examples
 #' ## There is a small example file to use for testing
+#' library(jamba)
 #' cov_file1 <- system.file("data", "tss_coverage.matrix", package="platjam");
 #' cov_file2 <- system.file("data", "h3k4me1_coverage.matrix", package="platjam");
 #' cov_files <- c(cov_file1, cov_file2);
@@ -506,11 +531,70 @@ coverage_matrix2nmat <- function
 #' nmatlist <- lapply(cov_files, coverage_matrix2nmat);
 #' nmatlist2heatmaps(nmatlist);
 #'
-#' # k-means clusters
-#' nmatlist2heatmaps(nmatlist, k_clusters=4);
+#' # sometimes data transform can be helpful
+#' nmatlist2heatmaps(nmatlist,
+#'    transform=c("log2signed", "sqrt"));
 #'
-#' # multiple rows
-#' nmatlist2heatmaps(nmatlist, k_clusters=4, hm_nrow=2);
+#' # k-means clusters, default uses euclidean distance
+#' nmatlist2heatmaps(nmatlist, k_clusters=4,
+#'    transform=c("log2signed", "sqrt"));
+#'
+#' # k-means clusters, "correlation" or "pearson" sometimes works better
+#' nmatlist2heatmaps(nmatlist,
+#'    k_clusters=4,
+#'    k_method="pearson",
+#'    transform=c("log2signed", "sqrt"));
+#'
+#' # example showing usage of top_axis_side
+#' # and panel_groups
+#' nmatlist2 <- nmatlist[c(1, 1, 1, 2, 2, 2)];
+#' names(nmatlist2) <- jamba::makeNames(names(nmatlist2))
+#' for (iname in names(nmatlist2)) {
+#'    attr(nmatlist2[[iname]], "signal_name") <- gsub("coverage", "cov", iname);
+#' }
+#' # top_axis_side="left"
+#' # assumes 12x7 figure size
+#' nmatlist2heatmaps(nmatlist2,
+#'    signal_ceiling=0.8,
+#'    nmat_colors=rep(c("firebrick", "tomato"), each=3),
+#'    panel_groups=rep(c("tss", "h3k4me1"), each=3),
+#'    ht_gap=grid::unit(4, "mm"),
+#'    top_axis_side="left",
+#'    transform=rep(c("log2signed", "sqrt"), each=3));
+#'
+#' # top_axis_side="both"
+#' nmatlist2heatmaps(nmatlist2,
+#'    panel_groups=rep(c("tss", "h3k4me1"), each=3),
+#'    ht_gap=grid::unit(6, "mm"),
+#'    top_axis_side="both",
+#'    transform=rep(c("log2signed", "sqrt"), each=3));
+#'
+#' # multiple heatmap rows
+#' nmatlist2heatmaps(nmatlist2,
+#'    k_clusters=4,
+#'    k_method="pearson",
+#'    hm_nrow=2,
+#'    panel_groups=rep(c("tss", "h3k4me1"), each=3),
+#'    ht_gap=grid::unit(6, "mm"),
+#'    top_axis_side="both",
+#'    top_anno_height=grid::unit(0.8, "cm"),
+#'    transform=rep(c("log2signed", "sqrt"), each=3));
+#'
+#' # invent anno_df data.frame of additional annotations
+#' anno_df <- data.frame(
+#'    tss_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[1]])),
+#'    h3k4me1_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[2]]))
+#' );
+#' rownames(anno_df) <- rownames(nmatlist[[1]]);
+#' nmatlist2heatmaps(nmatlist,
+#'    title="k-means clustering across both heatmaps",
+#'    k_clusters=4,
+#'    k_method="pearson",
+#'    k_heatmap=c(1, 2),
+#'    ht_gap=grid::unit(6, "mm"),
+#'    top_axis_side="left",
+#'    anno_df=anno_df,
+#'    transform=rep(c("log2signed", "sqrt"), each=3));
 #'
 #' @export
 nmatlist2heatmaps <- function
@@ -525,6 +609,7 @@ nmatlist2heatmaps <- function
  k_colors=NULL,
  k_width=grid::unit(5, "mm"),
  k_method=c("euclidean", "pearson", "correlation"),
+ k_heatmap=main_heatmap,
  partition=NULL,
  rows=NULL,
  row_order=NULL,
@@ -539,6 +624,7 @@ nmatlist2heatmaps <- function
  anno_row_labels=NULL,
  top_annotation=NULL,
  top_anno_height=grid::unit(3, "cm"),
+ top_axis_side=c("right"),
  legend_max_ncol=2,
  legend_base_nrow=5,
  legend_max_labels=40,
@@ -753,7 +839,16 @@ nmatlist2heatmaps <- function
       } else if (length(names(k_colors)) == 0) {
          names(k_colors) <- rev(seq_len(k_clusters));
       }
-      itransform <- transform[[main_heatmap]];
+      if (length(k_heatmap) == 0) {
+         k_heatmap <- main_heatmap;
+      }
+      if (length(k_heatmap) > 1) {
+         imatrix <- do.call(cbind, lapply(k_heatmap, function(k_heatmap1){
+            transform[[k_heatmap1]](nmatlist[[k_heatmap1]][rows,,drop=FALSE]);
+         }));
+      } else {
+         imatrix <- transform[[k_heatmap]](nmatlist[[k_heatmap]][rows,,drop=FALSE]);
+      }
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Running kmeans, k_clusters:",
@@ -765,7 +860,7 @@ nmatlist2heatmaps <- function
       ## 28aug2020 update to kmeans cluster within partitions
       if (length(partition) == 0) {
          kpartition <- kmeans(
-            itransform(nmatlist[[main_heatmap]][rows,]),
+            imatrix,
             iter.max=iter.max,
             centers=k_clusters)$cluster;
          ## Confirm that names(partition) match rows
@@ -1142,7 +1237,7 @@ nmatlist2heatmaps <- function
                   legend_width=legend_width,
                   title_position="topleft",
                   border="black",
-                  grid_width=unit(1, "npc"));
+                  grid_width=grid::unit(1, "npc"));
             } else {
                if (verbose) {
                   jamba::printDebug("nmatlist2heatmaps(): ",
@@ -1164,7 +1259,7 @@ nmatlist2heatmaps <- function
                   border="black",
                   nrow=a_nrow
                )
-               #   grid_width=unit(1, "npc")
+               #   grid_width=grid::unit(1, "npc")
             }
          });
       }
@@ -1461,7 +1556,31 @@ nmatlist2heatmaps <- function
    }
    top_axis <- rep(TRUE, length(nmatlist));
    if (length(panel_groups) > 0) {
-      top_axis <- (panel_groups != tail(c(panel_groups, "blahblah"), -1))
+      if ("left" %in% top_axis_side) {
+         top_axis <- c("blahblah", head(panel_groups, -1)) != panel_groups;
+         top_axis_side <- ifelse(top_axis, "left", "left");
+      } else if ("right" %in% top_axis_side) {
+         top_axis <- (panel_groups != tail(c(panel_groups, "blahblah"), -1))
+         top_axis_side <- ifelse(top_axis, "right", "left");
+      } else if ("both" %in% top_axis_side) {
+         top_axis_left <- c("blahblah", head(panel_groups, -1)) != panel_groups;
+         top_axis_right <- (panel_groups != tail(c(panel_groups, "blahblah"), -1));
+         top_axis <- (top_axis_left | top_axis_right);
+         top_axis_side <- ifelse(top_axis_right, "right",
+            ifelse(top_axis_left, "left", "left"));
+      } else if ("none" %in% top_axis_side) {
+         top_axis <- rep(FALSE, length.out=length(panel_groups));
+         top_axis_side <- rep("left", length.out=length(panel_groups));
+      } else {
+         top_axis <- rep(TRUE, length.out=length(panel_groups));
+         top_axis_side <- rep("right", length.out=length(panel_groups));
+      }
+   } else {
+      if (length(top_axis_side) == 0) {
+         top_axis_side <- "left";
+      }
+      top_axis_side <- rep(top_axis_side,
+         length.out=length(nmatlist));
    }
 
    #############################
@@ -1604,6 +1723,7 @@ nmatlist2heatmaps <- function
                value=profile_value,
                ylim=ylim,
                axis=top_axis[i],
+               axis_param=list(side=top_axis_side[i]),
                height=top_anno_height,
                show_error=show_error)
          )
@@ -1650,6 +1770,10 @@ nmatlist2heatmaps <- function
             each=ceiling(length(nmatlist) / hm_nrow)),
          length.out=length(nmatlist));
       EH_l3 <- split(EH_l, hm_split);
+      HM_temp <- NULL;
+      main_heatmap_temp <- main_heatmap +
+         (length(partition) > 0) +
+         (length(AHM) > 0);
       ht_l <- lapply(EH_l3, function(EHs){
          HM_temp <- Reduce("+", EHs);
          main_heatmap_temp <- main_heatmap;
@@ -1673,7 +1797,7 @@ nmatlist2heatmaps <- function
          grid::grid.newpage();
          grid::pushViewport(vp);
          for (i in seq_along(ht_l)) {
-            grid::pushViewport(viewport(layout.pos.row=i));
+            grid::pushViewport(grid::viewport(layout.pos.row=i));
             grid::grid.draw(ht_l[[i]]);
             grid::popViewport();
          }
@@ -1722,6 +1846,7 @@ nmatlist2heatmaps <- function
          HM_drawn <- ComplexHeatmap::draw(HM_temp,
             column_title=title,
             ht_gap=ht_gap,
+            adjust_annotation_extension=TRUE,
             main_heatmap=main_heatmap_temp)
          if (FALSE) {
             jamba::printDebug("nmatlist2heatmaps(): ",
@@ -1982,7 +2107,7 @@ get_numeric_transform <- function
 #' Also in all cases, `na.rm=TRUE` is used, to prevent returning `NA`.
 #'
 #'
-#' @family jam utility functions
+#' @family jam coverage heatmap functions
 #'
 #' @export
 get_nmat_ceiling <- function

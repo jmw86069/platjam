@@ -215,10 +215,10 @@ save_salmon_qc_xlsx <- function
       "num_frags_with_concordant_consistent_mappings",
       "num_frags_with_inconsistent_or_orphan_mappings",
       "strand_mapping_bias");
-   qc_cols <- provigrep(qc_cols,
+   qc_cols <- jamba::provigrep(qc_cols,
       colnames(metajsons));
    meta_qc <- metajsons[,qc_cols,drop=FALSE];
-   colorSub1 <- nameVector(
+   colorSub1 <- jamba::nameVector(
       colorjam::group2colors(gsub("[.].+", "", meta_qc[,1])),
       meta_qc[,1]);
 
@@ -248,7 +248,7 @@ save_salmon_qc_xlsx <- function
       meta_ori_pct);
 
    if (length(salmon_qc_xlsx) > 0) {
-      writeOpenxlsx(file=salmon_qc_xlsx,
+      jamba::writeOpenxlsx(file=salmon_qc_xlsx,
          x=meta_qc,
          sheetName="Raw_QC",
          colorSub=colorSub1,
@@ -262,16 +262,16 @@ save_salmon_qc_xlsx <- function
          dryrun=FALSE,
          numColumns=seq(from=2, to=ncol(meta_qc))
       )
-      set_xlsx_colwidths(salmon_qc_xlsx,
+      jamba::set_xlsx_colwidths(salmon_qc_xlsx,
          sheet="Raw_QC",
          widths=rep(c(50,12),c(1, ncol(meta_qc)-1)))
-      set_xlsx_rowheights(salmon_qc_xlsx,
+      jamba::set_xlsx_rowheights(salmon_qc_xlsx,
          sheet="Raw_QC",
          rows=seq_len(nrow(meta_qc)+1),
          heights=rep(c(17*5,17),c(1, nrow(meta_qc))))
 
       ## adjusted QC
-      writeOpenxlsx(file=salmon_qc_xlsx,
+      jamba::writeOpenxlsx(file=salmon_qc_xlsx,
          x=metam_adj_df,
          sheetName="Adjusted_QC",
          colorSub=colorSub1,
@@ -286,10 +286,10 @@ save_salmon_qc_xlsx <- function
          dryrun=FALSE,
          numColumns=seq(from=2, to=ncol(metam_adj_df))
       )
-      set_xlsx_colwidths(salmon_qc_xlsx,
+      jamba::set_xlsx_colwidths(salmon_qc_xlsx,
          sheet="Adjusted_QC",
          widths=rep(c(50,12),c(1, ncol(metam_adj_df)-1)))
-      set_xlsx_rowheights(salmon_qc_xlsx,
+      jamba::set_xlsx_rowheights(salmon_qc_xlsx,
          sheet="Adjusted_QC",
          rows=seq_len(nrow(metam_adj_df)+1),
          heights=rep(c(17*5,17),c(1, nrow(metam_adj_df))))
@@ -297,7 +297,7 @@ save_salmon_qc_xlsx <- function
       ## Salmon orientation
       ori_means <- colMeans(meta_ori_pct_df[,-1,drop=FALSE]);
       ori_int <- (ori_means == 0 | ori_means >= 10);
-      writeOpenxlsx(file=salmon_qc_xlsx,
+      jamba::writeOpenxlsx(file=salmon_qc_xlsx,
          x=meta_ori_df,
          sheetName="Orientation",
          colorSub=colorSub1,
@@ -313,10 +313,10 @@ save_salmon_qc_xlsx <- function
          verbose=TRUE,
          numColumns=seq(from=2, to=ncol(meta_ori_df))
       )
-      set_xlsx_colwidths(salmon_qc_xlsx,
+      jamba::set_xlsx_colwidths(salmon_qc_xlsx,
          sheet="Orientation",
          widths=rep(c(50,12),c(1, ncol(meta_ori_df)-1)))
-      set_xlsx_rowheights(salmon_qc_xlsx,
+      jamba::set_xlsx_rowheights(salmon_qc_xlsx,
          sheet="Orientation",
          rows=seq_len(nrow(meta_ori_df)+1),
          heights=rep(c(17*5,17),c(1, nrow(meta_ori_df))))
@@ -324,7 +324,7 @@ save_salmon_qc_xlsx <- function
       ## Salmon orientation by percent
       ori_pct_means <- colMeans(meta_ori_pct_df[,-1]);
       ori_pct_int <- (ori_pct_means == 0 | ori_pct_means >= 10);
-      writeOpenxlsx(file=salmon_qc_xlsx,
+      jamba::writeOpenxlsx(file=salmon_qc_xlsx,
          x=meta_ori_pct_df,
          sheetName="Orientation_Percent",
          colorSub=colorSub1,
@@ -340,10 +340,10 @@ save_salmon_qc_xlsx <- function
          verbose=TRUE,
          numColumns=seq(from=2, to=ncol(meta_ori_pct_df))
       )
-      set_xlsx_colwidths(salmon_qc_xlsx,
+      jamba::set_xlsx_colwidths(salmon_qc_xlsx,
          sheet="Orientation_Percent",
          widths=rep(c(50,12),c(1, ncol(meta_ori_pct_df)-1)))
-      set_xlsx_rowheights(salmon_qc_xlsx,
+      jamba::set_xlsx_rowheights(salmon_qc_xlsx,
          sheet="Orientation_Percent",
          rows=seq_len(nrow(meta_ori_pct_df)+1),
          heights=rep(c(17*5,17),c(1, nrow(meta_ori_pct_df))))
@@ -397,7 +397,7 @@ applyXlsxConditionalFormatByColumn <- function
       }
       x_rule <- c(x_range, x_mid)[c(1,3,2)];
       if (verbose || dryrun) {
-         printDebug("applyXlsxConditionalFormatByColumn(): ",
+         jamba::printDebug("applyXlsxConditionalFormatByColumn(): ",
             paste0(colnames(x)[i],": "),
             format(x_rule,
                digits=1,
@@ -410,7 +410,7 @@ applyXlsxConditionalFormatByColumn <- function
             bgText=list(NA, NA, numStyle));
       }
       if (!dryrun) {
-         applyXlsxConditionalFormat(xlsxFile=file,
+         jamba::applyXlsxConditionalFormat(xlsxFile=file,
             sheet=sheet,
             numStyle=numStyle,
             numRule=x_rule,
@@ -420,71 +420,3 @@ applyXlsxConditionalFormatByColumn <- function
    }
 }
 
-#' Set column widths in Xlsx files
-#'
-#' Set column widths in Xlsx files
-#'
-#' This function is a light wrapper to perform these steps
-#' from the very useful `openxlsx` R package:
-#'
-#' * `openxlsx::loadWorkbook()`
-#' * `openxlsx::setColWidths()`
-#' * `openxlsx::saveWorkbook()`
-#'
-#' @family jam export functions
-#'
-#' @export
-set_xlsx_colwidths <- function
-(xlsxFile,
-   sheet=1,
-   cols=seq_along(widths),
-   widths=11,
-   ...)
-{
-   ## Load the requested file as a workbook
-   wb <- openxlsx::loadWorkbook(xlsxFile);
-
-   openxlsx::setColWidths(wb,
-      sheet=sheet,
-      cols=cols,
-      widths=widths,
-      ...);
-
-   ## Save workbook
-   openxlsx::saveWorkbook(wb,
-      xlsxFile,
-      overwrite=TRUE);
-}
-
-#' Set row heights in Xlsx files
-#'
-#' This function is a light wrapper to perform these steps
-#' from the very useful `openxlsx` R package:
-#'
-#' * `openxlsx::loadWorkbook()`
-#' * `openxlsx::setRowHeights()`
-#' * `openxlsx::saveWorkbook()`
-#'
-#' @family jam export functions
-#'
-#' @export
-set_xlsx_rowheights <- function
-(xlsxFile,
-   sheet=1,
-   rows=seq_along(heights)+1,
-   heights=17,
-   ...)
-{
-   ## Load the requested file as a workbook
-   wb <- openxlsx::loadWorkbook(xlsxFile);
-
-   openxlsx::setRowHeights(wb,
-      sheet=sheet,
-      rows=rows,
-      heights=heights);
-
-   ## Save workbook
-   openxlsx::saveWorkbook(wb,
-      xlsxFile,
-      overwrite=TRUE);
-}

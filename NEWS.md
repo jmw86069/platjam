@@ -1,3 +1,35 @@
+# platjam 0.0.39.900
+
+## changes to `nmatlist2heatmaps()`
+
+* The `ComplexHeatmap::draw()` function by default includes the
+argument `adjust_annotation_extension=TRUE` described here
+https://jokergoo.github.io/ComplexHeatmap-reference/book/a-list-of-heatmaps.html#adjust-blank-space-caused-by-annotations
+
+   * The problem was that y-axis labels on the right side of profile plots
+   overlapped the color legends on the right side.
+   * Alternatively, profile axis labels may be positioned on the left side,
+   which avoids having to adjust the legend on the right side.
+
+* New argument `top_axis_side` with values "right", "left", "both",
+"all", "none"
+* New argument `k_heatmap` which defines which heatmap or heatmaps are
+used for k-means clustering. Key new feature, k-means clustering can
+now involve multiple heatmaps, which may be useful to find patterns
+across multiple signals. This feature is being tested currently.
+
+* `save_salmon_qc_xlsx()` was updated to include jamba:: function
+prefixes as needed.
+
+## functions removed
+
+* `set_xlsx_colwidths()` and `set_xlsx_rowheights()` were removed,
+since they have been moved into package `"jamba"`.
+* `twostep_gradient()`, `showDichromat()`, and `make_jam_divergent()`
+were moved into package `"colorjam"`.
+* `jam_divergent` and `jam_linear` were moved into package `"colorjam"`.
+
+
 # platjam 0.0.38.900
 
 ## changes to `nmatlist2heatmaps()`
