@@ -299,11 +299,6 @@ parse_ucsc_gokey <- function
             track_lines[track_df$tracknum]));
 
    ## apply parent and header values
-   jamba::printDebug("multiwig_concat_header: ", multiwig_concat_header);
-   jamba::printDebug("concat conditional:");
-   print(track_df$is_overlay &
-         !track_df$group == track_df$header &
-         multiwig_concat_header);
    track_df$superTrack <- ifelse(
       track_df$is_overlay &
          !track_df$group == track_df$header &
