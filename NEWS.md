@@ -1,3 +1,17 @@
+# platjam 0.0.40.900
+
+## changes to existing functions
+
+* `parse_ucsc_gokey()` was updated to allow additional parameters to be
+defined through `...` dot list. These values will override all values
+defined in the track lines.
+   * Examples have been added to demonstrate minimal use of the function,
+   showing composite track views, and multiWig overlay tracks.
+   * new experimental argument `multiwig_concat_header=TRUE` allows
+   adjusting the format of multiWig superTrack names, being tested
+   inside the UCSC genome browser.
+
+
 # platjam 0.0.39.900
 
 ## changes to `nmatlist2heatmaps()`

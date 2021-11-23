@@ -49,9 +49,84 @@
 #' lines into groups, and return a text string usable in
 #' a UCSC genome browser track hub.
 #'
-#' For example:
+#' In general, the intention is to convert a set of UCSC
+#' track lines to a track hub format, where common track options
+#' are converted to relevant track hub configuration lines.
 #'
-#' `parse_ucsc_gokey("tracks.txt")`
+#' Tracks are generally divided into two types of groupings:
+#'
+#' ## multiWig Overlay Tracks
+#'
+#' Track name that matches `overlay_grep` regular expression pattern
+#' are configured as `multiWig` overlay tracks. This configuration
+#' uses the UCSC multiWig format as described here
+#' https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#aggregate
+#'
+#' * More specifically, a parent track is configured as a `superTrack`.
+#' * Each track matching `overlay_grep` is converted to a shared track
+#' name after removing the relevant grep pattern. Each unique track group
+#' is used as an intermediate track with `"container multiWig"`.
+#' * Each track group is assigned priority in order of each unique track
+#' group defined in the track config lines.
+#' * Individual tracks are configured as child tracks to the track groups.
+#'
+#' ## Composite View Tracks
+#'
+#' All other tracks are grouped as composite tracks, specifically
+#' using composite track view, as described here
+#' https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#compositeTrack
+#'
+#' * More specifically, the parent track is configured as a `compositeTrack`,
+#' including views as `"view Views COV=Coverage JUNC=Junctions PEAK=Peaks"`
+#' by default.
+#' * An intermediate track is created to represent each view, by default
+#' `"JUNC"` however this value is not visible to users unless there are
+#' multiple different view values.
+#' * Each track is configured as a child to the relevant view track.
+#' Track priority is assigned in the order it appears in the track config
+#' lines. The priority allows peak tracks to be ordered directly after
+#' or before the associated coverage track.
+#'
+#' ## Top-Level Parent Tracks
+#'
+#' Note that in both scenarios above, there is one top-level parent
+#' track that contains a subset of tracks. The top-level grouping can
+#' be defined in the track lines by supplying two header lines immediately
+#' before each top-level grouping of tracks, referred to as `header1`
+#' and `header2` for clarity.
+#'
+#' The first header line `header1` is used as the top-level track.
+#' For composite tracks, one composite track view is created underneath
+#' the top-level track for each secondary header `header2`.
+#' Composite tracks can associate two views to the same parent by
+#' using only second header line `header2` for subsequent track groups.
+#' In this way, composite views can effectively contain a subgroup of
+#' tracks within each top-level header `header1`.
+#'
+#' For multiWig overlay tracks, each overlay track is grouped into
+#' the top-level header `header1` track. However, there is no additional
+#' subgroup available.
+#'
+#' An example for two composite tracks, each with one view.
+#'
+#' ```
+#' headingA1
+#' headingA2
+#' track name=trackname1
+#' track name=trackname2
+#'
+#' headingB1
+#' headingB2
+#' track name=trackname5
+#' track name=trackname6
+#' ```
+#'
+#' In this case, there will be two top-level parent tracks, labeled
+#' `"headingA1"` and `"headingB1"`, which appear inside the track hub.
+#' Within each track, there will be one composite view:
+#' for `headingA1` there is one internal track `headingA2`; and
+#' for `headingB1` there is one internal track `headingB2`.
+#'
 #'
 #' @return by default a character string suitable to `cat()`
 #' directly into a text file, when `output_format="text"`.
@@ -78,10 +153,59 @@
 #'    output format, where `"text"` will return one long character
 #'    string, and `"list"` will return a `list` with one track
 #'    per list element with class `"glue","character"`.
-#' @param debug `character` indicating type of debug output: `df`
-#'    returns the intermediate `track_df` data.frame; `pri` prints
-#'    priority during track parsing; `none` does no debug.
-#' @param ... additional arguments are ignored.
+#' @param debug `character` indicating type of debug output:
+#'    * `df`: returns the intermediate `track_df` data.frame;
+#'    * `pri`: prints priority during track parsing;
+#'    * `none`: does no debug, the default.
+#' @param multiwig_concat_header `logical` indicating whether
+#'    multiWig parent tracks should be named by concatenating
+#'    `header1` and `header2` values.
+#' @param verbose `logical` indicating whether to print verbose
+#'    output during processing.
+#' @param ... additional arguments are treated as a named list
+#'    of track parameters that override existing parameter values.
+#'    For example `scoreFilter=1` will override the default
+#'    for bigBed tracks `scoreFilter=5`.
+#'
+#' @examples
+#' # example of two composite track top-level parent tracks
+#' track_lines_text <- c("headingA1
+#' headingA2
+#' track name=trackname1 shortLabel=trackname1 bigDataUrl=some_url
+#' track name=trackname2 shortLabel=trackname2 bigDataUrl=some_url
+#' track name=trackname3 shortLabel=trackname3 bigDataUrl=some_url
+#' track name=trackname4 shortLabel=trackname4 bigDataUrl=some_url
+#'
+#' headingB1
+#' headingB2
+#' track name=trackname5 shortLabel=trackname5 bigDataUrl=some_url
+#' track name=trackname6 shortLabel=trackname6 bigDataUrl=some_url
+#' track name=trackname7 shortLabel=trackname7 bigDataUrl=some_url
+#' track name=trackname8 shortLabel=trackname8 bigDataUrl=some_url
+#' ")
+#' track_lines <- unlist(strsplit(track_lines_text, "\n"));
+#' cat(parse_ucsc_gokey(track_lines))
+#' track_df <- parse_ucsc_gokey(track_lines, debug="df")
+#'
+#' # example of two composite track top-level parent tracks
+#' track_lines_text2 <- c("headingA1
+#' headingA2
+#' track name=trackname1_pos shortLabel=trackname1_pos bigDataUrl=some_url
+#' track name=trackname1_neg shortLabel=trackname1_neg bigDataUrl=some_url
+#' track name=trackname2_pos shortLabel=trackname2_pos bigDataUrl=some_url
+#' track name=trackname2_neg shortLabel=trackname2_neg bigDataUrl=some_url
+#'
+#' headingB1
+#' headingB2
+#' track name=trackname3_pos shortLabel=trackname3_pos bigDataUrl=some_url
+#' track name=trackname3_neg shortLabel=trackname3_neg bigDataUrl=some_url
+#' track name=trackname4_pos shortLabel=trackname4_pos bigDataUrl=some_url
+#' track name=trackname4_neg shortLabel=trackname4_neg bigDataUrl=some_url
+#' ")
+#' track_lines2 <- unlist(strsplit(track_lines_text2, "\n"));
+#' cat(parse_ucsc_gokey(track_lines2))
+#' cat(parse_ucsc_gokey(track_lines2, multiwig_concat_header=FALSE))
+#' track_df <- parse_ucsc_gokey(track_lines2, debug="df")
 #'
 #' @export
 parse_ucsc_gokey <- function
@@ -90,11 +214,15 @@ parse_ucsc_gokey <- function
  priority=5000,
  output_format=c("text", "list"),
  debug=c("none"),
+ multiwig_concat_header=TRUE,
  verbose=FALSE,
  ...)
 {
    #
    output_format <- match.arg(output_format);
+
+   # optional dots list
+   dotlist <- list(...);
 
    # check if track_lines is a file
    if (length(track_lines) == 1) {
@@ -144,56 +272,43 @@ parse_ucsc_gokey <- function
    })
    track_df <- jamba::rbindList(track_supergroup_dfs)
 
-   # Old workflow is disabled for now
-   if (FALSE) {
-      ## non-track lines which are group names
-      is_group <- diff(c(nontrack, Inf)) > 1;
-      has_header <- diff(c(-Inf, nontrack)) == 1;
-      nontracki <- nontrack[is_group];
-      nontrackh <- ifelse(has_header[is_group], nontracki - 1, nontracki);
-
-      tracki <- which(grepl("^track", track_lines));
-      track_df <- data.frame(tracknum=tracki);
-      track_df$headernum <- sapply(track_df$tracknum, function(i){
-         max(nontracki[nontracki < i])
-      })
-      track_df$groupnum <- sapply(track_df$tracknum, function(i){
-         max(nontrackh[nontrackh < i])
-      })
-      track_df$header <- gsub("[ ]+", " ", track_lines[track_df$headernum]);
-      track_df$group <- gsub("[ ]+", " ", track_lines[track_df$groupnum]);
-   }
-
    ## convert each track line to data.frame
    track_dfl <- lapply(track_lines[track_df$tracknum], function(i){
       j <- gsub(" ([a-zA-Z]+)=", "!!\\1!", i);
-      k <- tail(rbindList(strsplit(gsub('"', '', strsplit(j, "!!")[[1]]), "!")), -1);
-      as.data.frame(as.list(nameVector(k[,2:1])))
+      k <- tail(jamba::rbindList(strsplit(gsub('"', '', strsplit(j, "!!")[[1]]), "!")), -1);
+      as.data.frame(as.list(jamba::nameVector(k[,2:1])))
    });
 
    ## Parse track names, determine overlay tracks
    track_names <- sapply(track_dfl, function(i){
       i$name
    });
-   track_names_dupe <- tcount(track_names, minCount=2);
+   track_names_dupe <- jamba::tcount(track_names, minCount=2);
    if (length(track_names_dupe) > 0) {
       stop(paste0(
          "There are duplicated track names: ",
-         cPaste(names(track_names_dupe)))
+         jamba::cPaste(names(track_names_dupe)))
       );
    }
    names(track_dfl) <- track_names;
    track_df$name <- track_names;
 
-   track_df$is_overlay <- (track_names %in% provigrep(overlay_grep, track_names) &
+   track_df$is_overlay <- (track_names %in% jamba::provigrep(overlay_grep, track_names) &
          !grepl("[.](bigBed|bb|bed)",
             ignore.case=TRUE,
             track_lines[track_df$tracknum]));
 
    ## apply parent and header values
-   #track_df$superTrack <- pasteByRow(track_df[,c("group","header")], sep=": ");
-   track_df$superTrack <- ifelse(track_df$is_overlay & !track_df$group == track_df$header,
-      pasteByRow(track_df[,c("group","header")], sep=": "),
+   jamba::printDebug("multiwig_concat_header: ", multiwig_concat_header);
+   jamba::printDebug("concat conditional:");
+   print(track_df$is_overlay &
+         !track_df$group == track_df$header &
+         multiwig_concat_header);
+   track_df$superTrack <- ifelse(
+      track_df$is_overlay &
+         !track_df$group == track_df$header &
+         multiwig_concat_header,
+      jamba::pasteByRow(track_df[,c("group","header")], sep=": "),
       track_df$group);
    track_df$parent <- ifelse(track_df$is_overlay,
       gsub(overlay_grep, "", track_df$name),
@@ -210,8 +325,11 @@ parse_ucsc_gokey <- function
 
    ## add track url and isbed flag
    if ("df" %in% debug) {
+      jamba::printDebug("jamba::sdim(track_dfl):");
+      print(jamba::sdim(track_dfl));
       print(head(track_dfl, 2));
-      print(head(track_df$name, 2));
+      jamba::printDebug("head(track_df$name, 4):");
+      print(head(track_df$name, 4));
    }
    track_df$url <- sapply(track_dfl[track_df$name], function(idf){
       idf$bigDataUrl
@@ -222,7 +340,7 @@ parse_ucsc_gokey <- function
 
    show_env <- function(env){
       ls_names <- ls(envir=env);
-      ls_values <- lapply(nameVector(ls_names), function(i){
+      ls_values <- lapply(jamba::nameVector(ls_names), function(i){
          get(i, envir=env)
       });
       ls_df <- data.frame(
@@ -253,6 +371,7 @@ parse_ucsc_gokey <- function
       value=priority,
       envir=pri_env);
 
+   # iterate each track set
    for (hname in names(track_dfhs)) {
       priority <- get("priority", envir=pri_env);
       priority <- priority + 100;
@@ -290,13 +409,24 @@ parse_ucsc_gokey <- function
          tmpl_parent <- default_env$composite_parent;
          tmpl_track <- default_env$composite_track;
       }
-      assign_track_defaults(track_env, default_values);
-      assign_track_defaults(track_env, list(
-         shortLabel=hname,
-         longLabel=hname));
-      assign_track_defaults(track_env, track_dfh);
+      # define overall default track parameters
+      assign_track_defaults(env=track_env,
+         defaults=default_values);
+      # override with shortLabel and longLabel
+      assign_track_defaults(env=track_env,
+         defaults=list(
+            shortLabel=hname,
+            longLabel=hname));
+      # override with other values provided in the track lines
+      assign_track_defaults(env=track_env,
+         defaults=track_dfh);
+      # optionally override with dotlist values from ...
+      if (length(dotlist) > 0) {
+         assign_track_defaults(env=track_env,
+            defaults=dotlist);
+      }
       if (verbose) {
-         printDebug("parse_ucsc_gokey(): ",
+         jamba::printDebug("parse_ucsc_gokey(): ",
             "show_env(superTrack):");
          show_env(track_env);
       }
@@ -312,13 +442,20 @@ parse_ucsc_gokey <- function
          if ("pri" %in% debug) jamba::printDebug("10 priority:", priority)
          track_dfhp <- track_dfhps[[pname]];
          track_env <- new.env();
-         assign_track_defaults(track_env, default_values);
-         assign_track_defaults(track_env, track_dfhp);
-         assign_track_defaults(track_env, list(
-            shortLabel=pname,
-            longLabel=pname));
+         assign_track_defaults(track_env,
+            defaults=default_values);
+         assign_track_defaults(track_env,
+            defaults=track_dfhp);
+         assign_track_defaults(track_env,
+            defaults=list(
+               shortLabel=pname,
+               longLabel=pname));
+         if (length(dotlist) > 0) {
+            assign_track_defaults(env=track_env,
+               defaults=dotlist);
+         }
          if (verbose) {
-            printDebug("parse_ucsc_gokey(): ",
+            jamba::printDebug("parse_ucsc_gokey(): ",
                "show_env(parent):");
             show_env(track_env);
          }
@@ -334,15 +471,23 @@ parse_ucsc_gokey <- function
             track_dfhpt <- track_dfhp[irow,,drop=FALSE];
             track <- track_dfhpt$name;
             track_env <- new.env();
-            assign_track_defaults(track_env, default_values);
-            assign_track_defaults(track_env, track_dfhpt);
-            assign_track_defaults(track_env, track_dfl[[track]]);
-            assign_track_defaults(track_env, list(
-               track=track,
-               shortLabel=track,
-               longLabel=track));
+            assign_track_defaults(track_env,
+               defaults=default_values);
+            assign_track_defaults(track_env,
+               defaults=track_dfhpt);
+            assign_track_defaults(track_env,
+               defaults=track_dfl[[track]]);
+            assign_track_defaults(track_env,
+               defaults=list(
+                  track=track,
+                  shortLabel=track,
+                  longLabel=track));
+            if (length(dotlist) > 0) {
+               assign_track_defaults(env=track_env,
+                  defaults=dotlist);
+            }
             if (verbose) {
-               printDebug("parse_ucsc_gokey(): ",
+               jamba::printDebug("parse_ucsc_gokey(): ",
                   "show_env(track):");
                show_env(track_env);
             }
@@ -449,7 +594,7 @@ assign_track_defaults <- function
          }
          vals <- jamba::cPaste(vals);
       }
-      if (length(provigrep(track_types, n)) > 0) {
+      if (length(jamba::provigrep(track_types, n)) > 0) {
          vals <- make_ucsc_trackname(vals);
       }
       base::assign(x=n,

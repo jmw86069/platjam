@@ -81,7 +81,8 @@ priority             {priority}
       maxHeightPixels="100:66:5",
       windowingFunction="mean+whiskers",
       autoScale="on",
-      visibility="full"
+      visibility="full",
+      color="0,0,150"
    );
 
    composite_header <- "
@@ -159,7 +160,8 @@ priority          {priority}
       alwaysZero="on",
       viewLimits="",
       smoothingWindow="off",
-      windowingFunction="mean+whiskers"
+      windowingFunction="mean+whiskers",
+      color="0,0,150"
    );
 
    composite_bed_header <- "
@@ -230,7 +232,8 @@ priority          {priority}
       alwaysZero="on",
       viewLimits="",
       smoothingWindow="off",
-      windowingFunction="mean+whiskers"
+      windowingFunction="mean+whiskers",
+      color="0,0,150"
    );
 
    default_names <- c("overlay_header",

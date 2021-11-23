@@ -10,6 +10,7 @@ parse_ucsc_gokey(
   priority = 5000,
   output_format = c("text", "list"),
   debug = c("none"),
+  multiwig_concat_header = TRUE,
   verbose = FALSE,
   ...
 )
@@ -36,11 +37,24 @@ output format, where \code{"text"} will return one long character
 string, and \code{"list"} will return a \code{list} with one track
 per list element with class \verb{"glue","character"}.}
 
-\item{debug}{\code{character} indicating type of debug output: \code{df}
-returns the intermediate \code{track_df} data.frame; \code{pri} prints
-priority during track parsing; \code{none} does no debug.}
+\item{debug}{\code{character} indicating type of debug output:
+\itemize{
+\item \code{df}: returns the intermediate \code{track_df} data.frame;
+\item \code{pri}: prints priority during track parsing;
+\item \code{none}: does no debug, the default.
+}}
 
-\item{...}{additional arguments are ignored.}
+\item{multiwig_concat_header}{\code{logical} indicating whether
+multiWig parent tracks should be named by concatenating
+\code{header1} and \code{header2} values.}
+
+\item{verbose}{\code{logical} indicating whether to print verbose
+output during processing.}
+
+\item{...}{additional arguments are treated as a named list
+of track parameters that override existing parameter values.
+For example \code{scoreFilter=1} will override the default
+for bigBed tracks \code{scoreFilter=5}.}
 }
 \value{
 by default a character string suitable to \code{cat()}
@@ -58,9 +72,125 @@ the \verb{Gokey format}, this function will parse the track
 lines into groups, and return a text string usable in
 a UCSC genome browser track hub.
 
-For example:
+In general, the intention is to convert a set of UCSC
+track lines to a track hub format, where common track options
+are converted to relevant track hub configuration lines.
 
-\code{parse_ucsc_gokey("tracks.txt")}
+Tracks are generally divided into two types of groupings:
+\subsection{multiWig Overlay Tracks}{
+
+Track name that matches \code{overlay_grep} regular expression pattern
+are configured as \code{multiWig} overlay tracks. This configuration
+uses the UCSC multiWig format as described here
+https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#aggregate
+\itemize{
+\item More specifically, a parent track is configured as a \code{superTrack}.
+\item Each track matching \code{overlay_grep} is converted to a shared track
+name after removing the relevant grep pattern. Each unique track group
+is used as an intermediate track with \code{"container multiWig"}.
+\item Each track group is assigned priority in order of each unique track
+group defined in the track config lines.
+\item Individual tracks are configured as child tracks to the track groups.
+}
+}
+
+\subsection{Composite View Tracks}{
+
+All other tracks are grouped as composite tracks, specifically
+using composite track view, as described here
+https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#compositeTrack
+\itemize{
+\item More specifically, the parent track is configured as a \code{compositeTrack},
+including views as \code{"view Views COV=Coverage JUNC=Junctions PEAK=Peaks"}
+by default.
+\item An intermediate track is created to represent each view, by default
+\code{"JUNC"} however this value is not visible to users unless there are
+multiple different view values.
+\item Each track is configured as a child to the relevant view track.
+Track priority is assigned in the order it appears in the track config
+lines. The priority allows peak tracks to be ordered directly after
+or before the associated coverage track.
+}
+}
+
+\subsection{Top-Level Parent Tracks}{
+
+Note that in both scenarios above, there is one top-level parent
+track that contains a subset of tracks. The top-level grouping can
+be defined in the track lines by supplying two header lines immediately
+before each top-level grouping of tracks, referred to as \code{header1}
+and \code{header2} for clarity.
+
+The first header line \code{header1} is used as the top-level track.
+For composite tracks, one composite track view is created underneath
+the top-level track for each secondary header \code{header2}.
+Composite tracks can associate two views to the same parent by
+using only second header line \code{header2} for subsequent track groups.
+In this way, composite views can effectively contain a subgroup of
+tracks within each top-level header \code{header1}.
+
+For multiWig overlay tracks, each overlay track is grouped into
+the top-level header \code{header1} track. However, there is no additional
+subgroup available.
+
+An example for two composite tracks, each with one view.\preformatted{headingA1
+headingA2
+track name=trackname1
+track name=trackname2
+
+headingB1
+headingB2
+track name=trackname5
+track name=trackname6
+}
+
+In this case, there will be two top-level parent tracks, labeled
+\code{"headingA1"} and \code{"headingB1"}, which appear inside the track hub.
+Within each track, there will be one composite view:
+for \code{headingA1} there is one internal track \code{headingA2}; and
+for \code{headingB1} there is one internal track \code{headingB2}.
+}
+}
+\examples{
+# example of two composite track top-level parent tracks
+track_lines_text <- c("headingA1
+headingA2
+track name=trackname1 shortLabel=trackname1 bigDataUrl=some_url
+track name=trackname2 shortLabel=trackname2 bigDataUrl=some_url
+track name=trackname3 shortLabel=trackname3 bigDataUrl=some_url
+track name=trackname4 shortLabel=trackname4 bigDataUrl=some_url
+
+headingB1
+headingB2
+track name=trackname5 shortLabel=trackname5 bigDataUrl=some_url
+track name=trackname6 shortLabel=trackname6 bigDataUrl=some_url
+track name=trackname7 shortLabel=trackname7 bigDataUrl=some_url
+track name=trackname8 shortLabel=trackname8 bigDataUrl=some_url
+")
+track_lines <- unlist(strsplit(track_lines_text, "\n"));
+cat(parse_ucsc_gokey(track_lines))
+track_df <- parse_ucsc_gokey(track_lines, debug="df")
+
+# example of two composite track top-level parent tracks
+track_lines_text2 <- c("headingA1
+headingA2
+track name=trackname1_pos shortLabel=trackname1_pos bigDataUrl=some_url
+track name=trackname1_neg shortLabel=trackname1_neg bigDataUrl=some_url
+track name=trackname2_pos shortLabel=trackname2_pos bigDataUrl=some_url
+track name=trackname2_neg shortLabel=trackname2_neg bigDataUrl=some_url
+
+headingB1
+headingB2
+track name=trackname3_pos shortLabel=trackname3_pos bigDataUrl=some_url
+track name=trackname3_neg shortLabel=trackname3_neg bigDataUrl=some_url
+track name=trackname4_pos shortLabel=trackname4_pos bigDataUrl=some_url
+track name=trackname4_neg shortLabel=trackname4_neg bigDataUrl=some_url
+")
+track_lines2 <- unlist(strsplit(track_lines_text2, "\n"));
+cat(parse_ucsc_gokey(track_lines2))
+cat(parse_ucsc_gokey(track_lines2, multiwig_concat_header=FALSE))
+track_df <- parse_ucsc_gokey(track_lines2, debug="df")
+
 }
 \seealso{
 Other jam ucsc browser functions: 
