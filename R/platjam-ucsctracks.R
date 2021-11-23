@@ -203,9 +203,13 @@
 #' track name=trackname4_neg shortLabel=trackname4_neg bigDataUrl=some_url
 #' ")
 #' track_lines2 <- unlist(strsplit(track_lines_text2, "\n"));
-#' cat(parse_ucsc_gokey(track_lines2))
-#' cat(parse_ucsc_gokey(track_lines2, multiwig_concat_header=FALSE))
-#' track_df <- parse_ucsc_gokey(track_lines2, debug="df")
+#' track_text2 <- parse_ucsc_gokey(track_lines2);
+#' cat(track_text2);
+#'
+#' # the final step is to save into a text file
+#' if (FALSE) {
+#'    cat(track_text2, file="trackDb_platjam.txt")
+#' }
 #'
 #' @export
 parse_ucsc_gokey <- function
