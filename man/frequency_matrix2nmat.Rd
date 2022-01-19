@@ -50,6 +50,7 @@ range, given a range of frequencies to use for scaling.
 Other jam import functions: 
 \code{\link{coverage_matrix2nmat}()},
 \code{\link{deepTools_matrix2nmat}()},
-\code{\link{import_nanostring_rcc}()}
+\code{\link{import_nanostring_rcc}()},
+\code{\link{import_proteomics_PD}()}
 }
 \concept{jam import functions}

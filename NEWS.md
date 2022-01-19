@@ -1,3 +1,21 @@
+# platjam 0.0.41.900
+
+## new functions
+
+* `import_proteomics_PD()` will import proteomics abundance data
+from Proteomics Discoverer software, focused on the Excel format
+in use in 2022 that includes protein abundance data, with nested
+sub-tables of peptide abundance data with different columns.
+The function will parse each type of row and return two
+`SummarizedExperiment` objects, one for protein data, one for
+peptide data. This function calls an internal helper function
+`convert_PD_df_to_SE()` which performs the work of parsing
+gene annotations, peptides, post-translational modifications,
+sample annotations, and optionally reads `"curation.txt"` to
+define specific sample group annotations for downstream
+analysis.
+
+
 # platjam 0.0.40.900
 
 ## changes to existing functions

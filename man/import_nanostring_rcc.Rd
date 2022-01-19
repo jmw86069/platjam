@@ -71,6 +71,7 @@ of experimental factors, see \code{splicejam::curateVtoDF()} or
 Other jam import functions: 
 \code{\link{coverage_matrix2nmat}()},
 \code{\link{deepTools_matrix2nmat}()},
-\code{\link{frequency_matrix2nmat}()}
+\code{\link{frequency_matrix2nmat}()},
+\code{\link{import_proteomics_PD}()}
 }
 \concept{jam import functions}
