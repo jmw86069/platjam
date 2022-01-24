@@ -17,6 +17,26 @@ import_proteomics_PD(
 \arguments{
 \item{xlsx}{\code{character} path to an Excel \code{.xlsx} file as exported
 from Proteomics Discoverer software.}
+
+\item{sheet}{\code{integer} or \code{character} used as index or direct character
+match with sheet name obtained with \code{openxlsx::getSheetNames(xlsx)}.}
+
+\item{import_types}{\code{character} indicating which type or types of
+PD data to import.}
+
+\item{ann_lib}{\code{character} passed to \code{genejam::freshenGenes3()}, see
+documentation for alternate methods of passing one or more annotation
+libraries.}
+
+\item{curation_txt}{\code{data.frame} whose first column should match the
+sample column headers found in the PD abundance columns, and
+subsequent columns contain associated sample annotations.
+If \code{curation_txt} is not supplied, then values will be split into
+columns by \verb{_} underscore or \code{" "} whitespace characters.}
+
+\item{verbose}{\code{logical} indicating whether to print verbose output.}
+
+\item{...}{additional arguments are ignored.}
 }
 \description{
 Import data from Proteomics Discoverer

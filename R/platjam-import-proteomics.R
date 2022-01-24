@@ -5,6 +5,20 @@
 #'
 #' @param xlsx `character` path to an Excel `.xlsx` file as exported
 #'    from Proteomics Discoverer software.
+#' @param sheet `integer` or `character` used as index or direct character
+#'    match with sheet name obtained with `openxlsx::getSheetNames(xlsx)`.
+#' @param import_types `character` indicating which type or types of
+#'    PD data to import.
+#' @param ann_lib `character` passed to `genejam::freshenGenes3()`, see
+#'    documentation for alternate methods of passing one or more annotation
+#'    libraries.
+#' @param curation_txt `data.frame` whose first column should match the
+#'    sample column headers found in the PD abundance columns, and
+#'    subsequent columns contain associated sample annotations.
+#'    If `curation_txt` is not supplied, then values will be split into
+#'    columns by `_` underscore or `" "` whitespace characters.
+#' @param verbose `logical` indicating whether to print verbose output.
+#' @param ... additional arguments are ignored.
 #'
 #' @export
 import_proteomics_PD <- function
