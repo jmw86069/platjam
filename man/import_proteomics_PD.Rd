@@ -10,7 +10,9 @@ import_proteomics_PD(
   import_types = c("protein", "peptide"),
   ann_lib = c("org.Hs.eg.db"),
   curation_txt = NULL,
-  verbose = TRUE,
+  remove_duplicate_peptides = TRUE,
+  xref_df = NULL,
+  verbose = FALSE,
   ...
 )
 }
@@ -33,6 +35,13 @@ sample column headers found in the PD abundance columns, and
 subsequent columns contain associated sample annotations.
 If \code{curation_txt} is not supplied, then values will be split into
 columns by \verb{_} underscore or \code{" "} whitespace characters.}
+
+\item{remove_duplicate_peptides}{\code{logical} indicating whether to remove
+rows with duplicate sequence-PTM combinations, which can occur when
+upstream PD is splitting the same measurement results across multiple
+annotation rows. Removing duplicate rows will retain the first
+non-duplicated entry in \code{"SeqPTM"} which is composed of the peptide
+sequence, and shortened post-translational modification in \code{"PTM"}.}
 
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 

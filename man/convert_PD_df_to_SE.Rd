@@ -9,6 +9,9 @@ convert_PD_df_to_SE(
   ann_lib = c("org.Hs.eg.db"),
   curation_txt = NULL,
   ptm_colname = "Modifications",
+  type = c("protein", "peptide"),
+  remove_duplicate_peptides = TRUE,
+  xref_df = NULL,
   verbose = FALSE,
   ...
 )

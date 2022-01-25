@@ -17,6 +17,12 @@
 #'    subsequent columns contain associated sample annotations.
 #'    If `curation_txt` is not supplied, then values will be split into
 #'    columns by `_` underscore or `" "` whitespace characters.
+#' @param remove_duplicate_peptides `logical` indicating whether to remove
+#'    rows with duplicate sequence-PTM combinations, which can occur when
+#'    upstream PD is splitting the same measurement results across multiple
+#'    annotation rows. Removing duplicate rows will retain the first
+#'    non-duplicated entry in `"SeqPTM"` which is composed of the peptide
+#'    sequence, and shortened post-translational modification in `"PTM"`.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are ignored.
 #'
@@ -27,7 +33,9 @@ import_proteomics_PD <- function
  import_types=c("protein", "peptide"),
  ann_lib=c("org.Hs.eg.db"),
  curation_txt=NULL,
- verbose=TRUE,
+ remove_duplicate_peptides=TRUE,
+ xref_df=NULL,
+ verbose=FALSE,
  ...)
 {
    #
@@ -67,6 +75,8 @@ import_proteomics_PD <- function
       ret_list$ProteinSE <- convert_PD_df_to_SE(protein_df,
          ann_lib=ann_lib,
          curation_txt=curation_txt,
+         type="protein",
+         remove_duplicate_peptides=FALSE,
          verbose=verbose,
          ...);
    }
@@ -80,6 +90,16 @@ import_proteomics_PD <- function
             jamba::formatInt(length(pepptm_rows)),
             " rows of peptide data");
       }
+      # prepare xref data.frame from protein data
+      if (length(xref_df) == 0 && "ProteinSE" %in% names(ret_list)) {
+         reuse_colnames <- provigrep(c("Accession", "Description", "ENTREZID", "SYMBOL", "GENENAME"),
+            colnames(rowData(ret_list$ProteinSE)));
+         if (length(reuse_colnames) > 1) {
+            xref_df <- data.frame(check.names=FALSE,
+               rowData(ret_list$ProteinSE)[,reuse_colnames]);
+         }
+      }
+
       conf_rows <- head(which(pd_data$Master %in% c("Confidence")), 1) + 1;
       pepptm_rows <- sort(unique(c(conf_rows, pepptm_rows)));
       pepptm_df <- jamba::readOpenxlsx(xlsx,
@@ -88,6 +108,9 @@ import_proteomics_PD <- function
       ret_list$PeptideSE <- convert_PD_df_to_SE(pepptm_df,
          ann_lib=ann_lib,
          curation_txt=curation_txt,
+         type="peptide",
+         remove_duplicate_peptides=remove_duplicate_peptides,
+         xref_df=xref_df,
          verbose=verbose,
          ...);
    }
@@ -108,9 +131,15 @@ convert_PD_df_to_SE <- function
  ann_lib=c("org.Hs.eg.db"),
  curation_txt=NULL,
  ptm_colname="Modifications",
+ type=c("protein",
+    "peptide"),
+ remove_duplicate_peptides=TRUE,
+ xref_df=NULL,
  verbose=FALSE,
  ...)
 {
+   # type mainly decides rownames in the output
+   type <- match.arg(type);
    # first repair any NA colnames
    if (any(is.na(colnames(protein_df)))) {
       if (verbose) {
@@ -137,21 +166,7 @@ convert_PD_df_to_SE <- function
       }
    }
 
-   # freshen gene symbols using provided accession and gene name
-   if ("Description" %in% colnames(protein_df)) {
-      has_prot_gn_values <- grepl("GN=",
-         protein_df$Description);
-      prot_gn_values <- ifelse(has_prot_gn_values,
-         gsub("^.*GN=([^ ]+) .*$", "\\1",
-            protein_df$Description),
-         "");
-   } else {
-      prot_gn_values <- rep("", nrow(protein_df));
-   }
-   if (verbose) {
-      jamba::printDebug("convert_PD_df_to_SE(): ",
-         "Updating protein gene annotations");
-   }
+   # assign rownames and clean up sequence and post-translational modifications
    accession_colname <- "Accession";
    if (!accession_colname %in% colnames(protein_df)) {
       accession_colname <- jamba::vigrep("accession",
@@ -162,8 +177,15 @@ convert_PD_df_to_SE <- function
       gsub("[,;].*", "",
          protein_df[[head(accession_colname, 1)]]));
 
+   sequence_colname <- head(
+      provigrep(c("^Sequence$",
+         "Annotated.Sequence",
+         "^sequence",
+         "sequence"),
+      colnames(protein_df)),
+      1);
    if (FALSE &&
-         "Sequence" %in% colnames(protein_df) &&
+         length(sequence_colname) == 1 &&
          "Modifications" %in% colnames(protein_df) &&
          verbose) {
       print(head(subset(protein_df, Sequence %in% "IQIWDTAGQER" & Modifications %in% c(NA, ""))));
@@ -184,13 +206,92 @@ convert_PD_df_to_SE <- function
                      )))))
          protein_df$PTM <- PTMstring;
       }
-      if ("Sequence" %in% colnames(protein_df)) {
-         protein_df$SeqPTM <- jamba::pasteByRow(protein_df[,c("Sequence", "PTM")]);
-         rownames(protein_df) <- jamba::makeNames(protein_df$SeqPTM);
+      if (length(sequence_colname) == 1) {
+         peptide_sequence <- gsub(";.+", "",
+            protein_df[[sequence_colname]]);
+         peptide_sequence <- gsub(
+            "^[A-Z][.]|[.][A-Z]$|^[[][-A-Z]+][.]|[.][[][-A-Z]+]$",
+            "",
+            peptide_sequence);
+         if (any(!protein_df[[sequence_colname]] == peptide_sequence)) {
+            if (!"Sequence" == sequence_colname) {
+               sequence_colname <- "Sequence";
+            } else {
+               sequence_colname <- "Sequence_trim";
+            }
+            protein_df[[sequence_colname]] <- peptide_sequence;
+            rm(peptide_sequence);
+         }
+
+         # assign SeqPTM
+         protein_df$SeqPTM <- jamba::pasteByRow(protein_df[, c(sequence_colname, "PTM")]);
+
+         # remove duplicate peptide sequence rows
+         dupe_seqs <- duplicated(protein_df$SeqPTM);
+         if (remove_duplicate_peptides && any(dupe_seqs)) {
+            if (verbose) {
+               jamba::printDebug("convert_PD_df_to_SE(): ",
+                  "Updating removing ",
+                  jamba::formatInt(sum(dupe_seqs)),
+                  " duplicate peptide rows, retaining ",
+                  jamba::formatInt(sum(!dupe_seqs)),
+                  " rows.");
+            }
+            protein_df <- protein_df[!dupe_seqs, , drop=FALSE];
+         }
+
+         if ("peptide" %in% type) {
+            rownames(protein_df) <- jamba::makeNames(protein_df$SeqPTM);
+         }
       } else {
          protein_df$AccessionPTM <- jamba::pasteByRow(protein_df[,c(accession_colname, "PTM")]);
-         rownames(protein_df) <- jamba::makeNames(protein_df$AccessionPTM);
+         if ("peptide" %in% type) {
+            rownames(protein_df) <- jamba::makeNames(protein_df$AccessionPTM);
+         }
       }
+   }
+
+   # optionally merge xref_df data.frame with current data
+   if (length(xref_df) > 0 && length(accession_colname) > 0) {
+      xref_acc_colname <- head(vigrep("Accession", colnames(xref_df)), 1);
+      if (length(xref_acc_colname) == 0) {
+         xref_df <- NULL;
+      } else {
+         xref_match <- match(protein_df[[accession_colname]],
+            xref_df[[xref_acc_colname]]);
+         merge_colnames <- setdiff(colnames(xref_df),
+            c(xref_acc_colname,
+               accession_colname));
+         for (icol in merge_colnames) {
+            if (icol %in% colnames(protein_df)) {
+               update_rows <- (!is.na(xref_match) &
+                     !xref_df[xref_match, icol] %in% c(NA, "") &
+                     protein_df[,icol] %in% c(NA, ""));
+               protein_df[update_rows, icol] <- xref_df[xref_match[update_rows], icol];
+            } else {
+               protein_df[[icol]] <- jamba::rmNA(naValue="",
+                  xref_df[xref_match, icol]);
+            }
+         }
+      }
+   }
+   jamba::printDebug("print(head(protein_df, 3)):");
+   print(head(protein_df, 3));
+
+   # freshen gene symbols using provided accession and gene name
+   if ("Description" %in% colnames(protein_df)) {
+      has_prot_gn_values <- grepl("GN=",
+         protein_df$Description);
+      prot_gn_values <- ifelse(has_prot_gn_values,
+         gsub("^.*GN=([^ ]+) .*$", "\\1",
+            protein_df$Description),
+         "");
+   } else {
+      prot_gn_values <- rep("", nrow(protein_df));
+   }
+   if (verbose) {
+      jamba::printDebug("convert_PD_df_to_SE(): ",
+         "Updating protein gene annotations");
    }
 
    protein_genejam_df <- genejam::freshenGenes3(
@@ -203,6 +304,13 @@ convert_PD_df_to_SE <- function
       u1 <- unique(c(accession_colname,
          colnames(protein_genejam_df)));
       protein_genejam_df <- protein_genejam_df[, u1, drop=FALSE];
+   }
+   # filter duplicated colnames
+   if (any(grepl("_v[0-9]+$", colnames(protein_genejam_df)))) {
+      keepcols <- unvigrep("_v[0-9]+$", colnames(protein_genejam_df));
+      if (length(keepcols) >= 2) {
+         protein_genejam_df <- protein_genejam_df[, keepcols, drop=FALSE];
+      }
    }
 
    # if any genes have multiple symbols, try reverse priority
@@ -326,10 +434,12 @@ convert_PD_df_to_SE <- function
    }
 
    # prepare numeric matrix of abundance values
-   jamba::printDebug("convert_PD_df_to_SE(): ",
-      "unique(prot_abundance_types): ",
-      unique(prot_abundance_types),
-      sep="\n      ");
+   if (verbose) {
+      jamba::printDebug("convert_PD_df_to_SE(): ",
+         "unique(prot_abundance_types): ",
+         unique(prot_abundance_types),
+         sep="\n      ");
+   }
    prot_assays <- lapply(jamba::nameVector(unique(prot_abundance_types)), function(i){
       i_cols <- prot_abundance_cols[prot_abundance_types %in% i];
       i_matrix <- as.matrix(protein_df[, i_cols, drop=FALSE]);

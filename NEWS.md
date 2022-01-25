@@ -1,3 +1,15 @@
+# platjam 0.0.42.900
+
+## updates to existing functions
+
+* `import_proteomics_PD()` gained some options to handle PD data content,
+such as referring Protein gene annotations into the peptide data during
+import. Apparently sometimes they only annotate the protein level, so
+this step recovers some annotations otherwise lost.
+Also sometimes peptide data is split across multiple rows when the
+peptide may appear in multiple positions in the same protein.
+
+
 # platjam 0.0.41.900
 
 ## new functions
