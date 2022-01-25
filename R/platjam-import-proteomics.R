@@ -23,6 +23,15 @@
 #'    annotation rows. Removing duplicate rows will retain the first
 #'    non-duplicated entry in `"SeqPTM"` which is composed of the peptide
 #'    sequence, and shortened post-translational modification in `"PTM"`.
+#' @param accession_from,accession_to `character` vectors, that help manual
+#'    curation from one accession number to another, intended when an
+#'    accession number is not recognized by the Bioconductor annotation
+#'    library, and a newer accession would be recognized. No gene left
+#'    behind.
+#' @param xref_df `data.frame` that contains accession numbers in the
+#'    first column, and annotation columns in additional columns, specifically
+#'    using `"SYMBOL", "ENTREZID", "GENENAME"` as replacements for
+#'    output from `genejam::freshenGenes3()`.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are ignored.
 #'
@@ -34,6 +43,8 @@ import_proteomics_PD <- function
  ann_lib=c("org.Hs.eg.db"),
  curation_txt=NULL,
  remove_duplicate_peptides=TRUE,
+ accession_from=NULL,
+ accession_to=NULL,
  xref_df=NULL,
  verbose=FALSE,
  ...)
@@ -77,6 +88,9 @@ import_proteomics_PD <- function
          curation_txt=curation_txt,
          type="protein",
          remove_duplicate_peptides=FALSE,
+         accession_from=accession_from,
+         accession_to=accession_to,
+         xref_df=xref_df,
          verbose=verbose,
          ...);
    }
@@ -110,6 +124,8 @@ import_proteomics_PD <- function
          curation_txt=curation_txt,
          type="peptide",
          remove_duplicate_peptides=remove_duplicate_peptides,
+         accession_from=accession_from,
+         accession_to=accession_to,
          xref_df=xref_df,
          verbose=verbose,
          ...);
@@ -134,12 +150,18 @@ convert_PD_df_to_SE <- function
  type=c("protein",
     "peptide"),
  remove_duplicate_peptides=TRUE,
+ accession_from=NULL,
+ accession_to=NULL,
  xref_df=NULL,
  verbose=FALSE,
  ...)
 {
    # type mainly decides rownames in the output
+   # P10412
    type <- match.arg(type);
+   if (length(accession_from) != length(accession_to)) {
+      stop("accession_from and accession_to must have the same length.");
+   }
    # first repair any NA colnames
    if (any(is.na(colnames(protein_df)))) {
       if (verbose) {
@@ -172,6 +194,33 @@ convert_PD_df_to_SE <- function
       accession_colname <- jamba::vigrep("accession",
          colnames(protein_df));
    }
+
+   # optional manual curation of accession numbers
+   if (length(accession_from) > 0 && length(accession_colname) > 0) {
+      for (ann_i in seq_along(accession_from)) {
+         for (col_i in accession_colname) {
+            i_new <- gsub(
+               accession_from[ann_i],
+               accession_to[ann_i],
+               protein_df[, col_i]);
+            i_changed <- (i_new != protein_df[, col_i]);
+            if (any(i_changed)) {
+               jamba::printDebug("convert_PD_df_to_SE(): ",
+                  "Curated ",
+                  jamba::formatInt(sum(i_changed)),
+                  " entries in '",
+                  col_i,
+                  "' using ",
+                  c("accession_from","accession_to"));
+            }
+            protein_df[, col_i] <- gsub(
+               accession_from[ann_i],
+               accession_to[ann_i],
+               protein_df[, col_i]);
+         }
+      }
+   }
+
    # use only the first of multiple accessions associated with each row
    rownames(protein_df) <- jamba::makeNames(
       gsub("[,;].*", "",
@@ -275,8 +324,10 @@ convert_PD_df_to_SE <- function
          }
       }
    }
-   jamba::printDebug("print(head(protein_df, 3)):");
-   print(head(protein_df, 3));
+   if (verbose) {
+      jamba::printDebug("print(head(protein_df, 3)):");
+      print(head(protein_df, 3));
+   }
 
    # freshen gene symbols using provided accession and gene name
    if ("Description" %in% colnames(protein_df)) {
@@ -427,7 +478,7 @@ convert_PD_df_to_SE <- function
          paste0("V",
             seq_len(ncol(protein_sample_df)-1)));
    }
-   if (verbose) {
+   if (FALSE) {
       jamba::printDebug("convert_PD_df_to_SE(): ",
          "sample_df: ");
       print(head(protein_sample_df, 10));
@@ -440,11 +491,12 @@ convert_PD_df_to_SE <- function
          unique(prot_abundance_types),
          sep="\n      ");
    }
-   prot_assays <- lapply(jamba::nameVector(unique(prot_abundance_types)), function(i){
-      i_cols <- prot_abundance_cols[prot_abundance_types %in% i];
+   prot_assays <- lapply(jamba::nameVector(unique(prot_abundance_types)), function(itype){
+      jamba::printDebug("Importing abundance type: ", itype);
+      i_cols <- prot_abundance_cols[prot_abundance_types %in% itype];
       i_matrix <- as.matrix(protein_df[, i_cols, drop=FALSE]);
       colnames(i_matrix) <- gsub("^[:][ ]*", "",
-         gsub(i, "", fixed=TRUE,
+         gsub(itype, "", fixed=TRUE,
             colnames(i_matrix)));
       i_match <- match(colnames(i_matrix), protein_sample_df$Sample);
       i_use <- !is.na(i_match);
