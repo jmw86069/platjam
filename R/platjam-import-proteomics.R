@@ -1,6 +1,14 @@
 
 #' Import data from Proteomics Discoverer
 #'
+#' Import data from Proteomics Discoverer
+#'
+#' This function is intended to provide a series of steps that import
+#' proteomics abundance data produced by Proteomics Discoverer (PD)
+#' and return a `SummarizedExperiment` object ready for downstream
+#' analysis.
+#'
+#'
 #' @family jam import functions
 #'
 #' @param xlsx `character` path to an Excel `.xlsx` file as exported

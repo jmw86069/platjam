@@ -11,6 +11,8 @@ convert_PD_df_to_SE(
   ptm_colname = "Modifications",
   type = c("protein", "peptide"),
   remove_duplicate_peptides = TRUE,
+  accession_from = NULL,
+  accession_to = NULL,
   xref_df = NULL,
   verbose = FALSE,
   ...

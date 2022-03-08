@@ -874,6 +874,7 @@ nmatlist2heatmaps <- function
          }
       } else {
          partition_rows_list <- split(rows, partition[rows]);
+         itransform <- transform[[main_heatmap]];
          kpartitions_list <- lapply(partition_rows_list, function(prows){
             kpartition <- kmeans(
                itransform(nmatlist[[main_heatmap]][prows,]),

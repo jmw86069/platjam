@@ -1,3 +1,11 @@
+# platjam 0.0.43.900
+
+## updates to existing functions
+
+* `nmatlist2heatmaps()` was updated to handle transformation of
+data during k-means clustering. Previously this function was not
+correctly defined. 
+
 # platjam 0.0.42.900
 
 ## updates to existing functions

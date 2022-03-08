@@ -11,6 +11,8 @@ import_proteomics_PD(
   ann_lib = c("org.Hs.eg.db"),
   curation_txt = NULL,
   remove_duplicate_peptides = TRUE,
+  accession_from = NULL,
+  accession_to = NULL,
   xref_df = NULL,
   verbose = FALSE,
   ...
@@ -43,12 +45,29 @@ annotation rows. Removing duplicate rows will retain the first
 non-duplicated entry in \code{"SeqPTM"} which is composed of the peptide
 sequence, and shortened post-translational modification in \code{"PTM"}.}
 
+\item{accession_from, accession_to}{\code{character} vectors, that help manual
+curation from one accession number to another, intended when an
+accession number is not recognized by the Bioconductor annotation
+library, and a newer accession would be recognized. No gene left
+behind.}
+
+\item{xref_df}{\code{data.frame} that contains accession numbers in the
+first column, and annotation columns in additional columns, specifically
+using \verb{"SYMBOL", "ENTREZID", "GENENAME"} as replacements for
+output from \code{genejam::freshenGenes3()}.}
+
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are ignored.}
 }
 \description{
 Import data from Proteomics Discoverer
+}
+\details{
+This function is intended to provide a series of steps that import
+proteomics abundance data produced by Proteomics Discoverer (PD)
+and return a \code{SummarizedExperiment} object ready for downstream
+analysis.
 }
 \seealso{
 Other jam import functions: 
