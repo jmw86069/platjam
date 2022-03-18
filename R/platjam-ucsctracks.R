@@ -429,7 +429,9 @@ parse_ucsc_gokey <- function
             "show_env(superTrack):");
          show_env(track_env);
       }
-      new_trackline <- glue::glue(tmpl_header, .envir=track_env);
+      new_trackline <- glue::glue(tmpl_header,
+         .trim=FALSE,
+         .envir=track_env);
       trackline_list <- c(trackline_list,
          list(new_trackline)
       )
@@ -458,7 +460,9 @@ parse_ucsc_gokey <- function
                "show_env(parent):");
             show_env(track_env);
          }
-         new_trackline <- glue::glue(tmpl_parent, .envir=track_env);
+         new_trackline <- glue::glue(tmpl_parent,
+            .trim=FALSE,
+            .envir=track_env);
          trackline_list <- c(trackline_list,
             list(new_trackline)
          )
@@ -490,7 +494,9 @@ parse_ucsc_gokey <- function
                   "show_env(track):");
                show_env(track_env);
             }
-            new_trackline <- glue::glue(tmpl_track, .envir=track_env);
+            new_trackline <- glue::glue(tmpl_track,
+               .trim=FALSE,
+               .envir=track_env);
             trackline_list <- c(trackline_list,
                list(new_trackline)
             )

@@ -1,3 +1,16 @@
+# platjam 0.0.44.900
+
+## updates to existing functions
+
+* UCSC track hub function `parse_ucsc_gokey()` was updated because
+apparently `glue::glue()` added a new argument `.trim` to trim
+whitespace from every output line AND made `.trim=TRUE` the
+default value. Because why be consistent with past versions of `glue`.
+Thank you again to all the R package authors that have chosen not
+to change the output of the primary function in their package
+by default. :) Not shown: All the updates I did not have
+to do because other core functions keep working as normal.
+
 # platjam 0.0.43.900
 
 ## updates to existing functions
