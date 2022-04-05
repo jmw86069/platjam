@@ -300,14 +300,14 @@ get_salmon_root <- function
       salmonroots <- sapply(file, get_salmon_root);
       return(salmonroots);
    }
-   names_files <- names(files);
+   names_file <- names(file);
    salmonroot <- tryCatch({
       rprojroot::find_root(path=file,
          "cmd_info.json");
    }, error=function(e){
       NA;
    });
-   names(salmonroot) <- names_files;
+   names(salmonroot) <- names_file;
    return(salmonroot);
 }
 
