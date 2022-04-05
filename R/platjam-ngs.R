@@ -67,11 +67,16 @@ get_salmon_meta <- function
       metapaths <- jamba::rmNA(get_salmon_root(metafile));
       metapaths <- metapaths[!duplicated(metapaths)];
       metajsons <- lapply(seq_along(metapaths), function(i){
-         get_salmon_meta(metapaths[i],
+         idf <- get_salmon_meta(metapaths[i],
             exclude_hashes=exclude_hashes,
             ...);
+         idf$temp_rowname <- rownames(idf);
+         idf;
       });
       metajson <- jamba::mergeAllXY(metajsons);
+      rownames(metajson) <- metajson$temp_rowname;
+      metajson <- metajson[, setdiff(colnames(metajson),
+         "temp_rowname"), drop=FALSE];
       return(metajson);
    }
 
