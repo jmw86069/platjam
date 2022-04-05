@@ -2,8 +2,11 @@
 
 ## updates to existing functions
 
-* `get_salmon_meta()` now parses the fragment length distribution if
-the file exists. It returns mean, median, mode, and 25/75 percentiles.
+* `get_salmon_meta()`
+
+   * now parses the fragment length distribution if
+   the file exists. It returns mean, median, mode, and 25/75 percentiles.
+   * Also the `names(metafile)` are maintaines as rownames in the output.
 
 ## new functions
 

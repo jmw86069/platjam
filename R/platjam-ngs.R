@@ -64,7 +64,8 @@ get_salmon_meta <- function
       stop("The jsonlite package is required for get_salmon_meta().");
    }
    if (length(metafile) > 1) {
-      metapaths <- unique(jamba::rmNA(get_salmon_root(metafile)));
+      metapaths <- jamba::rmNA(get_salmon_root(metafile));
+      metapaths <- metapaths[!duplicated(metapaths)];
       metajsons <- lapply(seq_along(metapaths), function(i){
          get_salmon_meta(metapaths[i],
             exclude_hashes=exclude_hashes,
@@ -104,6 +105,7 @@ get_salmon_meta <- function
          stringsAsFactors=FALSE,
          as.data.frame(json1[jsoninfo$rows > 0]));
    }
+   rownames(metajson) <- names(metapath);
    if (exclude_hashes) {
       metajson <- metajson[,jamba::unvigrep("hash", colnames(metajson)),drop=FALSE];
    }
