@@ -277,6 +277,7 @@ parse_salmon_flenfile <- function
 #'
 #' @param file character path to a Salmon output file, or a vector
 #'    of files.
+#' @param ... additional arguments are ignored.
 #'
 #' @family jam nextgen sequence functions
 #'
@@ -288,7 +289,8 @@ parse_salmon_flenfile <- function
 #'
 #' @export
 get_salmon_root <- function
-(file)
+(file,
+ ...)
 {
    ## Try to use rprojroot to find the Salmon root directory
    if (!suppressPackageStartupMessages(require(rprojroot))) {
@@ -298,12 +300,14 @@ get_salmon_root <- function
       salmonroots <- sapply(file, get_salmon_root);
       return(salmonroots);
    }
+   names_files <- names(files);
    salmonroot <- tryCatch({
       rprojroot::find_root(path=file,
          "cmd_info.json");
    }, error=function(e){
       NA;
    });
+   names(salmonroot) <- names_files;
    return(salmonroot);
 }
 

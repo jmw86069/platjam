@@ -4,11 +4,13 @@
 \alias{get_salmon_root}
 \title{Get Salmon root directory}
 \usage{
-get_salmon_root(file)
+get_salmon_root(file, ...)
 }
 \arguments{
 \item{file}{character path to a Salmon output file, or a vector
 of files.}
+
+\item{...}{additional arguments are ignored.}
 }
 \value{
 file path to the Salmon root directory, or \code{NA} if
