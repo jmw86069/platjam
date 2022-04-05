@@ -1,3 +1,44 @@
+# TODO 05apr2022
+
+## Salmon metadata
+
+COMPLETE: Salmon produces a useful file `"flenDist.txt"` that includes the
+distribution of fragment lengths observed, from 1 to 1000 length.
+Goal is to parse this file to determine the weighted mean
+fragment length, likely extending `get_salmon_meta()`.
+
+
+# TODO 21mar2022
+
+## UCSC track hubs
+
+* `parse_ucsc_gokey()` updates:
+
+   * currently the compositeTrack output requires editing to become
+   visible by default. It appears now to export a mix of
+   superTrack/compositeTrack. The apparent changes required:
+   
+      1. Remove "compositeTrack on" from the 2nd level of compositeTrack view.
+      2. Remove "superTrack on show" from the 1st level of compositeTrack view.
+      3. Add "type bigWig" to the 1st level of compositeTrack view (unlikely 
+      to be necessary however).
+      4. Add to 3rd level compositeTrack view, for each track:
+      `"subGroups            view=COV"`
+      Unclear if this line is required for visibility.
+
+   * Option `autoScale group` is useful for sets of tracks, and it should
+   be easy to configure upfront.
+   
+      * Track groups should be possible to be created independent of
+      track order. For example ATAC_cov and ATAC_NDR could appear for
+      each sample in order, with ATAC_cov autoScale to its own group,
+      and ATAC_NDR autoScale to its own group.
+   
+   * Not all track arguments are being honored in the final track hub entry.
+   For example autoScale=group is not propagating through the workflow.
+
+
+
 # TODO for platjam
 
 ## `nmatlist2heatmaps()`

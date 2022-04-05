@@ -1,3 +1,17 @@
+# platjam 0.0.45.900
+
+## updates to existing functions
+
+* `get_salmon_meta()` now parses the fragment length distribution if
+the file exists. It returns mean, median, mode, and 25/75 percentiles.
+
+## new functions
+
+* `parse_salmon_flenfile()` parses the Salmon fragment length file
+usually named `"flenDist.txt"`, and return summary values: mean,
+median, mode, 25/75 percentiles.
+
+
 # platjam 0.0.44.900
 
 ## updates to existing functions

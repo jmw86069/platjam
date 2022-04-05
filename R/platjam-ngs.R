@@ -85,6 +85,8 @@ get_salmon_meta <- function
       "cmd_info.json");
    libfile <- file.path(metapath,
       "lib_format_counts.json");
+   flenfile <- file.path(metapath,
+      "libParams/flenDist.txt");
 
    json1 <- jsonlite::read_json(metafile);
    jsoninfo <- jamba::sdim(json1);
@@ -142,8 +144,122 @@ get_salmon_meta <- function
       metajson[,colnames(libjson)] <- libjson;
    }
 
+   # fragment length file
+   if (file.exists(flenfile)) {
+      flen_values <- parse_salmon_flenfile(flenfile,
+         do_plot=FALSE);
+      names(flen_values) <- paste0("fraglen_", names(flen_values))
+      metajson[,names(flen_values)] <- flen_values;
+   }
+
    return(metajson);
 }
+
+#' Parse Salmon fragment length file
+#'
+#' Parse Salmon fragment length file
+#'
+#' @param x `character` path to file usually named `"flenDist.txt"`.
+#' @param k `numeric` used with `caTools::runmean()` to define the
+#'    width for smoothing a running mean, helpful to de-noise
+#'    the fragment length profile.
+#' @param do_plot `logical` indicating whether to plot the data and
+#'    resulting values.
+#' @param retcolors `character` vector with three colors used when
+#'    `do_plot=TRUE`: mean, median, mode.
+#' @param ... additional arguments are passed to `plot()` when `do_plot=TRUE`.
+#'
+#' @family jam nextgen sequence functions
+#'
+#' @return `numeric` vector with summary values:
+#' * mean: the weighted mean across the fragment length distribution
+#' * median: the position with 50% cumulative density at or below
+#' * mode: the position with the highest density
+#' * each value in `probs` representing percentiles
+#'
+#' value representing the weighted mean across the
+#'    fragment lengths reported, typically values from 1 to 1000.
+#'
+#' @export
+parse_salmon_flenfile <- function
+(x,
+ k=7,
+ do_plot=FALSE,
+ retcolors=c("red",
+    "gold",
+    "dodgerblue",
+    "grey"),
+ probs=c(0.25, 0.75),
+ ...)
+{
+   if (is.numeric(x)) {
+      xvals <- x;
+      xlens <- seq_along(x);
+   } else if (!file.exists(x)) {
+      stop(paste0("Salmon fragment length file is not accessible: ", x));
+   } else {
+      xdf <- data.table::fread(x,
+         data.table=FALSE,
+         header=FALSE);
+      xvals <- unname(unlist(xdf[1,]));
+      xlens <- seq_along(xvals)
+   }
+   names(xvals) <- xlens;
+   xmean <- weighted.mean(x=xlens,
+      w=xvals,
+      na.rm=TRUE);
+   if (jamba::check_pkg_installed("caTools")) {
+      xsmooth <- caTools::runmean(xvals,
+         k=k,
+         endrule="mean");
+      xmode <- xlens[which.max(xsmooth)];
+   } else {
+      xmode <- xlens[which.max(xvals)];
+      xsmooth <- NULL;
+   }
+   w <- xvals * (1 / sum(xvals));
+   probs <- setdiff(probs, 0.5);
+   xmedian <- xlens[match(TRUE, cumsum(w) >= 0.5)]
+   xprobs <- sapply(probs, function(i){
+      xlens[match(TRUE, cumsum(w) >= i)]
+   })
+   names(xprobs) <- paste0(round(100 * probs), "%");
+
+   retvals <- c(mean=xmean,
+      median=xmedian,
+      mode=xmode,
+      xprobs);
+
+   # optional plot
+   if (do_plot) {
+      plot(x=xlens,
+         y=xvals,
+         type="l",
+         col="blue",
+         lwd=4,
+         ...);
+      if (length(xsmooth) > 0) {
+         lines(x=xlens,
+            y=xsmooth,
+            col="red",
+            lwd=2);
+      }
+      abline(v=retvals,
+         lwd=1,
+         col=rep(retcolors,
+            c(1, 1, 1, length(xprobs))),
+         lty="dashed")
+      legend("topright",
+         legend=names(retvals),
+         col=rep(retcolors,
+            c(1, 1, 1, length(xprobs))),
+         lwd=2,
+         lty=1)
+   }
+   retvals
+}
+
+
 
 #' Get Salmon root directory
 #'

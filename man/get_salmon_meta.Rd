@@ -64,6 +64,7 @@ if (nchar(cmdinfopath) > 0) {
 \seealso{
 Other jam nextgen sequence functions: 
 \code{\link{get_salmon_root}()},
+\code{\link{parse_salmon_flenfile}()},
 \code{\link{save_salmon_qc_xlsx}()}
 }
 \concept{jam nextgen sequence functions}
