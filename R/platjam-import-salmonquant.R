@@ -145,22 +145,34 @@ import_salmon_quant <- function
       if (verbose) {
          jamba::printDebug("import_salmon_quant(): ",
             "applying sample annotations via curation_txt.");
-         jamba::printDebug("import_salmon_quant(): ",
-            "isamples from colnames(txiTx[[1]]):",
-            isamples);
       }
       # sample_df
       sample_df <- slicejam::curate_to_df_by_pattern(
          isamples,
          df=curation_txt,
          ...);
-      isamples <- rownames(sample_df);
-      if (verbose) {
-         jamba::printDebug("import_salmon_quant(): ",
-            "applying sample annotations via curation_txt.");
-         jamba::printDebug("import_salmon_quant(): ",
-            "isamples from curation_txt:",
+      isamples1 <- rownames(sample_df);
+      if (!all(isamples1) %in% isamples) {
+         filename_colname <- jamba::vigrep("^filename$", colnames(sample_df));
+         isamples_match <- match(sample_df[[filename_colname]],
             isamples);
+         isamples_from <- isamples[isamples_match];
+         isamples_to <- isamples1;
+         if (verbose > 1) {
+            jamba::printDebug("import_salmon_quant(): ",
+               "renaming sample colnames to match sample_df:");
+            print(data.frame(isamples_from,
+               isamples_to));
+         }
+         for (i in names(txiTx)) {
+            if ("matrix" %in% class(txiTx[[i]])) {
+               txiTx[[i]] <- jamba::renameColumn(txiTx[[i]],
+                  from=isamples_from,
+                  to=isamples_to);
+            }
+         }
+      }
+      if (verbose) {
          if (verbose > 1) {
             jamba::printDebug("import_salmon_quant(): ",
                "sample_df:");
