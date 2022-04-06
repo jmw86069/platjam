@@ -148,7 +148,8 @@ Other jam import functions:
 \code{\link{deepTools_matrix2nmat}()},
 \code{\link{frequency_matrix2nmat}()},
 \code{\link{import_nanostring_rcc}()},
-\code{\link{import_proteomics_PD}()}
+\code{\link{import_proteomics_PD}()},
+\code{\link{import_salmon_quant}()}
 }
 \concept{jam coverage heatmap functions}
 \concept{jam import functions}

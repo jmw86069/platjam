@@ -1,5 +1,14 @@
 # TODO 05apr2022
 
+## Salmon import to SummarizedExperiment?
+
+* goal would be to mimic `import_proteomics_PD()` by importing
+`quant.sf` files, incorporate `curation.txt` for sample annotations.
+
+   * requires `GTF` and/or `tx2gene` file for transcript-to-gene.
+   * Produce `list` with `TxSE` and `GeneSE` objects.
+   * `assays()` will include `counts` and `abundance`.
+
 ## Salmon metadata
 
 COMPLETE: Salmon produces a useful file `"flenDist.txt"` that includes the

@@ -1,3 +1,14 @@
+# platjam 0.0.46.900
+
+## new function
+
+* `import_salmon_quant()`
+
+   * does the job of `tximport::tximport()`, then associates
+   sample annotations via `curation_txt` to produce
+   `SummarizedExperiment` objects at transcript and/or gene
+   level.
+
 # platjam 0.0.45.900
 
 ## updates to existing functions
