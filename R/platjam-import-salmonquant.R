@@ -172,6 +172,7 @@ import_salmon_quant <- function
             }
          }
       }
+      isamples <- isamples1;
       if (verbose) {
          if (verbose > 1) {
             jamba::printDebug("import_salmon_quant(): ",
