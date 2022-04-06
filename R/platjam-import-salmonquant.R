@@ -108,8 +108,6 @@ import_salmon_quant <- function
    }
 
    # tximport
-   # replace with import for Salmon quant data
-   #library(tximport)
    if (length(names(salmonOut_paths)) == 0) {
       names(salmonOut_paths) <- jamba::makeNames(
          gsub("_salmonOut$",
@@ -131,7 +129,9 @@ import_salmon_quant <- function
    if (verbose) {
       jamba::printDebug("import_salmon_quant(): ",
          "importing tx data.");
-      print(data.frame(salmon_files));
+      if (verbose > 1) {
+         print(data.frame(salmon_files));
+      }
    }
    txiTx <- tximport::tximport(salmon_files,
       type="salmon",
@@ -145,6 +145,9 @@ import_salmon_quant <- function
       if (verbose) {
          jamba::printDebug("import_salmon_quant(): ",
             "applying sample annotations via curation_txt.");
+         jamba::printDebug("import_salmon_quant(): ",
+            "isamples from colnames(txiTx[[1]]):",
+            isamples);
       }
       # sample_df
       sample_df <- slicejam::curate_to_df_by_pattern(
@@ -152,6 +155,18 @@ import_salmon_quant <- function
          df=curation_txt,
          ...);
       isamples <- rownames(sample_df);
+      if (verbose) {
+         jamba::printDebug("import_salmon_quant(): ",
+            "applying sample annotations via curation_txt.");
+         jamba::printDebug("import_salmon_quant(): ",
+            "isamples from curation_txt:",
+            isamples);
+         if (verbose > 1) {
+            jamba::printDebug("import_salmon_quant(): ",
+               "sample_df:");
+            print(sample_df);
+         }
+      }
    }
 
    ret_list <- list();
