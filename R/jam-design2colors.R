@@ -470,13 +470,12 @@ design2colors <- function
          all_add_colors_v[unique(as.character(x[[icol]]))]
       })
    }
-   all_colors_v <- unlist(unname(
-      jamba::rmNULL(
-         c(jamba::rmNULL(new_colors), add_colors)[colnames(x)])));
    all_colors_list1 <- jamba::rmNULL(c(
       c(jamba::rmNULL(new_colors), add_colors)[colnames(x)],
       list(class_group_color=class_group_color,
          class_group_lightness_color=class_group_lightness_color)));
+   all_colors_v <- unlist(unname(all_colors_list1));
+   all_colors_v <- all_colors_v[!duplicated(names(all_colors_v))];
    all_colors_list <- lapply(all_colors_list1, function(i){
       all_colors_v[names(i)];
    })
