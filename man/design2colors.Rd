@@ -68,4 +68,13 @@ dfc3 <- design2colors(df,
    rotate_phase=TRUE,
    preset="dichromat")
 
+df1 <- df;
+df2 <- subset(df, time \%in\% "early");
+df12 <- rbind(df1, df2);
+dfc12 <- design2colors(df12,
+   group_colnames="genotype",
+   lightness_colnames=c("time", "treatment"),
+   class_colnames="-class",
+   preset="dichromat")
+
 }

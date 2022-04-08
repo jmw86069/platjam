@@ -42,6 +42,15 @@
 #'    rotate_phase=TRUE,
 #'    preset="dichromat")
 #'
+#' df1 <- df;
+#' df2 <- subset(df, time %in% "early");
+#' df12 <- rbind(df1, df2);
+#' dfc12 <- design2colors(df12,
+#'    group_colnames="genotype",
+#'    lightness_colnames=c("time", "treatment"),
+#'    class_colnames="-class",
+#'    preset="dichromat")
+#'
 #' @export
 design2colors <- function
 (x,
@@ -92,6 +101,28 @@ design2colors <- function
       }
    }
 
+   # sort by class, group, lightness to make downstream steps consistent
+   x_input <- x;
+   x <- jamba::mixedSortDF(x,
+      byCols=c(class_colnames,
+         group_colnames,
+         lightness_colnames));
+   class_colnames <- gsub("^[-]", "", class_colnames);
+   group_colnames <- gsub("^[-]", "", group_colnames);
+   lightness_colnames <- gsub("^[-]", "", lightness_colnames);
+   all_colnames <- c(class_colnames,
+      group_colnames,
+      lightness_colnames);
+
+   # convert character to factor to apply order each appears
+   for (icol in all_colnames) {
+      if (!is.factor(x[[icol]])) {
+         x[[icol]] <- factor(x[[icol]],
+            levels=unique(x[[icol]]));
+      }
+   }
+
+   # generate output per class, group, lightness values
    xlist <- list(
       class=jamba::pasteByRowOrdered(x[,class_colnames, drop=FALSE]),
       group=jamba::pasteByRowOrdered(x[,group_colnames, drop=FALSE]),
@@ -100,6 +131,8 @@ design2colors <- function
    xlist <- jamba::rmNULL(xlist, nullValue="");
    xdf <- data.frame(check.names=FALSE,
       xlist);
+
+   # add class_group and class_group_lightness column values
    xdf$class_group <- jamba::pasteByRowOrdered(xdf[,c("class", "group"), drop=FALSE]);
    xdf$class_group_lightness <- jamba::pasteByRowOrdered(xdf[,c("class", "group", "lightness"), drop=FALSE]);
 
@@ -216,7 +249,8 @@ design2colors <- function
          if (any(duplicated(idf[[icol]]))) {
             next;
          } else {
-            kcolors <- jamba::nameVector(idf[[2]],
+            kcolors <- jamba::nameVector(
+               as.character(idf[[2]]),
                as.character(idf[[1]]));
             return(kcolors);
          }
@@ -292,7 +326,7 @@ design2colors <- function
          new_colors_v);
 
       add_colors <- lapply(jamba::nameVector(add_colnames), function(icol) {
-         all_add_colors_v[as.character(unique(x[[icol]]))]
+         all_add_colors_v[unique(as.character(x[[icol]]))]
       })
    }
    all_colors_list <- jamba::rmNULL(c(
@@ -316,15 +350,15 @@ design2colors <- function
 
    # another option is to display the input data.frame colorized
    x_colors <- as.data.frame(
-      lapply(jamba::nameVector(colnames(x)), function(i){
-         all_colors_list[[i]][x[[i]]]
+      lapply(jamba::nameVector(colnames(x_input)), function(i){
+         all_colors_list[[i]][x_input[[i]]]
       }));
    if ("table" %in% plot_type) {
       opar <- par(no.readonly=TRUE);
       jamba::adjustAxisLabelMargins(
          rownames(x_colors), 2)
       jamba::imageByColors(x_colors,
-         cellnote=x,
+         cellnote=x_input,
          flip="y",
          cexCellnote=0.7)
       par(opar);
