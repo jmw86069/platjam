@@ -1,3 +1,66 @@
+# platjam 0.0.47.900
+
+## new function `import_lipotype()`
+
+* Intended to import CSV formats provided by LipoType lipidomics data
+* Returns `SummarizedExperiment` object, with rowData and colData
+assigned as appropriate.
+* Next iteration will parse optional `curation_txt` to assign
+sample annotation for experimental design, factors, etc.
+
+
+## new function `design2colors()` (in development)
+
+See examples `? design2colors()` for usage.
+
+* Intended as an extension to `colorjam::group2colors()`
+that also utilizes subgroup (smaller subsets of groups), and 
+group class (which includes multiple groups together).
+* If this function works well through early testing, it likely moves
+into `colorjam` for broader re-use.
+* I find myself assigning categorical colors by group, then using
+`jamba::color2gradient()` to split colors into light-to-dark gradient:
+
+   * time course, 0-hr, 2-hr, 4-hr, 8-hr (light-to-dark)
+   * treatment: untreated, treated (light-to-dark)
+   * for each group: batch A, batch B (light-to-dark)
+
+* I find myself assigning these categorical colors to each SampleID,
+or to subgroups, or other factors, so the colors are consistent when
+used in tables, and `ComplexHeatmap` output.
+
+   * assign colors to all annotation columns with appropriate cardinality
+
+* Finally, other factors need colors, they should differ from group colors
+
+   * for each individual factor, assign unique categorical colors
+   * re-use colors when a factor level already has an assigned color
+
+* Default output:
+
+   * colors assigned for every column, and every column value of the
+   input `data.frame` argument `x`.
+   * Plots a graphical table of sample annotations showing color assignments
+   using `jamba::imageByColors()`.
+   * `list` of colors, named by `colnames(x)`, suitable for use with
+   `ComplexHeatmap::HeatmapAnnotation()`.
+   * optionally a color vector, named by factor level.
+   * optionally returns a `data.frame` with colors, in same order as input `x`,
+   suitable for use directly in `jamba::imageByColors()`.
+   
+* Relevant arguments
+
+   * `group_colnames`: defines categorical colors, one per group
+   * `lightness_colnames`: assigns light-to-dark gradient to categorical colors
+   * `class_colnames`: arranges groups into classes, so groups with same class
+   are assigned similar color hues, with spacing between classes.
+   * `preset`: defines the color wheel used by `colorjam::rainbowJam()`:
+   
+      * `dichromat`: dichromat-friendly color wheel, largely removes green
+      * `ryb1`: red-yellow-blue (common painter's color wheel for color mixing)
+      * `rgb`: red-green-blue (default R, shows how much of the wheel is green)
+
+
 # platjam 0.0.46.900
 
 ## new function
