@@ -62,7 +62,7 @@ design2colors <- function
    rotate_phase=-1,
    class_pad=1,
    end_hue_pad=2,
-   desat=0,
+   desat=c(0, 0.4),
    plot_type=c("table",
       "list",
       "none"),
@@ -206,6 +206,11 @@ design2colors <- function
       ...);
    names(class_group_color) <- gdf$class_group;
    gdf$class_group_color <- class_group_color;
+   if (verbose) {
+      jamba::printDebug("design2colors(): ",
+         "expanded unique class, group df, with colors:");
+      print(gdf);
+   }
 
    # optionally rotate phase
    phase <- phase + rotate_phase;
@@ -240,7 +245,7 @@ design2colors <- function
          ivalues <- x[,icol, drop=FALSE]
       }
       # jamba::printDebug("icol: ", icol);
-      # jamba::printDebug("      ivalues: ", ivalues);
+      # jamba::printDebug("      ivalues: ", ivalues[,1]);
       for (kcolname in kcolnames) {
          # jamba::printDebug("      kcolname: ", kcolname);
          idf <- unique(data.frame(check.names=FALSE,
@@ -252,6 +257,7 @@ design2colors <- function
             kcolors <- jamba::nameVector(
                as.character(idf[[2]]),
                as.character(idf[[1]]));
+            # printDebug(kcolors);
             return(kcolors);
          }
       }
@@ -269,7 +275,7 @@ design2colors <- function
          if ("rownames" %in% icol) {
             unique(rownames(x))
          } else {
-            unique(x[[icol]])
+            unique(as.character(x[[icol]]))
          }
       })));
       # sometimes a factor is already assigned a color
@@ -351,7 +357,7 @@ design2colors <- function
    # another option is to display the input data.frame colorized
    x_colors <- as.data.frame(
       lapply(jamba::nameVector(colnames(x_input)), function(i){
-         all_colors_list[[i]][x_input[[i]]]
+         all_colors_list[[i]][as.character(x_input[[i]])]
       }));
    if ("table" %in% plot_type) {
       opar <- par(no.readonly=TRUE);

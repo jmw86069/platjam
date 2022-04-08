@@ -14,7 +14,7 @@ design2colors(
   rotate_phase = -1,
   class_pad = 1,
   end_hue_pad = 2,
-  desat = 0,
+  desat = c(0, 0.4),
   plot_type = c("table", "list", "none"),
   return_type = c("list", "df", "vector"),
   verbose = FALSE,
