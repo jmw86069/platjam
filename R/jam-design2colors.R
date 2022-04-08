@@ -10,6 +10,53 @@
 #'    which `colnames(x)` to use, in order, for group lightness gradient.
 #' @param class_colnames `character` or `intger` vector indicating
 #'    higher-level grouping of `group_colnames`
+#' @param preset `character` string passed to `colorjam::h2hwOptions()`,
+#'    which defines the hues around a color wheel, used when selecting
+#'    categorical colors.
+#' @param phase,rotate_phase `integer` value, `phase` is passed to
+#'    `colorjam::rainbowJam()` to define the light/dark pattern phasing,
+#'    which has 6 positions, and negative values reverse the order.
+#'    Categorical colors are assigned to the class/group combinations,
+#'    after which `phase + rotate_phase` is used for categorical colors
+#'    for any remaining values.
+#' @param class_pad `integer` zero or greater, indicating the number
+#'    of empty hues to insert as a spacer between hues when the class
+#'    changes in a sequence of class/group values. Higher values will
+#'    ensure the hues in each class are more distinct from each other
+#'    across class, and more similar to each other within class.
+#' @param end_hue_pad `integer` used to pad hues at the end of a
+#'    color wheel sequence, typically useful to ensure the last color
+#'    is not similar to the first color.
+#' @param desat `numeric` vector extended to length=2, used to desaturate
+#'    class/group colors, then remaining colors, in order. The intended
+#'    effect is to have class/group colors visibly more colorful than
+#'    remaining colors assigned to other factors.
+#' @param dex `numeric` vector passed to `jamba::color2gradient()` to
+#'    define the darkness expansion factor, where 1 applies a moderate
+#'    effect, and higher values apply more dramatic light-to-dark
+#'    effect. When `dex` has length=2, the second value is used only
+#'    for columns where colors are assigned by `colnames(x)`
+#'    using `color_sub`.
+#' @param color_sub `character` vector of R colors, where `names(color_sub)`
+#'    assign each color to a character string. It is intended to allow
+#'    specific color assignments upfront.
+#'    * `colnames(x)`: when `names(color_sub)` matches a column name in `x`,
+#'    the color is assigned to that color using a color gradient across
+#'    the unique character values in that column. Values are assigned in
+#'    order of their appearance in `x` unless the column is a `factor`,
+#'    in which case colors are assigned to `levels`.
+#' @param plot_type `character` string indicating a type of plot for results:
+#'    * `"table"`: plots a color table equal to the input `data.frame` where
+#'    background cells indicate color assignments.
+#'    * `"list"`: plots colors defined for each column in `x` using
+#'    `jamba::showColors()`
+#'    * `"none"`: no plot is produced
+#' @param return_type `character` string indicating the data format to return:
+#'    * `"list"`: a `list` of colors, named by `colnames(x)`.
+#'    * `"df"`: a `data.frame` in order of `x` with colors assigned to each cell.
+#'    * `"vector"`: a `character` vector of R colors, named by assigned
+#'    factor level.
+#' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to downstream functions.
 #'
 #' @examples
@@ -26,8 +73,32 @@
 #' dfc <- design2colors(df,
 #'    group_colnames="genotype",
 #'    lightness_colnames="treatment",
+#'    class_colnames="class")
+#'
+#' # same as above except assign colors to columns and some values
+#' dfc <- design2colors(df,
+#'    group_colnames="genotype",
+#'    lightness_colnames="treatment",
 #'    class_colnames="class",
-#'    preset="rgb")
+#'    preset="dichromat",
+#'    color_sub=c(KO="firebrick3",
+#'       treatment="navy",
+#'       class="cyan",
+#'       time="dodgerblue"))
+#'
+#' # same as above except assign specific group colors
+#' dfc <- design2colors(df,
+#'    group_colnames="genotype",
+#'    lightness_colnames="treatment",
+#'    class_colnames="class",
+#'    preset="dichromat",
+#'    color_sub=c(
+#'       WT_WT="gold",
+#'       KO_GeneAKO="firebrick3",
+#'       KO_GeneBKO="dodgerblue",
+#'       treatment="navy",
+#'       time="darkorchid4",
+#'       class="burlywood"))
 #'
 #' dfc2 <- design2colors(df,
 #'    group_colnames="genotype",
@@ -63,6 +134,8 @@ design2colors <- function
    class_pad=1,
    end_hue_pad=2,
    desat=c(0, 0.4),
+   dex=c(2, 5),
+   color_sub=NULL,
    plot_type=c("table",
       "list",
       "none"),
@@ -84,6 +157,8 @@ design2colors <- function
       class_pad <- 1;
    }
    desat <- rep(desat,
+      length.out=2);
+   dex <- rep(dex,
       length.out=2);
 
    # handle each argument of colnames
@@ -199,12 +274,16 @@ design2colors <- function
    class_group_hue1 <- jamba::nameVector(gdf[,c("hue", "class_group")])
    class_group_hue <- colorjam::hw2h(class_group_hue1,
       preset=preset);
-   class_group_color <- colorjam::rainbowJam(n=length(class_group_hue),
-      hues=class_group_hue,
-      phase=phase,
-      preset=preset,
-      ...);
-   names(class_group_color) <- gdf$class_group;
+   if (all(as.character(gdf$class_group) %in% names(color_sub))) {
+      class_group_color <- color_sub[as.character(gdf$class_group)];
+   } else {
+      class_group_color <- colorjam::rainbowJam(n=length(class_group_hue),
+         hues=class_group_hue,
+         phase=phase,
+         preset=preset,
+         ...);
+      names(class_group_color) <- gdf$class_group;
+   }
    gdf$class_group_color <- class_group_color;
    if (verbose) {
       jamba::printDebug("design2colors(): ",
@@ -220,8 +299,15 @@ design2colors <- function
    xdf$class_group_color <- class_group_color[as.character(xdf$class_group)];
    class_group_lightness_color <- NULL;
    if (any(duplicated(udf$class_group_color))) {
-      class_group_lightness_color <- jamba::color2gradient(udf$class_group_color);
+      class_group_lightness_color <- jamba::color2gradient(udf$class_group_color,
+         dex=dex[1]);
       names(class_group_lightness_color) <- udf$class_group_lightness;
+      udf$class_group_lightness_color <- class_group_lightness_color;
+      xdf$class_group_lightness_color <- class_group_lightness_color[as.character(xdf$class_group_lightness)];
+   } else {
+      class_group_lightness_color <- jamba::nameVector(
+         udf$class_group_color,
+         as.character(udf$class_group_lightness));
       udf$class_group_lightness_color <- class_group_lightness_color;
       xdf$class_group_lightness_color <- class_group_lightness_color[as.character(xdf$class_group_lightness)];
    }
@@ -231,6 +317,7 @@ design2colors <- function
          "class_group_color"),
       colnames(udf));
 
+   ###############################################################
    # assign group colors when cardinality is appropriate
    if (length(rownames(x)) == 0 ||
          !any(is.na(as.numeric(rownames(x))))) {
@@ -268,9 +355,36 @@ design2colors <- function
    # jamba::printDebug("new_colors_v:");
    # jamba::printDebug(new_colors_v);
 
+   ###############################################################
    # now generate categorical colors for remaining columns
    if (any(lengths(new_colors) == 0)) {
+      add_colors_v1 <- NULL;
       add_colnames <- names(new_colors)[lengths(new_colors) == 0];
+
+      # if color_sub matches colname, use that color with gradient effect
+      colname_colnames <- NULL;
+      if (any(add_colnames %in% names(color_sub))) {
+         colname_colnames <- intersect(add_colnames, names(color_sub));
+         add_colnames <- setdiff(add_colnames, colname_colnames);
+         colname_colors <- lapply(colname_colnames, function(icol){
+            # jamba::printDebug("colname_icol: ", icol);
+            if (is.factor(x[[icol]])) {
+               ivalues <- levels(x[[icol]]);
+            } else {
+               ivalues <- unique(as.character(x[[icol]]));
+            }
+            icolors <- jamba::nameVector(
+               jamba::color2gradient(color_sub[[icol]],
+                  dex=dex[2],
+                  n=length(ivalues)),
+               ivalues);
+            # jamba::printDebugI(icolors);
+            icolors;
+         });
+         add_colors_v1 <- unlist(unname(colname_colors));
+         add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
+      }
+
       add_values <- unique(unlist(lapply(add_colnames, function(icol) {
          if ("rownames" %in% icol) {
             unique(rownames(x))
@@ -278,6 +392,20 @@ design2colors <- function
             unique(as.character(x[[icol]]))
          }
       })));
+      # reuse color assignments if present
+      if (any(c(add_values, names(add_colors_v1)) %in% names(color_sub))) {
+         add_values_1 <- intersect(
+            c(add_values,
+               names(add_colors_v1)),
+            names(color_sub));
+         add_values <- setdiff(add_values, add_values_1);
+         add_colors_v1 <- c(
+            color_sub[add_values_1],
+            add_colors_v1)
+         add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
+      }
+
+      # jamba::printDebug("add_values: ", add_values);
       # sometimes a factor is already assigned a color
       if (any(add_values %in% names(new_colors_v))) {
          add_values <- setdiff(add_values,
@@ -285,45 +413,50 @@ design2colors <- function
       }
       add_n <- length(add_values);
 
-      # determine "improved" starting hue using mean of first two hues
-      if (nrow(gdf) > 1) {
-         start_hue1 <- mean(gdf[1:2, "hue"])
-      } else {
-         start_hue1 <- 0;
-      }
-      # jamba::printDebug("start_hue1: ", start_hue1);
-      offset <- 0;
-      add_hue_seq <- head(seq(from=0 + start_hue1,
-         to=360 + start_hue1,
-         length.out=add_n + end_hue_pad), add_n);
-      add_hue <- colorjam::hw2h(add_hue_seq,
-         preset=preset);
-      add_hue1 <- head(as.vector(
-         matrix(ncol=2,
-            byrow=TRUE,
-            add_hue)),
-         add_n);
+      if (add_n > 0) {
+         # determine "improved" starting hue using mean of first two hues
+         if (nrow(gdf) > 1) {
+            start_hue1 <- mean(gdf[1:2, "hue"])
+         } else {
+            start_hue1 <- 0;
+         }
+         # jamba::printDebug("start_hue1: ", start_hue1);
+         offset <- 0;
+         add_hue_seq <- head(seq(from=0 + start_hue1,
+            to=360 + start_hue1,
+            length.out=add_n + end_hue_pad), add_n);
+         add_hue <- colorjam::hw2h(add_hue_seq,
+            preset=preset);
+         add_hue1 <- head(as.vector(
+            matrix(ncol=2,
+               byrow=TRUE,
+               add_hue)),
+            add_n);
 
-      # assign categorical colors to unique values
-      add_m <- head(as.vector(
-         matrix(ncol=2,
-            byrow=TRUE,
-            add_values)),
-         add_n);
-      add_m <- add_values;
-      add_colors_v <- jamba::nameVector(
-         colorjam::rainbowJam(add_n,
-            phase=phase,
-            hues=add_hue,
-            preset=preset,
-            ...),
-         add_m);
+         # assign categorical colors to unique values
+         add_m <- head(as.vector(
+            matrix(ncol=2,
+               byrow=TRUE,
+               add_values)),
+            add_n);
+         add_m <- add_values;
+         add_colors_v <- jamba::nameVector(
+            colorjam::rainbowJam(add_n,
+               phase=phase,
+               hues=add_hue,
+               preset=preset,
+               ...),
+            add_m);
+      } else {
+         add_colors_v <- NULL;
+      }
+      add_colors_v <- c(add_colors_v,
+         add_colors_v1);
+      add_colors_v <- add_colors_v[!duplicated(names(add_colors_v))];
       add_colors_v <- jamba::nameVector(
          colorspace::desaturate(add_colors_v,
             amount=desat[2]),
-         add_m);
-      # jamba::printDebug("add_colors_v:");
-      # jamba::printDebugI(add_colors_v);
+         names(add_colors_v));
 
       # optionally rotate phase
       phase <- phase + rotate_phase;
@@ -331,14 +464,26 @@ design2colors <- function
       all_add_colors_v <- c(add_colors_v,
          new_colors_v);
 
-      add_colors <- lapply(jamba::nameVector(add_colnames), function(icol) {
+      # jamba::printDebug("add_colnames: ", add_colnames);
+      # jamba::printDebug("colname_colnames: ", colname_colnames);
+      add_colors <- lapply(jamba::nameVector(c(add_colnames, colname_colnames)), function(icol) {
          all_add_colors_v[unique(as.character(x[[icol]]))]
       })
    }
-   all_colors_list <- jamba::rmNULL(c(
+   all_colors_v <- unlist(unname(
+      jamba::rmNULL(
+         c(jamba::rmNULL(new_colors), add_colors)[colnames(x)])));
+   all_colors_list1 <- jamba::rmNULL(c(
       c(jamba::rmNULL(new_colors), add_colors)[colnames(x)],
       list(class_group_color=class_group_color,
          class_group_lightness_color=class_group_lightness_color)));
+   all_colors_list <- lapply(all_colors_list1, function(i){
+      all_colors_v[names(i)];
+   })
+   # all_colors_list <- jamba::rmNULL(c(
+   #    c(jamba::rmNULL(new_colors), add_colors)[colnames(x)],
+   #    list(class_group_color=class_group_color,
+   #       class_group_lightness_color=class_group_lightness_color)));
 
    if (!desat == 0) {
       all_colors_list <- lapply(all_colors_list, function(i){
@@ -355,6 +500,9 @@ design2colors <- function
    }
 
    # another option is to display the input data.frame colorized
+   x_colors_list <- lapply(jamba::nameVector(colnames(x_input)), function(i){
+         all_colors_list[[i]][as.character(x_input[[i]])]
+   });
    x_colors <- as.data.frame(
       lapply(jamba::nameVector(colnames(x_input)), function(i){
          all_colors_list[[i]][as.character(x_input[[i]])]

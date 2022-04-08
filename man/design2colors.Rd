@@ -15,6 +15,8 @@ design2colors(
   class_pad = 1,
   end_hue_pad = 2,
   desat = c(0, 0.4),
+  dex = c(2, 5),
+  color_sub = NULL,
   plot_type = c("table", "list", "none"),
   return_type = c("list", "df", "vector"),
   verbose = FALSE,
@@ -32,6 +34,69 @@ which \code{colnames(x)} to use, in order, for group lightness gradient.}
 
 \item{class_colnames}{\code{character} or \code{intger} vector indicating
 higher-level grouping of \code{group_colnames}}
+
+\item{preset}{\code{character} string passed to \code{colorjam::h2hwOptions()},
+which defines the hues around a color wheel, used when selecting
+categorical colors.}
+
+\item{phase, rotate_phase}{\code{integer} value, \code{phase} is passed to
+\code{colorjam::rainbowJam()} to define the light/dark pattern phasing,
+which has 6 positions, and negative values reverse the order.
+Categorical colors are assigned to the class/group combinations,
+after which \code{phase + rotate_phase} is used for categorical colors
+for any remaining values.}
+
+\item{class_pad}{\code{integer} zero or greater, indicating the number
+of empty hues to insert as a spacer between hues when the class
+changes in a sequence of class/group values. Higher values will
+ensure the hues in each class are more distinct from each other
+across class, and more similar to each other within class.}
+
+\item{end_hue_pad}{\code{integer} used to pad hues at the end of a
+color wheel sequence, typically useful to ensure the last color
+is not similar to the first color.}
+
+\item{desat}{\code{numeric} vector extended to length=2, used to desaturate
+class/group colors, then remaining colors, in order. The intended
+effect is to have class/group colors visibly more colorful than
+remaining colors assigned to other factors.}
+
+\item{dex}{\code{numeric} vector passed to \code{jamba::color2gradient()} to
+define the darkness expansion factor, where 1 applies a moderate
+effect, and higher values apply more dramatic light-to-dark
+effect. When \code{dex} has length=2, the second value is used only
+for columns where colors are assigned by \code{colnames(x)}
+using \code{color_sub}.}
+
+\item{color_sub}{\code{character} vector of R colors, where \code{names(color_sub)}
+assign each color to a character string. It is intended to allow
+specific color assignments upfront.
+\itemize{
+\item \code{colnames(x)}: when \code{names(color_sub)} matches a column name in \code{x},
+the color is assigned to that color using a color gradient across
+the unique character values in that column. Values are assigned in
+order of their appearance in \code{x} unless the column is a \code{factor},
+in which case colors are assigned to \code{levels}.
+}}
+
+\item{plot_type}{\code{character} string indicating a type of plot for results:
+\itemize{
+\item \code{"table"}: plots a color table equal to the input \code{data.frame} where
+background cells indicate color assignments.
+\item \code{"list"}: plots colors defined for each column in \code{x} using
+\code{jamba::showColors()}
+\item \code{"none"}: no plot is produced
+}}
+
+\item{return_type}{\code{character} string indicating the data format to return:
+\itemize{
+\item \code{"list"}: a \code{list} of colors, named by \code{colnames(x)}.
+\item \code{"df"}: a \code{data.frame} in order of \code{x} with colors assigned to each cell.
+\item \code{"vector"}: a \code{character} vector of R colors, named by assigned
+factor level.
+}}
+
+\item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are passed to downstream functions.}
 }
@@ -52,8 +117,32 @@ df
 dfc <- design2colors(df,
    group_colnames="genotype",
    lightness_colnames="treatment",
+   class_colnames="class")
+
+# same as above except assign colors to columns and some values
+dfc <- design2colors(df,
+   group_colnames="genotype",
+   lightness_colnames="treatment",
    class_colnames="class",
-   preset="rgb")
+   preset="dichromat",
+   color_sub=c(KO="firebrick3",
+      treatment="navy",
+      class="cyan",
+      time="dodgerblue"))
+
+# same as above except assign specific group colors
+dfc <- design2colors(df,
+   group_colnames="genotype",
+   lightness_colnames="treatment",
+   class_colnames="class",
+   preset="dichromat",
+   color_sub=c(
+      WT_WT="gold",
+      KO_GeneAKO="firebrick3",
+      KO_GeneBKO="dodgerblue",
+      treatment="navy",
+      time="darkorchid4",
+      class="burlywood"))
 
 dfc2 <- design2colors(df,
    group_colnames="genotype",
