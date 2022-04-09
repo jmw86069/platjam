@@ -3,6 +3,74 @@
 #'
 #' Convert experiment design into categorical colors
 #'
+#' The general goal is to assign categorical colors relevant to
+#' the experimental design of an analysis. The basic logic:
+#'
+#' 1. Assign categorical colors to broadly defined experimental groups.
+#' 2. Shade these colors light-to-dark based upon secondary factors.
+#' 3. For step 1 above, optionally assign similar color hues by class.
+#'
+#' ## Categorical colors
+#'
+#' At its simplest a set of groups can be assigned categorical colors.
+#'
+#' * colors should be visibly distinct from one another
+#' * colors should generally be distinct across forms of color-blindness
+#' * colors should be consistent across plots, figures, tables
+#'
+#' Finally, colors may be pre-defined using a named vector of colors.
+#' These colors will be propagated to other entries in the table.
+#'
+#' ## Light-to-dark gradient
+#'
+#' The light-to-dark gradient is intended for ordered sub-divisions,
+#' for example:
+#'
+#' * across time points in a time series
+#' * across treatment doses in an ordered series
+#' * across ordered measurements first-to-last
+#'
+#' ## Group class
+#'
+#' The group classification is intended to assign color hues
+#' for similar groups:
+#'
+#' * antagonists, agonists, untreated
+#' * treated, untreated
+#' * wildtype, mutant form 1, mutant form 2, etc.
+#'
+#' For example, antagonists may be assigned colors blue-to-purple;
+#' agonists may be assigned colors red-to-orange; with a pronounced
+#' color hue "gap" between antagonists and agonists.
+#'
+#' ## Additional categorical color assignment
+#'
+#' Finally, other annotations associated with samples are assigned
+#' categorical colors, visibly distinct from other color assignments.
+#'
+#' For entries associated with only one design color, for example "Sample_ID",
+#' "Sample Name", "Lane Number", or "Well Number",
+#' they inherit the design color.
+#'
+#' For entries associated with more than one design color, for example
+#' "Batch", "Date", or perhaps "Dose", they will be assigned a unique
+#' color.
+#'
+#' * additional annotations unique to design colors inherit the design colors
+#' * additional categorical colors should not duplicate existing colors
+#'
+#' ## Future ideas
+#'
+#' * Assign "additional factors" to colors based upon `class`
+#'
+#'    * Currently "additional factors" are only tested by class_group and
+#'    class_group_lightness.
+#'    * It could be useful to test versus `class` alone (if supplied)
+#'    * Goal would be to assign color hue using the mean color hue in the class.
+#'    * Otherwise the class may be assigned a color inconsistent with the
+#'    range of color hues.
+#'
+#'
 #' @param x `data.frame` with columns to be colorized
 #' @param group_colnames `character` or `intger` vector indicating
 #'    which `colnames(x)` to use, in order, for group color assignment.
