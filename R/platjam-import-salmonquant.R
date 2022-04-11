@@ -152,7 +152,7 @@ import_salmon_quant <- function
          df=curation_txt,
          ...);
       isamples1 <- rownames(sample_df);
-      if (!all(isamples1) %in% isamples) {
+      if (!all(isamples1 %in% isamples)) {
          filename_colname <- jamba::vigrep("^filename$", colnames(sample_df));
          isamples_match <- match(sample_df[[filename_colname]],
             isamples);
