@@ -179,6 +179,11 @@ class_group_lightness.
 \item Otherwise the class may be assigned a color inconsistent with the
 range of color hues.
 }
+\item Handle numeric columns by applying color gradient
+\itemize{
+\item A truly numeric column (not just integer index values) could
+use \code{circlize::colorRamp2()} to apply color gradient
+}
 }
 }
 }
