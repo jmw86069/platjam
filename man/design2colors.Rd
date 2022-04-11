@@ -100,6 +100,18 @@ factor level.
 
 \item{...}{additional arguments are passed to downstream functions.}
 }
+\value{
+output depends upon argument \code{return_type}:
+\itemize{
+\item \code{"list"}: returns a \code{list} of colors defined by \code{colnames(x)},
+suitable for use with \code{ComplexHeatmap::HeatmapAnnotation()} for example.
+\item \code{"df"}: returns \code{data.frame} of colors with same dimensions as the
+input \code{x}. Suitable for use with \code{jamba::imageByColors()} for example.
+\item \code{"vector"}: returns \code{character} vector of R colors, whose names represent
+values in \code{x}, where the values should be substituted with the color.
+Suitable for use with \code{ggplot2::color_manual(values=colors)}.
+}
+}
 \description{
 Convert experiment design into categorical colors
 }

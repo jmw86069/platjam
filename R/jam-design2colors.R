@@ -132,6 +132,15 @@
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to downstream functions.
 #'
+#' @return output depends upon argument `return_type`:
+#' * `"list"`: returns a `list` of colors defined by `colnames(x)`,
+#' suitable for use with `ComplexHeatmap::HeatmapAnnotation()` for example.
+#' * `"df"`: returns `data.frame` of colors with same dimensions as the
+#' input `x`. Suitable for use with `jamba::imageByColors()` for example.
+#' * `"vector"`: returns `character` vector of R colors, whose names represent
+#' values in `x`, where the values should be substituted with the color.
+#' Suitable for use with `ggplot2::color_manual(values=colors)`.
+#'
 #' @examples
 #' df <- data.frame(
 #'    genotype=rep(c("WT", "GeneAKO", "GeneBKO"), c(4, 8, 8)),
@@ -437,8 +446,6 @@ design2colors <- function
    });
    # create color vector
    new_colors_v <- unlist(unname(new_colors));
-   # jamba::printDebug("new_colors_v:");
-   # jamba::printDebug(new_colors_v);
 
    ###############################################################
    # now generate categorical colors for remaining columns
@@ -513,7 +520,6 @@ design2colors <- function
          add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
       }
 
-      # jamba::printDebug("add_values: ", add_values);
       # sometimes a factor is already assigned a color
       if (any(add_values %in% names(new_colors_v))) {
          add_values <- setdiff(add_values,
@@ -528,7 +534,6 @@ design2colors <- function
          } else {
             start_hue1 <- 0;
          }
-         # jamba::printDebug("start_hue1: ", start_hue1);
          offset <- 0;
          add_hue_seq <- head(seq(from=0 + start_hue1,
             to=360 + start_hue1,
@@ -572,8 +577,6 @@ design2colors <- function
       all_add_colors_v <- c(add_colors_v,
          new_colors_v);
 
-      # jamba::printDebug("add_colnames: ", add_colnames);
-      # jamba::printDebug("colname_colnames: ", colname_colnames);
       add_colors <- lapply(jamba::nameVector(c(add_colnames, colname_colnames)), function(icol) {
          all_add_colors_v[unique(as.character(x[[icol]]))]
       })
@@ -606,10 +609,6 @@ design2colors <- function
          "all_colors_list: ");
       print(all_colors_list);
    }
-   # all_colors_list <- jamba::rmNULL(c(
-   #    c(jamba::rmNULL(new_colors), add_colors)[colnames(x)],
-   #    list(class_group_color=class_group_color,
-   #       class_group_lightness_color=class_group_lightness_color)));
 
    if (!desat[1] == 0) {
       all_colors_list <- lapply(all_colors_list, function(i){
@@ -645,11 +644,21 @@ design2colors <- function
    }
 
    if ("df" %in% return_type) {
+      attr(all_colors_v, "color_list") <- all_colors_list;
+      attr(x_colors, "color_sub") <- all_colors_v;
+      attr(x_colors, "df") <- x_input;
       return(x_colors)
    }
    if ("vector" %in% return_type) {
-      return(unlist(unname(all_colors_list)));
+      attr(all_colors_v, "color_list") <- all_colors_list;
+      attr(all_colors_v, "df") <- x_input;
+      attr(all_colors_v, "color_df") <- x_colors;
+      return(all_colors_v);
+      #return(unlist(unname(all_colors_list)));
    }
 
+   attr(all_colors_v, "df") <- x_input;
+   attr(all_colors_v, "color_df") <- x_colors;
+   attr(all_colors_list, "color_sub") <- all_colors_v;
    return(all_colors_list)
 }
