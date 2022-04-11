@@ -429,7 +429,9 @@ design2colors <- function
       add_colors_v1 <- NULL;
       add_colnames <- names(new_colors)[lengths(new_colors) == 0];
 
-      # if color_sub matches colname, use that color with gradient effect
+      ######################################
+      # if color_sub matches colname,
+      # use that color with gradient effect
       colname_colnames <- NULL;
       if (any(add_colnames %in% names(color_sub))) {
          colname_colnames <- intersect(add_colnames, names(color_sub));
@@ -439,7 +441,7 @@ design2colors <- function
             if (is.factor(x[[icol]])) {
                ivalues <- levels(x[[icol]]);
             } else {
-               ivalues <- unique(as.character(x[[icol]]));
+               ivalues <- unique(as.character(x_input[[icol]]));
             }
             icolors <- jamba::nameVector(
                jamba::color2gradient(color_sub[[icol]],
@@ -453,11 +455,17 @@ design2colors <- function
          add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
       }
 
+      ########################################
+      # all other colors are assigned  colors
       add_values <- unique(unlist(lapply(add_colnames, function(icol) {
          if ("rownames" %in% icol) {
             unique(rownames(x))
          } else {
-            unique(as.character(x[[icol]]))
+            if (is.factor(x[[icol]])) {
+               levels(x[[icol]])
+            } else {
+               unique(as.character(x_input[[icol]]))
+            }
          }
       })));
       # reuse color assignments if present
@@ -552,7 +560,7 @@ design2colors <- function
    #    list(class_group_color=class_group_color,
    #       class_group_lightness_color=class_group_lightness_color)));
 
-   if (!desat == 0) {
+   if (!desat[1] == 0) {
       all_colors_list <- lapply(all_colors_list, function(i){
          jamba::nameVector(
             colorspace::desaturate(col=i,
