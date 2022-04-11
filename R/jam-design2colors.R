@@ -251,6 +251,17 @@ design2colors <- function
 
    # sort by class, group, lightness to make downstream steps consistent
    x_input <- x;
+   # iterate each column and convert to factor if needed
+   all_colnames1 <- gsub("^[-]", "",
+      c(class_colnames,
+         group_colnames,
+         lightness_colnames));
+   for (xcol in all_colnames1) {
+      if (!is.factor(x[[xcol]])) {
+         x[[xcol]] <- factor(x[[xcol]],
+            levels=unique(x[[xcol]]));
+      }
+   }
    x <- jamba::mixedSortDF(x,
       byCols=c(class_colnames,
          group_colnames,
