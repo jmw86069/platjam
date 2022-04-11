@@ -110,6 +110,10 @@ input \code{x}. Suitable for use with \code{jamba::imageByColors()} for example.
 \item \code{"vector"}: returns \code{character} vector of R colors, whose names represent
 values in \code{x}, where the values should be substituted with the color.
 Suitable for use with \code{ggplot2::color_manual(values=colors)}.
+
+In all cases, the \code{attributes()} of the returned object also includes
+colors in the other two formats: \code{"color_sub"}, \code{"color_df"}, and
+\code{"color_list"}.
 }
 }
 \description{

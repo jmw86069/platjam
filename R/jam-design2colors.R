@@ -141,6 +141,10 @@
 #' values in `x`, where the values should be substituted with the color.
 #' Suitable for use with `ggplot2::color_manual(values=colors)`.
 #'
+#'    In all cases, the `attributes()` of the returned object also includes
+#'    colors in the other two formats: `"color_sub"`, `"color_df"`, and
+#'    `"color_list"`.
+#'
 #' @examples
 #' df <- data.frame(
 #'    genotype=rep(c("WT", "GeneAKO", "GeneBKO"), c(4, 8, 8)),
