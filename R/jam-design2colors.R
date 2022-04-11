@@ -648,7 +648,7 @@ design2colors <- function
    }
 
    if ("df" %in% return_type) {
-      attr(all_colors_v, "color_list") <- all_colors_list;
+      attr(x_colors, "color_list") <- all_colors_list;
       attr(x_colors, "color_sub") <- all_colors_v;
       attr(x_colors, "df") <- x_input;
       return(x_colors)
@@ -661,8 +661,8 @@ design2colors <- function
       #return(unlist(unname(all_colors_list)));
    }
 
-   attr(all_colors_v, "df") <- x_input;
-   attr(all_colors_v, "color_df") <- x_colors;
+   attr(all_colors_list, "df") <- x_input;
+   attr(all_colors_list, "color_df") <- x_colors;
    attr(all_colors_list, "color_sub") <- all_colors_v;
    return(all_colors_list)
 }
