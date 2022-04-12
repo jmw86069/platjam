@@ -236,6 +236,12 @@ design2colors <- function
       return(NULL)
    }
 
+   # Convert SummarizedExperiment to data.frame using colData(x)
+   if ("SummarizedExperiment" %in% class(x)) {
+      x <- data.frame(check.names=FALSE,
+         SummarizedExperiment::colData(x));
+   }
+
    # validate arguments
    plot_type <- match.arg(plot_type);
    return_type <- match.arg(return_type);
@@ -665,4 +671,149 @@ design2colors <- function
    attr(all_colors_list, "color_df") <- x_colors;
    attr(all_colors_list, "color_sub") <- all_colors_v;
    return(all_colors_list)
+}
+
+
+#' Determine cardinality between two vectors
+#'
+#' Determine cardinality between two vectors
+#'
+#' @examples
+#' a <- letters[c(1, 1, 2, 2, 2, 3)];
+#' b <- LETTERS[c(1, 2, 3, 4, 5, 6)];
+#' d <- LETTERS[c(1, 2, 2, 1, 1, 1)];
+#'
+#' cardinality(a, b)
+#' cardinality(b, a)
+#'
+#' ab <- data.frame(a, b)
+#' ad <- data.frame(a, d)
+#' cardinality(ab, ad)
+#'
+#' abt <- tibble::tibble(a, b);
+#' adt <- tibble::tibble(a, d);
+#' cardinality(abt, adt)
+#'
+#' abm <- as.matrix(abt);
+#' adm <- as.matrix(adt);
+#' cardinality(abm, adm)
+#'
+#' cardinality(d, adm, verbose=TRUE)
+#'
+#' cardinality(d, adm, verbose=2)
+#'
+#' @export
+cardinality <- function
+(x,
+   y=NULL,
+   verbose=FALSE,
+   ...)
+{
+   #
+   df_classes <- c("matrix",
+      "data.frame",
+      "DataFrame",
+      "DFrame",
+      "tbl");
+   if (length(y) > 0 && any(df_classes %in% class(y))) {
+      if (verbose) {
+         jamba::printDebug("cardinality(): ",
+            c("Converting y to vector with ", "pasteByRow()"),
+            sep="");
+      }
+      y <- jamba::pasteByRow(y);
+   }
+   if (length(x) > 0) {
+      if (any(df_classes %in% class(x))) {
+         if (length(y) > 0) {
+            if (verbose) {
+               jamba::printDebug("cardinality(): ",
+                  c("Converting x to vector with ", "pasteByRow()"),
+                  sep="");
+            }
+            x <- jamba::pasteByRow(x);
+            x <- data.frame(x=x,
+               y=y);
+         } else {
+            if (!ncol(x) == 2) {
+               stop("When x is supplied alone, it must have two columns.");
+            }
+            x <- data.frame(x=x[,1],
+               y=x[,2]);
+         }
+      } else {
+         if (length(y) == 0) {
+            stop("When x is a vector, y must be supplied.");
+         }
+         x <- data.frame(x=x,
+            y=y);
+      }
+   }
+
+   # x is a data.frame with two columns
+   x_uniq <- unique(x);
+
+   if (verbose > 1) {
+      jamba::printDebug("cardinality(): ",
+         "head(x, 20):")
+      print(head(x, 20));
+      jamba::printDebug("cardinality(): ",
+         "head(unique(x), 20):")
+      print(head(x_uniq, 20));
+   }
+
+   x_tc <- jamba::tcount(x_uniq[,1]);
+   y_tc <- jamba::tcount(x_uniq[,2]);
+   c(`from`=max(x_tc),
+      `to`=max(y_tc))
+}
+
+#' Convert data.frame to numeric color substitution
+#'
+#' Convert data.frame to numeric color substitution
+#'
+#' @export
+df_to_numcolors <- function
+(df,
+   colramp=c("Reds"),
+   colramp_divergent=c("RdBu_r"),
+   ...)
+{
+   # find numeric columns
+   numcols <- which(unname(jamba::sclass(df)) %in% c("integer", "numeric", "float"))
+   colramp <- rep(colramp, length.out=length(numcols));
+   colramp_divergent <- rep(colramp_divergent, length.out=length(numcols));
+
+   # calculate max value per column
+   nummaxs <- sapply(numcols, function(i){
+      max(abs(df[[i]]), na.rm=TRUE)
+   });
+
+   # iterate each column and populate color vector
+   colsub <- list();
+   for (i in rev(seq_along(numcols))) {
+      vals <- df[[numcols[i]]]
+      if (nummaxs[i] > 10) {
+         vals <- round(vals);
+         df[[numcols[i]]] <- vals;
+      } else {
+         vals <- round(vals * 100) / 100
+         df[[numcols[i]]] <- vals;
+      }
+      vals <- unique(rmNA(vals));
+      if (min(vals) < 0) {
+         col1 <- colorjam::col_div_xf(max(abs(vals)),
+            colramp=colramp_divergent)
+         col1sub <- jamba::nameVector(col1(vals), vals)
+      } else {
+         col1 <- circlize::colorRamp2(
+            colors=jamba::getColorRamp("Reds", trimRamp=c(2, 2), n=5),
+            breaks=seq(from=min(vals)-0.1, to=max(vals)+1, length.out=5))
+         col1sub <- jamba::nameVector(col1(vals), vals)
+      }
+      colsub[as.character(vals)] <- col1sub;
+   }
+   return(list(
+      df=df,
+      color_sub=colsub));
 }

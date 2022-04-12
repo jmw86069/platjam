@@ -1,3 +1,19 @@
+# platjam 0.0.48.900
+
+## new functions
+
+* `design2layout()` is experimental, and is intended to determine
+appropriate plot panel layout dimensions, given experimental groups
+and batch information. It should help align panels within
+batch, then within group, into columns, so plots can be visually
+compared.
+* `cardinality()` takes two vectors and determines the data cardinality,
+in terms of "one-to-one", "one-to-many", "many-to-many", "many-to-one".
+This function may help detect when experimental factors are compatible
+with color assignment by group or other factors.
+* `df_to_numcolors()` is an experimental function only used to
+create a color substitution vector for use with `kable_coloring()`.
+
 # platjam 0.0.47.900
 
 ## new function `import_lipotype()`
