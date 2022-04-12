@@ -793,8 +793,11 @@ df_to_numcolors <- function
    colsub <- list();
    for (i in rev(seq_along(numcols))) {
       vals <- df[[numcols[i]]]
-      if (nummaxs[i] > 10) {
+      if (nummaxs[i] > 100) {
          vals <- round(vals);
+         df[[numcols[i]]] <- vals;
+      } else if (nummaxs[i] > 10) {
+         vals <- round(vals * 10) / 10;
          df[[numcols[i]]] <- vals;
       } else {
          vals <- round(vals * 100) / 100
