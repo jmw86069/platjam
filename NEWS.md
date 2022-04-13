@@ -1,3 +1,13 @@
+# platjam 0.0.49.900
+
+## changes to existing functions
+
+* `save_salmon_qc_xlsx()` new argument `verbose=FALSE`, thus changing
+the default which included some verbose output by default.
+* `df_to_numcolors()` new argument `trimRamp` passed to
+`jamba::getColorRamp()` to trim edge colors from linear color gradient,
+thus making the colors less dramatic.
+
 # platjam 0.0.48.900
 
 ## new functions

@@ -320,11 +320,20 @@ get_salmon_root <- function
 #'
 #' @family jam nextgen sequence functions
 #'
+#' @param metajsons `data.frame` output from `get_salmon_meta()`
+#' @param salmon_qc_xlsx `character` path to file to be saved.
+#' @param adj_target_reads `numeric` number indicating the target
+#'    number of sequence reads per row, used to define color gradient
+#'    range.
+#' @param verbose `logical` indicating whether to print verbose output.
+#' @param ... additional arguments are passed to underlying functions.
+#'
 #' @export
 save_salmon_qc_xlsx <- function
 (metajsons,
  salmon_qc_xlsx=NULL,
  adj_target_reads=75000000,
+ verbose=FALSE,
  ...)
 {
    rownames(metajsons) <- metajsons$output;
@@ -382,11 +391,13 @@ save_salmon_qc_xlsx <- function
          intColumns=unname(which(colMeans(meta_qc[,-1]) >= 10) + 1),
          numColumns=unname(which(colMeans(meta_qc[,-1]) < 10) + 1),
          numFormat="#,##0.00000",
+         verbose=verbose,
          doConditional=FALSE);
       applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
          x=meta_qc,
          sheet="Raw_QC",
          dryrun=FALSE,
+         verbose=verbose,
          numColumns=seq(from=2, to=ncol(meta_qc))
       )
       jamba::set_xlsx_colwidths(salmon_qc_xlsx,
@@ -406,11 +417,13 @@ save_salmon_qc_xlsx <- function
          numColumns=unname(which(colMeans(metam_adj_df[,-1]) < 10) + 1),
          numFormat="#,##0.00",
          append=TRUE,
+         verbose=verbose,
          doConditional=FALSE);
       applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
          x=metam_adj_df,
          sheet="Adjusted_QC",
          dryrun=FALSE,
+         verbose=verbose,
          numColumns=seq(from=2, to=ncol(metam_adj_df))
       )
       jamba::set_xlsx_colwidths(salmon_qc_xlsx,
@@ -432,12 +445,13 @@ save_salmon_qc_xlsx <- function
          numColumns=unname(which(!ori_int) + 1),
          numFormat="#,##0.0",
          append=TRUE,
+         verbose=verbose,
          doConditional=FALSE);
       applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
          x=meta_ori_df,
          sheet="Orientation",
          dryrun=FALSE,
-         verbose=TRUE,
+         verbose=verbose,
          numColumns=seq(from=2, to=ncol(meta_ori_df))
       )
       jamba::set_xlsx_colwidths(salmon_qc_xlsx,
@@ -459,12 +473,13 @@ save_salmon_qc_xlsx <- function
          numColumns=unname(which(!ori_pct_int) + 1),
          numFormat="#,##0.000",
          append=TRUE,
+         verbose=verbose,
          doConditional=FALSE);
       applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
          x=meta_ori_pct_df,
          sheet="Orientation_Percent",
          dryrun=FALSE,
-         verbose=TRUE,
+         verbose=verbose,
          numColumns=seq(from=2, to=ncol(meta_ori_pct_df))
       )
       jamba::set_xlsx_colwidths(salmon_qc_xlsx,

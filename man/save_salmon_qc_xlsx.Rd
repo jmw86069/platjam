@@ -8,8 +8,22 @@ save_salmon_qc_xlsx(
   metajsons,
   salmon_qc_xlsx = NULL,
   adj_target_reads = 7.5e+07,
+  verbose = FALSE,
   ...
 )
+}
+\arguments{
+\item{metajsons}{\code{data.frame} output from \code{get_salmon_meta()}}
+
+\item{salmon_qc_xlsx}{\code{character} path to file to be saved.}
+
+\item{adj_target_reads}{\code{numeric} number indicating the target
+number of sequence reads per row, used to define color gradient
+range.}
+
+\item{verbose}{\code{logical} indicating whether to print verbose output.}
+
+\item{...}{additional arguments are passed to underlying functions.}
 }
 \description{
 Save Salmon QC to Xlsx

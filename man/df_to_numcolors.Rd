@@ -4,7 +4,26 @@
 \alias{df_to_numcolors}
 \title{Convert data.frame to numeric color substitution}
 \usage{
-df_to_numcolors(df, colramp = c("Reds"), colramp_divergent = c("RdBu_r"), ...)
+df_to_numcolors(
+  df,
+  colramp = c("Reds"),
+  colramp_divergent = c("RdBu_r"),
+  trimRamp = c(1, 2),
+  ...
+)
+}
+\arguments{
+\item{df}{\code{data.frame} where columns with numeric values will be
+colorized.}
+
+\item{colramp, colramp_divergent}{\code{character} name of color ramp for
+linear and divergent color gradients, respectively.}
+
+\item{trimRamp}{\code{integer} vector length=2, passed to
+\code{jamba::getColorRamp()}, to trim the edge colors from a linear
+color gradient, thus avoiding extreme colors.}
+
+\item{...}{additional arguments are ignored.}
 }
 \description{
 Convert data.frame to numeric color substitution

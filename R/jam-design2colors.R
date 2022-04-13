@@ -772,12 +772,22 @@ cardinality <- function
 #'
 #' Convert data.frame to numeric color substitution
 #'
+#' @param df `data.frame` where columns with numeric values will be
+#'    colorized.
+#' @param colramp,colramp_divergent `character` name of color ramp for
+#'    linear and divergent color gradients, respectively.
+#' @param trimRamp `integer` vector length=2, passed to
+#'    `jamba::getColorRamp()`, to trim the edge colors from a linear
+#'    color gradient, thus avoiding extreme colors.
+#' @param ... additional arguments are ignored.
+#'
 #' @export
 df_to_numcolors <- function
 (df,
-   colramp=c("Reds"),
-   colramp_divergent=c("RdBu_r"),
-   ...)
+ colramp=c("Reds"),
+ colramp_divergent=c("RdBu_r"),
+ trimRamp=c(1, 2),
+ ...)
 {
    # find numeric columns
    numcols <- which(unname(jamba::sclass(df)) %in% c("integer", "numeric", "float"))
@@ -810,8 +820,10 @@ df_to_numcolors <- function
          col1sub <- jamba::nameVector(col1(vals), vals)
       } else {
          col1 <- circlize::colorRamp2(
-            colors=jamba::getColorRamp("Reds", trimRamp=c(2, 2), n=5),
-            breaks=seq(from=min(vals)-0.1, to=max(vals)+1, length.out=5))
+            colors=jamba::getColorRamp(colramp,
+               trimRamp=trimRamp,
+               n=5),
+            breaks=seq(from=min(vals), to=max(vals) + 1, length.out=5))
          col1sub <- jamba::nameVector(col1(vals), vals)
       }
       colsub[as.character(vals)] <- col1sub;
