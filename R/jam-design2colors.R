@@ -816,11 +816,11 @@ df_to_numcolors <- function
       vals <- unique(rmNA(vals));
       if (min(vals) < 0) {
          col1 <- colorjam::col_div_xf(max(abs(vals)),
-            colramp=colramp_divergent)
+            colramp=colramp_divergent[[i]])
          col1sub <- jamba::nameVector(col1(vals), vals)
       } else {
          col1 <- circlize::colorRamp2(
-            colors=jamba::getColorRamp(colramp,
+            colors=jamba::getColorRamp(colramp[[i]],
                trimRamp=trimRamp,
                n=5),
             breaks=seq(from=min(vals), to=max(vals) + 1, length.out=5))
