@@ -486,7 +486,7 @@ convert_PD_df_to_SE <- function
          paste0("V",
             seq_len(ncol(protein_sample_df)-1)));
    }
-   if (FALSE) {
+   if (verbose) {
       jamba::printDebug("convert_PD_df_to_SE(): ",
          "sample_df: ");
       print(head(protein_sample_df, 10));
@@ -511,7 +511,9 @@ convert_PD_df_to_SE <- function
       i_matrix <- jamba::renameColumn(i_matrix,
          from=colnames(i_matrix)[i_use],
          to=protein_sample_df$Label[i_match][i_use]);
-      i_matrix;
+      # re-order matrix columns so they match protein_sample_df
+      k_match <- match(protein_sample_df$Label, colnames(i_matrix));
+      i_matrix[,k_match, drop=FALSE];
    })
    names(prot_assays) <- gsub("^[_]+|[_]+$", "",
       gsub("[() ]+", "_",
