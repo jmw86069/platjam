@@ -6,9 +6,11 @@
 \usage{
 import_lipotype_csv(
   csv,
+  type = "raw",
   curation_txt = NULL,
   num_header_rows = 3,
   num_anno_columns = 7,
+  verbose = FALSE,
   ...
 )
 }

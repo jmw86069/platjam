@@ -214,11 +214,13 @@ design2colors <- function
    group_colnames=NULL,
    lightness_colnames=NULL,
    class_colnames=NULL,
+   ignore_colnames=NULL,
    preset="dichromat",
    phase=1,
    rotate_phase=-1,
    class_pad=1,
    end_hue_pad=2,
+   hue_offset=0,
    desat=c(0, 0.4),
    dex=c(2, 5),
    color_sub=NULL,
@@ -240,6 +242,11 @@ design2colors <- function
    if ("SummarizedExperiment" %in% class(x)) {
       x <- data.frame(check.names=FALSE,
          SummarizedExperiment::colData(x));
+   }
+
+   # optionally ignore some colnames
+   if (any(ignore_colnames %in% colnames(x))) {
+      x <- x[,setdiff(colnames(x), ignore_colnames), drop=FALSE];
    }
 
    # validate arguments
@@ -265,6 +272,15 @@ design2colors <- function
    if (length(class_colnames) > 0) {
       if (is.numeric(class_colnames)) {
          class_colnames <- jamba::rmNA(colnames(x)[class_colnames]);
+      }
+   }
+
+   # check cardinality of class and group
+   if (length(class_colnames) > 0 && length(group_colnames)) {
+      class_card <- cardinality(x[,class_colnames, drop=FALSE],
+         x[,group_colnames, drop=FALSE]);
+      if (class_card["from"] != 1) {
+         stop("class_colnames must have 1-to-X cardinality with group_colnames.");
       }
    }
 
@@ -311,8 +327,10 @@ design2colors <- function
       xlist);
 
    # add class_group and class_group_lightness column values
-   xdf$class_group <- jamba::pasteByRowOrdered(xdf[,c("class", "group"), drop=FALSE]);
-   xdf$class_group_lightness <- jamba::pasteByRowOrdered(xdf[,c("class", "group", "lightness"), drop=FALSE]);
+   # xdf$class_group <- jamba::pasteByRowOrdered(xdf[,c("class", "group"), drop=FALSE]);
+   # xdf$class_group_lightness <- jamba::pasteByRowOrdered(xdf[,c("class", "group", "lightness"), drop=FALSE]);
+   xdf$class_group <- jamba::pasteByRowOrdered(xdf[,c("group"), drop=FALSE]);
+   xdf$class_group_lightness <- jamba::pasteByRowOrdered(xdf[,c("group", "lightness"), drop=FALSE]);
 
    # sort table by class, group, lightness
    xdf <- jamba::mixedSortDF(xdf,
@@ -337,6 +355,7 @@ design2colors <- function
    gdf$real <- 1;
    gdf0 <- head(gdf, 1);
    gdf0[1,] <- NA
+   rownames(gdf0) <- "class_pad";
    if (verbose) {
       jamba::printDebug("design2colors(): ",
          "unique class, group df:");
@@ -363,14 +382,14 @@ design2colors <- function
 
    # assign color hue
    n <- nrow(gdf);
-   offset <- 0;
-   hue_seq <- head(seq(from=0 + offset,
-      to=360 + offset,
+   #hue_offset <- 0;
+   hue_seq <- head(seq(from=0 + hue_offset,
+      to=360 + hue_offset,
       length.out=n + end_hue_pad), n);
    gdf$hue <- hue_seq;
    # adjust color hue
-   gdf$hue2 <- colorjam::hw2h(hue_seq,
-      preset="dichromat");
+   #gdf$hue2 <- colorjam::hw2h(hue_seq,
+   #   preset="dichromat");
    gdf <- subset(gdf, !is.na(real))
 
    # assign colors
@@ -388,6 +407,38 @@ design2colors <- function
       names(class_group_color) <- gdf$class_group;
    }
    gdf$class_group_color <- class_group_color;
+
+   # get mean color hue per class
+   class_hues <- NULL;
+   if (length(class_colnames) > 0) {
+      class_hues <- sapply(split(gdf$hue, gdf$class), function(ihue){
+         if (length(ihue) %% 2 > 0) {
+            ihue[ceiling(length(ihue)/2)] %% 360;
+         } else {
+            ihues <- ihue[length(ihue)/2 + c(0, 1)];
+            if (ihues[1] > ihues[2]) {
+               ihues[2] <- ihues[2] + 360;
+            }
+            mean(ihues) %% 360;
+         }
+      })
+      class_hue <- colorjam::hw2h(class_hues,
+         preset=preset);
+      if (all(as.character(gdf$class) %in% names(color_sub))) {
+         class_color <- color_sub[as.character(gdf$class)];
+      } else {
+         class_color <- colorjam::rainbowJam(n=length(class_hue),
+            hues=class_hue,
+            phase=phase + 3,
+            preset=preset,
+            ...);
+         names(class_color) <- names(class_hues);
+         color_sub[names(class_color)] <- class_color;
+      }
+      gdf$class_hue <- class_hues[as.character(gdf$class)];
+      gdf$class_color <- class_color[as.character(gdf$class)];
+   }
+
    if (verbose) {
       jamba::printDebug("design2colors(): ",
          "expanded unique class, group df, with colors:");
@@ -705,9 +756,9 @@ design2colors <- function
 #' @export
 cardinality <- function
 (x,
-   y=NULL,
-   verbose=FALSE,
-   ...)
+ y=NULL,
+ verbose=FALSE,
+ ...)
 {
    #
    df_classes <- c("matrix",
@@ -762,8 +813,8 @@ cardinality <- function
       print(head(x_uniq, 20));
    }
 
-   x_tc <- jamba::tcount(x_uniq[,1]);
-   y_tc <- jamba::tcount(x_uniq[,2]);
+   x_tc <- jamba::tcount(x_uniq[,2]);
+   y_tc <- jamba::tcount(x_uniq[,1]);
    c(`from`=max(x_tc),
       `to`=max(y_tc))
 }

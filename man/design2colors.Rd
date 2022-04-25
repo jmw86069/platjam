@@ -9,6 +9,7 @@ design2colors(
   group_colnames = NULL,
   lightness_colnames = NULL,
   class_colnames = NULL,
+  ignore_colnames = NULL,
   preset = "dichromat",
   phase = 1,
   rotate_phase = -1,
