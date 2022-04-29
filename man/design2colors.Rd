@@ -214,12 +214,14 @@ df <- data.frame(
       rep(rep(c("early", "late"), each=4), 2)))
 df$sample_group <- jamba::pasteByRow(df[,c("genotype", "treatment", "time")])
 df$sample_name <- jamba::makeNames(df$sample_group);
+df$age <- sample(40:80, size=nrow(df));
 df
 
 dfc <- design2colors(df,
    group_colnames="genotype",
    lightness_colnames="treatment",
-   class_colnames="class")
+   class_colnames="class",
+   color_sub=c(age="dodgerblue"))
 
 # same as above except assign colors to columns and some values
 dfc <- design2colors(df,
