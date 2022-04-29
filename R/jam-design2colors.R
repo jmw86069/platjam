@@ -684,13 +684,17 @@ design2colors <- function
       } else {
          add_colors_v <- NULL;
       }
-      add_colors_v <- c(add_colors_v,
-         add_colors_v1);
+      if (length(add_colors_v1) > 0 && any(lengths(add_colors_v1) > 0)) {
+         add_colors_v <- c(add_colors_v,
+            add_colors_v1);
+      }
       add_colors_v <- add_colors_v[!duplicated(names(add_colors_v))];
-      add_colors_v <- jamba::nameVector(
-         colorspace::desaturate(add_colors_v,
-            amount=desat[2]),
-         names(add_colors_v));
+      if (length(add_colors_v) > 0) {
+         add_colors_v <- jamba::nameVector(
+            colorspace::desaturate(add_colors_v,
+               amount=desat[2]),
+            names(add_colors_v));
+      }
 
       # optionally rotate phase
       phase <- phase + rotate_phase;
@@ -794,7 +798,7 @@ design2colors <- function
       jamba::adjustAxisLabelMargins(
          rownames(x_colors), 2)
       jamba::imageByColors(x_colors,
-         cellnote=x_input,
+         cellnote=if(nrow(x_colors) < 1000){ x_input} else {NULL},
          flip="y",
          cexCellnote=0.7)
       par(opar);
