@@ -114,7 +114,7 @@ import_proteomics_PD <- function
       }
       # prepare xref data.frame from protein data
       if (length(xref_df) == 0 && "ProteinSE" %in% names(ret_list)) {
-         reuse_colnames <- provigrep(c("Accession", "Description", "ENTREZID", "SYMBOL", "GENENAME"),
+         reuse_colnames <- jamba::provigrep(c("Accession", "Description", "ENTREZID", "SYMBOL", "GENENAME"),
             colnames(rowData(ret_list$ProteinSE)));
          if (length(reuse_colnames) > 1) {
             xref_df <- data.frame(check.names=FALSE,
@@ -235,7 +235,7 @@ convert_PD_df_to_SE <- function
          protein_df[[head(accession_colname, 1)]]));
 
    sequence_colname <- head(
-      provigrep(c("^Sequence$",
+      jamba::provigrep(c("^Sequence$",
          "Annotated.Sequence",
          "^sequence",
          "sequence"),
@@ -310,7 +310,7 @@ convert_PD_df_to_SE <- function
 
    # optionally merge xref_df data.frame with current data
    if (length(xref_df) > 0 && length(accession_colname) > 0) {
-      xref_acc_colname <- head(vigrep("Accession", colnames(xref_df)), 1);
+      xref_acc_colname <- head(jamba::vigrep("Accession", colnames(xref_df)), 1);
       if (length(xref_acc_colname) == 0) {
          xref_df <- NULL;
       } else {
@@ -332,7 +332,7 @@ convert_PD_df_to_SE <- function
          }
       }
    }
-   if (verbose) {
+   if (verbose > 1) {
       jamba::printDebug("print(head(protein_df, 3)):");
       print(head(protein_df, 3));
    }
@@ -366,7 +366,7 @@ convert_PD_df_to_SE <- function
    }
    # filter duplicated colnames
    if (any(grepl("_v[0-9]+$", colnames(protein_genejam_df)))) {
-      keepcols <- unvigrep("_v[0-9]+$", colnames(protein_genejam_df));
+      keepcols <- jamba::unvigrep("_v[0-9]+$", colnames(protein_genejam_df));
       if (length(keepcols) >= 2) {
          protein_genejam_df <- protein_genejam_df[, keepcols, drop=FALSE];
       }
@@ -486,10 +486,44 @@ convert_PD_df_to_SE <- function
          paste0("V",
             seq_len(ncol(protein_sample_df)-1)));
    }
+
+   # detect sample and label colnames
    if (verbose) {
       jamba::printDebug("convert_PD_df_to_SE(): ",
          "sample_df: ");
       print(head(protein_sample_df, 10));
+   }
+   # use only columns with 1:1 cardinality with rows
+   card1_colnames <- names(which(sapply(colnames(protein_sample_df), function(icol){
+      all(platjam::cardinality(protein_sample_df[[icol]], seq_len(nrow(protein_sample_df))) %in% c(1))
+   })));
+   label_colname <- head(jamba::provigrep(c(
+      "^label$",
+      "label",
+      "^Input$",
+      "input",
+      "sample.*name",
+      "."),
+      card1_colnames), 1);
+   sample_colname <- head(jamba::provigrep(c(
+      "^Input$",
+      "^sample$",
+      "input",
+      "sample.*name",
+      "sample",
+      "."),
+      card1_colnames), 1);
+   if (length(sample_colname) == 0) {
+      stop("There is no colname in sample_df that has unique values per row.");
+   }
+   if (length(label_colname) == 0) {
+      label_colname <- sample_colname;
+   }
+   if (verbose) {
+      jamba::printDebug("convert_PD_df_to_SE(): ",
+         " label_colname: ", label_colname);
+      jamba::printDebug("convert_PD_df_to_SE(): ",
+         "sample_colname: ", sample_colname);
    }
 
    # prepare numeric matrix of abundance values
@@ -500,25 +534,40 @@ convert_PD_df_to_SE <- function
          sep="\n      ");
    }
    prot_assays <- lapply(jamba::nameVector(unique(prot_abundance_types)), function(itype){
-      jamba::printDebug("Importing abundance type: ", itype);
       i_cols <- prot_abundance_cols[prot_abundance_types %in% itype];
+      if (verbose) {
+         jamba::printDebug("convert_PD_df_to_SE(): ",
+            "Importing abundance type: ", itype);
+         if (verbose > 1) {
+            jamba::printDebug("convert_PD_df_to_SE(): ",
+               "colnames: ", i_cols);
+         }
+      }
       i_matrix <- as.matrix(protein_df[, i_cols, drop=FALSE]);
       colnames(i_matrix) <- gsub("^[:][ ]*", "",
          gsub(itype, "", fixed=TRUE,
             colnames(i_matrix)));
-      i_match <- match(colnames(i_matrix), protein_sample_df$Sample);
+      i_match <- match(colnames(i_matrix), protein_sample_df[[sample_colname]]);
       i_use <- !is.na(i_match);
-      i_matrix <- jamba::renameColumn(i_matrix,
-         from=colnames(i_matrix)[i_use],
-         to=protein_sample_df$Label[i_match][i_use]);
+      if (verbose && !sample_colname %in% label_colname) {
+         jamba::printDebug("convert_PD_df_to_SE(): ",
+            "matrix columns renamed as follows:")
+         print(data.frame(from=colnames(i_matrix)[i_use],
+            to=protein_sample_df[[label_colname]][i_match][i_use]));
+      }
+      if (length(i_use) > 0) {
+         i_matrix <- jamba::renameColumn(i_matrix,
+            from=colnames(i_matrix)[i_use],
+            to=protein_sample_df[[label_colname]][i_match][i_use]);
+      }
       # re-order matrix columns so they match protein_sample_df
-      k_match <- match(protein_sample_df$Label, colnames(i_matrix));
+      k_match <- match(protein_sample_df[[label_colname]], colnames(i_matrix));
       i_matrix[,k_match, drop=FALSE];
    })
    names(prot_assays) <- gsub("^[_]+|[_]+$", "",
       gsub("[() ]+", "_",
          names(prot_assays)));
-   if (verbose) {
+   if (verbose > 1) {
       jamba::printDebug("convert_PD_df_to_SE(): ",
          "head(x, 2) for each assay matrix")
       print(lapply(prot_assays, head, 2));

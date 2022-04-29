@@ -15,6 +15,7 @@ design2colors(
   rotate_phase = -1,
   class_pad = 1,
   end_hue_pad = 2,
+  hue_offset = 0,
   desat = c(0, 0.4),
   dex = c(2, 5),
   color_sub = NULL,

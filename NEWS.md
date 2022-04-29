@@ -1,3 +1,28 @@
+# platjam 0.0.50.900
+
+## changes to existing functions
+
+* `import_proteomics_pd()` was updated to handle absence of `curation_txt`
+where sample names and labels may or may not be renamed for each
+abundance matrix.
+
+   * Specifically `label_colname` is detected as `"Label"`, any column
+   containing `"Label"`, then `"^Input$"`. Note `"Input"` is the default
+   first colname produced when there is no `curation_txt` file, and
+   should represent a unique column identifier.
+
+* `design2colors()` was updated:
+
+   * `class_colnames` is required to have 1-to-many cardinality
+   with `group_colnames`, or throws an error. As a result, class
+   is guaranteed to be associated only with one set of columns.
+   * class is assigned a color hue using the mean color hue of
+   the groups it contains.
+   * TODO: add some ability to pre-define class color with `color_sub`
+   * TODO: add some ability to define numeric colors or color function
+   for columns that contain `numeric` data. They are currently
+   handled as categorical values, which is not ideal.
+
 # platjam 0.0.49.900
 
 ## changes to existing functions
