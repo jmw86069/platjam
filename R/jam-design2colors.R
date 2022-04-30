@@ -560,10 +560,14 @@ design2colors <- function
                   color1 <- jamba::color2gradient(color_sub[[icol]], n=3, dex=10);
                   icolors <- circlize::colorRamp2(
                      breaks=pretty_range,
-                     colors=tail(jamba::getColorRamp(c("#fff6f4", color1),
+                     colors=jamba::getColorRamp(c("#fff6f4", color1),
                         defaultBaseColor="#fff6f4",
                         lens=1,
-                        n=length(pretty_range)+1), -1));
+                        n=length(pretty_range)));
+                  # colors=tail(jamba::getColorRamp(c("#fff6f4", color1),
+                     #    defaultBaseColor="#fff6f4",
+                     #    lens=1,
+                     #    n=length(pretty_range)+1), -1));
                } else {
                   # divergent color scale
                   irange <- max(abs(irange)) * c(-1, 1);
