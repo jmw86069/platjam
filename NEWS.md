@@ -18,7 +18,7 @@ abundance matrix.
    is guaranteed to be associated only with one set of columns.
    * class is assigned a color hue using the mean color hue of
    the groups it contains.
-   # `color_sub` will apply a gradient color to `numeric` column values.
+   * `color_sub` will apply a gradient color to `numeric` column values.
    * TODO: add some ability to pre-define class color with `color_sub`
    * TODO: add some ability to define numeric colors or color function
    for columns that contain `numeric` data. They are currently

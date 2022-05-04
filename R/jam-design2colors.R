@@ -543,8 +543,14 @@ design2colors <- function
                if (verbose > 1) {
                   jamba::printDebug("design2colors(): ", c("   is.numeric=", "TRUE"), sep="");
                }
-               irange <- range(x_input[[icol]], na.rm=TRUE);
+               irange <- range(x_input[[icol]],
+                  na.rm=TRUE);
                if (min(irange) >= 0) {
+                  if (min(irange) > 0 && (
+                     max(irange) / min(irange) >= 2 ||
+                        max(irange) == min(irange))) {
+                     irange[0] <- 0;
+                  }
                   # linear color scale
                   if (length(irange) == 1) {
                      if (irange[1] == 0) {
@@ -556,6 +562,11 @@ design2colors <- function
                      pretty_range <- pretty(irange);
                      pretty_range <- pretty_range[pretty_range >= irange[1] &
                            pretty_range <= irange[2]];
+                     if (min(pretty_range) > 0) {
+                        if (max(pretty_range) / min(pretty_range) >= 2) {
+                           pretty_range <- c(0, pretty_range);
+                        }
+                     }
                   }
                   color1 <- jamba::color2gradient(color_sub[[icol]], n=3, dex=10);
                   icolors <- circlize::colorRamp2(
