@@ -1,3 +1,22 @@
+# platjam 0.0.51.900
+
+## changes to existing functions
+
+* `design2colors()` was updated to adjust the low end of color gradient.
+
+   * specifically when the low-high numeric range is above zero, for example
+   `c(20, 50)`. The adjustment lowers the low end of color scale 5% the diff,
+   so the low actual color will not be white.
+   * Also the function was using `pretty()` to generate reasonable numeric
+   steps across the numeric range, and was using those steps to define the
+   color gradient. This method had weird effects, partly due to `pretty()`
+   making choices about the best visible number for display, instead of
+   the point range. Instead, the color gradient is applied to the calculated
+   number range, then that function is used to generate a color function
+   across the `pretty()` scale. I'm not sure it is ideal when `pretty()`
+   does not color the numeric range, but it seems reasonable so far.
+
+
 # platjam 0.0.50.900
 
 ## changes to existing functions

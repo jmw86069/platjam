@@ -547,9 +547,12 @@ design2colors <- function
                   na.rm=TRUE);
                if (min(irange) >= 0) {
                   if (min(irange) > 0 && (
-                     max(irange) / min(irange) >= 2 ||
+                     max(irange) / min(irange) >= 3 ||
                         max(irange) == min(irange))) {
-                     irange[0] <- 0;
+                     irange[1] <- 0;
+                  } else if (length(unique(irange)) > 1) {
+                     # expand lower end of numeric range to prevent white
+                     irange <- irange + c(diff(irange) * -0.20, 0);
                   }
                   # linear color scale
                   if (length(irange) == 1) {
@@ -569,16 +572,16 @@ design2colors <- function
                      }
                   }
                   color1 <- jamba::color2gradient(color_sub[[icol]], n=3, dex=10);
+                  # once with our specific color breaks
+                  icolors1 <- circlize::colorRamp2(
+                     breaks=seq(from=irange[1], to=irange[2], length.out=6),
+                     colors=jamba::getColorRamp(c("#fff6f4", color1),
+                        lens=1,
+                        n=6));
+                  # once again using pretty_breaks
                   icolors <- circlize::colorRamp2(
                      breaks=pretty_range,
-                     colors=jamba::getColorRamp(c("#fff6f4", color1),
-                        defaultBaseColor="#fff6f4",
-                        lens=1,
-                        n=length(pretty_range)));
-                  # colors=tail(jamba::getColorRamp(c("#fff6f4", color1),
-                     #    defaultBaseColor="#fff6f4",
-                     #    lens=1,
-                     #    n=length(pretty_range)+1), -1));
+                     colors=icolors1(pretty_range));
                } else {
                   # divergent color scale
                   irange <- max(abs(irange)) * c(-1, 1);
@@ -622,7 +625,7 @@ design2colors <- function
          if (any(is_color_fn)) {
             add_color_functions <- colname_colors[is_color_fn];
             names(add_color_functions) <- colname_colnames[is_color_fn];
-            if (length(add_color_functions) > 0) {
+            if (length(add_color_functions) > 0 && verbose > 1) {
                jamba::printDebug("design2colors(): ",
                   "add_color_functions: ", names(add_color_functions));
             }
@@ -631,7 +634,10 @@ design2colors <- function
 
       ########################################
       # all other colors are assigned  colors
-      jamba::printDebug("add_colnames: ", add_colnames);
+      if (verbose > 1) {
+         jamba::printDebug("design2colors(): ",
+            "add_colnames: ", add_colnames);
+      }
       add_values <- unique(unlist(lapply(add_colnames, function(icol) {
          if ("rownames" %in% icol) {
             unique(rownames(x))
