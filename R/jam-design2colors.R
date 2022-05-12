@@ -550,15 +550,18 @@ design2colors <- function
                      max(irange) / min(irange) >= 3 ||
                         max(irange) == min(irange))) {
                      irange[1] <- 0;
-                  } else if (length(unique(irange)) > 1) {
+                  } else if (min(irange) > 0 &&
+                        length(unique(irange)) > 1) {
                      # expand lower end of numeric range to prevent white
                      irange <- irange + c(diff(irange) * -0.20, 0);
                   }
                   # linear color scale
-                  if (length(irange) == 1) {
+                  if (length(unique(irange)) == 1) {
                      if (irange[1] == 0) {
+                        irange <- c(0, 1);
                         pretty_range <- c(0, 1);
                      } else {
+                        irange <- c(0, irange[2]);
                         pretty_range <- c(0, irange[2]);
                      }
                   } else {
