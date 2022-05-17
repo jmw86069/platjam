@@ -428,7 +428,6 @@ design2colors <- function
    class_group_hue1 <- jamba::nameVector(gdf[,c("hue", "class_group")])
    class_group_hue <- colorjam::hw2h(class_group_hue1,
       preset=preset);
-   print(gdf);
    if (all(as.character(gdf$class_group) %in% names(color_sub))) {
       class_group_color <- color_sub[as.character(gdf$class_group)];
       gdf$hue <- colorjam::h2hw(jamba::col2hcl(class_group_color)["H",],
