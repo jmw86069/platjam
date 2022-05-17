@@ -19,6 +19,7 @@ design2colors(
   desat = c(0, 0.4),
   dex = c(2, 5),
   color_sub = NULL,
+  force_consistent_colors = TRUE,
   plot_type = c("table", "list", "none"),
   return_type = c("list", "df", "vector"),
   verbose = FALSE,
@@ -79,6 +80,33 @@ the color is assigned to that color using a color gradient across
 the unique character values in that column. Values are assigned in
 order of their appearance in \code{x} unless the column is a \code{factor},
 in which case colors are assigned to \code{levels}.
+}}
+
+\item{force_consistent_colors}{\code{logical} indicating whether to force
+color substitutions across multiple columns, when those columns
+share one or more of the same values. Note: This scenario is most
+likely to occur when using \code{color_sub} to assign colors to a
+specific column in \code{colnames(x)}, and where that column may contain
+one or more values already assigned a color earlier in the process.
+For example: class/group/lightness defines colors for these columns,
+then all columns are checked for cardinality with these color
+assignments. Columns not appearing in \code{color_sub} will be colorized
+when their cardinality is compatible with group colors, otherwise
+specific values may be assigned colors via \code{color_sub}, then all
+remaining values are assigned categorical colors. This process defines
+colors for each column. The last step reassigns colors consistently
+using the first value-color association that appears in the list,
+to make sure all assignments are consistent. This last step is subject
+of the argument \code{force_consistent_colors}. In either case, the
+output \code{color_sub} will only have one color assigned per value.
+\itemize{
+\item Default \code{TRUE}: When colors are being assigned to column values
+\code{color_sub}, if the value had been assigned a color in a previous
+column, for example by \code{group_colnames} color assignment, then the
+first assignment is applied to all subsequent assignments.
+\item Optional \code{FALSE}: Color assignments are re-used where applicable,
+except when overridden by \code{color_sub} for a particular column. In
+that case, color assignments are maintained for each specific column.
 }}
 
 \item{plot_type}{\code{character} string indicating a type of plot for results:
@@ -241,12 +269,12 @@ dfc <- design2colors(df,
    class_colnames="class",
    preset="dichromat",
    color_sub=c(
-      WT_WT="gold",
-      KO_GeneAKO="firebrick3",
-      KO_GeneBKO="dodgerblue",
+      WT="gold",
+      KO="purple3",
+      GeneAKO="firebrick3",
+      GeneBKO="dodgerblue",
       treatment="navy",
-      time="darkorchid4",
-      class="burlywood"))
+      time="darkorchid4"))
 
 dfc2 <- design2colors(df,
    group_colnames="genotype",
@@ -267,7 +295,12 @@ df12 <- rbind(df1, df2);
 dfc12 <- design2colors(df12,
    group_colnames="genotype",
    lightness_colnames=c("time", "treatment"),
-   class_colnames="-class",
-   preset="dichromat")
+   class_colnames="class",
+   preset="dichromat",
+   color_sub=c(
+      treatment="steelblue",
+      time="dodgerblue"
+   ))
+
 
 }

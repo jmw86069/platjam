@@ -1,3 +1,101 @@
+# platjam 0.0.52.900
+
+## new functions
+
+* `mean_hue()` is a simple function to return a mean hue in degrees.
+* `print_color_list()` is a convenience function to convert a color list
+that may contain color vectors, or color functions, into a list of
+named color vectors. It will print to the console using those colors.
+
+## changes to existing functions
+
+`design2colors()` was updated to to handle an edge condition.
+
+* Refactoring the workflow:
+
+   * define colors by design:
+   
+      * define colors to `group_colnames`
+      optionally partitioned by `class_colname`
+      * define gradient colors to `lightness_colnames`
+      * define class colors using the mean hue for groups contained in each class
+   
+   * Apply design colors to all matching columns:
+   
+      * Test all columns for compatible cardinality with group, lightness.
+      * Note: column names in `color_sub` will be ignored at this step,
+      instead those columns use `color_sub` to generate a gradient.
+      * Assign colors to each compatible column.
+      * Note this step will include extra annotation columns
+      that have consistent cardinality.
+      * (This might be the coolest step tbh, since it figures out which columns
+      match the design.)
+   
+   * Expand `color_sub` with newly defined colors.
+   
+      * Intent is to assign consistent categorical colors to values
+      present in other columns.
+   
+   * For columns without assigned colors:
+   
+      * Apply `color_sub` to the column when it matches the column name.
+      * Numeric columns produce a color function.
+      * Character columns produce a named color vector.
+
+   * Assemble all remaining unassigned values:
+      
+      * Numeric columns use the column name as its "value", to define
+      one color to the column header.
+      * Remaining `character` values defined in `color_sub` are assigned.
+      * Remaining unassigned `character` values, and `character` column names
+      of numeric columns are assigned categorical colors.
+   
+   * Apply new categorical colors
+
+      * For `numeric` columns, generate color function using the categorical
+      color assigned to that column name.
+      * For `character` columns, generate a color vector.
+
+* Note that the mechanism used may change, I am still testing how
+the assumptions work with real world data.
+
+* New behavior: When `color_sub` is assigned to a value in `colnames(x)`,
+the cardinality is not checked for consistency with group color assignments,
+and instead will use the color assigned for that column.
+* New argument `force_consistent_colors`:
+
+   * During color assignment, sometimes a column value is assigned one
+   color in a column, and a different color in another column. It usually
+   happens when `color_sub` defines a color for a column, where that
+   column unintentionally shares a value with another column that
+   gets colors assigned earlier in the chain.
+   * New argument `force_consistent_colors=TRUE` forces values to be
+   assigned only one color. It seems obvious to use this option, but why
+   not always?
+   * For purely text strings, like "Treated" and "Untreated" one would
+   think any time "Treated" appears in a graphic, it should use the same
+   color. Yes. However, sometimes the number "2" appears in a column,
+   as character or integer, it doesn't matter for this purpose. I have
+   seen something like "sample_num" with values "1", "2", "3", etc.
+   Their cardinality matches 1:1 with class/group/lightness color assignments
+   defined by this function, so these values are usually also assigned
+   to the group colors. However, these values may appear in another column
+   defined by `color_sub`, intended to apply a gradient of that color to
+   values in the column. What if that column contained values
+   `c(2, 20, 500, 1000)`? Only these values would be colorized: `c(20, 50, 1000)`,
+   while `2` would be assigned the color from group colors. It looks weird.
+   * There are workarounds:
+   
+      * pre-filter columns which might have this effect. In the case above,
+      remove `"sample_num"` before calling `design2colors()` so that column
+      is not assigned a color.
+      * associate all numeric columns with `color_sub`
+   
+   * The end result, which is intended, is to allow columns to have
+   independent color assignments when values in those columns are not
+   related. In the case above, the number `"2"` means something different
+   in one column than another column.
+
 # platjam 0.0.51.900
 
 ## changes to existing functions

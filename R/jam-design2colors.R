@@ -118,6 +118,30 @@
 #'    the unique character values in that column. Values are assigned in
 #'    order of their appearance in `x` unless the column is a `factor`,
 #'    in which case colors are assigned to `levels`.
+#' @param force_consistent_colors `logical` indicating whether to force
+#'    color substitutions across multiple columns, when those columns
+#'    share one or more of the same values. Note: This scenario is most
+#'    likely to occur when using `color_sub` to assign colors to a
+#'    specific column in `colnames(x)`, and where that column may contain
+#'    one or more values already assigned a color earlier in the process.
+#'    For example: class/group/lightness defines colors for these columns,
+#'    then all columns are checked for cardinality with these color
+#'    assignments. Columns not appearing in `color_sub` will be colorized
+#'    when their cardinality is compatible with group colors, otherwise
+#'    specific values may be assigned colors via `color_sub`, then all
+#'    remaining values are assigned categorical colors. This process defines
+#'    colors for each column. The last step reassigns colors consistently
+#'    using the first value-color association that appears in the list,
+#'    to make sure all assignments are consistent. This last step is subject
+#'    of the argument `force_consistent_colors`. In either case, the
+#'    output `color_sub` will only have one color assigned per value.
+#'    * Default `TRUE`: When colors are being assigned to column values
+#'    `color_sub`, if the value had been assigned a color in a previous
+#'    column, for example by `group_colnames` color assignment, then the
+#'    first assignment is applied to all subsequent assignments.
+#'    * Optional `FALSE`: Color assignments are re-used where applicable,
+#'    except when overridden by `color_sub` for a particular column. In
+#'    that case, color assignments are maintained for each specific column.
 #' @param plot_type `character` string indicating a type of plot for results:
 #'    * `"table"`: plots a color table equal to the input `data.frame` where
 #'    background cells indicate color assignments.
@@ -181,12 +205,12 @@
 #'    class_colnames="class",
 #'    preset="dichromat",
 #'    color_sub=c(
-#'       WT_WT="gold",
-#'       KO_GeneAKO="firebrick3",
-#'       KO_GeneBKO="dodgerblue",
+#'       WT="gold",
+#'       KO="purple3",
+#'       GeneAKO="firebrick3",
+#'       GeneBKO="dodgerblue",
 #'       treatment="navy",
-#'       time="darkorchid4",
-#'       class="burlywood"))
+#'       time="darkorchid4"))
 #'
 #' dfc2 <- design2colors(df,
 #'    group_colnames="genotype",
@@ -207,8 +231,13 @@
 #' dfc12 <- design2colors(df12,
 #'    group_colnames="genotype",
 #'    lightness_colnames=c("time", "treatment"),
-#'    class_colnames="-class",
-#'    preset="dichromat")
+#'    class_colnames="class",
+#'    preset="dichromat",
+#'    color_sub=c(
+#'       treatment="steelblue",
+#'       time="dodgerblue"
+#'    ))
+#'
 #'
 #' @export
 design2colors <- function
@@ -226,6 +255,7 @@ design2colors <- function
    desat=c(0, 0.4),
    dex=c(2, 5),
    color_sub=NULL,
+   force_consistent_colors=TRUE,
    plot_type=c("table",
       "list",
       "none"),
@@ -398,8 +428,11 @@ design2colors <- function
    class_group_hue1 <- jamba::nameVector(gdf[,c("hue", "class_group")])
    class_group_hue <- colorjam::hw2h(class_group_hue1,
       preset=preset);
+   print(gdf);
    if (all(as.character(gdf$class_group) %in% names(color_sub))) {
       class_group_color <- color_sub[as.character(gdf$class_group)];
+      gdf$hue <- colorjam::h2hw(jamba::col2hcl(class_group_color)["H",],
+         preset=preset);
    } else {
       class_group_color <- colorjam::rainbowJam(n=length(class_group_hue),
          hues=class_group_hue,
@@ -413,19 +446,20 @@ design2colors <- function
    # get mean color hue per class
    class_hues <- NULL;
    if (length(class_colnames) > 0) {
+      # calculate mean hue per class
       class_hues <- sapply(split(gdf$hue, gdf$class), function(ihue){
          if (length(ihue) %% 2 > 0) {
             ihue[ceiling(length(ihue)/2)] %% 360;
          } else {
-            ihues <- ihue[length(ihue)/2 + c(0, 1)];
-            if (ihues[1] > ihues[2]) {
-               ihues[2] <- ihues[2] + 360;
-            }
-            mean(ihues) %% 360;
+            colorjam::h2hw(
+               mean_hue(colorjam::hw2h(ihue,
+                  preset=preset)),
+               preset=preset)
          }
       })
       class_hue <- colorjam::hw2h(class_hues,
          preset=preset);
+      # class_hue <- class_hues;
       if (all(as.character(gdf$class) %in% names(color_sub))) {
          class_color <- color_sub[as.character(gdf$class)];
       } else {
@@ -437,8 +471,6 @@ design2colors <- function
          names(class_color) <- names(class_hues);
          color_sub[names(class_color)] <- class_color;
       }
-      gdf$class_hue <- class_hues[as.character(gdf$class)];
-      gdf$class_color <- class_color[as.character(gdf$class)];
    }
 
    if (verbose) {
@@ -473,8 +505,10 @@ design2colors <- function
          "class_group_color"),
       colnames(udf));
 
-   ###############################################################
+   ################################################################
    # assign group colors when cardinality is appropriate
+   # Note: use all columns including class, group, lightness
+   # which allows various combinations to be detected and assigned.
    if (length(rownames(x)) == 0 ||
          any(!grepl("^[0-9]+$", rownames(x)))) {
       # if rownames are entirely integers, do not assign categorical colors
@@ -483,6 +517,10 @@ design2colors <- function
       iter_colnames <- jamba::nameVector(c("rownames", colnames(x)));
    }
    new_colors <- lapply(iter_colnames, function(icol) {
+      # new in version 0.0.52.900: do not assign colors when color_sub is defined
+      if (length(color_sub) > 0 && icol %in% names(color_sub)) {
+         return(NULL);
+      }
       # skip numeric columns which will be assigned gradient colors
       if (is.numeric(x[[icol]])) {
          return(NULL);
@@ -492,8 +530,6 @@ design2colors <- function
       } else {
          ivalues <- x[,icol, drop=FALSE]
       }
-      # jamba::printDebug("icol: ", icol);
-      # jamba::printDebug("      ivalues: ", ivalues[,1]);
       for (kcolname in kcolnames) {
          # jamba::printDebug("      kcolname: ", kcolname);
          idf <- unique(data.frame(check.names=FALSE,
@@ -513,10 +549,16 @@ design2colors <- function
    });
    # create color vector
    new_colors_v <- unlist(unname(new_colors));
+   new_color_list <- c(new_colors);
+   color_sub_1 <- color_sub;
+   color_sub <- c(color_sub_1,
+      unlist(unname(new_color_list)))
 
-   ###############################################################
-   # now generate categorical colors for remaining columns
+   ############################################
+   # now generate colors for remaining columns
    add_color_functions <- NULL;
+   colname_colors <- NULL;
+   # any empty element in new_colors lacks color assignment
    if (any(lengths(new_colors) == 0)) {
       add_colors_v1 <- NULL;
       add_colnames <- names(new_colors)[lengths(new_colors) == 0];
@@ -528,7 +570,9 @@ design2colors <- function
       if (any(add_colnames %in% names(color_sub))) {
          colname_colnames <- intersect(add_colnames, names(color_sub));
          add_colnames <- setdiff(add_colnames, colname_colnames);
-         colname_colors <- lapply(colname_colnames, function(icol){
+
+         # iterate remaining colnames and assign colors
+         colname_colors <- lapply(jamba::nameVector(colname_colnames), function(icol){
             if (verbose > 1) {
                jamba::printDebug("design2colors(): ",
                   "colname_icol: ", icol);
@@ -543,63 +587,9 @@ design2colors <- function
                if (verbose > 1) {
                   jamba::printDebug("design2colors(): ", c("   is.numeric=", "TRUE"), sep="");
                }
-               irange <- range(x_input[[icol]],
-                  na.rm=TRUE);
-               if (min(irange) >= 0) {
-                  if (min(irange) > 0 && (
-                     max(irange) / min(irange) >= 3 ||
-                        max(irange) == min(irange))) {
-                     irange[1] <- 0;
-                  } else if (min(irange) > 0 &&
-                        length(unique(irange)) > 1) {
-                     # expand lower end of numeric range to prevent white
-                     irange <- irange + c(diff(irange) * -0.20, 0);
-                  }
-                  # linear color scale
-                  if (length(unique(irange)) == 1) {
-                     if (irange[1] == 0) {
-                        irange <- c(0, 1);
-                        pretty_range <- c(0, 1);
-                     } else {
-                        irange <- c(0, irange[2]);
-                        pretty_range <- c(0, irange[2]);
-                     }
-                  } else {
-                     pretty_range <- pretty(irange);
-                     pretty_range <- pretty_range[pretty_range >= irange[1] &
-                           pretty_range <= irange[2]];
-                     if (min(pretty_range) > 0) {
-                        if (max(pretty_range) / min(pretty_range) >= 2) {
-                           pretty_range <- c(0, pretty_range);
-                        }
-                     }
-                  }
-                  color1 <- jamba::color2gradient(color_sub[[icol]], n=3, dex=10);
-                  # once with our specific color breaks
-                  icolors1 <- circlize::colorRamp2(
-                     breaks=seq(from=irange[1], to=irange[2], length.out=6),
-                     colors=jamba::getColorRamp(c("#fff6f4", color1),
-                        lens=1,
-                        n=6));
-                  # once again using pretty_breaks
-                  icolors <- circlize::colorRamp2(
-                     breaks=pretty_range,
-                     colors=icolors1(pretty_range));
-               } else {
-                  # divergent color scale
-                  irange <- max(abs(irange)) * c(-1, 1);
-                  pretty_range <- pretty(irange);
-                  pretty_range <- pretty_range[pretty_range >= irange[1] &
-                     pretty_range <= irange[2]];
-                  color1 <- color_sub[[icol]];
-                  color2 <- quick_complement_color(color1);
-                  icolors <- circlize::colorRamp2(
-                     breaks=pretty_range,
-                     colors=jamba::getColorRamp(c(color2, "#fff6f4", color1),
-                        divergent=TRUE,
-                        lens=1,
-                        n=length(pretty_range)));
-               }
+               icolors <- assign_numeric_colors(x=x_input[[icol]],
+                  restrict_pretty_range=FALSE,
+                  color=color_sub[[icol]]);
                return(icolors);
             } else {
                if (verbose > 1) {
@@ -607,6 +597,7 @@ design2colors <- function
                }
                ivalues <- unique(as.character(x_input[[icol]]));
             }
+            # use ivalues to define colors
             icolors <- jamba::nameVector(
                jamba::color2gradient(color_sub[[icol]],
                   dex=dex[2],
@@ -621,57 +612,77 @@ design2colors <- function
             }
             icolors;
          });
-         # note this step ignores color functions for numeric columns
-         is_color_fn <- sapply(colname_colors, is.function);
-         add_colors_v1 <- unlist(unname(colname_colors[!is_color_fn]));
-         add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
-         if (any(is_color_fn)) {
-            add_color_functions <- colname_colors[is_color_fn];
-            names(add_color_functions) <- colname_colnames[is_color_fn];
-            if (length(add_color_functions) > 0 && verbose > 1) {
-               jamba::printDebug("design2colors(): ",
-                  "add_color_functions: ", names(add_color_functions));
-            }
+         if (verbose > 1) {
+            jamba::printDebug("design2colors(): ",
+               "colname_colors: ");
+            print_color_list(colname_colors);
          }
+         new_color_list[names(colname_colors)] <- colname_colors;
+         color_sub <- c(color_sub_1,
+            unlist(unname(new_color_list[!jamba::sclass(new_color_list) %in% "function"])))
+
+         # extract new color assignments so they can be consistent
+         # with values in other columns if needed.
+         # Note: This step ignores color functions for numeric columns.
+         # is_color_fn <- sapply(colname_colors, is.function);
+         # add_colors_v1 <- unlist(unname(colname_colors[!is_color_fn]));
+         # add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
+         # if (any(is_color_fn)) {
+         #    add_color_functions <- colname_colors[is_color_fn];
+         #    names(add_color_functions) <- colname_colnames[is_color_fn];
+         #    if (length(add_color_functions) > 0 && verbose > 1) {
+         #       jamba::printDebug("design2colors(): ",
+         #          "add_color_functions: ", names(add_color_functions));
+         #    }
+         # }
       }
 
-      ########################################
-      # all other colors are assigned  colors
+      ###################################################
+      # all other values are assigned categorical colors
       if (verbose > 1) {
          jamba::printDebug("design2colors(): ",
             "add_colnames: ", add_colnames);
       }
-      add_values <- unique(unlist(lapply(add_colnames, function(icol) {
-         if ("rownames" %in% icol) {
-            unique(rownames(x))
-         } else {
-            if (is.factor(x_input[[icol]])) {
-               levels(x_input[[icol]])
+      # assemble all remaining column values for color assignment
+      add_numeric_colnames <- add_colnames[sapply(add_colnames, function(icol){
+         is.numeric(x_input[[icol]])})];
+      # assemble all unique values that need colors,
+      # using column name itself for numeric columns
+      add_values <- unique(unlist(
+         lapply(add_colnames, function(icol) {
+            if ("rownames" %in% icol) {
+               unique(rownames(x))
             } else {
-               unique(as.character(x_input[[icol]]))
+               if (is.factor(x_input[[icol]])) {
+                  levels(x_input[[icol]])
+               } else if (is.numeric(x_input[[icol]])) {
+                  # for numeric columns assign a color to the colname
+                  icol;
+               } else {
+                  unique(as.character(x_input[[icol]]))
+               }
             }
-         }
-      })));
+         })
+      ));
       # reuse color assignments if present
-      if (any(c(add_values, names(add_colors_v1)) %in% names(color_sub))) {
+      # if (any(c(add_values, names(add_colors_v1)) %in% names(color_sub))) {
+      # Note: do not reassign names(add_colors_v1) via names(color_sub).
+      # Give preference to new_colors_v, defined by class/group/lightness
+      # remove add_values that already have assignments in color_sub
+      if (any(add_values %in% names(color_sub))) {
          add_values_1 <- intersect(
-            c(add_values,
-               names(add_colors_v1)),
+            add_values,
             names(color_sub));
          add_values <- setdiff(add_values, add_values_1);
-         add_colors_v1 <- c(
-            color_sub[add_values_1],
-            add_colors_v1)
-         add_colors_v1 <- add_colors_v1[!duplicated(names(add_colors_v1))];
-      }
-
-      # sometimes a factor is already assigned a color
-      if (any(add_values %in% names(new_colors_v))) {
-         add_values <- setdiff(add_values,
-            names(new_colors_v))
+         # add_match <- match(add_values_1,
+         #    c(names(new_colors_v),
+         #       names(color_sub)));
+         # add_colors_v1 <- c(new_colors_v,
+         #    color_sub)[add_match];
       }
       add_n <- length(add_values);
 
+      # check if any values remain to be assigned new colors
       if (add_n > 0) {
          # determine "improved" starting hue using mean of first two hues
          if (nrow(gdf) > 1) {
@@ -692,11 +703,13 @@ design2colors <- function
             add_n);
 
          # assign categorical colors to unique values
-         add_m <- head(as.vector(
-            matrix(ncol=2,
-               byrow=TRUE,
-               add_values)),
-            add_n);
+         # optionally "rotate" the assignment by column to avoid
+         # adjacent colors being too similar
+         # add_m <- as.vector(
+         #    matrix(ncol=2,
+         #       byrow=TRUE,
+         #       add_values));
+         # add_m <- add_m[!duplicated(add_m)];
          add_m <- add_values;
          add_colors_v <- jamba::nameVector(
             colorjam::rainbowJam(add_n,
@@ -705,30 +718,45 @@ design2colors <- function
                preset=preset,
                ...),
             add_m);
-      } else {
-         add_colors_v <- NULL;
-      }
-      if (length(add_colors_v1) > 0 && any(lengths(add_colors_v1) > 0)) {
-         add_colors_v <- c(add_colors_v,
-            add_colors_v1);
-      }
-      add_colors_v <- add_colors_v[!duplicated(names(add_colors_v))];
-      if (length(add_colors_v) > 0) {
-         add_colors_v <- jamba::nameVector(
-            colorspace::desaturate(add_colors_v,
-               amount=desat[2]),
-            names(add_colors_v));
-      }
+         # extend color_sub with newly assigned colors
+         color_sub <- c(color_sub,
+            add_colors_v);
 
+         # now re-apply these color_sub to each add_colnames
+         add_colname_colors <- lapply(jamba::nameVector(add_colnames), function(icol){
+            if ("rownames" %in% icol) {
+               icolors <- color_sub[unique(rownames(x))]
+            } else {
+               if (is.factor(x_input[[icol]])) {
+                  icolors <- color_sub[levels(x_input[[icol]])]
+               } else if (is.numeric(x_input[[icol]])) {
+                  icolors <- assign_numeric_colors(x=x_input[[icol]],
+                     restrict_pretty_range=FALSE,
+                     color=color_sub[[icol]]);
+               } else {
+                  icolors <- color_sub[unique(as.character(x_input[[icol]]))]
+               }
+            }
+            icolors;
+         })
+         if (verbose > 1) {
+            jamba::printDebug("design2colors(): ",
+               "add_colname_colors: ");
+            print(sdim(add_colname_colors));
+            print(add_colname_colors);
+            print_color_list(add_colname_colors);
+         }
+         new_color_list[names(add_colname_colors)] <- add_colname_colors;
+         color_sub <- c(color_sub,
+            unlist(unname(
+               add_colname_colors[!jamba::sclass(add_colname_colors) %in% "function"])))
+      } else {
+         # no new colors need to be assigned
+         # add_colors_v <- NULL;
+      }
       # optionally rotate phase
       phase <- phase + rotate_phase;
 
-      all_add_colors_v <- c(add_colors_v,
-         new_colors_v);
-
-      add_colors <- lapply(jamba::nameVector(c(add_colnames, colname_colnames)), function(icol) {
-         all_add_colors_v[unique(as.character(x[[icol]]))]
-      })
    } else {
       add_colors <- NULL;
       add_color_functions <- NULL;
@@ -736,39 +764,52 @@ design2colors <- function
    # end filling in new_colors
    ###############################
 
+   ###############################
+   # Refresh the list of colors
    all_colors_list1 <- jamba::rmNULL(
-      c(
-         c(jamba::rmNULL(new_colors),
-            add_color_functions,
-            add_colors)[colnames(x)],
-         list(class_group_color=class_group_color,
+      c(new_color_list[colnames(x_input)],
+         list(
+            class_group_color=class_group_color,
             class_group_lightness_color=class_group_lightness_color)));
    is_color_fn <- sapply(all_colors_list1, is.function);
-   #print(jamba::sdim(all_colors_list1))
-   #jamba::printDebug("add_color_functions:");print(add_color_functions);
-   #jamba::printDebug("is_color_fn: ", is_color_fn);
+
+   # obtain vector of value-color associations except for columns
+   # that use color functions
    all_colors_v <- unlist(unname(all_colors_list1[!is_color_fn]));
+   # remove any duplicated names, where the same value
+   # appeared in multiple columns. This step retains only the
+   # first color assignment per value.
    if (any(duplicated(names(all_colors_v)))) {
       all_colors_v <- all_colors_v[!duplicated(names(all_colors_v))];
    }
-   all_colors_list <- lapply(all_colors_list1, function(i){
-      if (is.function(i)) {
-         i
-      } else {
-         all_colors_v[names(i)];
-      }
-   })
+
+   # optionally force consistent color assignment by column
+   if (force_consistent_colors) {
+      all_colors_list <- lapply(all_colors_list1, function(i){
+         if (is.function(i)) {
+            i
+         } else {
+            all_colors_v[names(i)];
+         }
+      })
+   } else {
+      all_colors_list <- all_colors_list1;
+   }
 
    if (verbose > 1) {
+      # jamba::printDebug("design2colors(): ",
+      #    "add_colors: ");
+      # print(add_colors);
       jamba::printDebug("design2colors(): ",
          "all_colors_list1: ");
-      print(all_colors_list1);
+      print(sdim(all_colors_list1));
+      print_color_list(all_colors_list1);
       jamba::printDebug("design2colors(): ",
          "all_colors_v: ");
-      jamba::printDebugI(all_colors_v);
+      print_color_list(all_colors_v);
       jamba::printDebug("design2colors(): ",
          "all_colors_list: ");
-      print(all_colors_list);
+      print_color_list(all_colors_list);
    }
 
    if (!desat[1] == 0) {
@@ -786,14 +827,8 @@ design2colors <- function
 
    # one option is to display the full list of colors
    if ("list" %in% plot_type) {
-      all_colors_list_use <- lapply(all_colors_list, function(i){
-         if (is.function(i)) {
-            jamba::nameVector(i(attr(i, "breaks")),
-               attr(i, "breaks"))
-         } else {
-            i;
-         }
-      })
+      all_colors_list_use <- print_color_list(all_colors_list,
+         do_print=FALSE);
       jamba::showColors(all_colors_list_use)
    }
 
@@ -807,7 +842,7 @@ design2colors <- function
          all_colors_list[[i]][as.character(x_input[[i]])]
       }
    });
-   x_colors <- as.data.frame(
+   x_colors_list <- (
       lapply(jamba::nameVector(colnames(x_input)), function(i){
          if (is.function(all_colors_list[[i]])) {
             jamba::nameVector(all_colors_list[[i]](x_input[[i]]),
@@ -817,10 +852,15 @@ design2colors <- function
             all_colors_list[[i]][as.character(x_input[[i]])]
          }
       }));
+   x_colors <- as.data.frame(x_colors_list);
    if ("table" %in% plot_type) {
       opar <- par(no.readonly=TRUE);
       jamba::adjustAxisLabelMargins(
-         rownames(x_colors), 2)
+         x=rownames(x_colors),
+         margin=2)
+      jamba::adjustAxisLabelMargins(
+         x=colnames(x_colors),
+         margin=1)
       jamba::imageByColors(x_colors,
          cellnote=if(nrow(x_colors) < 1000){ x_input} else {NULL},
          flip="y",

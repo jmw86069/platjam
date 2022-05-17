@@ -1,3 +1,16 @@
+# TODO 13may2022
+
+* `design2colors()`
+
+   * make it work even without `group_colnames`, which is effectively
+   just colorizing a `data.frame` by each column.
+   * Make `numeric` columns apply a gradient as if a categorical
+   color were supplied. Basic idea is that instead of assigning
+   categorical colors to each numeric value, for numeric columns
+   assign the categorical color to the column name. Then it should
+   proceed as it does now, when the user supplies a `color_sub`
+   for that column name.
+
 # TODO 05apr2022
 
 ## Salmon import to SummarizedExperiment?
