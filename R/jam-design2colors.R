@@ -703,10 +703,20 @@ design2colors <- function
       # Note: do not reassign names(add_colors_v1) via names(color_sub).
       # Give preference to new_colors_v, defined by class/group/lightness
       # remove add_values that already have assignments in color_sub
+      add_values_1 <- NULL;
+      add_colors_1 <- NULL;
       if (any(add_values %in% names(color_sub))) {
+         if (verbose > 1) {
+            jamba::printDebug("design2colors(): ",
+               "add_values: ", add_values);
+            jamba::printDebug("design2colors(): ",
+               "add_values in names(color_sub): ",
+               intersect(add_values, names(color_sub)));
+         }
          add_values_1 <- intersect(
             add_values,
             names(color_sub));
+         add_colors_1 <- color_sub[add_values_1];
          add_values <- setdiff(add_values, add_values_1);
          # add_match <- match(add_values_1,
          #    c(names(new_colors_v),
@@ -715,6 +725,10 @@ design2colors <- function
          #    color_sub)[add_match];
       }
       add_n <- length(add_values);
+      if (verbose > 1) {
+         jamba::printDebug("design2colors(): ",
+            "add_values: ", add_values);
+      }
 
       # check if any values remain to be assigned new colors
       if (add_n > 0) {
@@ -755,10 +769,21 @@ design2colors <- function
                preset=preset,
                ...),
             add_m);
+         add_colors_1 <- c(add_colors_1,
+            add_colors_v);
+         if (verbose > 1) {
+            jamba::printDebug("design2colors(): ",
+               "add_m: ", add_m);
+            jamba::printDebug("design2colors(): ",
+               "add_colors_v: ", add_colors_v);
+         }
          # extend color_sub with newly assigned colors
          color_sub <- c(color_sub,
             add_colors_v);
-
+      }
+      # re-apply colors to these columns if either process above
+      # added new colors
+      if (length(add_colors_1) > 0) {
          # now re-apply these color_sub to each add_colnames
          add_colname_colors <- lapply(jamba::nameVector(add_colnames), function(icol){
             if ("rownames" %in% icol) {
@@ -776,20 +801,7 @@ design2colors <- function
             }
             icolors;
          })
-         if (verbose > 1) {
-            jamba::printDebug("design2colors(): ",
-               "add_colname_colors: ");
-            print(sdim(add_colname_colors));
-            print(add_colname_colors);
-            print_color_list(add_colname_colors);
-         }
          new_color_list[names(add_colname_colors)] <- add_colname_colors;
-         color_sub <- c(color_sub,
-            unlist(unname(
-               add_colname_colors[!jamba::sclass(add_colname_colors) %in% "function"])))
-      } else {
-         # no new colors need to be assigned
-         # add_colors_v <- NULL;
       }
       # optionally rotate phase
       phase <- phase + rotate_phase;
