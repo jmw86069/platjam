@@ -20,6 +20,7 @@ design2colors(
   dex = c(2, 5),
   color_sub = NULL,
   na_color = "grey75",
+  shuffle_colors = FALSE,
   force_consistent_colors = TRUE,
   plot_type = c("table", "list", "none"),
   return_type = c("list", "df", "vector"),
@@ -86,6 +87,11 @@ in which case colors are assigned to \code{levels}.
 \item{na_color}{\code{character} string with R color, used to assign a
 specific color to \code{NA} values.
 (This assignment is not yet implemented.)}
+
+\item{shuffle_colors}{\code{logical} indicating whether to shuffle categorical
+color assignments for values not already assigned by
+class/group/lightness, nor by \code{color_sub}. The effect is that colors
+are less likely to be similar for adjacent column values.}
 
 \item{force_consistent_colors}{\code{logical} indicating whether to force
 color substitutions across multiple columns, when those columns

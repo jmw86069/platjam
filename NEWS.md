@@ -5,6 +5,13 @@
 * `import_nanostring_rlf()` is an import function to load Nanostring
 codeset data provided in the form of an RLF file.
 
+## changes to existing functions
+
+* `design2colors()` now calls `colorjam::blend_colors()` to define
+colors for each class. The method is still in development, so the
+specific methods may change. The output is intended to represent
+the group colors contained in each class, we'll see how well it fares.
+
 ## bug fixes
 
 * `design2colors()` was updated to convert columns with class `"table"`

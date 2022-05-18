@@ -43,12 +43,25 @@
 #' @param plot_type `character` string passed to `design2colors()` to define
 #'    colors for the Class data. Use `plot_type="none"` to suppress plotting
 #'    the colot table.
+#' @param color_sub,desat arguments passed to `design2colors()`.
 #' @param ... additional arguments are passed to `design2colors()`.
 #'
 #' @export
 import_nanostring_rlf <- function
 (rlf,
  plot_type=c("table", "list", "none"),
+ color_sub=c(
+    Endogenous="darkorange",
+    Positive="greenyellow",
+    Negative="firebrick3",
+    Housekeeping="gold",
+    Binding="steelblue4",
+    Purification="steelblue2",
+    Reserved="mediumpurple1",
+    #ClassActive="darkorange",
+    ClassDate="blue",
+    ClassName_count="navy"),
+ desat=c(0.2, 0.4),
  ...)
 {
    # validate arguments
@@ -90,15 +103,15 @@ import_nanostring_rlf <- function
    rlf_classdf$ClassName_count <- as.vector(ClassName_count[rlf_classdf$ClassKey]);
 
    # associate colors with Class data
-   rlf_classdf$ClassActive <- as.character(rlf_classdf$ClassActive);
+   rlf_classdf$ClassActive <- as.factor(rlf_classdf$ClassActive);
+   #rlf_classdf$ClassActive <- as.character(rlf_classdf$ClassActive);
    tryCatch({
       rlf_color_list <- platjam::design2colors(rlf_classdf,
+         class_colnames="ClassActive",
          group_colnames="ClassName",
          force_consistent_colors=FALSE,
-         color_sub=c(
-            ClassActive="red",
-            ClassDate="blue",
-            ClassName_count="navy"),
+         color_sub=color_sub,
+         desat=desat,
          ...)
    }, error=function(e){
       print(e)

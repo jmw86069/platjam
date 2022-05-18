@@ -121,6 +121,10 @@
 #' @param na_color `character` string with R color, used to assign a
 #'    specific color to `NA` values.
 #'    (This assignment is not yet implemented.)
+#' @param shuffle_colors `logical` indicating whether to shuffle categorical
+#'    color assignments for values not already assigned by
+#'    class/group/lightness, nor by `color_sub`. The effect is that colors
+#'    are less likely to be similar for adjacent column values.
 #' @param force_consistent_colors `logical` indicating whether to force
 #'    color substitutions across multiple columns, when those columns
 #'    share one or more of the same values. Note: This scenario is most
@@ -259,6 +263,7 @@ design2colors <- function
    dex=c(2, 5),
    color_sub=NULL,
    na_color="grey75",
+   shuffle_colors=FALSE,
    force_consistent_colors=TRUE,
    plot_type=c("table",
       "list",
@@ -458,30 +463,47 @@ design2colors <- function
    class_hues <- NULL;
    if (length(class_colnames) > 0) {
       # calculate mean hue per class
-      class_hues <- sapply(split(gdf$hue, gdf$class), function(ihue){
-         if (length(ihue) %% 2 > 0) {
-            ihue[ceiling(length(ihue)/2)] %% 360;
-         } else {
-            colorjam::h2hw(
-               mean_hue(colorjam::hw2h(ihue,
-                  preset=preset)),
-               preset=preset)
+      print(gdf)
+      class_color <- sapply(split(gdf$class_group_color, gdf$class), function(icolors){
+         #ihue <- jamba::col2hcl(icolors)["H",]
+         if (length(icolors) == 2) {
+            icolors <- icolors[c(1, 2, 2)];
          }
+         colorjam::blend_colors(icolors,
+            c_weight=0.9,
+            preset="ryb2")
       })
-      class_hue <- colorjam::hw2h(class_hues,
-         preset=preset);
+      gdf$class_color <- class_color[as.character(gdf$class)];
+      print(gdf)
+      # class_hues <- sapply(split(gdf$class_group_color, gdf$class), function(ihue){
+         # if (length(ihue) %% 2 > 0) {
+         #    ihue[ceiling(length(ihue)/2)] %% 360;
+         # } else {
+         # print(ihue);
+         #    new_hue <- colorjam::h2hw(
+         #       mean_hue(colorjam::hw2h(ihue,
+         #          preset=preset)),
+         #       preset=preset)
+         #    print(new_hue)
+         #    new_hue
+         # }
+      # })
+      # class_hue <- colorjam::hw2h(class_hues,
+      #    preset=preset);
       # class_hue <- class_hues;
       if (all(as.character(gdf$class) %in% names(color_sub))) {
          class_color <- color_sub[as.character(gdf$class)];
-      } else {
-         class_color <- colorjam::rainbowJam(n=length(class_hue),
-            hues=class_hue,
-            phase=phase + 3,
-            preset=preset,
-            ...);
-         names(class_color) <- names(class_hues);
-         color_sub[names(class_color)] <- class_color;
       }
+      color_sub[names(class_color)] <- class_color;
+      # } else {
+      #    class_color <- colorjam::rainbowJam(n=length(class_hue),
+      #       hues=class_hue,
+      #       phase=phase + 3,
+      #       preset=preset,
+      #       ...);
+      #    names(class_color) <- names(class_hues);
+      #    color_sub[names(class_color)] <- class_color;
+      # }
    }
 
    if (verbose) {
@@ -717,12 +739,15 @@ design2colors <- function
          # assign categorical colors to unique values
          # optionally "rotate" the assignment by column to avoid
          # adjacent colors being too similar
-         # add_m <- as.vector(
-         #    matrix(ncol=2,
-         #       byrow=TRUE,
-         #       add_values));
-         # add_m <- add_m[!duplicated(add_m)];
-         add_m <- add_values;
+         if (shuffle_colors) {
+            add_m <- as.vector(
+               matrix(ncol=2,
+                  byrow=TRUE,
+                  add_values));
+            add_m <- add_m[!duplicated(add_m)];
+         } else {
+            add_m <- add_values;
+         }
          add_colors_v <- jamba::nameVector(
             colorjam::rainbowJam(add_n,
                phase=phase,
