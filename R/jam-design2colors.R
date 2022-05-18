@@ -898,10 +898,32 @@ design2colors <- function
       jamba::adjustAxisLabelMargins(
          x=colnames(x_colors),
          margin=1)
+      x_colors_note <- data.frame(check.names=FALSE, lapply(x_input, function(i){
+         if (length(jamba::breaksByVector(i)$breakPoints) > 100) {
+            rep("...", length(i))
+         } else {
+            i
+         }
+      }))
+      x_colors_note_cex <- lapply(x_colors_note, function(i){
+         bbv <- jamba::breaksByVector(as.character(i))
+         k <- unname(diff(c(0, bbv$breakPoints)));
+         k1 <- (jamba::noiseFloor(
+            (k/length(i) / 0.2)^(1/3),
+            minimum=0.4,
+            ceiling=0.9))
+         names(k1) <- head(bbv$useLabels, length(k1))
+         (rep(k1, k));
+      })
+      par("xpd"=TRUE);
       jamba::imageByColors(x_colors,
-         cellnote=if(nrow(x_colors) < 1000){ x_input} else {NULL},
+         #cellnote=if(nrow(x_colors) < 500){ x_input} else {NULL},
+         cellnote=x_colors_note,
+         groupByColors=FALSE,
+         groupBy="column",
+         adjBy="column",
          flip="y",
-         cexCellnote=0.7)
+         cexCellnote=x_colors_note_cex)
       par(opar);
    }
 
