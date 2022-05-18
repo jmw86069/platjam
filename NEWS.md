@@ -1,3 +1,17 @@
+# platjam 0.0.53.900
+
+## new functions
+
+* `import_nanostring_rlf()` is an import function to load Nanostring
+codeset data provided in the form of an RLF file.
+
+## bug fixes
+
+* `design2colors()` was updated to convert columns with class `"table"`
+into `"integer"`, otherwise weird things happened during coersion,
+causing an error.
+
+
 # platjam 0.0.52.900
 
 ## new functions

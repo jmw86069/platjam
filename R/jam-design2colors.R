@@ -118,6 +118,9 @@
 #'    the unique character values in that column. Values are assigned in
 #'    order of their appearance in `x` unless the column is a `factor`,
 #'    in which case colors are assigned to `levels`.
+#' @param na_color `character` string with R color, used to assign a
+#'    specific color to `NA` values.
+#'    (This assignment is not yet implemented.)
 #' @param force_consistent_colors `logical` indicating whether to force
 #'    color substitutions across multiple columns, when those columns
 #'    share one or more of the same values. Note: This scenario is most
@@ -255,6 +258,7 @@ design2colors <- function
    desat=c(0, 0.4),
    dex=c(2, 5),
    color_sub=NULL,
+   na_color="grey75",
    force_consistent_colors=TRUE,
    plot_type=c("table",
       "list",
@@ -318,6 +322,14 @@ design2colors <- function
 
    # sort by class, group, lightness to make downstream steps consistent
    x_input <- x;
+
+   # quickly convert certain column types for better processing
+   for (icol in colnames(x_input)) {
+      if (is.table(x_input[[icol]])) {
+         x_input[[icol]] <- as.vector(x_input[[icol]]);
+      }
+   }
+
    # iterate each column and convert to factor if needed
    all_colnames1 <- gsub("^[-]", "",
       c(class_colnames,
@@ -576,6 +588,7 @@ design2colors <- function
                jamba::printDebug("design2colors(): ",
                   "colname_icol: ", icol);
             }
+            # handle by column data type
             if (is.factor(x_input[[icol]])) {
                if (verbose > 1) {
                   jamba::printDebug("design2colors(): ", c("   is.factor=", "TRUE"), sep="");

@@ -19,6 +19,7 @@ design2colors(
   desat = c(0, 0.4),
   dex = c(2, 5),
   color_sub = NULL,
+  na_color = "grey75",
   force_consistent_colors = TRUE,
   plot_type = c("table", "list", "none"),
   return_type = c("list", "df", "vector"),
@@ -81,6 +82,10 @@ the unique character values in that column. Values are assigned in
 order of their appearance in \code{x} unless the column is a \code{factor},
 in which case colors are assigned to \code{levels}.
 }}
+
+\item{na_color}{\code{character} string with R color, used to assign a
+specific color to \code{NA} values.
+(This assignment is not yet implemented.)}
 
 \item{force_consistent_colors}{\code{logical} indicating whether to force
 color substitutions across multiple columns, when those columns
