@@ -463,7 +463,6 @@ design2colors <- function
    class_hues <- NULL;
    if (length(class_colnames) > 0) {
       # calculate mean hue per class
-      print(gdf)
       class_color <- sapply(split(gdf$class_group_color, gdf$class), function(icolors){
          #ihue <- jamba::col2hcl(icolors)["H",]
          if (length(icolors) == 2) {
@@ -474,7 +473,6 @@ design2colors <- function
             preset="ryb2")
       })
       gdf$class_color <- class_color[as.character(gdf$class)];
-      print(gdf)
       # class_hues <- sapply(split(gdf$class_group_color, gdf$class), function(ihue){
          # if (length(ihue) %% 2 > 0) {
          #    ihue[ceiling(length(ihue)/2)] %% 360;
