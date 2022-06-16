@@ -902,12 +902,13 @@ design2colors <- function
    x_colors <- as.data.frame(x_colors_list);
    if ("table" %in% plot_type) {
       opar <- par(no.readonly=TRUE);
-      jamba::adjustAxisLabelMargins(
-         x=rownames(x_colors),
-         margin=2)
-      jamba::adjustAxisLabelMargins(
-         x=colnames(x_colors),
-         margin=1)
+      on.exit(par(opar), add=TRUE);
+      # jamba::adjustAxisLabelMargins(
+      #    x=rownames(x_colors),
+      #    margin=2)
+      # jamba::adjustAxisLabelMargins(
+      #    x=colnames(x_colors),
+      #    margin=1)
       x_colors_note <- data.frame(check.names=FALSE, lapply(x_input, function(i){
          if (length(jamba::breaksByVector(i)$breakPoints) > 100) {
             rep("...", length(i))
@@ -932,9 +933,12 @@ design2colors <- function
          groupByColors=FALSE,
          groupBy="column",
          adjBy="column",
+         adjustMargins=TRUE,
          flip="y",
-         cexCellnote=x_colors_note_cex)
-      par(opar);
+         cexCellnote=x_colors_note_cex,
+         maxRatioFix=300,
+         ...)
+      # par(opar);
    }
 
    if ("df" %in% return_type) {
