@@ -676,8 +676,12 @@ design2colors <- function
             "add_colnames: ", add_colnames);
       }
       # assemble all remaining column values for color assignment
-      add_numeric_colnames <- add_colnames[sapply(add_colnames, function(icol){
-         is.numeric(x_input[[icol]])})];
+      if (length(add_colnames) == 0) {
+         add_numeric_colnames <- NULL;
+      } else {
+         add_numeric_colnames <- add_colnames[sapply(add_colnames, function(icol){
+            is.numeric(x_input[[icol]])})];
+      }
       # assemble all unique values that need colors,
       # using column name itself for numeric columns
       add_values <- unique(unlist(

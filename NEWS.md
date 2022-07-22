@@ -1,3 +1,11 @@
+# platjam 0.0.54.900
+
+## bug fixes
+
+* `design2colors()` caused an error when there were no leftover
+categorical colors to be assigned after the initial group/class/lightness,
+then user-defined colors by colname. This bug has been fixed.
+
 # platjam 0.0.53.900
 
 ## new functions
