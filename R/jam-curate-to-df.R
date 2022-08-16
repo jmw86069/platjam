@@ -138,6 +138,8 @@ curate_to_df_by_pattern <- function
          "input_colname:",
          input_colname);
    }
+
+   # match each pattern to the input x
    x_match_l <- jamba::provigrep(df[[pattern_colname]],
       x,
       returnType="list");
@@ -149,6 +151,8 @@ curate_to_df_by_pattern <- function
       df[imatch,,drop=FALSE]);
    df_new[[input_colname]] <- unlist(x_match_l);
 
+   # prepare unique ID for each row
+   # also prepare concatenated group names as relevant
    if (length(id_colname) == 0) {
       if (length(group_colname) > 0 &&
             group_colname %in% colnames(df)) {
