@@ -1,3 +1,12 @@
+# platjam 0.0.55.900
+
+## bug fixes
+
+* `import_proteomics_PD()` was updated to remove dependency on `slicejam`
+R package which is currently private during internal development.
+The only dependent function `curate_to_df_by_pattern()` was moved into
+this package.
+
 # platjam 0.0.54.900
 
 ## bug fixes
