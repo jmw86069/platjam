@@ -73,6 +73,7 @@ Other jam import functions:
 \code{\link{deepTools_matrix2nmat}()},
 \code{\link{frequency_matrix2nmat}()},
 \code{\link{import_lipotype_csv}()},
+\code{\link{import_nanostring_csv}()},
 \code{\link{import_proteomics_PD}()},
 \code{\link{import_salmon_quant}()}
 }

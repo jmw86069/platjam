@@ -1,3 +1,12 @@
+# platjam 0.0.57.900
+
+## new functions
+
+* `import_nanostring_csv()` is a basic import function for the common
+CSV style export from Nanostring software. This version has minimal
+extra capabilities, and produces a simple `SummarizedExperiment` object.
+
+
 # platjam 0.0.56.900
 
 ## changes to existing functions
