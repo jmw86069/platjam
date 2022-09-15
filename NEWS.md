@@ -1,3 +1,21 @@
+# platjam 0.0.56.900
+
+## changes to existing functions
+
+* `import_proteomics_PD()` was updated to fix an errant check of
+the protein colnames. This check occurs to verify that the accession
+colnames did not contain delimited values, which causes the colnames
+to be split into individual values by `jamba::makeNames()` with suffix.
+When that happens, the original colname is added before the split columns
+so the original data can be verified.
+
+## new functions
+
+* `import_proteomics_mascot()` is a version 1 importer for MASCOT and
+similar data, which expects protein-level data with `totalIntensity`
+and `numSpectra` columns for each sample.
+
+
 # platjam 0.0.55.900
 
 ## bug fixes

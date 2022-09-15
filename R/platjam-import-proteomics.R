@@ -358,7 +358,9 @@ convert_PD_df_to_SE <- function
          GN=prot_gn_values),
       intermediate="ENTREZID",
       ann_lib=ann_lib);
-   if (!all(protein_genejam_df %in% colnames(protein_genejam_df))) {
+
+   # if (!all(protein_genejam_df %in% colnames(protein_genejam_df))) {
+   if (!all(accession_colname %in% colnames(protein_genejam_df))) {
       protein_genejam_df[, accession_colname] <- protein_df[, accession_colname];
       u1 <- unique(c(accession_colname,
          colnames(protein_genejam_df)));

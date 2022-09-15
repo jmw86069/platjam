@@ -1,3 +1,7 @@
+# TODO 13sep2022
+
+* Add import function for Mascot proteomics type data format.
+
 # TODO 13may2022
 
 * `design2colors()`
