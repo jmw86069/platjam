@@ -3,14 +3,57 @@
 #'
 #' Import Salmon quant.sf files to SummarizedExperiment
 #'
+#' This function is intended to automate the process of importing
+#' a series of `quant.sf` files, then generating `SummarizedExperiment`
+#' objects at the transcript and gene level. It optionally includes
+#' sample annotation provided as a `data.frame` in argument `curation_txt`.
+#' It also includes transcript and gene annotations through either
+#' `data.frame` from argument `tx2gene`, or it derives `tx2gene`
+#' from a GTF file from argument `gtf`. The GTF file option then calls
+#' `splicejam::makeTx2geneFromGtf()`.
+#'
+#' This function can optionally process data that includes full length
+#' gene body regions, annotated with `"gene_body"`. This option is specific
+#' for Salmon quantitation where the transcripts include full length
+#' gene body for multi-exon genes, for example to measure unspliced
+#' transcript abundance.
+#'
+#' * `import_types="gene"` summarizes only the proper transcripts,
+#' excluding `"gene_body"` entries.
+#' * `import_types="gene_body"` summarizes all transcript
+#' and full gene entries into one summary transcript abundance.
+#' * `import_types="gene_tx"` summarizes proper transcript to gene level,
+#' and separately represents `"gene_body"` entries for comparison.
+#'
+#' @return `list` with `SummarizedExperiment` objects, each of which
+#'    contain assay names `c("counts", "abundance", "length)`, where
+#'    `c("counts", "abundance")` are transformed with `log2(1 + x)`.
+#'    The transform can be reversed with `10^x - 1`.
+#'    The `SummarizedExperiment` objects by name:
+#'    * `"TxSE"`: transcript-level values imported from `quant.sf`.
+#'    * `"GeneSE"`: gene-level summary values, excluding
+#'    `"gene_body"` entries.
+#'    * `"GeneBodySE"`: gene-level summary values, including
+#'    `"gene_body"` entries.
+#'    * `"GeneTxSE"`: gene-level summary values, where transcripts are
+#'    combined to gene level, and `"gene_body"` entries are represented
+#'    separately, with suffix `"_gene_body"` added to the gene name.
+#'
 #' @family jam import functions
 #'
 #' @param salmonOut_paths `character` vectors to each individual folder
 #'    that contains the `"quant.sf"` output file for Salmon.
 #' @param import_types `character` indicating which type or types of
-#'    data to return:
-#'    * `tx`: transcript quantitation
-#'    * `gene`: gene quantitation after calling `tximport::summarizeToGene()`
+#'    data to return. Note that the distinction between `gene` and
+#'    `gene_body` is only relevant when there are transcript entries
+#'    defined with `transcript_type="gene_body"`. These entries specifically
+#'    represent unspliced transcribed regions for a gene locus, and
+#'    only for multi-exon genes.
+#'    * `tx`: transcript quantitation, direct import of `quant.sf` files.
+#'    * `gene`: gene quantitation after calling `tximport::summarizeToGene()`,
+#'    excluding `transcript_type="gene_body"`.
+#'    * `gene_body`: gene quantitation after calling `tximport::summarizeToGene()`,
+#'    including `transcript_type="gene_body"`.
 #' @param tx2gene `character` path to file, or `data.frame` with at
 #'    least two columns matching `tx_colname` and `gene_colname` below.
 #'    When supplied, the `gtf` argument is ignored, unless the file
@@ -35,21 +78,32 @@
 #' @param countsFromAbundance `character` string passed to
 #'    `tximport::summarizeToGene()` to define the method for calculating
 #'    abundance.
+#' @param gene_body_ids `character` optional vector with specific row
+#'    identifiers that should be considered `transcript_type="gene_body"`
+#'    entries, relevant to argument `import_types` above. When `gene_body_ids`
+#'    is defined, these entries are used directly without using `tx2gene`.
+#'    When `gene_body_ids` is not defined, `tx2gene$transcript_type` is used
+#'    if present. If that column is not present, or does not contain any
+#'    entries with `"gene_body"`, then all transcripts are used for
+#'    `import_types="gene"`, and `import_types="gene_body"` is not valid
+#'    and therefore is not returned.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to supporting functions.
 #'
 #' @export
 import_salmon_quant <- function
 (salmonOut_paths,
-   import_types=c("tx", "gene"),
+   import_types=c("tx", "gene", "gene_body", "gene_tx"),
    gtf=NULL,
    tx2gene=NULL,
    curation_txt=NULL,
    tx_colname="transcript_id",
    gene_colname="gene_name",
+   gene_body_colname="transcript_type",
    geneFeatureType="exon",
    txFeatureType="exon",
    countsFromAbundance="lengthScaledTPM",
+   gene_body_ids=NULL,
    verbose=FALSE,
    ...)
 {
@@ -66,11 +120,12 @@ import_salmon_quant <- function
          tx2gene <- data.table::fread(tx2gene,
             data.table=FALSE);
          rownames(tx2gene) <- tx2gene[[tx_colname]];
-      } else if (!"data.frame" %in% tx2gene) {
+      } else if (!"data.frame" %in% class(tx2gene)) {
          warning(paste("tx2gene should be a file path, or data.frame.",
             "Ignoring tx2gene."));
          tx2gene <- NULL;
       }
+      rownames(tx2gene) <- tx2gene[[tx_colname]];
    }
 
    # gtf
@@ -128,7 +183,8 @@ import_salmon_quant <- function
    # Import transcript quant.sf
    if (verbose) {
       jamba::printDebug("import_salmon_quant(): ",
-         "importing tx data.");
+         "importing tx data: ",
+         "TxSE");
       if (verbose > 1) {
          print(data.frame(salmon_files));
       }
@@ -186,48 +242,179 @@ import_salmon_quant <- function
    if ("tx" %in% import_types) {
       # rowData for transcripts
       # table(rownames(txiTx[[1]]) %in% tx2gene$transcript_id)
-      rowData_tx <- tx2gene[match(rownames(txiTx[[1]]), tx2gene$transcript_id),,drop=FALSE];
-      rownames(rowData_tx) <- rowData_tx$transcript_id;
+      rowData_tx <- tx2gene[match(rownames(txiTx[[1]]), tx2gene[[tx_colname]]),,drop=FALSE];
+      rownames(rowData_tx) <- rowData_tx[[tx_colname]];
       # Create tx SummarizedExperiment
       TxSE <- SummarizedExperiment(
          assays=list(
             counts=log2(1+txiTx$counts)[,isamples, drop=FALSE],
-            tpm=log2(1+txiTx$abundance)[,isamples, drop=FALSE]
+            abundance=log2(1+txiTx$abundance)[,isamples, drop=FALSE],
+            length=txiTx$length[,isamples, drop=FALSE]
          ),
          rowData=rowData_tx,
-         colData=sample_df[isamples, , drop=FALSE]
+         colData=sample_df[isamples, , drop=FALSE],
+         metadata=list(countsFromAbundance=txiTx$countsFromAbundance)
       );
       ret_list$TxSE <- TxSE;
    }
 
-   if ("gene" %in% import_types) {
-      # summarize transcript to gene level
-      if (verbose) {
-         jamba::printDebug("import_salmon_quant(): ",
-            "summarizing tx data to gene level.");
+   # optionally define gene_body_ids
+   if (any(c("gene", "gene_body", "gene_tx") %in% import_types)) {
+      if (length(gene_body_ids) == 0) {
+         gene_body_colname <- head(intersect(gene_body_colname,
+            colnames(tx2gene)), 1)
+         if (length(gene_body_colname) > 0) {
+            gene_body_ids <- subset(tx2gene, tx2gene[[gene_body_colname]] %in% "gene_body")[[tx_colname]];
+         }
       }
-      txiGene <- tximport::summarizeToGene(txiTx,
-         countsFromAbundance=countsFromAbundance,
-         tx2gene=tx2gene[,c(tx_colname, gene_colname), drop=FALSE]);
-      igenes <- rownames(txiGene[[1]]);
+      gene_body_ids <- intersect(gene_body_ids,
+         rownames(txiTx$counts));
+   } else {
+      gene_body_ids <- NULL
+   }
+   # remove gene_body entries from transcript rows used here
+   tx_ids <- setdiff(rownames(txiTx$counts), gene_body_ids)
+   if (verbose) {
+      jamba::printDebug("import_salmon_quant(): ",
+         "length(tx_ids): ",
+         jamba::formatInt(length(tx_ids)))
+      jamba::printDebug("import_salmon_quant(): ",
+         "length(gene_body_ids): ",
+         jamba::formatInt(length(gene_body_ids)))
+   }
 
-      # create gene SummarizedExperiment
-      # rowData for genes
-      # table(rownames(txiGene[[1]]) %in% tx2gene$gene_name)
-      gene_colnames <- unique(c(gene_colname,
-         unvigrep("transcript|tx", colnames(tx2gene))));
-      rowData_gene <- tx2gene[match(igenes, tx2gene[[gene_colname]]),
-         gene_colnames, drop=FALSE];
-      rownames(rowData_gene) <- rowData_gene[[gene_colname]];
-      GeneSE <- SummarizedExperiment::SummarizedExperiment(
-         assays=list(
-            counts=log2(1+txiGene$counts)[igenes, isamples, drop=FALSE],
-            tpm=log2(1+txiGene$abundance)[igenes, isamples, drop=FALSE]
-         ),
-         rowData=rowData_gene[igenes, , drop=FALSE],
-         colData=sample_df[isamples, , drop=FALSE]
-      );
-      ret_list$GeneSE <- GeneSE;
+   if ("gene" %in% import_types) {
+      if (length(tx_ids) == 0) {
+         jamba::printDebug("import_salmon_quant(): ",
+            "no tx_ids exist for import_types='gene'")
+      } else {
+         # summarize transcript to gene level
+         if (verbose) {
+            jamba::printDebug("import_salmon_quant(): ",
+               "summarizing tx data to gene level: ",
+               "GeneSE");
+         }
+         txiTx_use <- lapply(txiTx[c("abundance", "counts", "length")], function(i){
+            i[match(tx_ids, rownames(i)), , drop=FALSE]
+         });
+         tx2gene_use <- tx2gene[match(tx_ids, tx2gene[[tx_colname]]),
+            c(tx_colname, gene_colname), drop=FALSE]
+         txiGene <- tximport::summarizeToGene(
+            txiTx_use,
+            countsFromAbundance=countsFromAbundance,
+            tx2gene=tx2gene_use);
+         igenes <- rownames(txiGene[[1]]);
+
+         # create gene SummarizedExperiment
+         # rowData for genes
+         gene_colnames <- setdiff(c(gene_colname,
+            jamba::unvigrep("transcript|tx", colnames(tx2gene))),
+            tx_colname);
+         rowData_gene <- tx2gene[match(igenes, tx2gene[[gene_colname]]),
+            gene_colnames, drop=FALSE];
+         rownames(rowData_gene) <- igenes;
+         GeneSE <- SummarizedExperiment::SummarizedExperiment(
+            assays=list(
+               counts=log2(1+txiGene$counts)[, isamples, drop=FALSE],
+               abundance=log2(1+txiGene$abundance)[, isamples, drop=FALSE],
+               length=txiGene$length[, isamples, drop=FALSE]
+            ),
+            rowData=rowData_gene,
+            colData=sample_df[isamples, , drop=FALSE],
+            metadata=list(countsFromAbundance=txiGene$countsFromAbundance)
+         );
+         ret_list$GeneSE <- GeneSE;
+      }
+   }
+
+   if ("gene_body" %in% import_types) {
+      if (length(gene_body_ids) == 0) {
+         jamba::printDebug("import_salmon_quant(): ",
+            "no gene_body_ids exist for import_types='gene_body'")
+      } else {
+         # summarize transcript to gene level
+         if (verbose) {
+            jamba::printDebug("import_salmon_quant(): ",
+               "summarizing tx and gene_body data to gene level: ",
+               "GeneBodySE");
+         }
+         txiGeneBody <- tximport::summarizeToGene(
+            txiTx,
+            countsFromAbundance=countsFromAbundance,
+            tx2gene=tx2gene[,c(tx_colname, gene_colname), drop=FALSE]);
+         igenes <- rownames(txiGeneBody[[1]]);
+
+         # create gene SummarizedExperiment
+         # rowData for genes
+         gene_colnames <- setdiff(c(gene_colname,
+            jamba::unvigrep("transcript|tx", colnames(tx2gene))),
+            tx_colname);
+         rowData_gene <- tx2gene[match(igenes, tx2gene[[gene_colname]]),
+            gene_colnames, drop=FALSE];
+         rownames(rowData_gene) <- igenes;
+         GeneBodySE <- SummarizedExperiment::SummarizedExperiment(
+            assays=list(
+               counts=log2(1+txiGeneBody$counts)[, isamples, drop=FALSE],
+               abundance=log2(1+txiGeneBody$abundance)[, isamples, drop=FALSE],
+               length=txiGeneBody$length[, isamples, drop=FALSE]
+            ),
+            rowData=rowData_gene,
+            colData=sample_df[isamples, , drop=FALSE],
+            metadata=list(countsFromAbundance=txiGeneBody$countsFromAbundance)
+         );
+         ret_list$GeneBodySE <- GeneBodySE;
+      }
+   }
+
+   if ("gene_tx" %in% import_types) {
+      if (length(gene_body_ids) == 0) {
+         jamba::printDebug("import_salmon_quant(): ",
+            "no gene_body_ids exist for import_types='gene_body'")
+      } else {
+         # summarize transcript to gene level
+         if (verbose) {
+            jamba::printDebug("import_salmon_quant(): ",
+               "summarizing tx data to gene level, with gene_body data separately: ",
+               "GeneTxSE");
+         }
+         # prepare custom tx2gene
+         tx2gene_tx <- tx2gene;
+         tx2gene_tx[match(gene_body_ids, rownames(tx2gene_tx)), gene_colname] <- paste0(
+            tx2gene_tx[match(gene_body_ids, rownames(tx2gene_tx)), gene_colname],
+            "_gene_body")
+         txiGeneTx <- tximport::summarizeToGene(
+            txiTx,
+            countsFromAbundance=countsFromAbundance,
+            tx2gene=tx2gene_tx[,c(tx_colname, gene_colname), drop=FALSE]);
+         igenes <- rownames(txiGeneTx[[1]]);
+
+         # create gene SummarizedExperiment
+         # rowData for genes
+         gene_colnames <- setdiff(c(gene_colname,
+            jamba::unvigrep("transcript|tx", colnames(tx2gene_tx))),
+            tx_colname);
+         rowData_gene <- tx2gene_tx[match(igenes, tx2gene_tx[[gene_colname]]),
+            gene_colnames, drop=FALSE];
+         rownames(rowData_gene) <- igenes;
+         rowData_gene$gene_body <- ifelse(grepl("_gene_body$", igenes),
+            "gene_body",
+            "transcript");
+         rowData_gene$base_gene_name <- gsub("_gene_body$", "", igenes)
+
+         rowData_gene$has_gene_body <- igenes %in% c(tx2gene[gene_body_ids, gene_colname],
+            paste0(tx2gene[gene_body_ids, gene_colname], "_gene_body"));
+         GeneTxSE <- SummarizedExperiment::SummarizedExperiment(
+            assays=list(
+               counts=log2(1+txiGeneTx$counts)[, isamples, drop=FALSE],
+               abundance=log2(1+txiGeneTx$abundance)[, isamples, drop=FALSE],
+               length=txiGeneTx$length[, isamples, drop=FALSE]
+            ),
+            rowData=rowData_gene,
+            colData=sample_df[isamples, , drop=FALSE],
+            metadata=list(countsFromAbundance=txiGeneTx$countsFromAbundance)
+         );
+         ret_list$GeneTxSE <- GeneTxSE;
+      }
    }
    return(ret_list);
 }

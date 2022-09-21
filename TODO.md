@@ -1,6 +1,11 @@
+# TODO 20sep2022
+
+* `get_salmon_meta()` should return data in the same order the filenames
+were provided, in fact it's weird that it would not already do that.
+
 # TODO 13sep2022
 
-* Add import function for Mascot proteomics type data format.
+* (COMPLETE) Add import function for Mascot proteomics type data format.
 
 # TODO 13may2022
 

@@ -1,3 +1,33 @@
+# platjam 0.0.58.900
+
+## bug fixes
+
+* `import_salmon_quant()` was errantly checking the class of `tx2gene`,
+causing it to ignore user-supplied `tx2gene`. This issue affected import
+when `gtf` was not supplied, which was much more common.
+
+## changes to existing functions
+
+* `import_salmon_quant()`
+
+   * the list of assays now use names directly from `tximport()`, specifically
+   `c("counts", "abundance", "length")`, and not `c("counts", "tpm")`.
+   * `TxSE` now contains assayName `"length"`, and metadata item
+   `"countsFromAbundance"`, so the output can be used with
+   `tximport::summarizeToGene()` as a second step outside this import
+   process.
+   * new argument option `import_types="gene_body"` designed specifically
+   when the GTF or `tx2gene` contain entries representing unspliced
+   multi-exon genes, in addition to spliced proper transcripts. When present:
+   
+      * `import_types="gene"` will summarize transcripts to gene level,
+      excluding entries annotated `"gene_body"`, returned as `GeneSE`.
+      * `import_types="gene_body"` will summarize transcripts to gene level,
+      including entries annotated `"gene_body"`, returned as `GeneBodySE`.
+      * `import_types="gene_tx"` will summarize transcripts to gene level,
+      and separately represents `"gene_body"` entries,
+      returned as `GeneTxSE`.
+
 # platjam 0.0.57.900
 
 ## new functions

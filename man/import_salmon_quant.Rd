@@ -6,15 +6,17 @@
 \usage{
 import_salmon_quant(
   salmonOut_paths,
-  import_types = c("tx", "gene"),
+  import_types = c("tx", "gene", "gene_body", "gene_tx"),
   gtf = NULL,
   tx2gene = NULL,
   curation_txt = NULL,
   tx_colname = "transcript_id",
   gene_colname = "gene_name",
+  gene_body_colname = "transcript_type",
   geneFeatureType = "exon",
   txFeatureType = "exon",
   countsFromAbundance = "lengthScaledTPM",
+  gene_body_ids = NULL,
   verbose = FALSE,
   ...
 )
@@ -24,10 +26,17 @@ import_salmon_quant(
 that contains the \code{"quant.sf"} output file for Salmon.}
 
 \item{import_types}{\code{character} indicating which type or types of
-data to return:
+data to return. Note that the distinction between \code{gene} and
+\code{gene_body} is only relevant when there are transcript entries
+defined with \code{transcript_type="gene_body"}. These entries specifically
+represent unspliced transcribed regions for a gene locus, and
+only for multi-exon genes.
 \itemize{
-\item \code{tx}: transcript quantitation
-\item \code{gene}: gene quantitation after calling \code{tximport::summarizeToGene()}
+\item \code{tx}: transcript quantitation, direct import of \code{quant.sf} files.
+\item \code{gene}: gene quantitation after calling \code{tximport::summarizeToGene()},
+excluding \code{transcript_type="gene_body"}.
+\item \code{gene_body}: gene quantitation after calling \code{tximport::summarizeToGene()},
+including \code{transcript_type="gene_body"}.
 }}
 
 \item{gtf}{\code{character} path to a GTF file, used only when \code{tx2gene}
@@ -62,12 +71,63 @@ summarized expression values, typically \code{"gene_name"}.
 \code{tximport::summarizeToGene()} to define the method for calculating
 abundance.}
 
+\item{gene_body_ids}{\code{character} optional vector with specific row
+identifiers that should be considered \code{transcript_type="gene_body"}
+entries, relevant to argument \code{import_types} above. When \code{gene_body_ids}
+is defined, these entries are used directly without using \code{tx2gene}.
+When \code{gene_body_ids} is not defined, \code{tx2gene$transcript_type} is used
+if present. If that column is not present, or does not contain any
+entries with \code{"gene_body"}, then all transcripts are used for
+\code{import_types="gene"}, and \code{import_types="gene_body"} is not valid
+and therefore is not returned.}
+
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are passed to supporting functions.}
 }
+\value{
+\code{list} with \code{SummarizedExperiment} objects, each of which
+contain assay names \verb{c("counts", "abundance", "length)}, where
+\code{c("counts", "abundance")} are transformed with \code{log2(1 + x)}.
+The transform can be reversed with \code{10^x - 1}.
+The \code{SummarizedExperiment} objects by name:
+\itemize{
+\item \code{"TxSE"}: transcript-level values imported from \code{quant.sf}.
+\item \code{"GeneSE"}: gene-level summary values, excluding
+\code{"gene_body"} entries.
+\item \code{"GeneBodySE"}: gene-level summary values, including
+\code{"gene_body"} entries.
+\item \code{"GeneTxSE"}: gene-level summary values, where transcripts are
+combined to gene level, and \code{"gene_body"} entries are represented
+separately, with suffix \code{"_gene_body"} added to the gene name.
+}
+}
 \description{
 Import Salmon quant.sf files to SummarizedExperiment
+}
+\details{
+This function is intended to automate the process of importing
+a series of \code{quant.sf} files, then generating \code{SummarizedExperiment}
+objects at the transcript and gene level. It optionally includes
+sample annotation provided as a \code{data.frame} in argument \code{curation_txt}.
+It also includes transcript and gene annotations through either
+\code{data.frame} from argument \code{tx2gene}, or it derives \code{tx2gene}
+from a GTF file from argument \code{gtf}. The GTF file option then calls
+\code{splicejam::makeTx2geneFromGtf()}.
+
+This function can optionally process data that includes full length
+gene body regions, annotated with \code{"gene_body"}. This option is specific
+for Salmon quantitation where the transcripts include full length
+gene body for multi-exon genes, for example to measure unspliced
+transcript abundance.
+\itemize{
+\item \code{import_types="gene"} summarizes only the proper transcripts,
+excluding \code{"gene_body"} entries.
+\item \code{import_types="gene_body"} summarizes all transcript
+and full gene entries into one summary transcript abundance.
+\item \code{import_types="gene_tx"} summarizes proper transcript to gene level,
+and separately represents \code{"gene_body"} entries for comparison.
+}
 }
 \seealso{
 Other jam import functions: 
