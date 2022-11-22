@@ -87,25 +87,35 @@
 #'    entries with `"gene_body"`, then all transcripts are used for
 #'    `import_types="gene"`, and `import_types="gene_body"` is not valid
 #'    and therefore is not returned.
+#' @param curate_tx_from,curate_tx_to `character` vector of regular expression
+#'    patterns to be used optionally to curate the values in `tx_colname` prior
+#'    to joining those values to `tx2gene[[tx_colname]]`.
+#'    The default is to remove `"(-)"` and `"(+)"` from the transcript_id
+#'    (`tx_colname`) column.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to supporting functions.
 #'
 #' @export
 import_salmon_quant <- function
 (salmonOut_paths,
-   import_types=c("tx", "gene", "gene_body", "gene_tx"),
-   gtf=NULL,
-   tx2gene=NULL,
-   curation_txt=NULL,
-   tx_colname="transcript_id",
-   gene_colname="gene_name",
-   gene_body_colname="transcript_type",
-   geneFeatureType="exon",
-   txFeatureType="exon",
-   countsFromAbundance="lengthScaledTPM",
-   gene_body_ids=NULL,
-   verbose=FALSE,
-   ...)
+ import_types=c("tx",
+    "gene",
+    "gene_body",
+    "gene_tx"),
+ gtf=NULL,
+ tx2gene=NULL,
+ curation_txt=NULL,
+ tx_colname="transcript_id",
+ gene_colname="gene_name",
+ gene_body_colname="transcript_type",
+ geneFeatureType="exon",
+ txFeatureType="exon",
+ countsFromAbundance="lengthScaledTPM",
+ gene_body_ids=NULL,
+ trim_tx_from=c("[(][-+][)]"),
+ trim_tx_to=c(""),
+ verbose=FALSE,
+ ...)
 {
    #
    import_types <- match.arg(import_types,
@@ -119,11 +129,20 @@ import_salmon_quant <- function
       if (length(tx2gene) == 1 && file.exists(tx2gene)) {
          tx2gene <- data.table::fread(tx2gene,
             data.table=FALSE);
-         rownames(tx2gene) <- tx2gene[[tx_colname]];
       } else if (!"data.frame" %in% class(tx2gene)) {
          warning(paste("tx2gene should be a file path, or data.frame.",
             "Ignoring tx2gene."));
          tx2gene <- NULL;
+      }
+      # optionally curate tx_colname values
+      if (length(trim_tx_from) > 0) {
+         trim_tx_to <- rep(trim_tx_to,
+            length.out=length(trim_tx_from));
+         for (iseq in seq_along(trim_tx_from)) {
+            tx2gene[[tx_colname]] <- gsub(trim_tx_from[[iseq]],
+               trim_tx_to[[iseq]],
+               tx2gene[[tx_colname]])
+         }
       }
       rownames(tx2gene) <- tx2gene[[tx_colname]];
    }

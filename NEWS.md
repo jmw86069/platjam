@@ -1,3 +1,16 @@
+# platjam 0.0.59.900
+
+## updates to existing functions
+
+* `import_salmon_quant()`
+
+   * new arguments `curate_tx_from`, `curate_tx_to` to allow custom
+   curation of transcript identifiers, specifically for transcripts
+   where the FASTA workflow introduces `"(-)"` and `"(+)"` to the
+   identifiers. This situation occurred when adding gene body transcripts
+   to the Thuman T2Tv2.0 genome GTF entries.
+
+
 # platjam 0.0.58.900
 
 ## bug fixes

@@ -17,6 +17,8 @@ import_salmon_quant(
   txFeatureType = "exon",
   countsFromAbundance = "lengthScaledTPM",
   gene_body_ids = NULL,
+  trim_tx_from = c("[(][-+][)]"),
+  trim_tx_to = c(""),
   verbose = FALSE,
   ...
 )
@@ -84,6 +86,12 @@ and therefore is not returned.}
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are passed to supporting functions.}
+
+\item{curate_tx_from, curate_tx_to}{\code{character} vector of regular expression
+patterns to be used optionally to curate the values in \code{tx_colname} prior
+to joining those values to \code{tx2gene[[tx_colname]]}.
+The default is to remove \code{"(-)"} and \code{"(+)"} from the transcript_id
+(\code{tx_colname}) column.}
 }
 \value{
 \code{list} with \code{SummarizedExperiment} objects, each of which
