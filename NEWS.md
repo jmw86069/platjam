@@ -10,6 +10,12 @@
    identifiers. This situation occurred when adding gene body transcripts
    to the Thuman T2Tv2.0 genome GTF entries.
 
+* `design2colors()`
+
+   * argument `color_sub` will convert color names to hex format, for
+   compatibility with some downstream uses, for example `knitr::kable()`
+   and `jamba::kable_coloring()` when used in an Rmarkdown document.
+
 
 # platjam 0.0.58.900
 

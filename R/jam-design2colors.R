@@ -301,6 +301,19 @@ design2colors <- function
    dex <- rep(dex,
       length.out=2);
 
+   # validate color_sub as supplied
+   # - note that color names should be converted to hex
+   #   in order to be compatible with some downstream tools
+   #   such as knitr::kable(), jamba::kable_coloring().
+   if (length(color_sub) > 0 && "character" %in% class(color_sub)) {
+      # note if this step fails, re-use the input unchanged
+      color_sub <- tryCatch({
+         jamba::rgb2col(col2rgb(color_sub));
+      }, error=function(e){
+         color_sub;
+      })
+   }
+
    # handle each argument of colnames
    if (is.numeric(group_colnames)) {
       group_colnames <- jamba::rmNA(colnames(x)[group_colnames]);
