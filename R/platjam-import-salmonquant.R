@@ -134,17 +134,6 @@ import_salmon_quant <- function
             "Ignoring tx2gene."));
          tx2gene <- NULL;
       }
-      # optionally curate tx_colname values
-      if (length(trim_tx_from) > 0) {
-         trim_tx_to <- rep(trim_tx_to,
-            length.out=length(trim_tx_from));
-         for (iseq in seq_along(trim_tx_from)) {
-            tx2gene[[tx_colname]] <- gsub(trim_tx_from[[iseq]],
-               trim_tx_to[[iseq]],
-               tx2gene[[tx_colname]])
-         }
-      }
-      rownames(tx2gene) <- tx2gene[[tx_colname]];
    }
 
    # gtf
@@ -214,6 +203,21 @@ import_salmon_quant <- function
       countsFromAbundance=countsFromAbundance,
       txOut=TRUE);
    isamples <- colnames(txiTx[[1]]);
+
+   # optionally curate transcript rownames
+   if (length(trim_tx_from) > 0) {
+      trim_tx_to <- rep(trim_tx_to,
+         length.out=length(trim_tx_from));
+      for (itype in c("counts", "abundance", "length")) {
+         for (iseq in seq_along(trim_tx_from)) {
+            rownames(txiTx[[itype]]) <- gsub(trim_tx_from[[iseq]],
+               trim_tx_to[[iseq]],
+               rownames(txiTx[[itype]]))
+         }
+      }
+   }
+   rownames(tx2gene) <- tx2gene[[tx_colname]];
+
 
    # import sample annotations
    if (length(curation_txt) > 0) {
@@ -388,7 +392,7 @@ import_salmon_quant <- function
    if ("gene_tx" %in% import_types) {
       if (length(gene_body_ids) == 0) {
          jamba::printDebug("import_salmon_quant(): ",
-            "no gene_body_ids exist for import_types='gene_body'")
+            "no gene_body_ids exist for import_types='gene_tx'")
       } else {
          # summarize transcript to gene level
          if (verbose) {
