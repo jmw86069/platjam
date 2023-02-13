@@ -9,6 +9,7 @@ import_nanostring_csv(
   probe_colname = "Probe_ID",
   probe_anno_file = NULL,
   assay_name = NULL,
+  hk_count = 10,
   ...
 )
 }
@@ -25,6 +26,12 @@ measurement.}
 \item{probe_anno_file}{\code{character} path to one or more files with
 additional annotation for each measurement, with identifiers that
 match \code{probe_colname} above.}
+
+\item{hk_count}{\code{integer} number of housekeeper genes to use when
+\code{"control_type"} is not defined for the imported data.
+In this case, the last \code{hk_count} genes in the data are
+assumed to be housekeeper genes, by typical convention of
+NanoString codeset design.}
 
 \item{...}{additional arguments are ignored.}
 }

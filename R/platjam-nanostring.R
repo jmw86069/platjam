@@ -36,6 +36,15 @@
 #'    during data import. Note that when `include` is defined, *only*
 #'    these files are included in the file import, all other files are
 #'    ignored.
+#' @param return_type `character` string indicating the format to return.
+#'    SummarizedExperiment is recommended, as the NanoString format
+#'    was useful for R analysis in a package that is no longer
+#'    actively maintained.
+#' @param hk_count `integer` number of housekeeper genes to use when
+#'    `"control_type"` is not defined for the imported data.
+#'    In this case, the last `hk_count` genes in the data are
+#'    assumed to be housekeeper genes, by typical convention of
+#'    NanoString codeset design.
 #' @param debug logical indicating whether to send intermediate data
 #'    before full processing, useful for debugging file format errors.
 #' @param verbose logical indicating whether to print verbose output.
@@ -49,7 +58,8 @@ import_nanostring_rcc <- function
  exclude=NULL,
  include=NULL,
  nprobes=-1,
- control_greps=c(POS="^POS_", NEG="^NEG_"),
+ control_greps=c(POS="^POS", NEG="^NEG"),
+ hk_count=10,
  return_type=c("SummarizedExperiment", "NanoString"),
  debug=FALSE,
  verbose=FALSE,
@@ -318,6 +328,35 @@ import_nanostring_rcc <- function
    if (length(assay_name) > 0) {
       names(SummarizedExperiment::assays(nano_se)) <- head(assay_name, 1);
    }
+
+   # add probe control_type if needed
+   if (!"control_type" %in% colnames(rowData(nano_se))) {
+      SummarizedExperiment::rowData(nano_se)$control_type <- ifelse(
+         grepl("^POS", rownames(nano_se)),
+         "POS",
+         ifelse(
+            grepl("^NEG", rownames(nano_se)),
+            "NEG",
+            NA))
+   }
+   # attempt to add housekeeper genes if not defined
+   if (!any(grepl("^h|control", ignore.case=TRUE, SummarizedExperiment::rowData(nano_se)$control_type))) {
+      control_probes <- split(rownames(nano_se),
+         SummarizedExperiment::rowData(nano_se)$control_type)
+      # guess HK genes
+      hk_genes <- tail(
+         setdiff(rownames(nano_se), unlist(control_probes)),
+         hk_count)
+      hkmatch <- match(hk_genes, rownames(nano_se));
+      SummarizedExperiment::rowData(nano_se[hkmatch,])$control_type <- "HK";
+      SummarizedExperiment::rowData(nano_se)$control_type <- factor(
+         SummarizedExperiment::rowData(nano_se)$control_type,
+         levels=jamba::provigrep(c("NEG", "POS", "HK", "."),
+            unique(SummarizedExperiment::rowData(nano_se)$control_type)))
+      control_probes <- split(rownames(nano_se),
+         SummarizedExperiment::rowData(nano_se)$control_type)
+   }
+
    return(nano_se);
 }
 

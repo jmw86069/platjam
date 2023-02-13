@@ -11,7 +11,8 @@ import_nanostring_rcc(
   exclude = NULL,
   include = NULL,
   nprobes = -1,
-  control_greps = c(POS = "^POS_", NEG = "^NEG_"),
+  control_greps = c(POS = "^POS", NEG = "^NEG"),
+  hk_count = 10,
   return_type = c("SummarizedExperiment", "NanoString"),
   debug = FALSE,
   verbose = FALSE,
@@ -39,6 +40,17 @@ the basename without the file path.}
 during data import. Note that when \code{include} is defined, \emph{only}
 these files are included in the file import, all other files are
 ignored.}
+
+\item{hk_count}{\code{integer} number of housekeeper genes to use when
+\code{"control_type"} is not defined for the imported data.
+In this case, the last \code{hk_count} genes in the data are
+assumed to be housekeeper genes, by typical convention of
+NanoString codeset design.}
+
+\item{return_type}{\code{character} string indicating the format to return.
+SummarizedExperiment is recommended, as the NanoString format
+was useful for R analysis in a package that is no longer
+actively maintained.}
 
 \item{debug}{logical indicating whether to send intermediate data
 before full processing, useful for debugging file format errors.}

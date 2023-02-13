@@ -17,6 +17,11 @@
 #' @param probe_anno_file `character` path to one or more files with
 #'    additional annotation for each measurement, with identifiers that
 #'    match `probe_colname` above.
+#' @param hk_count `integer` number of housekeeper genes to use when
+#'    `"control_type"` is not defined for the imported data.
+#'    In this case, the last `hk_count` genes in the data are
+#'    assumed to be housekeeper genes, by typical convention of
+#'    NanoString codeset design.
 #' @param ... additional arguments are ignored.
 #'
 #' @export
@@ -25,6 +30,7 @@ import_nanostring_csv <- function
  probe_colname="Probe_ID",
  probe_anno_file=NULL,
  assay_name=NULL,
+ hk_count=10,
  ...)
 {
    # read csv into data.frame
@@ -66,6 +72,31 @@ import_nanostring_csv <- function
       names(SummarizedExperiment::assays(nano_se)) <- head(assay_name, 1);
    } else if (any(grepl("norm", ignore.case=TRUE, csv))) {
       names(SummarizedExperiment::assays(nano_se)) <- "norm";
+   }
+
+   # add probe control_type
+   if (!"control_type" %in% colnames(rowData(nano_se))) {
+      SummarizedExperiment::rowData(nano_se)$control_type <- ifelse(
+         grepl("^POS", rownames(nano_se)),
+         "POS",
+         ifelse(
+            grepl("^NEG", rownames(nano_se)),
+            "NEG",
+            NA))
+      control_probes <- split(rownames(nano_se),
+         SummarizedExperiment::rowData(nano_se)$control_type)
+      # guess HK genes
+      hk_genes <- tail(
+         setdiff(rownames(nano_se), unlist(control_probes)),
+         hk_count)
+      hkmatch <- match(hk_genes, rownames(nano_se));
+      SummarizedExperiment::rowData(nano_se[hkmatch,])$control_type <- "HK";
+      SummarizedExperiment::rowData(nano_se)$control_type <- factor(
+         SummarizedExperiment::rowData(nano_se)$control_type,
+         levels=intersect(c("NEG", "POS", "HK"),
+            SummarizedExperiment::rowData(nano_se)$control_type))
+      control_probes <- split(rownames(nano_se),
+         SummarizedExperiment::rowData(nano_se)$control_type)
    }
 
    return(nano_se)
