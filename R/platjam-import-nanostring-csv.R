@@ -99,5 +99,9 @@ import_nanostring_csv <- function
          SummarizedExperiment::rowData(nano_se)$control_type)
    }
 
+   # update colnames(nano_se) to remove whitespace and file extension
+   colnames(nano_se) <- gsub("[ _]+", "_",
+      gsub("[.]RCC$", ignore.case=TRUE, "", colnames(nano_se)))
+
    return(nano_se)
 }
