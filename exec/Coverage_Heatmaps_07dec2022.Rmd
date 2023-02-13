@@ -1,0 +1,135 @@
+---
+title: "Coverage Heatmaps - 07dec2022"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 4
+    toc_float:
+      collapsed: true
+    theme: cerulean
+    highlight: pygments
+    df_print: kable
+    self_contained: true
+    keep_md: false
+  pdf_document:
+    toc: true
+    latex_engine: xelatex
+params:
+  date: !r jamba::getDate()
+---
+
+This document was prepared on **`r format(Sys.time(), "%a %b %d %X %Y")`**.
+
+Input is defined by a tabular file that contains coverage files
+and associated visualization options for each file.
+
+
+# Initialization of Rmarkdown
+
+
+```{r parameters}
+#
+options("stringsAsFactors"=FALSE)
+
+# process all arguments
+
+# required file with input coverage files
+coverage_file <- param$coverage_file;
+
+# optional file to define anno_df
+anno_file <- param$annofile;
+```
+
+
+```{r, markdown_options}
+# Render HTML page with this command:
+# rmarkdown::render("Coverage_Heatmaps_07dec2022.Rmd", "html_document")
+#
+# log into bioinfo3, which contains magick C++ libraries
+# working directory
+# cd /ddn/gs1/project/nextgen/post/archer1/gokey_working/Copied_Intersections/042920_Stranded_Rmarkdown/ATAC_cov/081822_2235_DACs/Rmarkdown_18aug2022
+# open R361 then run the render() function inside that R session
+
+## Saved for reference, update JAM R packages
+if (FALSE) {
+   jampack <- c("jamba", "jamma", "multienrichjam",
+      "venndir", "jamses", "platjam",
+      "slicejam", "colorjam");
+   for (i in jampack) {
+      remotes::install_github(paste0("jmw86069/", i), upgrade="never")
+   }
+}
+
+# /ddn/gs1/project/nextgen/post/archer1/gokey_working/Copied_Intersections/042920_Stranded_Rmarkdown/ATAC_cov/081822_2235_DACs
+basepath <- file.path(
+   "/ddn/gs1/project/nextgen/post/archer1",
+   "gokey_working/Copied_Intersections/042920_Stranded_Rmarkdown",
+   "ATAC_cov/081822_2235_DACs");
+# slicejam
+# 110619_ATAC_coverage_slice_1000s_v2.stats_mgm4_atac1.quantile_countsbatch.txt
+sjfile <- file.path(basepath,
+   "110619_ATAC_coverage_slice_1000s_v2.stats_mgm4_atac1.quantile_countsbatch.txt")
+
+sjfile_txt_mtime <- file.info(sjfile)$mtime;
+
+knitr::opts_chunk$set(
+   cache=TRUE,
+   autodep=TRUE,
+   cache.extra=list(
+      packageVersion("jamba"),
+      # packageVersion("jamma"),
+      packageVersion("jamses"),
+      packageVersion("platjam"),
+      packageVersion("venndir"),
+      sjfile_txt_mtime,
+      "cache_key_1"
+   ),
+   dev=c("png", "cairo_pdf"),
+   # dev=c("png"),
+   dev.args=list(
+      cairo_pdf=list(family=c("Arial"))
+   ),
+   pdf.options(encoding="ISOLatin9.enc"),
+   fig.height=8,
+   fig.width=8,
+   fig.align="center"
+);
+options("scipen"=12);
+options("kable_styling_position"="left",
+   "kable_styling_full_width"=FALSE,
+   "kable_styling_bootstrap_options"=c("striped",
+      "hover",
+      "condensed",
+      "responsive")
+);
+```
+
+
+```{r, pkg_load}
+if (!suppressPackageStartupMessages(require(pacman))) {
+   install.packages("pacman")
+   require(pacman)
+}
+# load or install packages from Github as needed
+p_load_gh("jmw86069/jamba");
+p_load_gh("jmw86069/colorjam");
+p_load_gh("jmw86069/jamma");
+p_load_gh("jmw86069/genejam");
+p_load_gh("jmw86069/venndir");
+p_load_gh("jmw86069/jamses");
+p_load_gh("jmw86069/platjam");
+p_load_gh("jmw86069/jamsession");
+p_load_gh("jmw86069/multienrichjam");
+
+# load or install other required packages as needed
+suppressPackageStartupMessages(p_load(SummarizedExperiment));
+suppressPackageStartupMessages(p_load(ComplexHeatmap));
+suppressPackageStartupMessages(p_load(igraph));
+
+# load or install other required packages as needed
+suppressPackageStartupMessages(p_load(kableExtra));
+suppressPackageStartupMessages(p_load(ggplot2));
+
+```
+

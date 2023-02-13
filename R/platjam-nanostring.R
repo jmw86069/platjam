@@ -43,8 +43,7 @@
 #'
 #' @export
 import_nanostring_rcc <- function
-(
- rcc_files=NULL,
+(rcc_files=NULL,
  rcc_path=".",
  rcc_pattern=NULL,
  exclude=NULL,
@@ -286,6 +285,9 @@ import_nanostring_rcc <- function
    gene_colnames <- setdiff(colnames(x$x), colnames(x$header));
    nano_assays <- as.matrix(x$x[,colnames(x$header),drop=FALSE]);
 
+   # by default transform with log2(1 + x)
+   nano_assays <- log2(1 + nano_assays);
+
    nano_genes <- x$x[,gene_colnames,drop=FALSE];
    if (length(control_greps) > 0) {
       nano_controls_l <- jamba::provigrep(control_greps,
@@ -309,10 +311,13 @@ import_nanostring_rcc <- function
       header=TRUE,
       comment.char="");
    rownames(nano_samples) <- colnames(x$header);
-   nanoSE <- SummarizedExperiment::SummarizedExperiment(
+   nano_se <- SummarizedExperiment::SummarizedExperiment(
       assays=list(raw=nano_assays),
       colData=nano_samples,
       rowData=nano_genes);
-   return(nanoSE);
+   if (length(assay_name) > 0) {
+      names(SummarizedExperiment::assays(nano_se)) <- head(assay_name, 1);
+   }
+   return(nano_se);
 }
 

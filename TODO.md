@@ -1,3 +1,7 @@
+# TODO 10jan2023
+
+* `get_salmon_meta()` - please fix the file ordering as described below.
+
 # TODO 20sep2022
 
 * `get_salmon_meta()` should return data in the same order the filenames

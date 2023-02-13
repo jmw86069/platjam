@@ -8,6 +8,7 @@ import_nanostring_csv(
   csv,
   probe_colname = "Probe_ID",
   probe_anno_file = NULL,
+  assay_name = NULL,
   ...
 )
 }

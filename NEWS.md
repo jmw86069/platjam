@@ -1,3 +1,25 @@
+# platjam 0.0.60.900
+
+* `jamba` dependency was bumped to 0.0.89.900
+* added `SummarizedExperiment` and `XML` to dependencies
+
+## updates to existing functions
+
+* `import_nanostring_csv()` and `import_nanostring_rcc()`
+
+   * both functions now return data transformed with `log2(1 + x)`
+   * CSV import will name the assay `"norm"` if the CSV file contains
+   that substring, otherwise defaults to `"raw"`, consistent with
+   RCC import.
+   * The `assay_name` can be defined upfront for both functions.
+
+## new functions in development
+
+* `validate_heatmap_params()`
+
+   * This function begins a process of making the coverage heatmaps
+   into a command-line tool. Work in progress.
+
 # platjam 0.0.59.900
 
 ## updates to existing functions

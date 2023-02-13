@@ -22,12 +22,15 @@
 #' @export
 import_nanostring_csv <- function
 (csv,
-   probe_colname="Probe_ID",
-   probe_anno_file=NULL,
-   ...)
+ probe_colname="Probe_ID",
+ probe_anno_file=NULL,
+ assay_name=NULL,
+ ...)
 {
    # read csv into data.frame
-   df <- data.table::fread(csv, data.table=FALSE)
+   df <- data.table::fread(file=csv,
+      data.table=FALSE,
+      ...)
    rownames(df) <- df[,1];
 
    # detect sample colnames
@@ -50,13 +53,20 @@ import_nanostring_csv <- function
    }
 
    # NanoString expression
+   # default is to transform with log(1 + x)
    m <- log2(1 + t(as.matrix(df[, probe_names, drop=FALSE])))
 
    # SummarizedExperiment
    nano_se <- SummarizedExperiment::SummarizedExperiment(
-      assays=list(nano=m),
+      assays=list(raw=m),
       rowData=probe_df,
       colData=df[,sample_colnames, drop=FALSE])
+
+   if (length(assay_name) > 0) {
+      names(SummarizedExperiment::assays(nano_se)) <- head(assay_name, 1);
+   } else if (any(grepl("norm", ignore.case=TRUE, csv))) {
+      names(SummarizedExperiment::assays(nano_se)) <- "norm";
+   }
 
    return(nano_se)
 }
