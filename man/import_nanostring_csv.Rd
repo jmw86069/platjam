@@ -27,6 +27,11 @@ measurement.}
 additional annotation for each measurement, with identifiers that
 match \code{probe_colname} above.}
 
+\item{assay_name}{\code{character} string of optional assay name used
+in the \code{SummarizedExperiment} object created. When \code{NULL} the
+default is \code{"raw"} unless the file contains substring \code{"norm"}
+in which case it uses \code{"norm"}.}
+
 \item{hk_count}{\code{integer} number of housekeeper genes to use when
 \code{"control_type"} is not defined for the imported data.
 In this case, the last \code{hk_count} genes in the data are

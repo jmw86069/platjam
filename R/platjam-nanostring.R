@@ -45,6 +45,9 @@
 #'    In this case, the last `hk_count` genes in the data are
 #'    assumed to be housekeeper genes, by typical convention of
 #'    NanoString codeset design.
+#' @param assay_name `character` string of optional assay name used
+#'    in the `SummarizedExperiment` object created. When `NULL` the
+#'    default is `"raw"`.
 #' @param debug logical indicating whether to send intermediate data
 #'    before full processing, useful for debugging file format errors.
 #' @param verbose logical indicating whether to print verbose output.
@@ -60,6 +63,7 @@ import_nanostring_rcc <- function
  nprobes=-1,
  control_greps=c(POS="^POS", NEG="^NEG"),
  hk_count=10,
+ assay_name=NULL,
  return_type=c("SummarizedExperiment", "NanoString"),
  debug=FALSE,
  verbose=FALSE,

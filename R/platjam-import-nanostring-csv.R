@@ -17,6 +17,10 @@
 #' @param probe_anno_file `character` path to one or more files with
 #'    additional annotation for each measurement, with identifiers that
 #'    match `probe_colname` above.
+#' @param assay_name `character` string of optional assay name used
+#'    in the `SummarizedExperiment` object created. When `NULL` the
+#'    default is `"raw"` unless the file contains substring `"norm"`
+#'    in which case it uses `"norm"`.
 #' @param hk_count `integer` number of housekeeper genes to use when
 #'    `"control_type"` is not defined for the imported data.
 #'    In this case, the last `hk_count` genes in the data are

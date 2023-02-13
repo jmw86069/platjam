@@ -13,6 +13,7 @@ import_nanostring_rcc(
   nprobes = -1,
   control_greps = c(POS = "^POS", NEG = "^NEG"),
   hk_count = 10,
+  assay_name = NULL,
   return_type = c("SummarizedExperiment", "NanoString"),
   debug = FALSE,
   verbose = FALSE,
@@ -46,6 +47,10 @@ ignored.}
 In this case, the last \code{hk_count} genes in the data are
 assumed to be housekeeper genes, by typical convention of
 NanoString codeset design.}
+
+\item{assay_name}{\code{character} string of optional assay name used
+in the \code{SummarizedExperiment} object created. When \code{NULL} the
+default is \code{"raw"}.}
 
 \item{return_type}{\code{character} string indicating the format to return.
 SummarizedExperiment is recommended, as the NanoString format
