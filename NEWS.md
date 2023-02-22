@@ -1,3 +1,18 @@
+# platjam 0.0.61.900
+
+## new functions
+
+Proteomics data is sometimes provided in separate results files,
+which can later be merged into one larger format for downstream
+analysis.
+
+* `merge_proteomics_se()`
+
+   * This function provides a specific method of merging two
+   `SummarizedExperiment` objects, with heuristics appropriate
+   for proteomics expression data.
+
+
 # platjam 0.0.60.900
 
 * `jamba` dependency was bumped to 0.0.89.900

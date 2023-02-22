@@ -87,6 +87,7 @@ jamba::showColors(rc_ramps2, groupCellnotes=TRUE, groupByColors=FALSE);
 \seealso{
 Other jam utility functions: 
 \code{\link{get_numeric_transform}()},
+\code{\link{merge_proteomics_se}()},
 \code{\link{rowNormScale}()}
 }
 \concept{jam utility functions}

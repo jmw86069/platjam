@@ -57,6 +57,7 @@ rowNormScale(m, from=0, to=10);
 \seealso{
 Other jam utility functions: 
 \code{\link{color_complement}()},
-\code{\link{get_numeric_transform}()}
+\code{\link{get_numeric_transform}()},
+\code{\link{merge_proteomics_se}()}
 }
 \concept{jam utility functions}
