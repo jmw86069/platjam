@@ -13,6 +13,13 @@
 #' @return `data.frame` with number of rows equal to the length of input,
 #'    `length(x)`. Columns are defined by the input `colnames(df)`.
 #'
+#'    Note that the row order of the output will match the
+#'    curation `df` input.
+#'    The purpose of sorting by curation `df` is so this data can define
+#'    the order of factors used in downstream statistical contrasts.
+#'    The factor order is used to define the control group, as
+#'    the first factor is preferentially the control group.
+#'
 #' @param x `character` vector of input data, often filenames used
 #'    when importing data using one of the `import_*` functions.
 #' @param df `data.frame` whose first column contains `character` patterns,
@@ -38,6 +45,14 @@
 #'    `jamba::ucfirst()` applies upper-case to the first character
 #'    in each colname. When `colname_hook=NULL` then no changes
 #'    are made.
+#' @param sep `character` string passed to `jamba::pasteByRow()` when
+#'    concatenating columns to create a unique identifier for each row.
+#' @param order_priority `character` string indicating how the output
+#'    `data.frame` row order should be defined. Note that the output
+#'    will only include entries in `x` that were found in the
+#'    curation `df`.
+#'    * `"df"`: output follows the order of matching rows in `df`
+#'    * `"x"`: output follows the order of matching `x` values
 #' @param ... additional arguments are passed to `jamba::makeNames()`.
 #'
 #' @examples
@@ -76,6 +91,13 @@
 #' ## Review the curated output
 #' print(df_new);
 #'
+#' # note that output is in order defined by df
+#' match(x, df_new$Filename)
+#'
+#' # output can be ordered by x
+#' df_new_by_x <- curate_to_df_by_pattern(x, df, order_priority="x");
+#' match(x, df_new_by_x$Filename)
+#'
 #' ## Print a colorized image
 #' colorSub <- colorjam::group2colors(unique(unlist(df_new)));
 #' colorSub <- jamba::makeColorDarker(colorSub, darkFactor=-1.6, sFactor=-1.6);
@@ -102,15 +124,21 @@ curate_to_df_by_pattern <- function
  df,
  pattern_colname="pattern",
  group_colname="group",
- id_colname=c("label", "sample"),
+ id_colname=c("label",
+    "sample"),
  input_colname="filename",
  suffix="_rep",
  renameOnes=TRUE,
  colname_hook=jamba::ucfirst,
  sep="_",
+ order_priority=c("df",
+    "x"),
  verbose=FALSE,
  ...)
 {
+   # validate arguments
+   order_priority <- match.arg(order_priority);
+
    ## Match pattern with input vector x
    pattern_colname <- head(jamba::rmNA(colnames(df)[match(tolower(pattern_colname),
       tolower(colnames(df)))]), 1);
@@ -185,6 +213,17 @@ curate_to_df_by_pattern <- function
       setdiff(colnames(df_new), input_colname),
       input_colname));
    df_new <- df_new[, df_colnames, drop=FALSE];
+
+   # optionally order output by the input x
+   if ("x" %in% order_priority) {
+      xmatch <- jamba::rmNA(match(x, df_new[[input_colname]]));
+      df_new <- df_new[xmatch, , drop=FALSE];
+      jamba::printDebug("curate_to_df_by_pattern(): ",
+         "output rows were ordered to match the order in x, using ",
+         "input_colname:",
+         input_colname);
+   }
+
    if (length(colname_hook) > 0 && is.function(colname_hook)) {
       colnames(df_new) <- colname_hook(colnames(df_new));
    }

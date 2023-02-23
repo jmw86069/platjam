@@ -469,10 +469,12 @@ convert_PD_df_to_SE <- function
             data.table=FALSE);
       }
       if ("data.frame" %in% class(curation_txt)) {
+         # consider order_priority="x" as an option
          protein_sample_df <- curate_to_df_by_pattern(
             x=sample_colnames,
             input_colname=head(colnames(curation_txt), 1),
             df=curation_txt,
+            # order_priority="x",
             verbose=verbose);
       }
    }

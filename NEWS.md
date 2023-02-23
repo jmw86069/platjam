@@ -1,3 +1,28 @@
+# platjam 0.0.62.900
+
+## changes to existing functions
+
+* `import_proteomics_mascot()`
+
+   * Added more robust detection of changes in column order between
+   the input Excel file and the curation_txt data.
+   * The output column order now matches the order of the curation_txt
+   file, which should be helpful when defining the control group
+   in statistical contrasts.
+
+* `curate_to_df_by_pattern()`
+
+   * new argument `order_priority="df"` to indicate the order of rows
+   in the `data.frame` returned will match the curation `df`.
+   * option `order_priority="x"` will order rows in the `data.frame`
+   returned by the order of entries in `x`.
+
+* `import_lipotype_csv()`
+
+   * minor changes to ensure the order of curated rows and sample identifiers
+   were matched when the curation data did not contain `"Filename"` column,
+   by default uses the last column returned by `curate_to_df_by_pattern()`.
+
 # platjam 0.0.61.900
 
 ## new functions
@@ -11,7 +36,6 @@ analysis.
    * This function provides a specific method of merging two
    `SummarizedExperiment` objects, with heuristics appropriate
    for proteomics expression data.
-
 
 # platjam 0.0.60.900
 

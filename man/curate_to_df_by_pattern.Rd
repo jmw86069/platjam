@@ -15,6 +15,7 @@ curate_to_df_by_pattern(
   renameOnes = TRUE,
   colname_hook = jamba::ucfirst,
   sep = "_",
+  order_priority = c("df", "x"),
   verbose = FALSE,
   ...
 )
@@ -51,11 +52,30 @@ is used to make unique names for each row.}
 in each colname. When \code{colname_hook=NULL} then no changes
 are made.}
 
+\item{sep}{\code{character} string passed to \code{jamba::pasteByRow()} when
+concatenating columns to create a unique identifier for each row.}
+
+\item{order_priority}{\code{character} string indicating how the output
+\code{data.frame} row order should be defined. Note that the output
+will only include entries in \code{x} that were found in the
+curation \code{df}.
+\itemize{
+\item \code{"df"}: output follows the order of matching rows in \code{df}
+\item \code{"x"}: output follows the order of matching \code{x} values
+}}
+
 \item{...}{additional arguments are passed to \code{jamba::makeNames()}.}
 }
 \value{
 \code{data.frame} with number of rows equal to the length of input,
 \code{length(x)}. Columns are defined by the input \code{colnames(df)}.
+
+Note that the row order of the output will match the
+curation \code{df} input.
+The purpose of sorting by curation \code{df} is so this data can define
+the order of factors used in downstream statistical contrasts.
+The factor order is used to define the control group, as
+the first factor is preferentially the control group.
 }
 \description{
 Curate vector to \code{data.frame} by pattern matching
@@ -103,6 +123,13 @@ x <- c("NOV14_p2w5_VEH_25_v2_CoordSort_deduplicated_SingleFrag_38to100.bam",
 df_new <- curate_to_df_by_pattern(x, df);
 ## Review the curated output
 print(df_new);
+
+# note that output is in order defined by df
+match(x, df_new$Filename)
+
+# output can be ordered by x
+df_new_by_x <- curate_to_df_by_pattern(x, df, order_priority="x");
+match(x, df_new_by_x$Filename)
 
 ## Print a colorized image
 colorSub <- colorjam::group2colors(unique(unlist(df_new)));

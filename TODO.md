@@ -1,3 +1,25 @@
+# TODO 22feb2023
+
+* `design2colors()`
+
+   * Error is thrown when there are empty values in `group_colnames` fields.
+   * Allow defining a `color_max`, maximum value for `numeric` columns that
+   will use a color gradient.
+   
+      * This option will help whenever a few columns should share the
+      same threshold. It is not auto-detected, but can still be useful.
+      The analyst will need to provide the `color_max` value upfront,
+      perhaps in the form of a named vector similar to `color_sub`,
+      named by `colnames(x)`.
+   
+   * Allow `"rownames"` as valid input to `group_colnames`,
+   essentially assigning one value per row.
+   * Make the function work when `group_colnames` is `NULL`.
+   Assign colors to rownames?
+   * consider removing `class_group_color` and `class_group_lightness_color`
+   from output, or renaming each to use the combination of actual colnames
+   assembled to form those colors.
+
 # TODO 10jan2023
 
 * `get_salmon_meta()` - please fix the file ordering as described below.

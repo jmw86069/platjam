@@ -112,7 +112,11 @@ import_lipotype_csv <- function
          isamples,
          df=curation_txt,
          ...);
-      curation_match <- match(sample_df$Filename,
+      filename_column <- vigrep("filename", colnames(sample_df));
+      if (length(filename_column) == 0) {
+         filename_column <- tail(colnames(sample_df), 1)
+      }
+      curation_match <- match(sample_df[[filename_column]],
          rownames(colData_csv));
       if (verbose > 1) {
          jamba::printDebug("import_lipotype_csv(): ",

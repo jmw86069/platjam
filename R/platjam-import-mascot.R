@@ -196,6 +196,12 @@ import_proteomics_mascot <- function
             input_colname=head(colnames(curation_txt), 1),
             df=curation_txt,
             verbose=verbose);
+         # Re-order assays colnames to match sample_colnames
+         sample_colnames <- protein_sample_df$Input;
+         assay_list <- lapply(assay_list, function(iassay){
+            imatch <- match(sample_colnames, colnames(iassay))
+            iassay[, imatch, drop=FALSE]
+         })
       }
    }
    # default sample table
