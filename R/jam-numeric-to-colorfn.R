@@ -3,10 +3,60 @@
 #'
 #' Assign color function to a numeric vector
 #'
-#' This function is called internally by `design2colors()`.
+#' This function is called internally by `design2colors()`. It takes
+#' a `numeric` vector as input, and applies a color gradient
+#' defined by `color` across the range of `numeric` values.
+#'
+#' When there are negative values, a divergent color scale is generated:
+#' * When `color` is a single R color, it is used as the positive color
+#' gradient. A complementary color is chosen as the negative color
+#' using `quick_complement_color()`. The middle color is `base_color`.
+#' * When `color` is a named color gradient, it is assumed to be a
+#' divergent gradient. The middle color of the gradient is assigned to zero,
+#' and the color gradient is symmetric above and below zero.
+#'
+#' The `numeric` range is either defined by the data `x`, or when
+#' `color_max` is supplied, it is used to define the `numeric`
+#' value at which (or higher) the maximum color is assigned.
+#'
+#' * When `color_max` is not assigned, it is defined as `max(abs(x))`.
+#' * If there are negative values, the color gradient will be
+#' defined from `-color_max` to `color_max`, with the middle color
+#' assigned to zero, as described above.
+#' * If there are only positive values, the baseline will be defined
+#' using `ratio_for_zero_baseline`, and the maximum color will be defined
+#' at `color_max` (and higher).
+#'
+#' The `ratio_for_zero_baseline` is used only when there are
+#' no negative values, since it determines whether the color gradient
+#' should be applied starting at zero, or based upon `min(x)`.
+#' When the lowest value is less than `ratio_for_zero_baseline * color_max`
+#' the color gradient is applied starting from zero;
+#' otherwise the baseline uses `min(x)`. In the latter case, non-zero
+#' baseline, the lowest value is extended by multiplying
+#' `lower_range_expansion` by the span of the numeric range, in order
+#' to prevent the lowest non-zero value from being a blank color
+#' defined by `base_color`.
+#'
+#' @return `function` as defined by `circlize::colorRamp2()` which takes
+#'    a `numeric` vector as input, and returns `character` vector of
+#'    colors as output. The attributes described below are used to
+#'    show a suitable summary of colors in `jamba::showColors()`;
+#'    and are used by `jamses::heatmap_se()` to define a
+#'    usable color legend with reasonable number of labels.
+#'    The `function` also contains two important attributes:
+#'    * `"breaks"`: `numeric` values at break positions used when the
+#'    color function was defined. Note the values are taken from the
+#'    color function environment, so modifying breaks directly will
+#'    not affect the color function output.
+#'    * `"colors"`: a matrix of colors in rgb format, with columns
+#'    red, blue, green, and `numeric` values ranging from 0 to 1.
+#'    The number of rows equals the length of color breaks.
 #'
 #' @param x `numeric` or `integer` vector
 #' @param color `character` color
+#' @param color_max `numeric` optional fixed value to define the
+#'    `numeric` value associated with the maximum color gradient color.
 #' @param ratio_for_zero_baseline `numeric` indicating the ratio of
 #'    max to min numeric range, above which the baseline value
 #'    should include zero. This argument is intended when values
@@ -38,20 +88,37 @@
 assign_numeric_colors <- function
 (x,
  color,
+ color_max=NULL,
  ratio_for_zero_baseline=3,
  lower_range_expansion=0.2,
  base_color="#fff6f4",
  restrict_pretty_range=TRUE,
  lens=1,
+ verbose=FALSE,
  ...)
 {
-   #
+   # define numeric range of the data
    irange <- range(x, na.rm=TRUE);
+
+   # optionally apply numeric ceiling
+   color_max <- head(jamba::rmNA(color_max), 1);
+   if (length(color_max) > 0) {
+      irange <- range(
+         jamba::noiseFloor(c(irange, color_max),
+            minimum=-abs(color_max),
+            ceiling=abs(color_max)))
+   }
+
+   # define spanned numeric range
    ispan <- diff(irange, na.rm=TRUE);
    all_integers <- ("integer" %in% class(x) |
          all((x %% 1) == 0));
 
    if (min(irange) >= 0) {
+      if (verbose) {
+         jamba::printDebug("assign_numeric_colors(): ",
+            "Values are positive, defining a linear gradient.")
+      }
       # use a linear color scale if the minimum value is at least zero
       if (min(irange) > 0 && (
          # if lowest value is relatively close to zero, use baseline zero
@@ -109,6 +176,10 @@ assign_numeric_colors <- function
          breaks=pretty_range,
          colors=icolors1(pretty_range));
    } else {
+      if (verbose) {
+         jamba::printDebug("assign_numeric_colors(): ",
+            "Values are negative, defining a divergent gradient.")
+      }
       # divergent color scale
       irange <- max(abs(irange)) * c(-1, 1);
       pretty_range <- pretty(irange);
@@ -125,19 +196,42 @@ assign_numeric_colors <- function
       }
 
       # define divergent color scale
-      color1 <- color;
-      color2 <- quick_complement_color(color1);
-      # one color function with specific color breaks
-      icolors1 <- circlize::colorRamp2(
-         breaks=seq(from=irange[1],
-            to=irange[2],
-            length.out=7),
-         colors=jamba::getColorRamp(
-            c(color2, base_color, color1),
-            divergent=TRUE,
-            defaultBaseColor=base_color,
-            lens=lens,
-            n=7));
+      color1 <- tryCatch({
+         jamba::rgb2col(col2rgb(color))
+      }, error=function(e){
+         color
+      })
+      if (verbose) {
+         jamba::printDebug("assign_numeric_colors(): ",
+            "color1", paste0("'", color1, "'"))
+      }
+
+      if (grepl("^#", color1)) {
+         color2 <- quick_complement_color(color1);
+         # one color function with specific color breaks
+         icolors1 <- circlize::colorRamp2(
+            breaks=seq(from=irange[1],
+               to=irange[2],
+               length.out=7),
+            colors=jamba::getColorRamp(
+               c(color2, base_color, color1),
+               divergent=TRUE,
+               defaultBaseColor=base_color,
+               lens=lens,
+               n=7));
+      } else {
+         # one color function with specific color breaks
+         icolors1 <- circlize::colorRamp2(
+            breaks=seq(from=irange[1],
+               to=irange[2],
+               length.out=7),
+            colors=jamba::getColorRamp(
+               c(color1),
+               divergent=TRUE,
+               defaultBaseColor=base_color,
+               lens=lens,
+               n=7));
+      }
       # use that color function with pretty_breaks
       icolors <- circlize::colorRamp2(
          breaks=pretty_range,

@@ -1,3 +1,23 @@
+# platjam 0.0.63.900
+
+* added testthis unit tests for some functions
+
+## changes to existing functions
+
+* `assign_numeric_colors()`
+
+   * new argument `color_max` to define a fixed upper `numeric` threshold
+   for the maximum color in the color gradient.
+
+* `design2colors()`
+
+   * Changes to enable `color_sub` to accept color ramp names in addition
+   to accepting single colors.
+   * Slightly cleaned up some logic during color assignment.
+   * New argument `color_sub_max` intended to be passed to
+   `assign_numeric_colors()` argument `color_max` for particular
+   column names.
+
 # platjam 0.0.62.900
 
 ## changes to existing functions

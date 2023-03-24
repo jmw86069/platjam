@@ -19,6 +19,7 @@ design2colors(
   desat = c(0, 0.4),
   dex = c(2, 5),
   color_sub = NULL,
+  color_sub_max = NULL,
   na_color = "grey75",
   shuffle_colors = FALSE,
   force_consistent_colors = TRUE,
@@ -84,6 +85,17 @@ order of their appearance in \code{x} unless the column is a \code{factor},
 in which case colors are assigned to \code{levels}.
 }}
 
+\item{color_sub_max}{\code{numeric} optional value used to define a fixed
+upper limit to a color gradient when a color is applied to
+a \code{numeric} column.
+\itemize{
+\item When one value is defined for \code{color_sub_max} it is used for all
+\code{numeric} columns uniformly.
+\item When multiple values are defined for \code{color_sub_max}, then
+\code{names(color_sub_max)} are used to associate to the appropriate
+column matching with \code{colnames(x)}.
+}}
+
 \item{na_color}{\code{character} string with R color, used to assign a
 specific color to \code{NA} values.
 (This assignment is not yet implemented.)}
@@ -95,7 +107,8 @@ are less likely to be similar for adjacent column values.}
 
 \item{force_consistent_colors}{\code{logical} indicating whether to force
 color substitutions across multiple columns, when those columns
-share one or more of the same values. Note: This scenario is most
+share one or more of the same values.
+Note: This scenario is most
 likely to occur when using \code{color_sub} to assign colors to a
 specific column in \code{colnames(x)}, and where that column may contain
 one or more values already assigned a color earlier in the process.

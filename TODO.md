@@ -3,7 +3,8 @@
 * `design2colors()`
 
    * Error is thrown when there are empty values in `group_colnames` fields.
-   * Allow defining a `color_max`, maximum value for `numeric` columns that
+   * DONE: Allow using color ramp name instead of color for column assignment.
+   * DONE: Allow defining a `color_max`, maximum value for `numeric` columns that
    will use a color gradient.
    
       * This option will help whenever a few columns should share the

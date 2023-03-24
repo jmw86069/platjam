@@ -1,6 +1,6 @@
 Package: platjam
 Title: Platform Jam, biological platform importers.
-Version: 0.0.62.9000
+Version: 0.0.63.9000
 Authors@R: person(given="James M.", family="Ward",
     email="jmw86069@gmail.com", role=c("aut", "cre"))
 Description: Platform data import methods for biological platform
@@ -16,11 +16,13 @@ Imports: jamba (>= 0.0.89.900),
     SummarizedExperiment,
     genejam (>= 0.0.16.900),
     XML
-Suggests: ComplexHeatmap,
+Suggests: 
+    ComplexHeatmap,
     EnrichedHeatmap,
     amap,
     jsonlite,
-    rprojroot
+    rprojroot,
+    testthat (>= 3.0.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -33,3 +35,4 @@ Remotes: github::jmw86069/jamba,
     github::jokergoo/ComplexHeatmap,
     github::jokergoo/EnrichedHeatmap
 Roxygen: list(markdown=TRUE)
+Config/testthat/edition: 3
