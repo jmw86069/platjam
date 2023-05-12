@@ -10,6 +10,8 @@ import_nanostring_csv(
   probe_anno_file = NULL,
   assay_name = NULL,
   hk_count = 10,
+  curation_txt = NULL,
+  verbose = FALSE,
   ...
 )
 }
@@ -37,6 +39,20 @@ in which case it uses \code{"norm"}.}
 In this case, the last \code{hk_count} genes in the data are
 assumed to be housekeeper genes, by typical convention of
 NanoString codeset design.}
+
+\item{curation_txt}{either \code{data.frame} or \code{character} file path
+to tab- or comma-delimited file. The first column should match the
+column headers after importing data, \code{colData(se)}.
+Subsequent columns contain associated sample annotations.
+For Nanostring data, the Nanostring sample annotations will already
+be associated with the \code{colData(se)}, and \code{colnames(curation_df)}
+will overwrite any that already exist.
+Pro tip: The first column in \code{curation_txt} should contain \code{'.'}
+instead of punctuation/whitespace, to improve pattern matching
+filenames where the punctuation characters may have been modified
+during processing.}
+
+\item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are ignored.}
 }

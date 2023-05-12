@@ -1,3 +1,21 @@
+# TODO 18apr2023
+
+* `nmatlist2heatmaps()`
+
+   * add method to display group labels above heatmaps:
+   
+      * `signal` - (H3K27ac, H3K4me3, etc) across contiguous `panel_groups`
+      * `type` - (signal, difference) across contiguous signal types
+      within `panel_groups`
+      * `label` - trimmed label which no longer requires the `signal` and
+      `type` encoded into the name.
+      * use `heatmap_column_group_labels()` style
+      
+   * add method to adjust padding (whitespace) around the overall heatmap
+   layout; between heatmaps and color legend; between annotation stripes.
+   * make the color assignment more similar to `jamses::heatmap_se()`,
+   in the form of color `color_list` named by column.
+
 # TODO 22feb2023
 
 * `design2colors()`

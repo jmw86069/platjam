@@ -133,7 +133,9 @@ For multiWig overlay tracks, each overlay track is grouped into
 the top-level header \code{header1} track. However, there is no additional
 subgroup available.
 
-An example for two composite tracks, each with one view.\preformatted{headingA1
+An example for two composite tracks, each with one view.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{headingA1
 headingA2
 track name=trackname1
 track name=trackname2
@@ -142,7 +144,7 @@ headingB1
 headingB2
 track name=trackname5
 track name=trackname6
-}
+}\if{html}{\out{</div>}}
 
 In this case, there will be two top-level parent tracks, labeled
 \code{"headingA1"} and \code{"headingB1"}, which appear inside the track hub.

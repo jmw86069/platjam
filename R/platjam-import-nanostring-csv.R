@@ -26,6 +26,18 @@
 #'    In this case, the last `hk_count` genes in the data are
 #'    assumed to be housekeeper genes, by typical convention of
 #'    NanoString codeset design.
+#' @param curation_txt either `data.frame` or `character` file path
+#'    to tab- or comma-delimited file. The first column should match the
+#'    column headers after importing data, `colData(se)`.
+#'    Subsequent columns contain associated sample annotations.
+#'    For Nanostring data, the Nanostring sample annotations will already
+#'    be associated with the `colData(se)`, and `colnames(curation_df)`
+#'    will overwrite any that already exist.
+#'    Pro tip: The first column in `curation_txt` should contain `'.'`
+#'    instead of punctuation/whitespace, to improve pattern matching
+#'    filenames where the punctuation characters may have been modified
+#'    during processing.
+#' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are ignored.
 #'
 #' @export
@@ -35,6 +47,8 @@ import_nanostring_csv <- function
  probe_anno_file=NULL,
  assay_name=NULL,
  hk_count=10,
+ curation_txt=NULL,
+ verbose=FALSE,
  ...)
 {
    # read csv into data.frame
@@ -72,6 +86,51 @@ import_nanostring_csv <- function
       rowData=probe_df,
       colData=df[,sample_colnames, drop=FALSE])
 
+   # optional curation_txt
+   if (length(curation_txt) > 0) {
+      # if curation_txt is supplied, use it to annotate the samples
+      #
+      if (verbose) {
+         jamba::printDebug("import_nanostring_csv(): ",
+            "processing curation_txt.");
+      }
+      if (is.atomic(curation_txt)) {
+         if (length(curation_txt) == 1) {
+            curation_txt <- data.table::fread(file=curation_txt,
+               data.table=FALSE);
+         } else {
+            stop("curation_txt must be a single file path, or a data.frame")
+         }
+      }
+      if ("data.frame" %in% class(curation_txt)) {
+         # consider order_priority="x" as an option
+         new_sample_df <- curate_to_df_by_pattern(
+            x=colnames(nano_se),
+            input_colname=head(colnames(curation_txt), 1),
+            df=curation_txt,
+            verbose=verbose);
+         if (ncol(new_sample_df) > 1) {
+            sample_match <- match(colnames(nano_se), new_sample_df$File)
+            if (all(is.na(sample_match))) {
+               jamba::printDebug("import_nanostring_csv(): ",
+                  c("No values matched curation_txt, ",
+                  "try replace non-alphanumeric characters with "), "'.'")
+            }
+            add_colnames <- colnames(new_sample_df);
+            if (verbose) {
+               jamba::printDebug("import_nanostring_csv(): ",
+                  "added columns: ", add_colnames);
+               # jamba::printDebug("new_sample_df:");
+               # print(new_sample_df);
+            }
+            colData(nano_se)[,add_colnames] <- (
+               new_sample_df[sample_match, add_colnames, drop=FALSE])
+         }
+      } else {
+         stop("curation_txt must be a single file path, or a data.frame")
+      }
+   }
+
    if (length(assay_name) > 0) {
       names(SummarizedExperiment::assays(nano_se)) <- head(assay_name, 1);
    } else if (any(grepl("norm", ignore.case=TRUE, csv))) {
@@ -79,7 +138,7 @@ import_nanostring_csv <- function
    }
 
    # add probe control_type
-   if (!"control_type" %in% colnames(rowData(nano_se))) {
+   if (!"control_type" %in% colnames(SummarizedExperiment::rowData(nano_se))) {
       SummarizedExperiment::rowData(nano_se)$control_type <- ifelse(
          grepl("^POS", rownames(nano_se)),
          "POS",

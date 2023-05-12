@@ -1,3 +1,15 @@
+# platjam 0.0.64.900
+
+## changes to existing functions
+
+* `import_nanostring_csv()`
+
+   * new argument `curation_txt` for optional sample annotations during
+   import; behaves exactly as with `import_proteomics_mascot()`.
+   * TODO: will add this argument to `import_nanostring_rcc()`
+   * TODO: will create generic function for curation into SE `colData()`
+   * fixed bug not prefixing `rowData()`
+
 # platjam 0.0.63.900
 
 * added testthis unit tests for some functions
