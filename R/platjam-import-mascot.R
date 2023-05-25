@@ -34,25 +34,25 @@
 #' @export
 import_proteomics_mascot <- function
 (file,
-   sheet=1,
-   ann_lib=c("org.Hs.eg.db",
-      "org.Mm.eg.db",
-      "org.Rn.eg.db"),
-   curation_txt=NULL,
-   accession_from=NULL,
-   accession_to=NULL,
-   xref_df=NULL,
-   measurements=c("totalIntensity",
-      "numSpectra"),
-   accession_colname="accession",
-   delim="[/]",
-   try_list=c("SYMBOL2EG",
-      "ACCNUM2EG",
-      "UNIPROT2EG",
-      "ENSEMBLPROT2EG",
-      "ALIAS2EG"),
-   verbose=FALSE,
-   ...)
+ sheet=1,
+ ann_lib=c("org.Hs.eg.db",
+    "org.Mm.eg.db",
+    "org.Rn.eg.db"),
+ curation_txt=NULL,
+ accession_from=NULL,
+ accession_to=NULL,
+ xref_df=NULL,
+ measurements=c("totalIntensity",
+    "numSpectra"),
+ accession_colname="accession",
+ delim="[/]",
+ try_list=c("SYMBOL2EG",
+    "ACCNUM2EG",
+    "UNIPROT2EG",
+    "ENSEMBLPROT2EG",
+    "ALIAS2EG"),
+ verbose=FALSE,
+ ...)
 {
    #
    if (!jamba::check_pkg_installed("SummarizedExperiment")) {
@@ -153,6 +153,11 @@ import_proteomics_mascot <- function
    protein_gene_df <- data.frame(check.names=FALSE,
       protein_genejam_df,
       protein_df[,setdiff(rowData_colnames, colnames(protein_genejam_df)), drop=FALSE]);
+   if (verbose) {
+      jamba::printDebug("import_proteomics_mascot(): ",
+         "head(protein_gene_df):");
+      print(head(protein_gene_df))
+   }
 
    if (verbose) {
       jamba::printDebug("import_proteomics_mascot(): ",
@@ -172,6 +177,11 @@ import_proteomics_mascot <- function
          gsub(iname, "", colnames(m)));
       m
    })
+   if (verbose) {
+      jamba::printDebug("import_proteomics_mascot(): ",
+         "head(assay_list[[1]]):");
+      print(head(assay_list[[1]]))
+   }
 
    protein_sample_df <- NULL;
    sample_colnames <- colnames(assay_list[[1]]);
@@ -196,12 +206,20 @@ import_proteomics_mascot <- function
             input_colname=head(colnames(curation_txt), 1),
             df=curation_txt,
             verbose=verbose);
-         # Re-order assays colnames to match sample_colnames
-         sample_colnames <- protein_sample_df$Input;
+         # Re-order assays colnames to match protein_sample_df$Input
+         # Then rename assay colnames to match rownames(protein_sample_df)
          assay_list <- lapply(assay_list, function(iassay){
-            imatch <- match(sample_colnames, colnames(iassay))
-            iassay[, imatch, drop=FALSE]
+            imatch <- match(protein_sample_df$Input, colnames(iassay))
+            iassay <- iassay[, imatch, drop=FALSE];
+            colnames(iassay) <- rownames(protein_sample_df);
+            iassay;
          })
+         sample_colnames <- rownames(protein_sample_df);
+         if (verbose) {
+            jamba::printDebug("import_proteomics_mascot(): ",
+               "head(assay_list[[1]]):");
+            print(head(assay_list[[1]]))
+         }
       }
    }
    # default sample table

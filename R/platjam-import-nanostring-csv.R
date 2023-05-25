@@ -109,6 +109,17 @@ import_nanostring_csv <- function
             input_colname=head(colnames(curation_txt), 1),
             df=curation_txt,
             verbose=verbose);
+         if (verbose) {
+            jamba::printDebug("import_nanostring_csv(): ",
+               "curation_txt:");
+            print(curation_txt);
+            jamba::printDebug("import_nanostring_csv(): ",
+               "colnames(nano_se):");
+            print(colnames(nano_se));
+            jamba::printDebug("import_nanostring_csv(): ",
+               "curated data.frame:");
+            print(new_sample_df);
+         }
          if (ncol(new_sample_df) > 1) {
             sample_match <- match(colnames(nano_se), new_sample_df$File)
             if (all(is.na(sample_match))) {
@@ -123,7 +134,7 @@ import_nanostring_csv <- function
                # jamba::printDebug("new_sample_df:");
                # print(new_sample_df);
             }
-            colData(nano_se)[,add_colnames] <- (
+            SummarizedExperiment::colData(nano_se)[,add_colnames] <- (
                new_sample_df[sample_match, add_colnames, drop=FALSE])
          }
       } else {

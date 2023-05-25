@@ -10,6 +10,11 @@
    * TODO: will create generic function for curation into SE `colData()`
    * fixed bug not prefixing `rowData()`
 
+* `import_proteomics_mascot()`
+
+   * updated to fix error when colnames are changed by `curation_txt`
+
+
 # platjam 0.0.63.900
 
 * added testthis unit tests for some functions
