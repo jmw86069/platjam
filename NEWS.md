@@ -1,3 +1,11 @@
+# platjam 0.0.65.900
+
+## changes
+
+* added genejam Github information to DESCRIPTION, previously this
+package was not properly referenced as part of Github and would
+cause the package dependency to fail.
+
 # platjam 0.0.64.900
 
 ## changes to existing functions
