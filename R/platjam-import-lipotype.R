@@ -108,7 +108,7 @@ import_lipotype_csv <- function
          jamba::printDebug("import_lipotype_csv(): ",
             "applying sample annotations via curation_txt.");
       }
-      sample_df <- slicejam::curate_to_df_by_pattern(
+      sample_df <- curate_to_df_by_pattern(
          isamples,
          df=curation_txt,
          ...);
