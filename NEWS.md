@@ -1,3 +1,12 @@
+# platjam 0.0.66.900
+
+## bug fixes
+
+* `import_salmon_quant()` was using the older version of
+`curate_to_df_by_pattern()` supplied by `slicejam` instead of
+the slightly updated version in `platjam` (this package).
+Not such a big issue except that `slicejam` is not yet public.
+
 # platjam 0.0.65.900
 
 ## changes

@@ -226,7 +226,7 @@ import_salmon_quant <- function
             "applying sample annotations via curation_txt.");
       }
       # sample_df
-      sample_df <- slicejam::curate_to_df_by_pattern(
+      sample_df <- curate_to_df_by_pattern(
          isamples,
          df=curation_txt,
          ...);
