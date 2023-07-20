@@ -67,6 +67,8 @@ transform_list[[2]](x)
 \seealso{
 Other jam utility functions: 
 \code{\link{color_complement}()},
+\code{\link{curate_se_colData}()},
+\code{\link{curate_to_df_by_pattern}()},
 \code{\link{merge_proteomics_se}()},
 \code{\link{rowNormScale}()}
 }

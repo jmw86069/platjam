@@ -152,3 +152,12 @@ axis(3,
 par(opar);
 
 }
+\seealso{
+Other jam utility functions: 
+\code{\link{color_complement}()},
+\code{\link{curate_se_colData}()},
+\code{\link{get_numeric_transform}()},
+\code{\link{merge_proteomics_se}()},
+\code{\link{rowNormScale}()}
+}
+\concept{jam utility functions}

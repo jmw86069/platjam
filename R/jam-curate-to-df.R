@@ -20,6 +20,8 @@
 #'    The factor order is used to define the control group, as
 #'    the first factor is preferentially the control group.
 #'
+#' @family jam utility functions
+#'
 #' @param x `character` vector of input data, often filenames used
 #'    when importing data using one of the `import_*` functions.
 #' @param df `data.frame` whose first column contains `character` patterns,
@@ -218,10 +220,12 @@ curate_to_df_by_pattern <- function
    if ("x" %in% order_priority) {
       xmatch <- jamba::rmNA(match(x, df_new[[input_colname]]));
       df_new <- df_new[xmatch, , drop=FALSE];
-      jamba::printDebug("curate_to_df_by_pattern(): ",
-         "output rows were ordered to match the order in x, using ",
-         "input_colname:",
-         input_colname);
+      if (verbose) {
+         jamba::printDebug("curate_to_df_by_pattern(): ",
+            "output rows were ordered to match the order in x, using ",
+            "colname: '",
+            input_colname, "'");
+      }
    }
 
    if (length(colname_hook) > 0 && is.function(colname_hook)) {

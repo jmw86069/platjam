@@ -1,3 +1,21 @@
+# platjam 0.0.67.900
+
+## new functions
+
+* `import_metabolomics_niehs()`
+
+   * imports metabolomics data specifically in file formats used
+   by the NIEHS Metabolomics Core Facility. The output is a `list`
+   of `SummarizedExperiment` objects, typically including positive
+   and negative ionization data.
+
+* `curate_se_colData()`
+
+   * wrapper function to `curate_to_df_by_pattern()` specifically
+   for `SummarizedExperiment::colData()`, updating data in place.
+   * optionally this step can subset columns for those that
+   match curated patterns.
+
 # platjam 0.0.66.900
 
 ## bug fixes

@@ -51,6 +51,7 @@ Other jam import functions:
 \code{\link{coverage_matrix2nmat}()},
 \code{\link{deepTools_matrix2nmat}()},
 \code{\link{import_lipotype_csv}()},
+\code{\link{import_metabolomics_niehs}()},
 \code{\link{import_nanostring_csv}()},
 \code{\link{import_nanostring_rcc}()},
 \code{\link{import_proteomics_PD}()},

@@ -1,3 +1,11 @@
+# TODO 19jul2023
+
+* DONE: add importer for metabolomics data
+
+   * `import_metabolomics_niehs()` - import LC-MS or LC-MS/MS data
+   processed by the NIEHS Metabolomics Core Facility, with defined file
+   formats.
+
 # TODO 18apr2023
 
 * `nmatlist2heatmaps()`
