@@ -1,3 +1,15 @@
+# platjam 0.0.68.900
+
+## bug fixes
+
+* `import_metabolomics_niehs()`
+
+   * Fixed bug when importing files that may contain duplicated
+   rows in metadata, and in each data matrix file.
+   The issue appears to be pure duplication of rows, so the workaround
+   is to print a warning, and retain non-duplicated records
+   per SampleID value.
+
 # platjam 0.0.67.900
 
 ## new functions

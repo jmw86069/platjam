@@ -168,8 +168,21 @@ import_metabolomics_niehs <- function
    # load sample metadata
    metadata_df <- data.table::fread(metadata_file,
       data.table=FALSE)
-   # 0.0.67.900 - fix issue where CORE_Filename may be present multiple times
-   metadata_df <- subset(metadata_df, !duplicated(CORE_Filename))
+   # 0.0.68.900 - fix issue where CORE_Filename may be present multiple times
+   dupe_filenames <- names(jamba::tcount(metadata_df$CORE_Filename, 2));
+   if (length(dupe_filenames) > 0) {
+      metadata_df <- subset(metadata_df, !duplicated(CORE_Filename))
+      if (verbose) {
+         jamba::printDebug("import_metabolomics_niehs(): ",
+            c("Warning: ",
+               jamba::formatInt(length(dupe_filenames)),
+               " CORE_Filename values were duplicated in the metadata.",
+               " Retaining non-duplicated rows."),
+            sep="",
+            fgText=c("darkorange", "firebrick3"))
+         print(dupe_filenames);
+      }
+   }
    # now rownames should be unique
    rownames(metadata_df) <- metadata_df$CORE_Filename;
 
@@ -205,12 +218,19 @@ import_metabolomics_niehs <- function
          anno_df <- data.table::fread(
             file.path(data_path, rownames(idf_sub)),
             data.table=FALSE)
+         if (verbose) {
+            jamba::printDebug("import_metabolomics_niehs(): ",
+               indent=3,
+               "Importing file subset '", ilist, "' annotation '",
+               rownames(idf_sub), "'")
+         }
          fi_colname <- head(jamba::vigrep("^feature.index$",
             colnames(anno_df)), 1)
          if (length(fi_colname) == 1) {
             rownames(anno_df) <- anno_df[[fi_colname]];
          } else {
             jamba::printDebug("import_metabolomics_niehs(): ",
+               indent=3,
                "No annotation column 'feature_index' exists for subset '",
                ilist,
                "'. Skipping this subset.",
@@ -219,6 +239,7 @@ import_metabolomics_niehs <- function
          }
       } else {
          jamba::printDebug("import_metabolomics_niehs(): ",
+            indent=3,
             "No annotation file exists for subset '",
             ilist,
             "'. Skipping this subset.",
@@ -231,6 +252,12 @@ import_metabolomics_niehs <- function
          idf_sub <- jamba::mixedSortDF(idf_sub, byCols="Signal")
          idf_files <- jamba::nameVector(rownames(idf_sub), idf_sub$Signal);
          assay_list <- lapply(idf_files, function(idf_file) {
+            if (verbose) {
+               jamba::printDebug("import_metabolomics_niehs(): ",
+                  indent=3,
+                  "Importing file subset '", ilist, "'       data '",
+                  idf_file, "'")
+            }
             jdf <- data.table::fread(
                file.path(data_path, idf_file),
                data.table=FALSE)
@@ -238,12 +265,29 @@ import_metabolomics_niehs <- function
                jamba::vigrep("^SampleID$", colnames(jdf)),
                1)
             if (length(sample_colname) == 1) {
+               # 0.0.68.900 - fix issue where SampleID may be duplicated
+               dupe_samples <- names(jamba::tcount(jdf[[sample_colname]], 2));
+               if (length(dupe_samples) > 0) {
+                  if (verbose) {
+                     jamba::printDebug("import_metabolomics_niehs(): ",
+                        indent=6,
+                        c("Warning: ",
+                           jamba::formatInt(length(dupe_samples)),
+                           " samples were duplicated in the results.",
+                           " Retaining non-duplicated rows."),
+                        sep="",
+                        fgText=c("darkorange", "firebrick3"))
+                     print(dupe_samples);
+                  }
+                  jdf <- subset(jdf, !duplicated(jdf[[sample_colname]]));
+               }
                rownames(jdf) <- jdf[[sample_colname]];
                use_colnames <- setdiff(colnames(jdf), sample_colname)
                jmatrix <- t(jdf[, use_colnames, drop=FALSE])
                return(jmatrix)
             }
             jamba::printDebug("import_metabolomics_niehs(): ",
+               indent=3,
                "No measurement column 'SampleID' exists for subset '",
                ilist,
                "' and file '",
@@ -256,6 +300,7 @@ import_metabolomics_niehs <- function
          assay_columns <- colnames(assay_list[[1]]);
       } else {
          jamba::printDebug("import_metabolomics_niehs(): ",
+            indent=3,
             "No datamatrix files exists for subset '",
             ilist,
             "'. Skipping this subset.",
