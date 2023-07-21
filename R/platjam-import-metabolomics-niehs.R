@@ -168,6 +168,9 @@ import_metabolomics_niehs <- function
    # load sample metadata
    metadata_df <- data.table::fread(metadata_file,
       data.table=FALSE)
+   # 0.0.67.900 - fix issue where CORE_Filename may be present multiple times
+   metadata_df <- subset(metadata_df, !duplicated(CORE_Filename))
+   # now rownames should be unique
    rownames(metadata_df) <- metadata_df$CORE_Filename;
 
    # find data files
