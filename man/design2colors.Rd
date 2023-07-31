@@ -18,6 +18,8 @@ design2colors(
   hue_offset = 0,
   desat = c(0, 0.4),
   dex = c(2, 5),
+  Crange = c(70, 120),
+  Lrange = c(45, 90),
   color_sub = NULL,
   color_sub_max = NULL,
   na_color = "grey75",
@@ -26,11 +28,17 @@ design2colors(
   plot_type = c("table", "list", "none"),
   return_type = c("list", "df", "vector"),
   verbose = FALSE,
+  debug = c("none", "cardinality"),
   ...
 )
 }
 \arguments{
-\item{x}{\code{data.frame} with columns to be colorized}
+\item{x}{\code{data.frame} with columns to be colorized,
+\code{DataFrame} from Bioconductor \code{S4Vectors} package,
+\code{tbl_df} from the \code{tibble} package, or \code{matrix}. In all cases
+the data is coerced to \code{data.frame} without changing colnames,
+and without imposing factor values per column, unless factors
+were already encoded.}
 
 \item{group_colnames}{\code{character} or \code{intger} vector indicating
 which \code{colnames(x)} to use, in order, for group color assignment.}
@@ -43,7 +51,19 @@ higher-level grouping of \code{group_colnames}}
 
 \item{preset}{\code{character} string passed to \code{colorjam::h2hwOptions()},
 which defines the hues around a color wheel, used when selecting
-categorical colors.}
+categorical colors. Some shortcuts:
+\itemize{
+\item \code{"dichromat"}: (default) uses color-blindness friendly color wheel,
+minimizing effects of three types of color blindness mainly by
+removing large chunks of the green color space.
+\item \code{"ryb"}: red-yellow-blue color wheel, which emphasizes the yellow
+part of the wheel as a major color, as opposed to computer
+monitor default that represents the red-green-blue color components.
+\item \code{"ryb2"}: red-yellow-blue color wheel, version 2, adjusted
+to reduce effects of greenish-yellow for aesthetics.
+\item \code{"rgb"}: default red-green-blue color wheel used by computer
+monitors to mimic the components of human vision.
+}}
 
 \item{phase, rotate_phase}{\code{integer} value, \code{phase} is passed to
 \code{colorjam::rainbowJam()} to define the light/dark pattern phasing,
@@ -73,6 +93,10 @@ effect, and higher values apply more dramatic light-to-dark
 effect. When \code{dex} has length=2, the second value is used only
 for columns where colors are assigned by \code{colnames(x)}
 using \code{color_sub}.}
+
+\item{Crange, Lrange}{\code{numeric} ranges passed to \code{colorjam::rainbowJam()}
+to define slightly less saturated colors than the default rainbow
+palette.}
 
 \item{color_sub}{\code{character} vector of R colors, where \code{names(color_sub)}
 assign each color to a character string. It is intended to allow
@@ -152,6 +176,8 @@ factor level.
 
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 
+\item{debug}{\code{character} string used to enable detailed debugging output.}
+
 \item{...}{additional arguments are passed to downstream functions.}
 }
 \value{
@@ -177,10 +203,50 @@ Convert experiment design into categorical colors
 The general goal is to assign categorical colors relevant to
 the experimental design of an analysis. The basic logic:
 \enumerate{
-\item Assign categorical colors to broadly defined experimental groups.
+\item Assign categorical colors to experimental groups.
 \item Shade these colors light-to-dark based upon secondary factors.
 \item For step 1 above, optionally assign similar color hues by class.
 }
+
+When there are multiple factors in a design, the general guidance:
+\itemize{
+\item Define \code{group_colnames} using the first two factors in the design.
+\item Define \code{class_colnames} using one of these two factors.
+Values in \code{group_colnames} will be assigned rainbow categorical colors,
+with extra spacing between each class. Values in one class will be
+assigned similar color hues, for example one class may be red/orange,
+another class may be blue/purple.
+\item Optionally choose another factor to use as \code{lightness_colnames}.
+When there are multiple unique values per group, they will be
+shaded from light to dark within the group color hue.
+}
+
+It is sometimes helpful to create a column for \code{class_colnames},
+for example when a series of treatments can be categorized
+by the type of treatment (agonists, antagonists, inhibitors,
+controls).
+
+Franky, we tend to try a few combinations until the output seems
+intuitive. Then we assign specific values from other columns
+using \code{color_sub}. Typically for \code{numeric} columns we assign
+a color to the colname, and for \code{categorical} colors we assign
+colors to values in the column.
+
+Version 0.0.69.900 and higher: When the cardinality of group/class
+values is not 1-to-many, either the group/class assignments
+are switched in order to create 1-to-many cardinality, or
+a combination of the two vectors is used to create the appropriate
+cardinality.
+\subsection{When no group_colnames or class_colnames are defined}{
+
+By default, the unique rownames are used as if they were groups,
+then colors are assigned using the same logic as usual. Any
+other column whose values are 1-to-1 match with rownames will
+inherit the same colors, otherwise \code{character} and \code{factor}
+columns will be assigned categorical colors, and \code{numeric}
+columns will be assigned a color gradient.
+}
+
 \subsection{Categorical colors}{
 
 At its simplest a set of groups can be assigned categorical colors.

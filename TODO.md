@@ -1,3 +1,22 @@
+# TODO 31jul2023
+
+* `design2colors()`
+
+   * DONE. accept `DataFrame` input, as from `SummarizedExperiment::colData()`.
+   * DONE. use workaround for class/group cardinality different than 1-to-N
+   * DONE. when lightness is defined and group/lightness cardinality is not
+   1-to-N, assign "grey45" to lightness_colnames in color_sub.
+   * DONE. handle using `"-"` prefix for colnames to reverse the sort order
+   * DONE. fix use case with no values assigned from `group_colnames`
+   * fix use case with only one input colname, no rownames are printed
+   * consider sorting column assignment based upon cardinality with
+   `group_colnames`, then number of unique entries, in order to impose
+   some reproducibility even when input column order is changed.
+   * accept color assignment for `class_colnames` values, which would
+   then impose constraints on group color hues within reasonable range
+   of those colors. It would effective split the color hue into a slightly
+   wider range of hues, centered on the class color hue.
+
 # TODO 19jul2023
 
 * DONE: add importer for metabolomics data

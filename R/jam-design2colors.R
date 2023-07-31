@@ -6,9 +6,47 @@
 #' The general goal is to assign categorical colors relevant to
 #' the experimental design of an analysis. The basic logic:
 #'
-#' 1. Assign categorical colors to broadly defined experimental groups.
+#' 1. Assign categorical colors to experimental groups.
 #' 2. Shade these colors light-to-dark based upon secondary factors.
 #' 3. For step 1 above, optionally assign similar color hues by class.
+#'
+#' When there are multiple factors in a design, the general guidance:
+#'
+#' * Define `group_colnames` using the first two factors in the design.
+#' * Define `class_colnames` using one of these two factors.
+#' Values in `group_colnames` will be assigned rainbow categorical colors,
+#' with extra spacing between each class. Values in one class will be
+#' assigned similar color hues, for example one class may be red/orange,
+#' another class may be blue/purple.
+#' * Optionally choose another factor to use as `lightness_colnames`.
+#' When there are multiple unique values per group, they will be
+#' shaded from light to dark within the group color hue.
+#'
+#' It is sometimes helpful to create a column for `class_colnames`,
+#' for example when a series of treatments can be categorized
+#' by the type of treatment (agonists, antagonists, inhibitors,
+#' controls).
+#'
+#' Franky, we tend to try a few combinations until the output seems
+#' intuitive. Then we assign specific values from other columns
+#' using `color_sub`. Typically for `numeric` columns we assign
+#' a color to the colname, and for `categorical` colors we assign
+#' colors to values in the column.
+#'
+#' Version 0.0.69.900 and higher: When the cardinality of group/class
+#' values is not 1-to-many, either the group/class assignments
+#' are switched in order to create 1-to-many cardinality, or
+#' a combination of the two vectors is used to create the appropriate
+#' cardinality.
+#'
+#' ## When no group_colnames or class_colnames are defined
+#'
+#' By default, the unique rownames are used as if they were groups,
+#' then colors are assigned using the same logic as usual. Any
+#' other column whose values are 1-to-1 match with rownames will
+#' inherit the same colors, otherwise `character` and `factor`
+#' columns will be assigned categorical colors, and `numeric`
+#' columns will be assigned a color gradient.
 #'
 #' ## Categorical colors
 #'
@@ -76,7 +114,12 @@
 #'    use `circlize::colorRamp2()` to apply color gradient
 #'
 #'
-#' @param x `data.frame` with columns to be colorized
+#' @param x `data.frame` with columns to be colorized,
+#'    `DataFrame` from Bioconductor `S4Vectors` package,
+#'    `tbl_df` from the `tibble` package, or `matrix`. In all cases
+#'    the data is coerced to `data.frame` without changing colnames,
+#'    and without imposing factor values per column, unless factors
+#'    were already encoded.
 #' @param group_colnames `character` or `intger` vector indicating
 #'    which `colnames(x)` to use, in order, for group color assignment.
 #' @param lightness_colnames `character` or `intger` vector indicating
@@ -85,7 +128,17 @@
 #'    higher-level grouping of `group_colnames`
 #' @param preset `character` string passed to `colorjam::h2hwOptions()`,
 #'    which defines the hues around a color wheel, used when selecting
-#'    categorical colors.
+#'    categorical colors. Some shortcuts:
+#'    * `"dichromat"`: (default) uses color-blindness friendly color wheel,
+#'    minimizing effects of three types of color blindness mainly by
+#'    removing large chunks of the green color space.
+#'    * `"ryb"`: red-yellow-blue color wheel, which emphasizes the yellow
+#'    part of the wheel as a major color, as opposed to computer
+#'    monitor default that represents the red-green-blue color components.
+#'    * `"ryb2"`: red-yellow-blue color wheel, version 2, adjusted
+#'    to reduce effects of greenish-yellow for aesthetics.
+#'    * `"rgb"`: default red-green-blue color wheel used by computer
+#'    monitors to mimic the components of human vision.
 #' @param phase,rotate_phase `integer` value, `phase` is passed to
 #'    `colorjam::rainbowJam()` to define the light/dark pattern phasing,
 #'    which has 6 positions, and negative values reverse the order.
@@ -110,6 +163,9 @@
 #'    effect. When `dex` has length=2, the second value is used only
 #'    for columns where colors are assigned by `colnames(x)`
 #'    using `color_sub`.
+#' @param Crange,Lrange `numeric` ranges passed to `colorjam::rainbowJam()`
+#'    to define slightly less saturated colors than the default rainbow
+#'    palette.
 #' @param color_sub `character` vector of R colors, where `names(color_sub)`
 #'    assign each color to a character string. It is intended to allow
 #'    specific color assignments upfront.
@@ -170,6 +226,7 @@
 #'    * `"vector"`: a `character` vector of R colors, named by assigned
 #'    factor level.
 #' @param verbose `logical` indicating whether to print verbose output.
+#' @param debug `character` string used to enable detailed debugging output.
 #' @param ... additional arguments are passed to downstream functions.
 #'
 #' @return output depends upon argument `return_type`:
@@ -258,41 +315,52 @@
 #' @export
 design2colors <- function
 (x,
-   group_colnames=NULL,
-   lightness_colnames=NULL,
-   class_colnames=NULL,
-   ignore_colnames=NULL,
-   preset="dichromat",
-   phase=1,
-   rotate_phase=-1,
-   class_pad=1,
-   end_hue_pad=2,
-   hue_offset=0,
-   desat=c(0, 0.4),
-   dex=c(2, 5),
-   color_sub=NULL,
-   color_sub_max=NULL,
-   na_color="grey75",
-   shuffle_colors=FALSE,
-   force_consistent_colors=TRUE,
-   plot_type=c("table",
-      "list",
-      "none"),
-   return_type=c("list",
-      "df",
-      "vector"),
-   verbose=FALSE,
-   ...)
+ group_colnames=NULL,
+ lightness_colnames=NULL,
+ class_colnames=NULL,
+ ignore_colnames=NULL,
+ preset="dichromat",
+ phase=1,
+ rotate_phase=-1,
+ class_pad=1,
+ end_hue_pad=2,
+ hue_offset=0,
+ desat=c(0, 0.4),
+ dex=c(2, 5),
+ Crange=c(70, 120),
+ Lrange=c(45, 90),
+ color_sub=NULL,
+ color_sub_max=NULL,
+ na_color="grey75",
+ shuffle_colors=FALSE,
+ force_consistent_colors=TRUE,
+ plot_type=c("table",
+    "list",
+    "none"),
+ return_type=c("list",
+    "df",
+    "vector"),
+ verbose=FALSE,
+ debug=c("none",
+    "cardinality"),
+ ...)
 {
    #
    if (length(x) == 0) {
       return(NULL)
    }
+   debug <- match.arg(debug);
 
    # Convert SummarizedExperiment to data.frame using colData(x)
    if ("SummarizedExperiment" %in% class(x)) {
       x <- data.frame(check.names=FALSE,
          SummarizedExperiment::colData(x));
+   } else if (inherits(x, "DataFrame")) {
+      x <- data.frame(check.names=FALSE,
+         stringsAsFactors=FALSE,
+         x);
+   } else if (inherits(x, "tbl_df") || inherits(x, "matrix")) {
+      x <- as.data.frame(x);
    }
 
    # optionally ignore some colnames
@@ -348,8 +416,10 @@ design2colors <- function
    }
 
    # handle each argument of colnames
-   if (is.numeric(group_colnames)) {
-      group_colnames <- jamba::rmNA(colnames(x)[group_colnames]);
+   if (length(group_colnames) > 0) {
+      if (is.numeric(group_colnames)) {
+         group_colnames <- jamba::rmNA(colnames(x)[group_colnames]);
+      }
    }
    if (length(lightness_colnames) > 0) {
       if (is.numeric(lightness_colnames)) {
@@ -362,19 +432,163 @@ design2colors <- function
       }
    }
 
-   # check cardinality of class and group
-   if (length(class_colnames) > 0 && length(group_colnames)) {
-      class_card <- cardinality(x[,class_colnames, drop=FALSE],
-         x[,group_colnames, drop=FALSE]);
-      if (class_card["from"] != 1) {
-         stop("class_colnames must have 1-to-X cardinality with group_colnames.");
+   # handle empty group_colnames
+   if (length(group_colnames) == 0 && length(class_colnames) == 0) {
+      group_colnames <- "added_rownames";
+      x$added_rownames <- rownames(x);
+   }
+
+   # review colnames before cardinality checks
+   if (verbose || "cardinality" %in% debug) {
+      if (length(lightness_colnames) > 0) {
+         jamba::printDebug("design2colors(): ",
+            "input lightness_colnames: ", lightness_colnames);
+      }
+      if (length(group_colnames) > 0) {
+         jamba::printDebug("design2colors(): ",
+            "input group_colnames:     ", group_colnames);
+      }
+      if (length(class_colnames) > 0) {
+         jamba::printDebug("design2colors(): ",
+            "input class_colnames:     ", class_colnames);
       }
    }
+   # check cardinality of class and group
+   card_changed <- FALSE;
+   if (length(class_colnames) > 0) {
+      if (length(group_colnames) == 0) {
+         group_colnames <- class_colnames;
+         if (verbose) {
+            jamba::printDebug("design2colors(): ",
+               c("No ","group_colnames",
+                  " supplied, using ","class_colnames."),
+               sep="")
+         }
+      }
+      class_group_card <- cardinality(
+         x[, gsub("^-", "", class_colnames), drop=FALSE],
+         x[, gsub("^-", "", group_colnames), drop=FALSE]);
+      if ("cardinality" %in% debug) {
+         jamba::printDebug("design2colors(): ",
+            "class-to-group cardinality: ",
+            jamba::cPaste(class_group_card[c("from", "to")], sep="-to-"));
+      }
+      if (class_group_card["from"] != 1) {
+         card_changed <- TRUE;
+         if (class_group_card["to"] == 1) {
+            # cardinality is X-to-1
+            # switch group_colnames,class_colnames
+            group_colnames1 <- class_colnames;
+            class_colnames <- group_colnames;
+            group_colnames <- group_colnames1;
+            if (verbose || "cardinality" %in% debug) {
+               jamba::printDebug("design2colors(): ",
+                  "due to ",
+                  jamba::cPaste(class_group_card[c("from", "to")],
+                     sep="-to-"),
+                  c(" cardinality, ",
+                     "group_colnames", " and ", "class_colnames",
+                     " were switched."),
+                  sep="")
+            }
+         } else {
+            # cardinality shows no X-to-1 relationship
+            if (class_group_card["from"] > class_group_card["to"]) {
+               # assign lightness_colnames if empty
+               if (length(lightness_colnames) == 0) {
+                  lightness_colnames <- group_colnames;
+                  for (ig in gsub("^-", "", lightness_colnames)) {
+                     if (!ig %in% names(color_sub)) {
+                        color_sub[ig] <- "grey45"
+                     }
+                  }
+               }
+               # combine class into group
+               group_colnames <- c(group_colnames, class_colnames)
+               if (verbose || "cardinality" %in% debug) {
+                  jamba::printDebug("design2colors(): ",
+                     "due to ",
+                     jamba::cPaste(class_group_card[c("from", "to")],
+                        sep="-to-"),
+                     c(" cardinality, ",
+                        "class_colnames",
+                        " was combined into ",
+                        "group_colnames."),
+                     sep="")
+               }
+            } else {
+               # assign lightness_colnames if empty
+               if (length(lightness_colnames) == 0) {
+                  lightness_colnames <- class_colnames;
+                  for (ig in gsub("^-", "", lightness_colnames)) {
+                     if (!ig %in% names(color_sub)) {
+                        color_sub[ig] <- "grey45"
+                     }
+                  }
+               }
+               # switch group and class
+               group_colnames1 <- class_colnames;
+               class_colnames <- group_colnames;
+               group_colnames <- group_colnames1;
+               # now combine class into group
+               group_colnames <- c(group_colnames, class_colnames)
+               if (verbose || "cardinality" %in% debug) {
+                  jamba::printDebug("design2colors(): ",
+                     "due to ",
+                     jamba::cPaste(class_group_card[c("from", "to")],
+                        sep="-to-"),
+                     c(" cardinality, ",
+                        "group_colnames", " and ", "class_colnames",
+                        " were switched."),
+                     sep="")
+                  jamba::printDebug("design2colors(): ",
+                     "due to ",
+                     jamba::cPaste(class_group_card[c("from", "to")],
+                        sep="-to-"),
+                     c(" cardinality, ",
+                        "class_colnames",
+                        " was combined into ",
+                        "group_colnames."),
+                     sep="")
+               }
+            }
+         }
+         # stop("class_colnames must have 1-to-X cardinality with group_colnames.");
+      }
+   }
+
+   # assign lightness_colnames if non-empty and not assigned
+   if (length(lightness_colnames) > 0) {
+      # check cardinality
+
+      group_lightness_card <- cardinality(
+         x[, gsub("^-", "", group_colnames), drop=FALSE],
+         x[, gsub("^-", "", lightness_colnames), drop=FALSE]);
+      if (group_lightness_card["from"] != 1) {
+         for (ig in gsub("^-", "", lightness_colnames)) {
+            if (!ig %in% names(color_sub)) {
+               color_sub[ig] <- "grey45"
+            }
+         }
+      }
+   }
+
+   # review colnames after cardinality checks
+   if (verbose || (card_changed && "cardinality" %in% debug)) {
+      jamba::printDebug("design2colors(): ",
+         "resolved lightness_colnames: ", lightness_colnames);
+      jamba::printDebug("design2colors(): ",
+         "resolved group_colnames:     ", group_colnames);
+      jamba::printDebug("design2colors(): ",
+         "resolved class_colnames:     ", class_colnames);
+   }
+
 
    # sort by class, group, lightness to make downstream steps consistent
    x_input <- x;
 
    # quickly convert certain column types for better processing
+   # - convert table to numeric vector
    for (icol in colnames(x_input)) {
       if (is.table(x_input[[icol]])) {
          x_input[[icol]] <- as.vector(x_input[[icol]]);
@@ -382,20 +596,33 @@ design2colors <- function
    }
 
    # iterate each column and convert to factor if needed
-   all_colnames1 <- gsub("^[-]", "",
+   all_colnames1 <- gsub("^[-]---", "",
       c(class_colnames,
          group_colnames,
          lightness_colnames));
    for (xcol in all_colnames1) {
-      if (!is.factor(x[[xcol]])) {
-         x[[xcol]] <- factor(x[[xcol]],
-            levels=unique(x[[xcol]]));
+      if (xcol %in% colnames(x)) {
+         if (!is.factor(x[[xcol]])) {
+            x[[xcol]] <- factor(x[[xcol]],
+               levels=unique(x[[xcol]]));
+         }
+         # jamba::printDebug("xcol:", xcol, ", levels:", levels(x[[xcol]]));# debug
+      } else {
+         xcol1 <- gsub("^-", "", xcol);
+         if (xcol1 %in% colnames(x)) {
+            if (!is.factor(x[[xcol1]])) {
+               x[[xcol1]] <- factor(x[[xcol1]],
+                  levels=rev(unique(x[[xcol1]])));
+            }
+            # jamba::printDebug("xcol1:", xcol1, ", levels:", levels(x[[xcol1]]));# debug
+         }
       }
    }
    x <- jamba::mixedSortDF(x,
       byCols=c(class_colnames,
          group_colnames,
          lightness_colnames));
+   # jamba::printDebug("Sorted class,group,lightness data.frame:");print(x);# debug
    class_colnames <- gsub("^[-]", "", class_colnames);
    group_colnames <- gsub("^[-]", "", group_colnames);
    lightness_colnames <- gsub("^[-]", "", lightness_colnames);
@@ -409,6 +636,7 @@ design2colors <- function
          x[[icol]] <- factor(x[[icol]],
             levels=unique(x[[icol]]));
       }
+      # jamba::printDebug("icol:", icol, ", levels:", levels(x[[icol]]));# debug
    }
 
    # generate output per class, group, lightness values
@@ -422,10 +650,10 @@ design2colors <- function
       xlist);
 
    # add class_group and class_group_lightness column values
-   # xdf$class_group <- jamba::pasteByRowOrdered(xdf[,c("class", "group"), drop=FALSE]);
-   # xdf$class_group_lightness <- jamba::pasteByRowOrdered(xdf[,c("class", "group", "lightness"), drop=FALSE]);
-   xdf$class_group <- jamba::pasteByRowOrdered(xdf[,c("group"), drop=FALSE]);
-   xdf$class_group_lightness <- jamba::pasteByRowOrdered(xdf[,c("group", "lightness"), drop=FALSE]);
+   xdf$class_group <- jamba::pasteByRowOrdered(
+      xdf[,c("group"), drop=FALSE]);
+   xdf$class_group_lightness <- jamba::pasteByRowOrdered(
+      xdf[,c("group", "lightness"), drop=FALSE]);
 
    # sort table by class, group, lightness
    xdf <- jamba::mixedSortDF(xdf,
@@ -504,6 +732,8 @@ design2colors <- function
          hues=class_group_hue,
          phase=phase,
          preset=preset,
+         Crange=Crange,
+         Lrange=Lrange,
          ...);
       names(class_group_color) <- gdf$class_group;
    }
@@ -558,6 +788,12 @@ design2colors <- function
       udf$class_group_lightness_color <- class_group_lightness_color;
       xdf$class_group_lightness_color <- class_group_lightness_color[as.character(xdf$class_group_lightness)];
    }
+   # jamba::printDebug("design2colors(): ",
+   #    "udf:");
+   # print(udf);
+   # jamba::printDebug("design2colors(): ",
+   #    "xdf:");
+   # print(xdf);
 
    kcolnames <- intersect(
       c("class_group_lightness_color",
@@ -575,6 +811,7 @@ design2colors <- function
    } else {
       iter_colnames <- jamba::nameVector(c("rownames", colnames(x)));
    }
+   xmatch <- match(rownames(x), rownames(xdf));
    new_colors <- lapply(iter_colnames, function(icol) {
       # new in version 0.0.52.900: do not assign colors
       # when color_sub is already defined
@@ -594,7 +831,8 @@ design2colors <- function
          # jamba::printDebug("      kcolname: ", kcolname);
          idf <- unique(data.frame(check.names=FALSE,
             ivalues,
-            xdf[,kcolname, drop=FALSE]));
+            xdf[xmatch, kcolname, drop=FALSE]));
+         # jamba::printDebug("idf:");print(idf);# debug
          if (any(duplicated(idf[[icol]]))) {
             next;
          } else {
@@ -800,6 +1038,8 @@ design2colors <- function
                phase=phase,
                hues=add_hue,
                preset=preset,
+               Crange=Crange,
+               Lrange=Lrange,
                ...),
             add_m);
          add_colors_1 <- c(add_colors_1,
@@ -858,6 +1098,10 @@ design2colors <- function
 
    ###############################
    # Refresh the list of colors
+   if ("added_rownames" %in% colnames(x_input)) {
+      x_keep_colnames <- setdiff(colnames(x_input), "added_rownames");
+      x_input <- x_input[, x_keep_colnames, drop=FALSE];
+   }
    all_colors_list1 <- jamba::rmNULL(
       c(new_color_list[colnames(x_input)],
          list(

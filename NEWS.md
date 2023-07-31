@@ -1,3 +1,19 @@
+# platjam 0.0.69.900
+
+* `design2colors()`
+
+   * input recognizes `DataFrame` which is commonly produced from
+   `SummarizedExperiment::colData()`.
+   * input recognizes `tbl_df` (tibble) and `matrix` by coercing to
+   `data.frame`.
+   * column sort can be reversed with "-" prefix. For example
+   `"-Treatment"` will reverse the sort order in column `"Treatment"`.
+   * allow empty `group_colnames` so colors are assigned in all columns
+   * tolerate various combinations of `group_colnames`, `class_colnames`
+   with non-ideal cardinality, by using different workarounds strategies
+   * new arguments `Crange`,`Lrange` which are passed to
+   `colorjam::rainbowJam()` to set a less saturated color palette by default.
+
 # platjam 0.0.68.900
 
 ## bug fixes
