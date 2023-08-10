@@ -1,5 +1,13 @@
 # TODO 31jul2023
 
+* `import_salmon_quant()`
+
+   * be more tolerant of being given paths to `quant.sf` files which
+   may be renamed to different filenames.
+   * be more tolerant when GTF and tx2gene are not supplied, the import
+   can still import transcript-level data without adding gene-level
+   annotation and summaries.
+
 * `design2colors()`
 
    * DONE. accept `DataFrame` input, as from `SummarizedExperiment::colData()`.

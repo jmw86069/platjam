@@ -123,7 +123,7 @@ coverage_matrix2nmat <- function
    ## Interpret vector of filenames as input
    if (length(filename) == 0 && length(x) > 1 && is.atomic(x)) {
       if (all(file.exists(x))) {
-         xseq <- nameVector(seq_along(x), names(x));
+         xseq <- jamba::nameVector(seq_along(x), names(x));
          nmatlist <- lapply(xseq, function(i){
             coverage_matrix2nmat(x=x[i],
                filename=NULL,
@@ -916,9 +916,11 @@ nmatlist2heatmaps <- function
                rows);
             k_colors <- colorjam::group2colors(levels(partition),
                colorSub=color_sub);
-            jamba::printDebug("k_colors:");
-            print(k_colors);
-            jamba::printDebugI(nameVector(k_colors));
+            if (verbose) {
+               jamba::printDebug("k_colors:");
+               print(k_colors);
+               jamba::printDebugI(jamba::nameVector(k_colors));
+            }
             if (verbose) {
                k_sizes <- table(partition);
                jamba::printDebug("nmatlist2heatmaps(): ",
@@ -952,7 +954,7 @@ nmatlist2heatmaps <- function
       }
       ## Define colors if not provided
       if (length(k_colors) == 0) {
-         k_colors <- nameVector(
+         k_colors <- jamba::nameVector(
             colorjam::rainbowJam(length(levels(partition)),
                ...),
             levels(partition));
@@ -1077,7 +1079,7 @@ nmatlist2heatmaps <- function
       }
       anno_df <- anno_df[match(rows, rownames(anno_df)),, drop=FALSE];
       ## Determine a list of color functions, one for each column
-      anno_colors_l <- lapply(nameVector(colnames(anno_df)), function(i){
+      anno_colors_l <- lapply(jamba::nameVector(colnames(anno_df)), function(i){
          if (verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
                "anno_colors_l colname:", i);
@@ -1192,7 +1194,7 @@ nmatlist2heatmaps <- function
             }
          });
          ## list of annotation_legend_param
-         annotation_legend_param <- lapply(nameVector(colnames(anno_df)), function(i){
+         annotation_legend_param <- lapply(jamba::nameVector(colnames(anno_df)), function(i){
             i1 <- jamba::rmNA(anno_df[[i]]);
             a_num <- length(setdiff(unique(i1), c("", NA)));
             a_ncol <- min(c(ceiling(a_num / legend_base_nrow), legend_max_ncol));
@@ -1314,7 +1316,7 @@ nmatlist2heatmaps <- function
          }
          ##################################
          ## Mark Heatmap
-         MHM <- ComplexHeatmap::Heatmap(nameVector(anno_df[rows,1], rows),
+         MHM <- ComplexHeatmap::Heatmap(jamba::nameVector(anno_df[rows,1], rows),
             col=anno_colors_l[[1]],
             name=colnames(anno_df)[1],
             show_row_names=FALSE,
@@ -1489,7 +1491,7 @@ nmatlist2heatmaps <- function
             decreasing=TRUE);
          names(row_order) <- rows;
       } else {
-         row_order <- nameVector(rows);
+         row_order <- jamba::nameVector(rows);
       }
    }
    if (length(row_order) > 1) {
@@ -1497,7 +1499,7 @@ nmatlist2heatmaps <- function
    }
    if (any(is.na(row_order))) {
       jamba::printDebug("Fixed NA row_order by assigning rows.");
-      row_order <- nameVector(rows);
+      row_order <- jamba::nameVector(rows);
    }
    #} else if (isFALSE(row_order)) {
    #   row_order <- seq_along(rows);

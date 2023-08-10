@@ -51,5 +51,5 @@ testthat::test_that("assign_numeric_colors", {
    x <- -3:4;
    testthat::expect_equal(
       assign_numeric_colors(x, color="RdBu_r", color_max=3, lens=2)(x),
-      expected_x34_max2_lens2)
+      expected_x34_max3_lens2)
 })

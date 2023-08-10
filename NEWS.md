@@ -1,3 +1,15 @@
+# platjam 0.0.70.900
+
+## bug fixes
+
+* Added missing package prefix for several calls to `jamba::nameVector()`,
+or `jamba::printDebug()`. Affected functions:
+
+   * `import_nanostring_rcc()`
+   * `coverage_matrix2nmat()`
+   * `frequency_matrix2nmat()`
+   * `nmatlist2heatmaps()`
+
 # platjam 0.0.69.900
 
 * `design2colors()`

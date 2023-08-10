@@ -55,7 +55,7 @@ frequency_matrix2nmat <- function
    }
    downstream_index <- which(freq_index > max(c(0, target_index)));
    if (verbose) {
-      printDebug("frequency_matrix2nmat(): ",
+      jamba::printDebug("frequency_matrix2nmat(): ",
          "upstream_index:",
          upstream_index,
          ", target_index:",
@@ -73,7 +73,7 @@ frequency_matrix2nmat <- function
          scale_index <- freq_index;
       }
       if (verbose) {
-         printDebug("frequency_matrix2nmat(): ",
+         jamba::printDebug("frequency_matrix2nmat(): ",
             "scale_index:",
             scale_index);
       }
@@ -87,7 +87,7 @@ frequency_matrix2nmat <- function
       if (apply_floor) {
          if (verbose) {
             scale_diff <- (scale_to - scale_from) / 2;
-            printDebug("frequency_matrix2nmat(): ",
+            jamba::printDebug("frequency_matrix2nmat(): ",
                "scale_diff:",
                scale_diff);
          }

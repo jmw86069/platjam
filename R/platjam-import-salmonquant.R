@@ -259,6 +259,12 @@ import_salmon_quant <- function
             print(sample_df);
          }
       }
+   } else {
+      # create default
+      sample_df <- data.frame(check.names=FALSE,
+         stringsAsFactors=FALSE,
+         sample_id=isamples);
+      rownames(sample_df) <- isamples;
    }
 
    ret_list <- list();
@@ -266,6 +272,9 @@ import_salmon_quant <- function
       # rowData for transcripts
       # table(rownames(txiTx[[1]]) %in% tx2gene$transcript_id)
       rowData_tx <- tx2gene[match(rownames(txiTx[[1]]), tx2gene[[tx_colname]]),,drop=FALSE];
+      # TODO: debug workarounds when this step fails,
+      # usually occurs when rownames do not match tx2gene, which is
+      # often the version numbers ENST000012.1_1
       rownames(rowData_tx) <- rowData_tx[[tx_colname]];
       # Create tx SummarizedExperiment
       TxSE <- SummarizedExperiment(

@@ -101,7 +101,7 @@ import_nanostring_rcc <- function
 
    if (length(rcc_files) > 0 && any(file.exists(rcc_files))) {
       if (any(!file.exists(rcc_files))) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "Error: Some (",
             sum(!file.exists(rcc_files)),
             ") supplied rcc_files do not exist. Please remedy.");
@@ -112,7 +112,7 @@ import_nanostring_rcc <- function
          stop("rcc_path must be a valid file path.") ;
       }
       if (verbose) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "rcc_pattern:",
             rcc_pattern);
       }
@@ -124,7 +124,7 @@ import_nanostring_rcc <- function
       rcc_exclude <- (rcc_files %in% exclude |
             basename(rcc_files) %in% exclude);
       if (verbose && any(rcc_exclude)) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "excluding ",
             sum(rcc_exclude),
             " files matching exclude string.");
@@ -135,7 +135,7 @@ import_nanostring_rcc <- function
       rcc_include <- (rcc_files %in% include |
             basename(rcc_files) %in% include);
       if (verbose && any(!rcc_include)) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "including only ",
             sum(rcc_include),
             " files matching include string.");
@@ -146,7 +146,7 @@ import_nanostring_rcc <- function
 
    # check if any rcc_files
    if (length(rcc_files) == 0) {
-      printDebug("import_nanostring_rcc(): ",
+      jamba::printDebug("import_nanostring_rcc(): ",
          "No files were found in rcc_path:", head(rcc_path),
          ", rcc_pattern:", head(rcc_pattern),
          ", exclude:", exclude,
@@ -163,7 +163,7 @@ import_nanostring_rcc <- function
    for (count in seq_along(rcc_files)) {
       rcc_file <- rcc_files[[count]];
       if (verbose) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "reading rcc_file:",
             rcc_file);
       }
@@ -190,19 +190,19 @@ import_nanostring_rcc <- function
             rccLines,
             "</RCC>"))));
       if (verbose) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "parsed XML");
       }
 
       headerNames <- jamba::provigrep(c("header","sample","lane"), names(rccXmlL));
       codeNames <- jamba::vigrep("code", names(rccXmlL));
       if (verbose) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "headerNames:", headerNames);
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "codeNames:", codeNames);
       }
-      rcc.header <- jamba::rbindList(lapply(nameVector(headerNames), function(i){
+      rcc.header <- jamba::rbindList(lapply(jamba::nameVector(headerNames), function(i){
          iXml <- rccXmlL[[i]];
          iDF <- data.frame(check.names=FALSE,
             stringsAsFactors=FALSE,
@@ -222,9 +222,9 @@ import_nanostring_rcc <- function
          iDF;
       }));
       if (verbose) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "parsed header");
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "codeNames:", codeNames);
       }
       if (debug) {
@@ -253,7 +253,7 @@ import_nanostring_rcc <- function
          to=sample_name);
       if (nprobes > 0) {
          if (verbose) {
-            printDebug("import_nanostring_rcc(): ",
+            jamba::printDebug("import_nanostring_rcc(): ",
                "loading only the first ",
                nprobes,
                " probes.");
@@ -261,7 +261,7 @@ import_nanostring_rcc <- function
          rcc.data <- head(rcc.data, nprobes);
       }
       if (verbose) {
-         printDebug("import_nanostring_rcc(): ",
+         jamba::printDebug("import_nanostring_rcc(): ",
             "parsed data");
       }
 
