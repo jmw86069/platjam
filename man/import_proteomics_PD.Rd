@@ -78,6 +78,7 @@ Other jam import functions:
 \code{\link{import_metabolomics_niehs}()},
 \code{\link{import_nanostring_csv}()},
 \code{\link{import_nanostring_rcc}()},
-\code{\link{import_salmon_quant}()}
+\code{\link{import_salmon_quant}()},
+\code{\link{process_metab_compounds_file}()}
 }
 \concept{jam import functions}

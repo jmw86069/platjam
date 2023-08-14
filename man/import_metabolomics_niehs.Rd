@@ -110,7 +110,22 @@ Import metabolomics data from NIEHS file formats
 This import function is specific to NIEHS file formats produced
 from their defined analysis workflow. The files typically include
 \code{"df_pos"} for positive ionization, and \code{"df_neg"} for negative
-ionization:
+ionization.
+
+Optionally, when the full data processing file is present,
+it will be imported alongside the cleaned data described above.
+The full data processing imports detailed compound measurement
+data, and is expected in one of two formats in the \code{data_path} folder:
+\enumerate{
+\item Files \code{"compounds_pos.txt"} and/or \code{"compounds_neg.txt"}, or
+\item \code{"1_DataProcessed.zip"} which is expected to contain
+files \code{"compounds_pos.txt"} and/or \code{"compounds_neg.txt"} in the archive.
+}
+
+The "compounds" data includes important annotations for each measurement,
+specifically the type of numeric measurement that is supplied
+by the upstream software. These annotations include whether numeric
+values were imputed, or measured directly in each sample.
 \subsection{Sample Metadata}{
 \itemize{
 \item \code{"[project_code]_NIEHS_MCF_metadata.txt"}: tab-delimited text file
@@ -156,6 +171,7 @@ Other jam import functions:
 \code{\link{import_nanostring_csv}()},
 \code{\link{import_nanostring_rcc}()},
 \code{\link{import_proteomics_PD}()},
-\code{\link{import_salmon_quant}()}
+\code{\link{import_salmon_quant}()},
+\code{\link{process_metab_compounds_file}()}
 }
 \concept{jam import functions}

@@ -155,6 +155,7 @@ par(opar);
 \seealso{
 Other jam utility functions: 
 \code{\link{color_complement}()},
+\code{\link{convert_imputed_assays_to_na}()},
 \code{\link{curate_se_colData}()},
 \code{\link{get_numeric_transform}()},
 \code{\link{merge_proteomics_se}()},

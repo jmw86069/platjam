@@ -1,3 +1,35 @@
+# platjam 0.0.71.900
+
+## changes to existing functions
+
+* `import_metabolomics_niehs()`
+
+   * added optional step to import `"compounds_pos.txt"` and
+   `"compounds_neg.txt"` files, which contains important annotations
+   for which measurements are imputed by the upstream software, and
+   using which impute method.
+   * When the files above are not present, and the file
+   `"1_DataProcessed.zip"` exists, it is used to extract the raw files
+   as named above.
+   * When no matching files are detected, this import step is skipped.
+
+## new functions
+
+* `convert_imputed_assays_to_na()`
+
+   * utility function used to apply filtering based upon the impute flags,
+   thereby converting imputed data matching the relevant flags to `NA`,
+   and storing in a new `assays()` entry for downstream analysis.
+
+* `process_metab_compounds_file()`
+
+   * Internal function used to import full compounds data supplied
+   as a `data.frame` after loading from the `"1_DataProcessed.zip"` file.
+   * The function will merge data into a `se_list` object if supplied,
+   otherwise it will return the full `se` object including each assay
+   name imported from the file.
+
+
 # platjam 0.0.70.900
 
 ## bug fixes

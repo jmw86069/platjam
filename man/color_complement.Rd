@@ -86,6 +86,7 @@ jamba::showColors(rc_ramps2, groupCellnotes=TRUE, groupByColors=FALSE);
 }
 \seealso{
 Other jam utility functions: 
+\code{\link{convert_imputed_assays_to_na}()},
 \code{\link{curate_se_colData}()},
 \code{\link{curate_to_df_by_pattern}()},
 \code{\link{get_numeric_transform}()},

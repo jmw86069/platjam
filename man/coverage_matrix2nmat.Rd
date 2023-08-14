@@ -152,7 +152,8 @@ Other jam import functions:
 \code{\link{import_nanostring_csv}()},
 \code{\link{import_nanostring_rcc}()},
 \code{\link{import_proteomics_PD}()},
-\code{\link{import_salmon_quant}()}
+\code{\link{import_salmon_quant}()},
+\code{\link{process_metab_compounds_file}()}
 }
 \concept{jam coverage heatmap functions}
 \concept{jam import functions}
