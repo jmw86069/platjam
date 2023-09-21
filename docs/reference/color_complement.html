@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,38 +52,50 @@
     <p>Create color complement by rotating the color hue</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">color_complement</span><span class="op">(</span>
-  <span class="va">color</span>,
-  Hflip <span class="op">=</span> <span class="fl">180</span>,
-  Cfloor <span class="op">=</span> <span class="fl">160</span>,
-  Lrange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,
-  useWarpHue <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">color_complement</span><span class="op">(</span></span>
+<span>  <span class="va">color</span>,</span>
+<span>  Hflip <span class="op">=</span> <span class="fl">180</span>,</span>
+<span>  Cfloor <span class="op">=</span> <span class="fl">160</span>,</span>
+<span>  Lrange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  useWarpHue <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>color</dt>
 <dd><p><code>character</code> vector of R compatible colors.</p></dd>
+
+
 <dt>Hflip</dt>
 <dd><p>numeric value in degrees (from 0 to 360) added
 to the color hue to produce the final color hue.</p></dd>
+
+
 <dt>Cfloor</dt>
 <dd><p>numeric value used to limit output chroma <code>C</code>
 values to this minimum value.</p></dd>
+
+
 <dt>Lrange</dt>
 <dd><p><code>numeric</code> vector with the allowed range of output
 luminance <code>L</code> values. When supplied, output values are
 simply forced to this range with no other scaling of intermediate
 values.</p></dd>
+
+
 <dt>useWarpHue</dt>
 <dd><p><code>logical</code> indicating whether to use the warp
 hue functions <code><a href="https://rdrr.io/pkg/colorjam/man/h2hw.html" class="external-link">colorjam::h2hw()</a></code> and <code><a href="https://rdrr.io/pkg/colorjam/man/hw2h.html" class="external-link">colorjam::hw2h()</a></code> which
 effectively change the color wheel from red-green-blue to
 red-yellow-blue.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are ignored.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -98,57 +110,59 @@ saturation.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other jam utility functions: 
+<code><a href="cardinality.html">cardinality</a>()</code>,
+<code><a href="convert_PD_df_to_SE.html">convert_PD_df_to_SE</a>()</code>,
+<code><a href="convert_imputed_assays_to_na.html">convert_imputed_assays_to_na</a>()</code>,
+<code><a href="curate_se_colData.html">curate_se_colData</a>()</code>,
+<code><a href="curate_to_df_by_pattern.html">curate_to_df_by_pattern</a>()</code>,
+<code><a href="design2layout.html">design2layout</a>()</code>,
 <code><a href="get_numeric_transform.html">get_numeric_transform</a>()</code>,
+<code><a href="handle_df_args.html">handle_df_args</a>()</code>,
+<code><a href="merge_proteomics_se.html">merge_proteomics_se</a>()</code>,
 <code><a href="rowNormScale.html">rowNormScale</a>()</code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5</span>;</span>
-<span class="r-in"><span class="va">rc</span> <span class="op">&lt;-</span> <span class="fu">colorjam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">rainbowJam</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in tcount(sign(diff(h1h2df1$h2))):</span> could not find function "tcount"</span>
-<span class="r-in"><span class="va">rc_comp</span> <span class="op">&lt;-</span> <span class="fu">color_complement</span><span class="op">(</span><span class="va">rc</span>, Cfloor<span class="op">=</span><span class="fl">180</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in as_colour_code(colour):</span> object 'rc' not found</span>
-<span class="r-in"><span class="va">rc_comp2</span> <span class="op">&lt;-</span> <span class="fu">color_complement</span><span class="op">(</span><span class="va">rc</span>, Cfloor<span class="op">=</span><span class="fl">180</span>, useWarpHue<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in as_colour_code(colour):</span> object 'rc' not found</span>
-<span class="r-in"><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/showColors.html" class="external-link">showColors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rainbowJam<span class="op">=</span><span class="va">rc</span>,</span>
-<span class="r-in">   `complement_warped\n(default uses RYB)`<span class="op">=</span><span class="va">rc_comp</span>,</span>
-<span class="r-in">   `complement_nowarp\n(unwarped uses RGB)`<span class="op">=</span><span class="va">rc_comp2</span><span class="op">)</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in igrepHas("list", class(x)):</span> object 'rc' not found</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## divergent color gradients through white</span></span>
-<span class="r-in"><span class="co">## hint: use higher lens value to make middle colors more intense</span></span>
-<span class="r-in"><span class="va">rc_ramps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">nameVector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">rc</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span></span>
-<span class="r-in">   <span class="va">j</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rc</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"white"</span>, <span class="va">rc_comp</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">      n<span class="op">=</span><span class="fl">25</span>,</span>
-<span class="r-in">      lens<span class="op">=</span><span class="fl">0</span>,</span>
-<span class="r-in">      divergent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">""</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"original colors"</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">25</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"color complements"</span>;</span>
-<span class="r-in">   <span class="va">j</span>;</span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in igrepHas("dataframe", class(x)):</span> object 'rc' not found</span>
-<span class="r-in"><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/showColors.html" class="external-link">showColors</a></span><span class="op">(</span><span class="va">rc_ramps</span>, groupCellnotes<span class="op">=</span><span class="cn">TRUE</span>, groupByColors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in igrepHas("list", class(x)):</span> object 'rc_ramps' not found</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## divergent color gradients through white</span></span>
-<span class="r-in"><span class="co">## hint: use higher lens value to make middle colors more intense</span></span>
-<span class="r-in"><span class="va">rc_ramps2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">nameVector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">rc</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span></span>
-<span class="r-in">   <span class="va">j</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rc</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"black"</span>, <span class="va">rc_comp</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,</span>
-<span class="r-in">      n<span class="op">=</span><span class="fl">25</span>,</span>
-<span class="r-in">      lens<span class="op">=</span><span class="fl">1</span>,</span>
-<span class="r-in">      divergent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">""</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"original colors"</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">25</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"color complements"</span>;</span>
-<span class="r-in">   <span class="va">j</span>;</span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in igrepHas("dataframe", class(x)):</span> object 'rc' not found</span>
-<span class="r-in"><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/showColors.html" class="external-link">showColors</a></span><span class="op">(</span><span class="va">rc_ramps2</span>, groupCellnotes<span class="op">=</span><span class="cn">TRUE</span>, groupByColors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>;</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in igrepHas("list", class(x)):</span> object 'rc_ramps2' not found</span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5</span>;</span></span>
+<span class="r-in"><span><span class="va">rc</span> <span class="op">&lt;-</span> <span class="fu">colorjam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">rainbowJam</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">rc_comp</span> <span class="op">&lt;-</span> <span class="fu">color_complement</span><span class="op">(</span><span class="va">rc</span>, Cfloor<span class="op">=</span><span class="fl">180</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">rc_comp2</span> <span class="op">&lt;-</span> <span class="fu">color_complement</span><span class="op">(</span><span class="va">rc</span>, Cfloor<span class="op">=</span><span class="fl">180</span>, useWarpHue<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/showColors.html" class="external-link">showColors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rainbowJam<span class="op">=</span><span class="va">rc</span>,</span></span>
+<span class="r-in"><span>   `complement_warped\n(default uses RYB)`<span class="op">=</span><span class="va">rc_comp</span>,</span></span>
+<span class="r-in"><span>   `complement_nowarp\n(unwarped uses RGB)`<span class="op">=</span><span class="va">rc_comp2</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-plt img"><img src="color_complement-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## divergent color gradients through white</span></span></span>
+<span class="r-in"><span><span class="co">## hint: use higher lens value to make middle colors more intense</span></span></span>
+<span class="r-in"><span><span class="va">rc_ramps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">nameVector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">rc</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">j</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rc</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"white"</span>, <span class="va">rc_comp</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      n<span class="op">=</span><span class="fl">25</span>,</span></span>
+<span class="r-in"><span>      lens<span class="op">=</span><span class="fl">0</span>,</span></span>
+<span class="r-in"><span>      divergent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">""</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"original colors"</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">25</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"color complements"</span>;</span></span>
+<span class="r-in"><span>   <span class="va">j</span>;</span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/showColors.html" class="external-link">showColors</a></span><span class="op">(</span><span class="va">rc_ramps</span>, groupCellnotes<span class="op">=</span><span class="cn">TRUE</span>, groupByColors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>;</span></span>
+<span class="r-plt img"><img src="color_complement-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## divergent color gradients through white</span></span></span>
+<span class="r-in"><span><span class="co">## hint: use higher lens value to make middle colors more intense</span></span></span>
+<span class="r-in"><span><span class="va">rc_ramps2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">nameVector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">rc</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">j</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rc</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">"black"</span>, <span class="va">rc_comp</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      n<span class="op">=</span><span class="fl">25</span>,</span></span>
+<span class="r-in"><span>      lens<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span>      divergent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">""</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"original colors"</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">[</span><span class="fl">25</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"color complements"</span>;</span></span>
+<span class="r-in"><span>   <span class="va">j</span>;</span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/showColors.html" class="external-link">showColors</a></span><span class="op">(</span><span class="va">rc_ramps2</span>, groupCellnotes<span class="op">=</span><span class="cn">TRUE</span>, groupByColors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>;</span></span>
+<span class="r-plt img"><img src="color_complement-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -163,7 +177,7 @@ saturation.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

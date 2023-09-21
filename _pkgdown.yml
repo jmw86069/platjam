@@ -9,12 +9,16 @@ reference:
 - title: Import functions
   desc: Import functions
   contents:
-  - has_concept("jam coverage heatmap functions")
+  - has_concept("jam import functions")
 - title: Coverage heatmap functions
   desc: Coverage heatmap functions
   contents:
-  - has_concept("jam import functions")
-- title: UCSC genome browser functions
+  - has_concept("jam coverage heatmap functions")
+- title: Jam color functions
+  desc: color manipulation and assignment
+  contents:
+  - has_concept("jam color functions")
+- title: UCSC genome browser track functions
   desc: Functions related to the UCSC genome browser
   contents:
   - has_concept("jam ucsc browser functions")

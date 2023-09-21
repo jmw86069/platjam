@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,27 +52,30 @@
     <p>Convert frequency matrix to normalizedMatrix format</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">frequency_matrix2nmat</span><span class="op">(</span>
-  <span class="va">mat</span>,
-  target_frequency <span class="op">=</span> <span class="cn">NULL</span>,
-  target_name <span class="op">=</span> <span class="st">"target"</span>,
-  signal_name <span class="op">=</span> <span class="st">"Frequency"</span>,
-  do_scale <span class="op">=</span> <span class="cn">TRUE</span>,
-  scale_from <span class="op">=</span> <span class="fl">0</span>,
-  scale_to <span class="op">=</span> <span class="fl">1</span>,
-  scale_frequency <span class="op">=</span> <span class="cn">NULL</span>,
-  apply_floor <span class="op">=</span> <span class="cn">TRUE</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">frequency_matrix2nmat</span><span class="op">(</span></span>
+<span>  <span class="va">mat</span>,</span>
+<span>  target_frequency <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  target_name <span class="op">=</span> <span class="st">"target"</span>,</span>
+<span>  signal_name <span class="op">=</span> <span class="st">"Frequency"</span>,</span>
+<span>  do_scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scale_from <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  scale_to <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  scale_frequency <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  apply_floor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>mat</dt>
 <dd><p>numeric matrix with frequency represented as
 columns, and whose numeric frequency is stored in
 <code>colnames(mat)</code> as character values.</p></dd>
+
+
 <dt>target_frequency</dt>
 <dd><p>numeric vector representing a
 range of frequencies to be considered the "target",
@@ -81,12 +84,17 @@ By default the target range is used to order rows from
 high to low signal, unless the order is specified
 otherwise. When <code>target_frequency</code> is <code>NULL</code>, there
 is no target indicated in the normalizedMatrix.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>normalizedMatrix</code> object, a subclass of <code>matrix</code>,
+    
+
+<p><code>normalizedMatrix</code> object, a subclass of <code>matrix</code>,
 as defined in <code>EnrichedHeatmap</code>.</p>
     </div>
     <div id="details">
@@ -101,8 +109,15 @@ range, given a range of frequencies to use for scaling.</p>
     <div class="dont-index"><p>Other jam import functions: 
 <code><a href="coverage_matrix2nmat.html">coverage_matrix2nmat</a>()</code>,
 <code><a href="deepTools_matrix2nmat.html">deepTools_matrix2nmat</a>()</code>,
-<code><a href="import_nanostring_rcc.html">import_nanostring_rcc</a>()</code></p></div>
-    </div>
+<code><a href="import_lipotype_csv.html">import_lipotype_csv</a>()</code>,
+<code><a href="import_metabolomics_niehs.html">import_metabolomics_niehs</a>()</code>,
+<code><a href="import_nanostring_csv.html">import_nanostring_csv</a>()</code>,
+<code><a href="import_nanostring_rcc.html">import_nanostring_rcc</a>()</code>,
+<code><a href="import_nanostring_rlf.html">import_nanostring_rlf</a>()</code>,
+<code><a href="import_proteomics_PD.html">import_proteomics_PD</a>()</code>,
+<code><a href="import_proteomics_mascot.html">import_proteomics_mascot</a>()</code>,
+<code><a href="import_salmon_quant.html">import_salmon_quant</a>()</code>,
+<code><a href="process_metab_compounds_file.html">process_metab_compounds_file</a>()</code></p></div>
     </div>
 
   </div>
@@ -117,7 +132,7 @@ range, given a range of frequencies to use for scaling.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

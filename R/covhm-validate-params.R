@@ -1,7 +1,9 @@
 
 #' Validate coverage heatmap params for Rmarkdown
 #'
-#' Validate coverage heatmap params for Rmarkdown
+#' Validate coverage heatmap params for Rmarkdown (INCOMPLETE)
+#'
+#' @family jam coverage heatmap functions
 #'
 #' @export
 validate_heatmap_params <- function

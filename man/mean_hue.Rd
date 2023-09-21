@@ -6,6 +6,22 @@
 \usage{
 mean_hue(x, seed = 1, ...)
 }
+\arguments{
+\item{x}{\code{numeric} angles in degrees representing HCL color hue.}
+
+\item{seed}{\code{numeric} used with \code{set.seed(seed)} for reproducibility.}
+
+\item{...}{additional arguments are ignored.}
+}
 \description{
 Mean hue for a vector
 }
+\seealso{
+Other jam color functions: 
+\code{\link{assign_numeric_colors}()},
+\code{\link{design2colors}()},
+\code{\link{df_to_numcolors}()},
+\code{\link{print_color_list}()},
+\code{\link{quick_complement_color}()}
+}
+\concept{jam color functions}

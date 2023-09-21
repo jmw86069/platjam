@@ -10,7 +10,7 @@ design2colors(
   lightness_colnames = NULL,
   class_colnames = NULL,
   ignore_colnames = NULL,
-  preset = "dichromat",
+  preset = "dichromat2",
   phase = 1,
   rotate_phase = -1,
   class_pad = 1,
@@ -394,3 +394,12 @@ dfc12 <- design2colors(df12,
 
 
 }
+\seealso{
+Other jam color functions: 
+\code{\link{assign_numeric_colors}()},
+\code{\link{df_to_numcolors}()},
+\code{\link{mean_hue}()},
+\code{\link{print_color_list}()},
+\code{\link{quick_complement_color}()}
+}
+\concept{jam color functions}

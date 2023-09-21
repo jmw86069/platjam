@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,21 +52,30 @@
     <p>Get appropriate numeric transformation function</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">get_numeric_transform</span><span class="op">(</span><span class="va">transform</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_numeric_transform</span><span class="op">(</span><span class="va">transform</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>transform</dt>
 <dd><p><code>character</code> string or <code>function</code>, or <code>list</code>
 that may contain <code>character</code> string or <code>function</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>function</code> or <code>NULL</code> when no matching function is
-found, or <code>list</code> is returned when the input <code>transform</code>has multiple values.</p>
+    
+
+<p><code>function</code> or <code>NULL</code> when no matching function is
+found, or <code>list</code> is returned when the input <code>transform</code></p>
+
+
+<p>has multiple values.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -95,14 +104,21 @@ this criteria, but a function such as <code><a href="https://rdrr.io/r/base/Log.
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other jam utility functions: 
+<code><a href="cardinality.html">cardinality</a>()</code>,
 <code><a href="color_complement.html">color_complement</a>()</code>,
+<code><a href="convert_PD_df_to_SE.html">convert_PD_df_to_SE</a>()</code>,
+<code><a href="convert_imputed_assays_to_na.html">convert_imputed_assays_to_na</a>()</code>,
+<code><a href="curate_se_colData.html">curate_se_colData</a>()</code>,
+<code><a href="curate_to_df_by_pattern.html">curate_to_df_by_pattern</a>()</code>,
+<code><a href="design2layout.html">design2layout</a>()</code>,
+<code><a href="handle_df_args.html">handle_df_args</a>()</code>,
+<code><a href="merge_proteomics_se.html">merge_proteomics_se</a>()</code>,
 <code><a href="rowNormScale.html">rowNormScale</a>()</code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">get_numeric_transform</span><span class="op">(</span><span class="st">"log2signed"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_numeric_transform</span><span class="op">(</span><span class="st">"log2signed"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (x,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  offset=1,</span>
@@ -136,34 +152,34 @@ this criteria, but a function such as <code><a href="https://rdrr.io/r/base/Log.
 <span class="r-out co"><span class="r-pr">#&gt;</span>    #log2(abs(x) + offset) * x_sign  / log2(base);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    log(abs(x) + offset, base=base) * x_sign;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7ff74ea1c8c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x1719b5710&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:jamba&gt;</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">transform_list</span> <span class="op">&lt;-</span> <span class="fu">get_numeric_transform</span><span class="op">(</span></span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>,</span>
-<span class="r-in">   <span class="st">"log2signed"</span>,</span>
-<span class="r-in">   <span class="va">log2</span>,</span>
-<span class="r-in">   <span class="va">sqrt</span><span class="op">)</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/sdim.html" class="external-link">sdim</a></span><span class="op">(</span><span class="va">transform_list</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">transform_list</span> <span class="op">&lt;-</span> <span class="fu">get_numeric_transform</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>,</span></span>
+<span class="r-in"><span>   <span class="st">"log2signed"</span>,</span></span>
+<span class="r-in"><span>   <span class="va">log2</span>,</span></span>
+<span class="r-in"><span>   <span class="va">sqrt</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/sdim.html" class="external-link">sdim</a></span><span class="op">(</span><span class="va">transform_list</span><span class="op">)</span>;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            rows    class</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> none          1 function</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log2signed    1 function</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log2          1 function</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> sqrt          1 function</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">nameVector</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">16</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">transform_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">nameVector</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">16</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">transform_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">transform_list</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">transform_list</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        0        1        2        3        4        5        6        7 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.000000 1.000000 1.584963 2.000000 2.321928 2.584963 2.807355 3.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        8        9       10       11       12       13       14       15 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3.169925 3.321928 3.459432 3.584963 3.700440 3.807355 3.906891 4.000000 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       16 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4.087463 </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -178,7 +194,7 @@ this criteria, but a function such as <code><a href="https://rdrr.io/r/base/Log.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

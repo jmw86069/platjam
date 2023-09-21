@@ -154,10 +154,14 @@ par(opar);
 }
 \seealso{
 Other jam utility functions: 
+\code{\link{cardinality}()},
 \code{\link{color_complement}()},
+\code{\link{convert_PD_df_to_SE}()},
 \code{\link{convert_imputed_assays_to_na}()},
 \code{\link{curate_se_colData}()},
+\code{\link{design2layout}()},
 \code{\link{get_numeric_transform}()},
+\code{\link{handle_df_args}()},
 \code{\link{merge_proteomics_se}()},
 \code{\link{rowNormScale}()}
 }

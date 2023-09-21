@@ -20,6 +20,10 @@
 #'    function arguments.
 #' @param ... additional arguments are ignored.
 #'
+#' @family jam utility functions
+#'
+#' @returns `environment` containing variables parsed from `df`
+#'
 #' @examples
 #' parent_fn <- nmatlist2heatmaps;
 #'

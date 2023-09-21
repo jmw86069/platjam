@@ -51,12 +51,32 @@ output from \code{genejam::freshenGenes3()}.}
 
 \item{...}{additional arguments are passed to \code{jamba::readOpenxlsx()}.}
 }
+\value{
+\code{SummarizedExperiment} object
+}
 \description{
 Import proteomics data from Mascot
 }
 \examples{
-file <- file.path(path.expand("~/Projects/Hu/hu_msprot_turboid"),
+# TODO: replace with smaller test data in the appropriate format
+mascot_file <- file.path(path.expand("~/Projects/Hu/hu_msprot_turboid"),
    "Lackford_all_090822.xlsx")
 protein_df <- jamba::readOpenxlsx(mascot_file, sheet=1)[[1]];
+se <- import_proteomics_mascot;
 
 }
+\seealso{
+Other jam import functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{deepTools_matrix2nmat}()},
+\code{\link{frequency_matrix2nmat}()},
+\code{\link{import_lipotype_csv}()},
+\code{\link{import_metabolomics_niehs}()},
+\code{\link{import_nanostring_csv}()},
+\code{\link{import_nanostring_rcc}()},
+\code{\link{import_nanostring_rlf}()},
+\code{\link{import_proteomics_PD}()},
+\code{\link{import_salmon_quant}()},
+\code{\link{process_metab_compounds_file}()}
+}
+\concept{jam import functions}

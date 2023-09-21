@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,21 +52,27 @@
     <p>Zoom the x-axis range for a list of normalizedMatrix coverage data</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">zoom_nmatlist</span><span class="op">(</span><span class="va">nmatlist</span>, upstream_length <span class="op">=</span> <span class="fl">500</span>, downstream_length <span class="op">=</span> <span class="fl">500</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zoom_nmatlist</span><span class="op">(</span><span class="va">nmatlist</span>, upstream_length <span class="op">=</span> <span class="fl">500</span>, downstream_length <span class="op">=</span> <span class="fl">500</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>nmatlist</dt>
 <dd><p><code>list</code> of <code>normalizedMatrix</code> objects. Each
 <code>normalizedMatrix</code> is passed to <code><a href="zoom_nmat.html">zoom_nmat()</a></code>.</p></dd>
+
+
 <dt>upstream_length, downstream_length</dt>
 <dd><p><code>numeric</code> vector whose
 values are recycled to length <code>length(nmatlist)</code>. Each value is
 passed to <code><a href="zoom_nmat.html">zoom_nmat()</a></code> so each matrix can be zoomed to independent
 ranges.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are passed to <code><a href="zoom_nmat.html">zoom_nmat()</a></code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -83,8 +89,8 @@ important associated attributes:</p><ul><li><p><code>attr(nmat, "upstream_index"
 <code><a href="get_nmat_ceiling.html">get_nmat_ceiling</a>()</code>,
 <code><a href="nmathm_row_order.html">nmathm_row_order</a>()</code>,
 <code><a href="nmatlist2heatmaps.html">nmatlist2heatmaps</a>()</code>,
+<code><a href="validate_heatmap_params.html">validate_heatmap_params</a>()</code>,
 <code><a href="zoom_nmat.html">zoom_nmat</a>()</code></p></div>
-    </div>
     </div>
 
   </div>
@@ -99,7 +105,7 @@ important associated attributes:</p><ul><li><p><code>attr(nmat, "upstream_index"
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

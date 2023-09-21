@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,22 +52,26 @@
     <p>Parse UCSC tracks that use the Gokey format</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">parse_ucsc_gokey</span><span class="op">(</span>
-  <span class="va">track_lines</span>,
-  overlay_grep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"[ -._](plus|minus|F|R|pos|neg)($|[ -._])"</span><span class="op">)</span>,
-  priority <span class="op">=</span> <span class="fl">5000</span>,
-  output_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span>, <span class="st">"list"</span><span class="op">)</span>,
-  debug <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span><span class="op">)</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">parse_ucsc_gokey</span><span class="op">(</span></span>
+<span>  <span class="va">track_lines</span>,</span>
+<span>  overlay_grep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"[ -._](plus|minus|F|R|pos|neg)($|[ -._])"</span><span class="op">)</span>,</span>
+<span>  priority <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>  output_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span>, <span class="st">"list"</span><span class="op">)</span>,</span>
+<span>  debug <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  multiwig_concat_header <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>track_lines</dt>
 <dd><p>character vector containing lines read from
 a track file, or valid path or connection to a track file.</p></dd>
+
+
 <dt>overlay_grep</dt>
 <dd><p>character vector containing valid regular
 expression patterns used to recognize when a track should
@@ -78,24 +82,53 @@ named <code>"trackA"</code>. Overlay tracks are handled using the UCSC
 <code>"multiWig"</code> approach, and not the composite track approach.
 To disable overlay_grep, use <code>overlay_grep="^$"</code>. To enable
 overlay_grep for all tracks, use <code>overlay_grep="$"</code>.</p></dd>
+
+
 <dt>priority</dt>
 <dd><p>integer value indicating the priority to
 start when assigning priority to each track.</p></dd>
+
+
 <dt>output_format</dt>
 <dd><p>character string indicating the
 output format, where <code>"text"</code> will return one long character
 string, and <code>"list"</code> will return a <code>list</code> with one track
 per list element with class <code>"glue","character"</code>.</p></dd>
+
+
 <dt>debug</dt>
-<dd><p><code>character</code> indicating type of debug output: <code>df</code>
-returns the intermediate <code>track_df</code> data.frame; <code>pri</code> prints
-priority during track parsing; <code>none</code> does no debug.</p></dd>
+<dd><p><code>character</code> indicating type of debug output:</p><ul><li><p><code>df</code>: returns the intermediate <code>track_df</code> data.frame;</p></li>
+<li><p><code>pri</code>: prints priority during track parsing;</p></li>
+<li><p><code>none</code>: does no debug, the default.</p></li>
+</ul></dd>
+
+
+<dt>multiwig_concat_header</dt>
+<dd><p><code>logical</code> indicating whether
+multiWig parent tracks should be named by concatenating
+<code>header1</code> and <code>header2</code> values.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code>logical</code> indicating whether to print verbose
+output during processing.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>additional arguments are ignored.</p></dd>
+<dd><p>additional arguments are treated as a named list
+of track parameters that override existing parameter values.
+For example <code>scoreFilter=1</code> will override the default
+for bigBed tracks <code>scoreFilter=5</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>by default a character string suitable to <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>directly into a text file, when <code>output_format="text"</code>.
+    
+
+<p>by default a character string suitable to <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code></p>
+
+
+<p>directly into a text file, when <code>output_format="text"</code>.
 When <code>output_format="list"</code> it returns a
 list of <code>glue</code> objects, which can be concatenated into
 one character string with <code>Reduce("+", trackline_list)</code>.</p>
@@ -106,8 +139,79 @@ one character string with <code>Reduce("+", trackline_list)</code>.</p>
 the <code>Gokey format</code>, this function will parse the track
 lines into groups, and return a text string usable in
 a UCSC genome browser track hub.</p>
-<p>For example:</p>
-<p><code>parse_ucsc_gokey("tracks.txt")</code></p>
+<p>In general, the intention is to convert a set of UCSC
+track lines to a track hub format, where common track options
+are converted to relevant track hub configuration lines.</p>
+<p>Tracks are generally divided into two types of groupings:</p><div class="section">
+<h3 id="multiwig-overlay-tracks">multiWig Overlay Tracks<a class="anchor" aria-label="anchor" href="#multiwig-overlay-tracks"></a></h3>
+
+
+<p>Track name that matches <code>overlay_grep</code> regular expression pattern
+are configured as <code>multiWig</code> overlay tracks. This configuration
+uses the UCSC multiWig format as described here
+https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#aggregate</p><ul><li><p>More specifically, a parent track is configured as a <code>superTrack</code>.</p></li>
+<li><p>Each track matching <code>overlay_grep</code> is converted to a shared track
+name after removing the relevant grep pattern. Each unique track group
+is used as an intermediate track with <code>"container multiWig"</code>.</p></li>
+<li><p>Each track group is assigned priority in order of each unique track
+group defined in the track config lines.</p></li>
+<li><p>Individual tracks are configured as child tracks to the track groups.</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="composite-view-tracks">Composite View Tracks<a class="anchor" aria-label="anchor" href="#composite-view-tracks"></a></h3>
+
+
+<p>All other tracks are grouped as composite tracks, specifically
+using composite track view, as described here
+https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#compositeTrack</p><ul><li><p>More specifically, the parent track is configured as a <code>compositeTrack</code>,
+including views as <code>"view Views COV=Coverage JUNC=Junctions PEAK=Peaks"</code>
+by default.</p></li>
+<li><p>An intermediate track is created to represent each view, by default
+<code>"JUNC"</code> however this value is not visible to users unless there are
+multiple different view values.</p></li>
+<li><p>Each track is configured as a child to the relevant view track.
+Track priority is assigned in the order it appears in the track config
+lines. The priority allows peak tracks to be ordered directly after
+or before the associated coverage track.</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="top-level-parent-tracks">Top-Level Parent Tracks<a class="anchor" aria-label="anchor" href="#top-level-parent-tracks"></a></h3>
+
+
+<p>Note that in both scenarios above, there is one top-level parent
+track that contains a subset of tracks. The top-level grouping can
+be defined in the track lines by supplying two header lines immediately
+before each top-level grouping of tracks, referred to as <code>header1</code>
+and <code>header2</code> for clarity.</p>
+<p>The first header line <code>header1</code> is used as the top-level track.
+For composite tracks, one composite track view is created underneath
+the top-level track for each secondary header <code>header2</code>.
+Composite tracks can associate two views to the same parent by
+using only second header line <code>header2</code> for subsequent track groups.
+In this way, composite views can effectively contain a subgroup of
+tracks within each top-level header <code>header1</code>.</p>
+<p>For multiWig overlay tracks, each overlay track is grouped into
+the top-level header <code>header1</code> track. However, there is no additional
+subgroup available.</p>
+<p>An example for two composite tracks, each with one view.</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>headingA1</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>headingA2</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>track name<span class="ot">=</span>trackname1</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>track name<span class="ot">=</span>trackname2</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>headingB1</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>headingB2</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>track name<span class="ot">=</span>trackname5</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>track name<span class="ot">=</span>trackname6</span></code></pre><p></p></div>
+<p>In this case, there will be two top-level parent tracks, labeled
+<code>"headingA1"</code> and <code>"headingB1"</code>, which appear inside the track hub.
+Within each track, there will be one composite view:
+for <code>headingA1</code> there is one internal track <code>headingA2</code>; and
+for <code>headingB1</code> there is one internal track <code>headingB2</code>.</p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -116,8 +220,464 @@ a UCSC genome browser track hub.</p>
 <code><a href="get_track_defaults.html">get_track_defaults</a>()</code>,
 <code><a href="make_ucsc_trackname.html">make_ucsc_trackname</a>()</code></p></div>
     </div>
-    </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># example of two composite track top-level parent tracks</span></span></span>
+<span class="r-in"><span><span class="va">track_lines_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"headingA1</span></span></span>
+<span class="r-in"><span><span class="st">headingA2</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname1 shortLabel=trackname1 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname2 shortLabel=trackname2 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname3 shortLabel=trackname3 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname4 shortLabel=trackname4 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">headingB1</span></span></span>
+<span class="r-in"><span><span class="st">headingB2</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname5 shortLabel=trackname5 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname6 shortLabel=trackname6 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname7 shortLabel=trackname7 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname8 shortLabel=trackname8 bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">track_lines</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">track_lines_text</span>, <span class="st">"\n"</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu">parse_ucsc_gokey</span><span class="op">(</span><span class="va">track_lines</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> track             headingA1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> compositeTrack    on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> shortLabel        headingA1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> longLabel         headingA1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> superTrack        on show</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> configurable      on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subGroup1         view Views \</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    COV=Coverage \</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    JUNC=Junctions \</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    PEAK=Peaks</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> visibility        full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> priority          5100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track                headingA2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    parent               headingA1 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    shortLabel           headingA2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    longLabel            headingA2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    view                 COV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    compositeTrack       on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    configurable         on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    centerLabelsDense    on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    dragAndDrop          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    maxHeightPixels      100:35:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transformFunc        NONE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    priority             5110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingA2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5112</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingA2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingA2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5116</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingA2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5118</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> track             headingB1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> compositeTrack    on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> shortLabel        headingB1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> longLabel         headingB1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> superTrack        on show</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> configurable      on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subGroup1         view Views \</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    COV=Coverage \</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    JUNC=Junctions \</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    PEAK=Peaks</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> visibility        full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> priority          5300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track                headingB2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    parent               headingB1 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    shortLabel           headingB2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    longLabel            headingB2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    view                 COV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    compositeTrack       on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    configurable         on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    centerLabelsDense    on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    dragAndDrop          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    maxHeightPixels      100:35:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transformFunc        NONE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    priority             5330</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingB2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5332</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingB2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingB2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5336</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track                trackname8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent               headingB2 on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type                 bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel           trackname8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel            trackname8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl           some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color                0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       gridDefault          on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       autoScale            on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       alwaysZero           on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       smoothingWindow      off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       windowingFunction    mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       visibility           full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority             5338</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">track_df</span> <span class="op">&lt;-</span> <span class="fu">parse_ucsc_gokey</span><span class="op">(</span><span class="va">track_lines</span>, debug<span class="op">=</span><span class="st">"df"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ##  (<span style="color: #00FFFF; font-weight: bold;">12:31:47</span>) 21Sep2023:   <span style="color: #FF8700;">jamba::sdim(track_dfl):</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            rows cols      class</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname1    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname2    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname3    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname4    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname5    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname6    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname7    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trackname8    1    3 data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         name shortLabel bigDataUrl</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 trackname1 trackname1   some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         name shortLabel bigDataUrl</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 trackname2 trackname2   some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ##  (<span style="color: #00FFFF; font-weight: bold;">12:31:47</span>) 21Sep2023:   <span style="color: #FF8700;">head(track_df$name, 4):</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trackname1" "trackname2" "trackname3" "trackname4"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># example of two composite track top-level parent tracks</span></span></span>
+<span class="r-in"><span><span class="va">track_lines_text2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"headingA1</span></span></span>
+<span class="r-in"><span><span class="st">headingA2</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname1_pos shortLabel=trackname1_pos bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname1_neg shortLabel=trackname1_neg bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname2_pos shortLabel=trackname2_pos bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname2_neg shortLabel=trackname2_neg bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">headingB1</span></span></span>
+<span class="r-in"><span><span class="st">headingB2</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname3_pos shortLabel=trackname3_pos bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname3_neg shortLabel=trackname3_neg bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname4_pos shortLabel=trackname4_pos bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">track name=trackname4_neg shortLabel=trackname4_neg bigDataUrl=some_url</span></span></span>
+<span class="r-in"><span><span class="st">"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">track_lines2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">track_lines_text2</span>, <span class="st">"\n"</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">track_text2</span> <span class="op">&lt;-</span> <span class="fu">parse_ucsc_gokey</span><span class="op">(</span><span class="va">track_lines2</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">track_text2</span><span class="op">)</span>;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> track                headingA1_headingA2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> superTrack           on show</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> shortLabel           headingA1: headingA2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> longLabel            headingA1: headingA2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> configurable         on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> priority             5100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track                  trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    superTrack             headingA1_headingA2 full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                   bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    container              multiWig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    aggregate              transparentOverlay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    shortLabel             trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    longLabel              trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    showSubtrackColorOnUi  on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    centerLabelsDense      on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    alwaysZero             on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    graphTypeDefault       bar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    maxHeightPixels        100:66:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    autoScale              on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    windowingFunction      mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    visibility             full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    priority               5110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname1_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname1_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname1_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5112</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname1_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname1_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname1_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track                  trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    superTrack             headingA1_headingA2 full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                   bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    container              multiWig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    aggregate              transparentOverlay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    shortLabel             trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    longLabel              trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    showSubtrackColorOnUi  on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    centerLabelsDense      on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    alwaysZero             on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    graphTypeDefault       bar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    maxHeightPixels        100:66:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    autoScale              on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    windowingFunction      mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    visibility             full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    priority               5130</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname2_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname2_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname2_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5132</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname2_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname2_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname2_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> track                headingB1_headingB2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> superTrack           on show</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> shortLabel           headingB1: headingB2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> longLabel            headingB1: headingB2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> configurable         on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> priority             5300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track                  trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    superTrack             headingB1_headingB2 full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                   bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    container              multiWig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    aggregate              transparentOverlay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    shortLabel             trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    longLabel              trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    showSubtrackColorOnUi  on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    centerLabelsDense      on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    alwaysZero             on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    graphTypeDefault       bar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    maxHeightPixels        100:66:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    autoScale              on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    windowingFunction      mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    visibility             full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    priority               5350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname3_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname3_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname3_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname3_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname3_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname3_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5354</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track                  trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    superTrack             headingB1_headingB2 full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                   bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    container              multiWig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    aggregate              transparentOverlay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    shortLabel             trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    longLabel              trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    showSubtrackColorOnUi  on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    centerLabelsDense      on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    alwaysZero             on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    graphTypeDefault       bar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    maxHeightPixels        100:66:5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    autoScale              on</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    windowingFunction      mean+whiskers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    visibility             full</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    priority               5370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname4_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname4_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname4_pos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       track             trackname4_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       parent            trackname4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       shortLabel        trackname4_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       longLabel         trackname4_neg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bigDataUrl        some_url</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       type              bigwig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       color             0,0,150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       priority          5374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># the final step is to save into a text file</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">track_text2</span>, file<span class="op">=</span><span class="st">"trackDb_platjam.txt"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -130,7 +690,7 @@ a UCSC genome browser track hub.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

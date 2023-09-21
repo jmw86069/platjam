@@ -46,6 +46,10 @@
 #' @param color_sub,desat arguments passed to `design2colors()`.
 #' @param ... additional arguments are passed to `design2colors()`.
 #'
+#' @returns `SummarizedExperiment` object
+#'
+#' @family jam import functions
+#'
 #' @export
 import_nanostring_rlf <- function
 (rlf,

@@ -55,6 +55,8 @@
 #' only linear: `viridis::inferno()`, `viridis::magma()`, `viridis::plasma()`
 #' `viridis::cividis()`,`viridis::viridis()`.
 #'
+#' @family jam coverage heatmap functions
+#'
 #' @examples
 #' # display RColorBrewer linear gradients
 #' RColorBrewer::display.brewer.all(type="seq")
@@ -71,17 +73,18 @@
 #'    viridis=viridis::viridis(11)))
 #'
 #' # jam_linear
-#' showColors(jam_linear)
+#' jamba::showColors(jam_linear)
 #'
 #' # jam_divergent
-#' showColors(jam_divergent)
+#' jamba::showColors(jam_divergent)
 #'
-make_coverage_heatmaps <- function
-(config_df,
- anno_df=NULL,
- ...)
-{
-}
+# make_coverage_heatmaps <- function
+# (config_df,
+#  anno_df=NULL,
+#  ...)
+# {
+#    # TODO;
+# }
 
 
 

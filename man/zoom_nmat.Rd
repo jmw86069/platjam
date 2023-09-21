@@ -45,6 +45,7 @@ Other jam coverage heatmap functions:
 \code{\link{get_nmat_ceiling}()},
 \code{\link{nmathm_row_order}()},
 \code{\link{nmatlist2heatmaps}()},
+\code{\link{validate_heatmap_params}()},
 \code{\link{zoom_nmatlist}()}
 }
 \concept{jam coverage heatmap functions}

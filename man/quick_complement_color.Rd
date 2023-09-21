@@ -4,26 +4,38 @@
 \alias{quick_complement_color}
 \title{Quick color complement function}
 \usage{
-quick_complement_color(x, space = c("hls", "hcl"), do_plot = FALSE, ...)
+quick_complement_color(
+  x,
+  space = c("hls", "hcl"),
+  preset = "ryb",
+  do_plot = FALSE,
+  ...
+)
+}
+\value{
+\code{character} vector of colors
 }
 \description{
 Quick color complement function
 }
 \examples{
 x <- "dodgerblue";
-complement_color(x);
-complement_color(x, space="hcl");
+jamba::showColors(list(x=x,
+   `quick_complement_color(x)`=quick_complement_color(x),
+   `colorjam::color_complement(x, preset="ryb")`=colorjam::color_complement(x, preset="ryb")))
 
-x <- c("dodgerblue", "firebrick2", "darkorange2", "gold", "aquamarine2", "darkorchid3");
-y <- complement_color(x);
-complement_color(y$output_hls)
-
-complement_color("green")
-complement_color(rainbow_hcl(10))
-complement_color(complement_color(rainbow_hcl(10))[[2]])
-
-x <- c("dodgerblue", "firebrick2", "darkorange2", "gold", "aquamarine2", "darkorchid3");
-y <- complement_color(x, preset="rgb");
-jamba::showColors(lapply(y, dichromat::dichromat))
+x <- rainbow_hcl(10);
+jamba::showColors(list(x=x,
+   `quick_complement_color(x)`=quick_complement_color(x),
+   `colorjam::color_complement(x, preset="ryb")`=colorjam::color_complement(x, preset="ryb")))
 
 }
+\seealso{
+Other jam color functions: 
+\code{\link{assign_numeric_colors}()},
+\code{\link{design2colors}()},
+\code{\link{df_to_numcolors}()},
+\code{\link{mean_hue}()},
+\code{\link{print_color_list}()}
+}
+\concept{jam color functions}

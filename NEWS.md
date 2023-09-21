@@ -1,3 +1,24 @@
+# platjam 0.0.73.900
+
+* dependency version bump for colorjam (>= 0.0.26.900)
+
+## changes to existing functions
+
+* `quick_complement_color()` was updated to match recent updates to colorjam
+version 0.0.26.900. This change also affected `design2colors()`
+* `design2colors()`
+
+   * `preset="dichromat2"` new default, so colors begin with yellow,
+   more conducive for applying to control groups than starting with red.
+
+# platjam 0.0.72.900
+
+## migration of coverage heatmap functions to coverjam
+
+The functions related to coverage heatmaps are being migrated into
+`"jmw86069/coverjam"` Github-hosted R package, for cleaner maintenance
+of those functions.
+
 # platjam 0.0.71.900
 
 ## changes to existing functions

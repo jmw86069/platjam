@@ -26,6 +26,9 @@ the colot table.}
 
 \item{...}{additional arguments are passed to \code{design2colors()}.}
 }
+\value{
+\code{SummarizedExperiment} object
+}
 \description{
 Import Nanostring RLF file for a codeset
 }
@@ -69,3 +72,18 @@ spike-in probes on the codeset
 }
 }
 }
+\seealso{
+Other jam import functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{deepTools_matrix2nmat}()},
+\code{\link{frequency_matrix2nmat}()},
+\code{\link{import_lipotype_csv}()},
+\code{\link{import_metabolomics_niehs}()},
+\code{\link{import_nanostring_csv}()},
+\code{\link{import_nanostring_rcc}()},
+\code{\link{import_proteomics_PD}()},
+\code{\link{import_proteomics_mascot}()},
+\code{\link{import_salmon_quant}()},
+\code{\link{process_metab_compounds_file}()}
+}
+\concept{jam import functions}

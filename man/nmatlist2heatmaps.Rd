@@ -459,6 +459,7 @@ Other jam coverage heatmap functions:
 \code{\link{coverage_matrix2nmat}()},
 \code{\link{get_nmat_ceiling}()},
 \code{\link{nmathm_row_order}()},
+\code{\link{validate_heatmap_params}()},
 \code{\link{zoom_nmatlist}()},
 \code{\link{zoom_nmat}()}
 }

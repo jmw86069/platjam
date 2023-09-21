@@ -229,7 +229,9 @@
 #' @param debug `character` string used to enable detailed debugging output.
 #' @param ... additional arguments are passed to downstream functions.
 #'
-#' @return output depends upon argument `return_type`:
+#' @family jam color functions
+#'
+#' @returns output depends upon argument `return_type`:
 #' * `"list"`: returns a `list` of colors defined by `colnames(x)`,
 #' suitable for use with `ComplexHeatmap::HeatmapAnnotation()` for example.
 #' * `"df"`: returns `data.frame` of colors with same dimensions as the
@@ -319,7 +321,7 @@ design2colors <- function
  lightness_colnames=NULL,
  class_colnames=NULL,
  ignore_colnames=NULL,
- preset="dichromat",
+ preset="dichromat2",
  phase=1,
  rotate_phase=-1,
  class_pad=1,
@@ -1255,6 +1257,8 @@ design2colors <- function
 #'
 #' Determine cardinality between two vectors
 #'
+#' @family jam utility functions
+#'
 #' @examples
 #' a <- letters[c(1, 1, 2, 2, 2, 3)];
 #' b <- LETTERS[c(1, 2, 3, 4, 5, 6)];
@@ -1357,6 +1361,8 @@ cardinality <- function
 #'    `jamba::getColorRamp()`, to trim the edge colors from a linear
 #'    color gradient, thus avoiding extreme colors.
 #' @param ... additional arguments are ignored.
+#'
+#' @family jam color functions
 #'
 #' @export
 df_to_numcolors <- function

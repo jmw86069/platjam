@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,41 +52,53 @@
     <p>Assign default UCSC track values to environment</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">assign_track_defaults</span><span class="op">(</span>
-  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">defaults</span>,
-  singlet_only <span class="op">=</span> <span class="cn">TRUE</span>,
-  track_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"track"</span>, <span class="st">"superTrack"</span>, <span class="st">"parent"</span><span class="op">)</span>,
-  type_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"longLabel"</span><span class="op">)</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assign_track_defaults</span><span class="op">(</span></span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">defaults</span>,</span>
+<span>  singlet_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  track_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"track"</span>, <span class="st">"superTrack"</span>, <span class="st">"parent"</span><span class="op">)</span>,</span>
+<span>  type_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"longLabel"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>env</dt>
 <dd><p><code>environment</code> in which the default values will be
 assigned. If the environment already has these values assigned,
 those values will be replaced with values in <code>defaults</code>.</p></dd>
+
+
 <dt>defaults</dt>
 <dd><p><code>list</code> or <code>data.frame</code> of named values,
 whose names are used for assignment in the environment <code>env</code>.</p></dd>
+
+
 <dt>singlet_only</dt>
 <dd><p>logical indicating whether to perform assignment
 only when there is one unique value to assign. Useful when passing
 <code>defaults</code> as a <code>data.frame</code>, when <code>singlet_only=TRUE</code> it will
 only assign columns containing one unique value.</p></dd>
+
+
 <dt>track_types</dt>
 <dd><p>character vector containing regular expression
 patterns, used to recognize track name fields. The values for
 track name fields are passed to <code><a href="make_ucsc_trackname.html">make_ucsc_trackname()</a></code> which
 replaces invalid characters with underscore.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are passed to <code><a href="https://rdrr.io/r/base/assign.html" class="external-link">base::assign()</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>`environment`` is returned invisibly.</p>
+    
+
+<p>`environment`` is returned invisibly.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -107,7 +119,6 @@ for the track hierarchy to remain valid.</p>
 <code><a href="make_ucsc_trackname.html">make_ucsc_trackname</a>()</code>,
 <code><a href="parse_ucsc_gokey.html">parse_ucsc_gokey</a>()</code></p></div>
     </div>
-    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -121,7 +132,7 @@ for the track hierarchy to remain valid.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

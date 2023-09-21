@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,9 +52,10 @@
     <p>Get Salmon metadata and aux info into a data.frame</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">get_salmon_meta</span><span class="op">(</span><span class="va">metafile</span>, exclude_hashes <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_salmon_meta</span><span class="op">(</span><span class="va">metafile</span>, exclude_hashes <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>metafile</dt>
@@ -62,15 +63,22 @@
 full file path to the <code>meta_info.json</code> file after running Salmon
 quant. The path <code>metafile</code> should be the path to any output file
 from one Salmon quant analysis.</p></dd>
+
+
 <dt>exclude_hashes</dt>
 <dd><p>logical indicating whether to drop columns that
 contain file hashes.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>data.frame</code> whose number of rows is equal to the number
+    
+
+<p><code>data.frame</code> whose number of rows is equal to the number
 of unique Salmon root directories in the input <code>metafile</code>.
 For any input <code>metafile</code> not found, the output is <code>NULL</code>.</p>
     </div>
@@ -80,7 +88,7 @@ For any input <code>metafile</code> not found, the output is <code>NULL</code>.<
 output files, uses that path to locate the full set of
 available files, loads data from each of the discovered
 files, and returns the results in a <code>data.frame</code> format.</p>
-<p>This function uses <code><a href="https://rdrr.io/pkg/rprojroot/man/find_root.html" class="external-link">rprojroot::find_root()</a></code> to find the
+<p>This function uses <code><a href="https://rprojroot.r-lib.org/reference/find_root.html" class="external-link">rprojroot::find_root()</a></code> to find the
 root directory, defined as the directory that contains
 the file <code>"cmd_info.json"</code>. The path to <code>"meta_info.json"</code>
 is constructed relative to that location.</p>
@@ -100,18 +108,16 @@ in order to fit on one row in the <code>data.frame</code>.</p>
     <h2>See also</h2>
     <div class="dont-index"><p>Other jam nextgen sequence functions: 
 <code><a href="get_salmon_root.html">get_salmon_root</a>()</code>,
+<code><a href="parse_salmon_flenfile.html">parse_salmon_flenfile</a>()</code>,
 <code><a href="save_salmon_qc_xlsx.html">save_salmon_qc_xlsx</a>()</code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">cmdinfopath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"salmonOut"</span>, <span class="st">"cmd_info.json"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">cmdinfopath</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="fu">get_salmon_meta</span><span class="op">(</span><span class="va">cmdinfopath</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘rprojroot’ was built under R version 3.6.2</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘jsonlite’ was built under R version 3.6.2</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">cmdinfopath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"salmonOut"</span>, <span class="st">"cmd_info.json"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">cmdinfopath</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="fu">get_salmon_meta</span><span class="op">(</span><span class="va">cmdinfopath</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   salmon_version samp_type opt_type num_libraries library_types</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         0.11.2      none       vb             1           ISR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   frag_dist_length seq_bias_correct gc_bias_correct num_bias_bins mapping_type</span>
@@ -142,7 +148,7 @@ in order to fit on one row in the <code>data.frame</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                        3482716   0   0 889   0   0 24661298</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        SF      SR MU OU IU U</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 1707293 1774534  0  0  0 0</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -157,7 +163,7 @@ in order to fit on one row in the <code>data.frame</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

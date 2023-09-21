@@ -38,7 +38,9 @@
 #' to prevent the lowest non-zero value from being a blank color
 #' defined by `base_color`.
 #'
-#' @return `function` as defined by `circlize::colorRamp2()` which takes
+#' @family jam color functions
+#'
+#' @returns `function` as defined by `circlize::colorRamp2()` which takes
 #'    a `numeric` vector as input, and returns `character` vector of
 #'    colors as output. The attributes described below are used to
 #'    show a suitable summary of colors in `jamba::showColors()`;
@@ -245,6 +247,8 @@ assign_numeric_colors <- function
 #'
 #' Print color list of color vectors or color functions
 #'
+#' @family jam color functions
+#'
 #' @param x `list` of `character` color vectors, or `function` defined by
 #'    `circlize::colorRamp2()` which encodes rgb colors and breaks
 #'    in attributes `"colors"` and `"breaks"` respectively.
@@ -289,6 +293,12 @@ print_color_list <- function
 #' Mean hue for a vector
 #'
 #' Mean hue for a vector
+#'
+#' @family jam color functions
+#'
+#' @param x `numeric` angles in degrees representing HCL color hue.
+#' @param seed `numeric` used with `set.seed(seed)` for reproducibility.
+#' @param ... additional arguments are ignored.
 #'
 #' @export
 mean_hue <- function

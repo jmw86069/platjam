@@ -1,3 +1,7 @@
+# TODO 21sep2023
+
+* DONE. Update `design2colors()` consistent with colorjam 0.0.26.900 changes.
+
 # TODO 31jul2023
 
 * `import_salmon_quant()`

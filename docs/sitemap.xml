@@ -4,6 +4,9 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/Coverage_Heatmaps_Notes.html</loc>
+  </url>
+  <url>
     <loc>/TODO.html</loc>
   </url>
   <url>
@@ -16,19 +19,49 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/nmatlist2heatmsaps_args.html</loc>
+  </url>
+  <url>
     <loc>/reference/applyXlsxConditionalFormatByColumn.html</loc>
+  </url>
+  <url>
+    <loc>/reference/assign_numeric_colors.html</loc>
   </url>
   <url>
     <loc>/reference/assign_track_defaults.html</loc>
   </url>
   <url>
+    <loc>/reference/cardinality.html</loc>
+  </url>
+  <url>
     <loc>/reference/color_complement.html</loc>
+  </url>
+  <url>
+    <loc>/reference/convert_PD_df_to_SE.html</loc>
+  </url>
+  <url>
+    <loc>/reference/convert_imputed_assays_to_na.html</loc>
   </url>
   <url>
     <loc>/reference/coverage_matrix2nmat.html</loc>
   </url>
   <url>
+    <loc>/reference/curate_se_colData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/curate_to_df_by_pattern.html</loc>
+  </url>
+  <url>
     <loc>/reference/deepTools_matrix2nmat.html</loc>
+  </url>
+  <url>
+    <loc>/reference/design2colors.html</loc>
+  </url>
+  <url>
+    <loc>/reference/design2layout.html</loc>
+  </url>
+  <url>
+    <loc>/reference/df_to_numcolors.html</loc>
   </url>
   <url>
     <loc>/reference/frequency_matrix2nmat.html</loc>
@@ -49,7 +82,31 @@
     <loc>/reference/get_track_defaults.html</loc>
   </url>
   <url>
+    <loc>/reference/handle_df_args.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_lipotype_csv.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_metabolomics_niehs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_nanostring_csv.html</loc>
+  </url>
+  <url>
     <loc>/reference/import_nanostring_rcc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_nanostring_rlf.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_proteomics_PD.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_proteomics_mascot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/import_salmon_quant.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
@@ -61,13 +118,31 @@
     <loc>/reference/make_ucsc_trackname.html</loc>
   </url>
   <url>
+    <loc>/reference/mean_hue.html</loc>
+  </url>
+  <url>
+    <loc>/reference/merge_proteomics_se.html</loc>
+  </url>
+  <url>
     <loc>/reference/nmathm_row_order.html</loc>
   </url>
   <url>
     <loc>/reference/nmatlist2heatmaps.html</loc>
   </url>
   <url>
+    <loc>/reference/parse_salmon_flenfile.html</loc>
+  </url>
+  <url>
     <loc>/reference/parse_ucsc_gokey.html</loc>
+  </url>
+  <url>
+    <loc>/reference/print_color_list.html</loc>
+  </url>
+  <url>
+    <loc>/reference/process_metab_compounds_file.html</loc>
+  </url>
+  <url>
+    <loc>/reference/quick_complement_color.html</loc>
   </url>
   <url>
     <loc>/reference/rowNormScale.html</loc>
@@ -86,6 +161,9 @@
   </url>
   <url>
     <loc>/reference/set_xlsx_rowheights.html</loc>
+  </url>
+  <url>
+    <loc>/reference/validate_heatmap_params.html</loc>
   </url>
   <url>
     <loc>/reference/zoom_nmat.html</loc>

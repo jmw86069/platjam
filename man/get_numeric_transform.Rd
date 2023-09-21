@@ -66,10 +66,14 @@ transform_list[[2]](x)
 }
 \seealso{
 Other jam utility functions: 
+\code{\link{cardinality}()},
 \code{\link{color_complement}()},
+\code{\link{convert_PD_df_to_SE}()},
 \code{\link{convert_imputed_assays_to_na}()},
 \code{\link{curate_se_colData}()},
 \code{\link{curate_to_df_by_pattern}()},
+\code{\link{design2layout}()},
+\code{\link{handle_df_args}()},
 \code{\link{merge_proteomics_se}()},
 \code{\link{rowNormScale}()}
 }

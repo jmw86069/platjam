@@ -3,6 +3,10 @@
 #'
 #' Import proteomics data from Mascot
 #'
+#' @family jam import functions
+#'
+#' @returns `SummarizedExperiment` object
+#'
 #' @param file `character` path to a file containing proteomics data
 #' @param sheet `integer` or `character` name of worksheet when `file`
 #'    is an Excel `xlsx` formatted file.
@@ -27,9 +31,11 @@
 #' @param ... additional arguments are passed to `jamba::readOpenxlsx()`.
 #'
 #' @examples
-#' file <- file.path(path.expand("~/Projects/Hu/hu_msprot_turboid"),
+#' # TODO: replace with smaller test data in the appropriate format
+#' mascot_file <- file.path(path.expand("~/Projects/Hu/hu_msprot_turboid"),
 #'    "Lackford_all_090822.xlsx")
 #' protein_df <- jamba::readOpenxlsx(mascot_file, sheet=1)[[1]];
+#' se <- import_proteomics_mascot;
 #'
 #' @export
 import_proteomics_mascot <- function

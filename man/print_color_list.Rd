@@ -22,3 +22,12 @@ The \code{list} is returned invisibly.}
 \description{
 Print color list of color vectors or color functions
 }
+\seealso{
+Other jam color functions: 
+\code{\link{assign_numeric_colors}()},
+\code{\link{design2colors}()},
+\code{\link{df_to_numcolors}()},
+\code{\link{mean_hue}()},
+\code{\link{quick_complement_color}()}
+}
+\concept{jam color functions}

@@ -25,3 +25,17 @@ Internal function to convert Proteomics Discoverer data.frame to SummarizedExper
 This function is intended to be called by \code{import_proteomics_PD()} after
 the Excel data is split into protein and peptide \code{data.frame} components.
 }
+\seealso{
+Other jam utility functions: 
+\code{\link{cardinality}()},
+\code{\link{color_complement}()},
+\code{\link{convert_imputed_assays_to_na}()},
+\code{\link{curate_se_colData}()},
+\code{\link{curate_to_df_by_pattern}()},
+\code{\link{design2layout}()},
+\code{\link{get_numeric_transform}()},
+\code{\link{handle_df_args}()},
+\code{\link{merge_proteomics_se}()},
+\code{\link{rowNormScale}()}
+}
+\concept{jam utility functions}

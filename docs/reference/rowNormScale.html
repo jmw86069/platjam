@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,39 +52,49 @@
     <p>Normalize and scale data per row</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">rowNormScale</span><span class="op">(</span>
-  <span class="va">x</span>,
-  from <span class="op">=</span> <span class="fl">0</span>,
-  to <span class="op">=</span> <span class="fl">1</span>,
-  naValue <span class="op">=</span> <span class="cn">NA</span>,
-  low <span class="op">=</span> <span class="cn">NULL</span>,
-  high <span class="op">=</span> <span class="cn">NULL</span>,
-  singletMethod <span class="op">=</span> <span class="st">"min"</span>,
-  col_range <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rowNormScale</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  from <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  to <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  naValue <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  low <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  high <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  singletMethod <span class="op">=</span> <span class="st">"min"</span>,</span>
+<span>  col_range <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x, from, to, naValue, singletMethod</dt>
 <dd><p>arguments passed to
 <code><a href="https://rdrr.io/pkg/jamba/man/normScale.html" class="external-link">jamba::normScale()</a></code>. Note that the default <code>low,high</code> values
 use the column range defined by <code>col_range</code>.</p></dd>
+
+
 <dt>low</dt>
 <dd><p>numeric value or <code>NULL</code>, passed to <code><a href="https://rdrr.io/pkg/jamba/man/normScale.html" class="external-link">jamba::normScale()</a></code>
 for each row in <code>x</code>. When <code>low</code> is <code>NULL</code>, it uses the
 minimum value in <code>col_range</code> for each row.</p></dd>
+
+
 <dt>high</dt>
 <dd><p>numeric value or <code>NULL</code>, passed to <code><a href="https://rdrr.io/pkg/jamba/man/normScale.html" class="external-link">jamba::normScale()</a></code>
 for each row in <code>x</code>. When <code>high</code> is <code>NULL</code>, it uses the
 maximum value in <code>col_range</code> for each row.</p></dd>
+
+
 <dt>col_range</dt>
 <dd><p>integer vector referring to column numbers in
 the input <code>x</code> matrix to use in <code><a href="https://rdrr.io/pkg/jamba/man/normScale.html" class="external-link">jamba::normScale()</a></code>. When
 <code>col_range</code> is <code>NULL</code>, it uses all columns in <code>x</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are passed to <code><a href="https://rdrr.io/pkg/jamba/man/normScale.html" class="external-link">jamba::normScale()</a></code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -98,31 +108,38 @@ help docs.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other jam utility functions: 
+<code><a href="cardinality.html">cardinality</a>()</code>,
 <code><a href="color_complement.html">color_complement</a>()</code>,
-<code><a href="get_numeric_transform.html">get_numeric_transform</a>()</code></p></div>
-    </div>
+<code><a href="convert_PD_df_to_SE.html">convert_PD_df_to_SE</a>()</code>,
+<code><a href="convert_imputed_assays_to_na.html">convert_imputed_assays_to_na</a>()</code>,
+<code><a href="curate_se_colData.html">curate_se_colData</a>()</code>,
+<code><a href="curate_to_df_by_pattern.html">curate_to_df_by_pattern</a>()</code>,
+<code><a href="design2layout.html">design2layout</a>()</code>,
+<code><a href="get_numeric_transform.html">get_numeric_transform</a>()</code>,
+<code><a href="handle_df_args.html">handle_df_args</a>()</code>,
+<code><a href="merge_proteomics_se.html">merge_proteomics_se</a>()</code></p></div>
     </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">m</span>;</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">m</span>;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    1    4    7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    2    5    8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]    3    6    9</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">rowNormScale</span><span class="op">(</span><span class="va">m</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">rowNormScale</span><span class="op">(</span><span class="va">m</span><span class="op">)</span>;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    0  0.5    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    0  0.5    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]    0  0.5    1</span>
-<span class="r-in"><span class="fu">rowNormScale</span><span class="op">(</span><span class="va">m</span>, from<span class="op">=</span><span class="fl">0</span>, to<span class="op">=</span><span class="fl">10</span><span class="op">)</span>;</span>
+<span class="r-in"><span><span class="fu">rowNormScale</span><span class="op">(</span><span class="va">m</span>, from<span class="op">=</span><span class="fl">0</span>, to<span class="op">=</span><span class="fl">10</span><span class="op">)</span>;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    0    5   10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    0    5   10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]    0    5   10</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -137,7 +154,7 @@ help docs.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

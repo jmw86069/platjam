@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,24 +52,25 @@
     <p>Import genome coverage matrix files</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">coverage_matrix2nmat</span><span class="op">(</span>
-  x <span class="op">=</span> <span class="cn">NULL</span>,
-  filename <span class="op">=</span> <span class="cn">NULL</span>,
-  signal_name <span class="op">=</span> <span class="cn">NULL</span>,
-  target_name <span class="op">=</span> <span class="st">"target"</span>,
-  background <span class="op">=</span> <span class="fl">0</span>,
-  smooth <span class="op">=</span> <span class="cn">FALSE</span>,
-  target_is_single_point <span class="op">=</span> <span class="cn">FALSE</span>,
-  signal_is_categorical <span class="op">=</span> <span class="cn">FALSE</span>,
-  mat_grep <span class="op">=</span> <span class="st">"[-0-9]+:[-0-9]+"</span>,
-  upstream_grep <span class="op">=</span> <span class="st">"^[-]"</span>,
-  downstream_grep <span class="op">=</span> <span class="st">"^[^-]"</span>,
-  target_grep <span class="op">=</span> <span class="st">"^0$"</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">coverage_matrix2nmat</span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  filename <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  signal_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  target_name <span class="op">=</span> <span class="st">"target"</span>,</span>
+<span>  background <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  target_is_single_point <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  signal_is_categorical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mat_grep <span class="op">=</span> <span class="st">"[-0-9]+:[-0-9]+"</span>,</span>
+<span>  upstream_grep <span class="op">=</span> <span class="st">"^[-]"</span>,</span>
+<span>  downstream_grep <span class="op">=</span> <span class="st">"^[^-]"</span>,</span>
+<span>  target_grep <span class="op">=</span> <span class="st">"^0$"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
@@ -78,56 +79,83 @@ genome coverage data, or a character file path. When
 <code>x</code> is not supplied, <code>filename</code> is used to import
 data. When <code>x</code> is a filename, it is used to populate
 <code>filename</code>, then data is imported into <code>x</code>.</p></dd>
+
+
 <dt>filename</dt>
 <dd><p>character path to a genome coverage file.
 When <code>x</code> is supplied, this argument is ignored. When
 <code>filename</code> is used, only the first file is imported.</p></dd>
+
+
 <dt>signal_name</dt>
 <dd><p>The name of signal regions. It is only used
 for printing the object. When <code>signal_name</code> is <code>NULL</code>, the
 <code>signal_name</code> is derived from <code>names(filename)</code> if
 available, then <code>basename(filename)</code>, or <code>"signal"</code> then
 only <code>x</code> is supplied.</p></dd>
+
+
 <dt>target_name</dt>
 <dd><p>The name of the target names. It is only used
 for printing the object.</p></dd>
+
+
 <dt>background</dt>
 <dd><p>numeric value containing the background
 value in the matrix.</p></dd>
+
+
 <dt>smooth</dt>
 <dd><p>logical whether to apply smoothing on rows.</p></dd>
+
+
 <dt>target_is_single_point, signal_is_categorical</dt>
 <dd><p>logical
 indicating whether the target region is a single point,
 and whether signal matrix is categorical, respectively.</p></dd>
+
+
 <dt>mat_grep</dt>
 <dd><p>character regular expression pattern used
 to identify colnames which contain coverage data. The
 default pattern expects the format <code>"-200:-100"</code>.</p></dd>
+
+
 <dt>upstream_grep</dt>
 <dd><p>character regular expression pattern
 used to identify upstream colnames from values that
 match <code>mat_grep</code>. The default assumes any region
 beginning <code>"-"</code> is negative and upstream the central
 target region.</p></dd>
+
+
 <dt>downstream_grep</dt>
 <dd><p>character regular expression pattern
 used to identify upstream colnames from values that
 match <code>mat_grep</code>. The default assumes all colnames which
 are not upstream are therefore downstream.</p></dd>
+
+
 <dt>target_grep</dt>
 <dd><p>character regular expression pattern
 used to identify a colname referring to the <code>target</code>,
 which by default can only be <code>"0"</code>. Otherwise, no target
 region is defined.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>logical indicating whether to print verbose output.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>normalizedMatrix</code> numeric matrix, where additiona
+    
+
+<p><code>normalizedMatrix</code> numeric matrix, where additiona
 metadata is stored in the object attributes. See
 <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/as.normalizedMatrix.html" class="external-link">EnrichedHeatmap::as.normalizedMatrix()</a></code> for more
 details about the metadata. The <code>rownames</code> are defined
@@ -152,58 +180,64 @@ function may change to call that function.</p>
 <code><a href="get_nmat_ceiling.html">get_nmat_ceiling</a>()</code>,
 <code><a href="nmathm_row_order.html">nmathm_row_order</a>()</code>,
 <code><a href="nmatlist2heatmaps.html">nmatlist2heatmaps</a>()</code>,
+<code><a href="validate_heatmap_params.html">validate_heatmap_params</a>()</code>,
 <code><a href="zoom_nmatlist.html">zoom_nmatlist</a>()</code>,
 <code><a href="zoom_nmat.html">zoom_nmat</a>()</code></p>
 <p>Other jam import functions: 
 <code><a href="deepTools_matrix2nmat.html">deepTools_matrix2nmat</a>()</code>,
 <code><a href="frequency_matrix2nmat.html">frequency_matrix2nmat</a>()</code>,
-<code><a href="import_nanostring_rcc.html">import_nanostring_rcc</a>()</code></p></div>
-    </div>
+<code><a href="import_lipotype_csv.html">import_lipotype_csv</a>()</code>,
+<code><a href="import_metabolomics_niehs.html">import_metabolomics_niehs</a>()</code>,
+<code><a href="import_nanostring_csv.html">import_nanostring_csv</a>()</code>,
+<code><a href="import_nanostring_rcc.html">import_nanostring_rcc</a>()</code>,
+<code><a href="import_nanostring_rlf.html">import_nanostring_rlf</a>()</code>,
+<code><a href="import_proteomics_PD.html">import_proteomics_PD</a>()</code>,
+<code><a href="import_proteomics_mascot.html">import_proteomics_mascot</a>()</code>,
+<code><a href="import_salmon_quant.html">import_salmon_quant</a>()</code>,
+<code><a href="process_metab_compounds_file.html">process_metab_compounds_file</a>()</code></p></div>
     </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## There is a small example file to use for testing</span></span>
-<span class="r-in"><span class="va">cov_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"tss_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">cov_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"h3k4me1_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cov_file</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">nmat</span> <span class="op">&lt;-</span> <span class="fu">coverage_matrix2nmat</span><span class="op">(</span><span class="va">cov_file</span><span class="op">)</span>;</span>
-<span class="r-in">   <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/printDebug.html" class="external-link">printDebug</a></span><span class="op">(</span><span class="st">"signal_name: "</span>,</span>
-<span class="r-in">      <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nmat</span>, <span class="st">"signal_name"</span><span class="op">)</span><span class="op">)</span>;</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/EnrichedHeatmap" class="external-link">EnrichedHeatmap</a></span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">color</span> <span class="op">&lt;-</span> <span class="st">"red3"</span>;</span>
-<span class="r-in">   <span class="va">signal_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nmat</span>, <span class="st">"signal_name"</span><span class="op">)</span>;</span>
-<span class="r-in">   <span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">6</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>;</span>
-<span class="r-in">   <span class="va">partition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">nmat</span><span class="op">)</span>, centers<span class="op">=</span><span class="va">k</span><span class="op">)</span><span class="op">$</span><span class="va">cluster</span>;</span>
-<span class="r-in">   <span class="va">EH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">nmat</span><span class="op">)</span>,</span>
-<span class="r-in">      split<span class="op">=</span><span class="va">partition</span>,</span>
-<span class="r-in">      pos_line<span class="op">=</span><span class="cn">FALSE</span>,</span>
-<span class="r-in">      use_raster<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span class="r-in">      col<span class="op">=</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp</a></span><span class="op">(</span><span class="va">color</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span>,</span>
-<span class="r-in">      top_annotation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">HeatmapAnnotation</a></span><span class="op">(</span></span>
-<span class="r-in">         lines<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html" class="external-link">anno_enriched</a></span><span class="op">(</span>gp<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>col<span class="op">=</span><span class="fu">colorjam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">rainbowJam</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">      <span class="op">)</span>,</span>
-<span class="r-in">      axis_name_gp<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize<span class="op">=</span><span class="fl">8</span><span class="op">)</span>,</span>
-<span class="r-in">      name<span class="op">=</span><span class="va">signal_name</span>,</span>
-<span class="r-in">      column_title<span class="op">=</span><span class="va">signal_name</span></span>
-<span class="r-in">   <span class="op">)</span>;</span>
-<span class="r-in">   <span class="va">PHM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></span><span class="op">(</span><span class="va">partition</span>,</span>
-<span class="r-in">      use_raster<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span class="r-in">      col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="fu">colorjam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">rainbowJam</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span>
-<span class="r-in">         names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">      name<span class="op">=</span><span class="st">"partition"</span>,</span>
-<span class="r-in">      show_row_names<span class="op">=</span><span class="cn">FALSE</span>,</span>
-<span class="r-in">      width<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"mm"</span><span class="op">)</span><span class="op">)</span>;</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">PHM</span> <span class="op">+</span> <span class="va">EH</span>, main_heatmap<span class="op">=</span><span class="fl">2</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ##  (<span style="color: #00FFFF; font-weight: bold;">17:21:02</span>) 18Nov2021:  <span style="color: #FF8700;">signal_name: </span><span style="color: #00AFFF;">h3k4me1_coverage.matrix</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘S4Vectors’ was built under R version 3.6.3</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘IRanges’ was built under R version 3.6.2</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in tcount(sign(diff(h1h2df1$h2))):</span> could not find function "tcount"</span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## There is a small example file to use for testing</span></span></span>
+<span class="r-in"><span><span class="va">cov_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"tss_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">cov_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"h3k4me1_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cov_file</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">nmat</span> <span class="op">&lt;-</span> <span class="fu">coverage_matrix2nmat</span><span class="op">(</span><span class="va">cov_file</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/printDebug.html" class="external-link">printDebug</a></span><span class="op">(</span><span class="st">"signal_name: "</span>,</span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nmat</span>, <span class="st">"signal_name"</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/EnrichedHeatmap" class="external-link">EnrichedHeatmap</a></span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">color</span> <span class="op">&lt;-</span> <span class="st">"red3"</span>;</span></span>
+<span class="r-in"><span>   <span class="va">signal_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nmat</span>, <span class="st">"signal_name"</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">6</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="va">partition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">nmat</span><span class="op">)</span>, centers<span class="op">=</span><span class="va">k</span><span class="op">)</span><span class="op">$</span><span class="va">cluster</span>;</span></span>
+<span class="r-in"><span>   <span class="va">EH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">nmat</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      split<span class="op">=</span><span class="va">partition</span>,</span></span>
+<span class="r-in"><span>      pos_line<span class="op">=</span><span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>      use_raster<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>      col<span class="op">=</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp</a></span><span class="op">(</span><span class="va">color</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      top_annotation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">HeatmapAnnotation</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>         lines<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html" class="external-link">anno_enriched</a></span><span class="op">(</span>gp<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>col<span class="op">=</span><span class="fu">colorjam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">rainbowJam</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="op">)</span>,</span></span>
+<span class="r-in"><span>      axis_name_gp<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize<span class="op">=</span><span class="fl">8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      name<span class="op">=</span><span class="va">signal_name</span>,</span></span>
+<span class="r-in"><span>      column_title<span class="op">=</span><span class="va">signal_name</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="va">PHM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></span><span class="op">(</span><span class="va">partition</span>,</span></span>
+<span class="r-in"><span>      use_raster<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>      col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="fu">colorjam</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">rainbowJam</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      name<span class="op">=</span><span class="st">"partition"</span>,</span></span>
+<span class="r-in"><span>      show_row_names<span class="op">=</span><span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>      width<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"mm"</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">PHM</span> <span class="op">+</span> <span class="va">EH</span>, main_heatmap<span class="op">=</span><span class="fl">2</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ##  (<span style="color: #00FFFF; font-weight: bold;">12:31:34</span>) 21Sep2023:   <span style="color: #FF8700;">signal_name: </span><span style="color: #00AFFF;">h3k4me1_coverage.matrix</span> </span>
+<span class="r-plt img"><img src="coverage_matrix2nmat-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -218,7 +252,7 @@ function may change to call that function.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

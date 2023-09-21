@@ -28,3 +28,12 @@ color gradient, thus avoiding extreme colors.}
 \description{
 Convert data.frame to numeric color substitution
 }
+\seealso{
+Other jam color functions: 
+\code{\link{assign_numeric_colors}()},
+\code{\link{design2colors}()},
+\code{\link{mean_hue}()},
+\code{\link{print_color_list}()},
+\code{\link{quick_complement_color}()}
+}
+\concept{jam color functions}

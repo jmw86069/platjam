@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,107 +52,126 @@
     <p>Make multiple coverage heatmaps</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">nmatlist2heatmaps</span><span class="op">(</span>
-  <span class="va">nmatlist</span>,
-  panel_groups <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  caption <span class="op">=</span> <span class="cn">NULL</span>,
-  upstream_length <span class="op">=</span> <span class="cn">NULL</span>,
-  downstream_length <span class="op">=</span> <span class="cn">NULL</span>,
-  k_clusters <span class="op">=</span> <span class="fl">0</span>,
-  k_subset <span class="op">=</span> <span class="cn">NULL</span>,
-  k_colors <span class="op">=</span> <span class="cn">NULL</span>,
-  k_width <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">5</span>, <span class="st">"mm"</span><span class="op">)</span>,
-  k_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"euclidean"</span>, <span class="st">"pearson"</span>, <span class="st">"correlation"</span><span class="op">)</span>,
-  k_heatmap <span class="op">=</span> <span class="va">main_heatmap</span>,
-  partition <span class="op">=</span> <span class="cn">NULL</span>,
-  rows <span class="op">=</span> <span class="cn">NULL</span>,
-  row_order <span class="op">=</span> <span class="cn">NULL</span>,
-  nmat_colors <span class="op">=</span> <span class="cn">NULL</span>,
-  middle_color <span class="op">=</span> <span class="st">"white"</span>,
-  nmat_names <span class="op">=</span> <span class="cn">NULL</span>,
-  main_heatmap <span class="op">=</span> <span class="fl">1</span>,
-  anno_df <span class="op">=</span> <span class="cn">NULL</span>,
-  byCols <span class="op">=</span> <span class="cn">NULL</span>,
-  color_sub <span class="op">=</span> <span class="cn">NULL</span>,
-  anno_row_marks <span class="op">=</span> <span class="cn">NULL</span>,
-  anno_row_labels <span class="op">=</span> <span class="cn">NULL</span>,
-  top_annotation <span class="op">=</span> <span class="cn">NULL</span>,
-  top_anno_height <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"cm"</span><span class="op">)</span>,
-  top_axis_side <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"right"</span><span class="op">)</span>,
-  legend_max_ncol <span class="op">=</span> <span class="fl">2</span>,
-  legend_base_nrow <span class="op">=</span> <span class="fl">5</span>,
-  legend_max_labels <span class="op">=</span> <span class="fl">40</span>,
-  show_heatmap_legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  hm_nrow <span class="op">=</span> <span class="fl">1</span>,
-  transform <span class="op">=</span> <span class="st">"none"</span>,
-  signal_ceiling <span class="op">=</span> <span class="cn">NULL</span>,
-  axis_name <span class="op">=</span> <span class="cn">NULL</span>,
-  axis_name_gp <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,
-  axis_name_rot <span class="op">=</span> <span class="fl">90</span>,
-  column_title_gp <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>,
-  lens <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>,
-  anno_lens <span class="op">=</span> <span class="fl">8</span>,
-  pos_line <span class="op">=</span> <span class="cn">FALSE</span>,
-  seed <span class="op">=</span> <span class="fl">123</span>,
-  ht_gap <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"mm"</span><span class="op">)</span>,
-  profile_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"abs_mean"</span>, <span class="st">"abs_sum"</span><span class="op">)</span>,
-  ylims <span class="op">=</span> <span class="cn">NULL</span>,
-  border <span class="op">=</span> <span class="cn">TRUE</span>,
-  iter.max <span class="op">=</span> <span class="fl">20</span>,
-  use_raster <span class="op">=</span> <span class="cn">TRUE</span>,
-  raster_quality <span class="op">=</span> <span class="fl">1</span>,
-  raster_by_magick <span class="op">=</span> <span class="cn">TRUE</span>,
-  do_plot <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_width <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"cm"</span><span class="op">)</span>,
-  trim_legend_title <span class="op">=</span> <span class="cn">TRUE</span>,
-  heatmap_legend_param <span class="op">=</span> <span class="cn">NULL</span>,
-  annotation_legend_param <span class="op">=</span> <span class="cn">NULL</span>,
-  return_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"heatmaplist"</span>, <span class="st">"grid"</span><span class="op">)</span>,
-  show_error <span class="op">=</span> <span class="cn">FALSE</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span></span>
+<span>  <span class="va">nmatlist</span>,</span>
+<span>  panel_groups <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  upstream_length <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  downstream_length <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  k_clusters <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  k_subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  k_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  k_width <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">5</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
+<span>  k_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"euclidean"</span>, <span class="st">"pearson"</span>, <span class="st">"correlation"</span><span class="op">)</span>,</span>
+<span>  k_heatmap <span class="op">=</span> <span class="va">main_heatmap</span>,</span>
+<span>  partition <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rows <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  row_order <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nmat_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  middle_color <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>  nmat_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  main_heatmap <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  anno_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  byCols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color_sub <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  anno_row_marks <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  anno_row_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_anno_height <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"cm"</span><span class="op">)</span>,</span>
+<span>  top_axis_side <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"right"</span><span class="op">)</span>,</span>
+<span>  legend_max_ncol <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  legend_base_nrow <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  legend_max_labels <span class="op">=</span> <span class="fl">40</span>,</span>
+<span>  show_heatmap_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  hm_nrow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  transform <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  signal_ceiling <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  axis_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  axis_name_gp <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,</span>
+<span>  axis_name_rot <span class="op">=</span> <span class="fl">90</span>,</span>
+<span>  column_title_gp <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>,</span>
+<span>  lens <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>,</span>
+<span>  anno_lens <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  pos_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">123</span>,</span>
+<span>  ht_gap <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
+<span>  profile_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"abs_mean"</span>, <span class="st">"abs_sum"</span><span class="op">)</span>,</span>
+<span>  ylims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  border <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  iter.max <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  use_raster <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  raster_quality <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  raster_by_magick <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  do_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_width <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="st">"cm"</span><span class="op">)</span>,</span>
+<span>  trim_legend_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  heatmap_legend_param <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  annotation_legend_param <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"heatmaplist"</span>, <span class="st">"grid"</span><span class="op">)</span>,</span>
+<span>  show_error <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>nmatlist</dt>
 <dd><p><code>list</code> containing <code>normalizedMatrix</code> objects,
 usually the output from <code><a href="coverage_matrix2nmat.html">coverage_matrix2nmat()</a></code>.</p></dd>
+
+
 <dt>k_clusters</dt>
 <dd><p>integer number of k-means clusters to
 use to partition each heatmap. Use <code>0</code> or <code>NULL</code> for
 no clustering.</p></dd>
+
+
 <dt>k_subset</dt>
 <dd><p>integer vector of k-means clusters to
 retain. Often one cluster contains mostly empty
 values, and can be removed using this mechanism.</p></dd>
+
+
 <dt>k_colors</dt>
 <dd><p>vector of R colors, or <code>NULL</code> to use
 the output of <code>colorjam::rainbowJam(k_clusters)</code>.</p></dd>
+
+
 <dt>k_width</dt>
 <dd><p><code>unit</code> width of the k-means cluster color
 bar, used with <code>k_clusters</code>.</p></dd>
+
+
 <dt>k_method</dt>
 <dd><p><code>character</code> string indicating the distance
 used by k-means, where the common default is
 <code>"euclidean"</code>, however a useful alternative for
 sequence coverage data is <code>"correlation"</code> as implemented
 in <code><a href="https://rdrr.io/pkg/amap/man/Kmeans.html" class="external-link">amap::Kmeans()</a></code>.</p></dd>
+
+
 <dt>k_heatmap</dt>
 <dd><p><code>integer</code> indicating which one or more
 <code>normalizedMatrix</code> objects in <code>nmatlist</code> will be used
 for k-means clustering, when <code>k_clusters</code> is defined
 more than 1.</p></dd>
+
+
 <dt>partition</dt>
 <dd><p><code>character</code> or <code>factor</code> vector used to split rows
 of each matrix in <code>nmatlist</code>, named by rownames. This
 value is ignored when <code>k_clusters</code> is supplied.</p></dd>
+
+
 <dt>rows</dt>
 <dd><p><code>character</code> vector of <code>rownames(nmatlist)</code> or
 <code>integer</code> vector with index of rows to keep from each
 matrix in <code>nmatlist</code>.</p></dd>
+
+
 <dt>row_order</dt>
 <dd><p>integer vector used to order rows.
 When <code>TRUE</code> or <code>NULL</code> it uses
@@ -163,25 +182,35 @@ rows are ordered by the order they appear in <code>rows</code>,
 which is either the order they appear in <code>nmatlist</code>
 or the order after sorting <code>anno_df</code>. When
 <code>TRUE</code> the default</p></dd>
+
+
 <dt>nmat_colors</dt>
 <dd><p>named character vector of R colors,
 to colorize each heatmap. When <code>NULL</code> then
 <code><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">colorjam::rainbowJam()</a></code> is used to create colors
 for each heatmap panel.</p></dd>
+
+
 <dt>middle_color</dt>
 <dd><p><code>character</code> R compatible color used
 when creating a divergent color gradient, this color
 is used as the middle color. Usually this color should
 be either <code>"white"</code> or <code>"black"</code>.</p></dd>
+
+
 <dt>nmat_names</dt>
 <dd><p><code>character</code> vector, or <code>NULL</code>, optional,
 used as custom names for each heatmap in <code>nmatlist</code>.
 When <code>nmat_names=NULL</code> the <code>signal_name</code> values are
 used from each <code>nmatlist</code> matrix.</p></dd>
+
+
 <dt>main_heatmap</dt>
 <dd><p>integer index referring to the
 entry in <code>nmatlist</code> to use for clustering and row
 ordering.</p></dd>
+
+
 <dt>anno_df</dt>
 <dd><p><code>data.frame</code> or object that can be coerced,
 used to annotate rows of each matrix. It must have
@@ -191,11 +220,15 @@ Note that only the <code>rownames(anno_df)</code>
 present in both <code>nmatlist</code> and <code>anno_df</code> are
 used to display the heatmaps. These rows
 may also be subsetted using argument <code>rows</code>.</p></dd>
+
+
 <dt>byCols</dt>
 <dd><p>character vector of  values in
 <code>colnames(anno_df)</code> used to sort the data.frame
 via <code><a href="https://rdrr.io/pkg/jamba/man/mixedSortDF.html" class="external-link">jamba::mixedSortDF()</a></code>. Any colname with
 prefix <code>-</code> will be reverse-sorted.</p></dd>
+
+
 <dt>color_sub</dt>
 <dd><p><code>character vector</code> of R colors to be used
 as categorical colors, whose names match items to be
@@ -206,6 +239,8 @@ using <code>color_sub</code> instead of generating new colors.
 Also colors for partition and kmeans clusters, usually
 defined with <code>k_colors</code> can be defined in color_sub,
 if <code>names(color_sub)</code> match the partition labels.</p></dd>
+
+
 <dt>anno_row_marks</dt>
 <dd><p>character vector of <code>rownames</code>
 which will be labeled beside the heatmaps, using
@@ -213,6 +248,8 @@ the <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/anno_mark.html" class=
 requires <code>anno_df</code> be defined, since it uses the
 first column in <code>anno_df</code> as a one-column heatmap,
 to anchor the labels.</p></dd>
+
+
 <dt>anno_row_labels</dt>
 <dd><p>character vector of optional
 character labels to use instead of <code>rownames</code>.
@@ -221,6 +258,8 @@ If <code>NULL</code> then <code>anno_row_marks</code> are used. Or
 of <code>colnames(anno_df)</code> which will create labels
 by concatenating each column value separated by
 space <code>" "</code>.</p></dd>
+
+
 <dt>top_annotation</dt>
 <dd><p><code>HeatmapAnnotation</code> or <code>logical</code> or <code>list</code>:</p><ul><li><p><code>TRUE</code> to use the default approach
 <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html" class="external-link">EnrichedHeatmap::anno_enriched()</a></code></p></li>
@@ -233,12 +272,16 @@ function to be called on each coverage matrix heatmap.</p></li>
 <code>top_annotation</code> argument for each coverage heatmap,
 in order of <code>nmatlist</code>.</p></li>
 </ul></dd>
+
+
 <dt>top_anno_height</dt>
 <dd><p><code>unit</code> object to define the default
 height of the <code>top_annotation</code>. When <code>top_annotation</code>
 is not defined, the default method uses
 <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html" class="external-link">EnrichedHeatmap::anno_enriched()</a></code> with
 <code>height=top_anno_height</code>.</p></dd>
+
+
 <dt>top_axis_side</dt>
 <dd><p><code>character</code> value indicating which side
 of the top annotation to place the y-axis labels.
@@ -251,24 +294,34 @@ first panel in each group, <code>"right"</code> will label the
 right side of the last panel in each group.
 Values:
 "left", "right", "both", "none", "all".</p></dd>
+
+
 <dt>legend_max_ncol</dt>
 <dd><p>integer number indicating the maximum
 number of columns allowed for a categorical color legend.</p></dd>
+
+
 <dt>legend_base_nrow</dt>
 <dd><p>integer number indicating the base
 number of rows used for a categorical color legend, before
 additional columns are added. Once the number of elements
 exceeds <code>(legend_max_ncol * legend_base_nrow)</code> then
 rows are added, but columns never exceed <code>legend_max_ncol</code>.</p></dd>
+
+
 <dt>legend_max_labels</dt>
 <dd><p><code>integer</code> to define the maximum labels
 to display as a color legend. When any <code>anno_df</code> column contains
 more than this number of categorical colors, the legend is
 not displayed (because it would prevent display of the
 heatmaps at all).</p></dd>
+
+
 <dt>hm_nrow</dt>
 <dd><p>integer number of rows used to display
 the heatmap panels.</p></dd>
+
+
 <dt>transform</dt>
 <dd><p>either <code>character</code> string referring to
 a numeric transformation, or a <code>function</code> that applies
@@ -283,6 +336,8 @@ then multiplied by the original sign. Therefore, the
 transformation is applied to adjust the magnitude of
 the values. These values are passed to <code><a href="get_numeric_transform.html">get_numeric_transform()</a></code>
 which may have more information.</p></dd>
+
+
 <dt>signal_ceiling</dt>
 <dd><p><code>numeric</code> vector whose values are recycled
 to length <code>length(nmatlist)</code>. The signal_ceiling
@@ -303,21 +358,29 @@ as needed.</p>
 <p>If data needs to be strictly controlled to a
 numeric ceiling, that processing should take place
 on <code>nmatlist</code> before calling <code>nmatlist2heatmaps()</code>.</p></dd>
+
+
 <dt>axis_name_gp</dt>
 <dd><p>x-axis label graphic parameters,
 as output from <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">grid::gpar()</a></code>. For example to define
 the x-axis font size, use the form
 <code>grid::gpar(fontsize=8)</code>.</p></dd>
+
+
 <dt>axis_name_rot</dt>
 <dd><p>numeric value either <code>0</code> or <code>90</code> indicating
 whether to rotate the x-axis names, where <code>90</code> will rotate
 labels, and <code>0</code> will leave labels horizontal.</p></dd>
+
+
 <dt>column_title_gp</dt>
 <dd><p>heatmap title graphic parameters,
 as output from <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">grid::gpar()</a></code>. For example to define
 the x-axis font size, use the form
 <code>grid::gpar(fontsize=8)</code>. This argument is passed
 directly to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>lens</dt>
 <dd><p>numeric value used to scale each heatmap
 color ramp, using <code><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">getColorRamp()</a></code>. Values above zero
@@ -333,46 +396,66 @@ each matrix in <code>nmatlist</code>, and so it is recycled to
 is also intended to help apply the color gradient to
 a suitable numeric range, and the <code>lens</code> argument is
 applied relative to the numeric range being used.</p></dd>
+
+
 <dt>anno_lens</dt>
 <dd><p>numeric value used to scale the annotation
 heatmap color scales, see <code>lens</code> for details. Values
 higher than 1 make the color gradient more intense,
 values below -1 make the color gradient less intense.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>numeric value used with <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to
 set the random seed. Set to <code>NULL</code> to avoid running
 <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>.</p></dd>
+
+
 <dt>ht_gap</dt>
 <dd><p><code>unit</code> size to specify the gap between multiple heatmaps.
 This argument is passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">ComplexHeatmap::draw()</a></code>. An example
 is <code>grid::unit(8, "mm")</code> to specify 8 millimeters.</p></dd>
+
+
 <dt>profile_value</dt>
 <dd><p>character string to define the type of numeric
 profile to display at the top of each heatmap. This argument is
 passed to <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html" class="external-link">EnrichedHeatmap::anno_enriched()</a></code>. Values: <code>"mean"</code> the
 mean profile; <code>"sum"</code> the sum; <code>"abs_sum"</code> sum of absolute values;
 <code>"abs_mean"</code> the mean of absolute values.</p></dd>
+
+
 <dt>ylims</dt>
 <dd><p><code>vector</code> of maximum y-axis values for each heatmap profile;
 or <code>list</code></p></dd>
+
+
 <dt>border</dt>
 <dd><p><code>logical</code> indicating whether to draw a border around the
 heatmap, which includes all heatmap panels in the event of
 splitting by clustering. The <code>border</code> can be supplied as a vector,
 so the <code>border</code> can be applied specifically to each heatmap
 if needed.</p></dd>
+
+
 <dt>iter.max</dt>
 <dd><p>integer value indicating the maximum iterations
 performed by k-means clustering, only relevant when <code>k_clusters</code>
 is non-zero.</p></dd>
+
+
 <dt>use_raster</dt>
 <dd><p>logical indicating whether to create heatmaps
 using raster resizing, almost always recommended <code>TRUE</code>.</p></dd>
+
+
 <dt>raster_quality</dt>
 <dd><p><code>logical</code> passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>,
 used when <code>use_raster=TRUE</code> and defines the level of detail retained,
 and is used only when <code>raster_by_magick=FALSE</code>. Using larger numbers
 decreases speed substantially.</p></dd>
+
+
 <dt>raster_by_magick</dt>
 <dd><p><code>logical</code> passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>,
 to enable ImageMagick use during rasterization. By default this
@@ -383,28 +466,39 @@ then check the R package with <code><a href="https://docs.ropensci.org/magick/" 
 there are error messages. When <code>"magick"</code> is not available,
 the rasterization is substantially slower, and may produce
 files much larger than normal.</p></dd>
+
+
 <dt>do_plot</dt>
 <dd><p>logical indicating whether to draw the heatmaps,
 where <code>FALSE</code> will return the data used to create heatmaps
 without actually drawing the heatmaps.</p></dd>
+
+
 <dt>return_type</dt>
 <dd><p>character string indicating the type of
 data to return: <code>"heatmaplist"</code> returns the list of heatmaps,
 which can separately be arranged together using
 <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">ComplexHeatmap::draw()</a></code> or <code><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid::grid.draw()</a></code>.</p></dd>
+
+
 <dt>show_error</dt>
 <dd><p>logical indicating whether to add error
 bars to the profile plot at the top of each heatmap.
 These error bars are calculated by
 <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/anno_enriched.html" class="external-link">EnrichedHeatmap::anno_enriched()</a></code> using
 <code>matrixStats::colSds(x)/nrow(x)</code>.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>logical indicating whether to print verbose output.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments are passed to
 <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap::EnrichedHeatmap()</a></code> to allow greater
 customization of details. Note that many <code>...</code> arguments
 are also passed to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -423,101 +517,105 @@ and to enable optional multi-row heatmap layout.</p>
 <code><a href="coverage_matrix2nmat.html">coverage_matrix2nmat</a>()</code>,
 <code><a href="get_nmat_ceiling.html">get_nmat_ceiling</a>()</code>,
 <code><a href="nmathm_row_order.html">nmathm_row_order</a>()</code>,
+<code><a href="validate_heatmap_params.html">validate_heatmap_params</a>()</code>,
 <code><a href="zoom_nmatlist.html">zoom_nmatlist</a>()</code>,
 <code><a href="zoom_nmat.html">zoom_nmat</a>()</code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## There is a small example file to use for testing</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/jmw86069/jamba" class="external-link">jamba</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">cov_file1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"tss_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">cov_file2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"h3k4me1_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">cov_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cov_file1</span>, <span class="va">cov_file2</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cov_files</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[.]matrix"</span>,</span>
-<span class="r-in">   <span class="st">""</span>,</span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">cov_files</span><span class="op">)</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="va">nmatlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">cov_files</span>, <span class="va">coverage_matrix2nmat</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span><span class="op">)</span>;</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: magick</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## There is a small example file to use for testing</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/jmw86069/jamba" class="external-link">jamba</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘jamba’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:IRanges’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     heads</span>
+<span class="r-in"><span><span class="va">cov_file1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"tss_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">cov_file2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"h3k4me1_coverage.matrix"</span>, package<span class="op">=</span><span class="st">"platjam"</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">cov_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cov_file1</span>, <span class="va">cov_file2</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cov_files</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[.]matrix"</span>,</span></span>
+<span class="r-in"><span>   <span class="st">""</span>,</span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">cov_files</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="va">nmatlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">cov_files</span>, <span class="va">coverage_matrix2nmat</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span><span class="op">)</span>;</span></span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># sometimes data transform can be helpful</span></span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># sometimes data transform can be helpful</span></span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span><span class="op">)</span>;</span></span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># k-means clusters, default uses euclidean distance</span></span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>, k_clusters<span class="op">=</span><span class="fl">4</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># k-means clusters, default uses euclidean distance</span></span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>, k_clusters<span class="op">=</span><span class="fl">4</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span><span class="op">)</span>;</span></span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># k-means clusters, "correlation" or "pearson" sometimes works better</span></span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>,</span>
-<span class="r-in">   k_clusters<span class="op">=</span><span class="fl">4</span>,</span>
-<span class="r-in">   k_method<span class="op">=</span><span class="st">"pearson"</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># k-means clusters, "correlation" or "pearson" sometimes works better</span></span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>,</span></span>
+<span class="r-in"><span>   k_clusters<span class="op">=</span><span class="fl">4</span>,</span></span>
+<span class="r-in"><span>   k_method<span class="op">=</span><span class="st">"pearson"</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span><span class="op">)</span>;</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>empty cluster: try a better set of initial centers</span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># example showing usage of top_axis_side</span></span>
-<span class="r-in"><span class="co"># and panel_groups</span></span>
-<span class="r-in"><span class="va">nmatlist2</span> <span class="op">&lt;-</span> <span class="va">nmatlist</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span>;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/makeNames.html" class="external-link">makeNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw">for</span> <span class="op">(</span><span class="va">iname</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">[[</span><span class="va">iname</span><span class="op">]</span><span class="op">]</span>, <span class="st">"signal_name"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"cov"</span>, <span class="va">iname</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="co"># top_axis_side="left"</span></span>
-<span class="r-in"><span class="co"># assumes 12x7 figure size</span></span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist2</span>,</span>
-<span class="r-in">   signal_ceiling<span class="op">=</span><span class="fl">0.8</span>,</span>
-<span class="r-in">   nmat_colors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"firebrick"</span>, <span class="st">"tomato"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">   panel_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tss"</span>, <span class="st">"h3k4me1"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">4</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
-<span class="r-in">   top_axis_side<span class="op">=</span><span class="st">"left"</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># example showing usage of top_axis_side</span></span></span>
+<span class="r-in"><span><span class="co"># and panel_groups</span></span></span>
+<span class="r-in"><span><span class="va">nmatlist2</span> <span class="op">&lt;-</span> <span class="va">nmatlist</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/makeNames.html" class="external-link">makeNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">iname</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nmatlist2</span><span class="op">[[</span><span class="va">iname</span><span class="op">]</span><span class="op">]</span>, <span class="st">"signal_name"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"coverage"</span>, <span class="st">"cov"</span>, <span class="va">iname</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># top_axis_side="left"</span></span></span>
+<span class="r-in"><span><span class="co"># assumes 12x7 figure size</span></span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist2</span>,</span></span>
+<span class="r-in"><span>   signal_ceiling<span class="op">=</span><span class="fl">0.8</span>,</span></span>
+<span class="r-in"><span>   nmat_colors<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"firebrick"</span>, <span class="st">"tomato"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   panel_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tss"</span>, <span class="st">"h3k4me1"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">4</span>, <span class="st">"mm"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   top_axis_side<span class="op">=</span><span class="st">"left"</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span></span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># top_axis_side="both"</span></span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist2</span>,</span>
-<span class="r-in">   panel_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tss"</span>, <span class="st">"h3k4me1"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
-<span class="r-in">   top_axis_side<span class="op">=</span><span class="st">"both"</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># top_axis_side="both"</span></span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist2</span>,</span></span>
+<span class="r-in"><span>   panel_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tss"</span>, <span class="st">"h3k4me1"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"mm"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   top_axis_side<span class="op">=</span><span class="st">"both"</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span></span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># multiple heatmap rows</span></span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist2</span>,</span>
-<span class="r-in">   k_clusters<span class="op">=</span><span class="fl">4</span>,</span>
-<span class="r-in">   k_method<span class="op">=</span><span class="st">"pearson"</span>,</span>
-<span class="r-in">   hm_nrow<span class="op">=</span><span class="fl">2</span>,</span>
-<span class="r-in">   panel_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tss"</span>, <span class="st">"h3k4me1"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
-<span class="r-in">   top_axis_side<span class="op">=</span><span class="st">"both"</span>,</span>
-<span class="r-in">   top_anno_height<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="st">"cm"</span><span class="op">)</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># multiple heatmap rows</span></span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist2</span>,</span></span>
+<span class="r-in"><span>   k_clusters<span class="op">=</span><span class="fl">4</span>,</span></span>
+<span class="r-in"><span>   k_method<span class="op">=</span><span class="st">"pearson"</span>,</span></span>
+<span class="r-in"><span>   hm_nrow<span class="op">=</span><span class="fl">2</span>,</span></span>
+<span class="r-in"><span>   panel_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tss"</span>, <span class="st">"h3k4me1"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"mm"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   top_axis_side<span class="op">=</span><span class="st">"both"</span>,</span></span>
+<span class="r-in"><span>   top_anno_height<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="st">"cm"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>empty cluster: try a better set of initial centers</span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-7.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># invent anno_df data.frame of additional annotations</span></span>
-<span class="r-in"><span class="va">anno_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">   tss_score<span class="op">=</span><span class="fu">EnrichedHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/enriched_score.html" class="external-link">enriched_score</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/log2signed.html" class="external-link">log2signed</a></span><span class="op">(</span><span class="va">nmatlist</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">   h3k4me1_score<span class="op">=</span><span class="fu">EnrichedHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/enriched_score.html" class="external-link">enriched_score</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/log2signed.html" class="external-link">log2signed</a></span><span class="op">(</span><span class="va">nmatlist</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">anno_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">nmatlist</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>;</span>
-<span class="r-in"><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>,</span>
-<span class="r-in">   title<span class="op">=</span><span class="st">"k-means clustering across both heatmaps"</span>,</span>
-<span class="r-in">   k_clusters<span class="op">=</span><span class="fl">4</span>,</span>
-<span class="r-in">   k_method<span class="op">=</span><span class="st">"pearson"</span>,</span>
-<span class="r-in">   k_heatmap<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
-<span class="r-in">   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"mm"</span><span class="op">)</span>,</span>
-<span class="r-in">   top_axis_side<span class="op">=</span><span class="st">"left"</span>,</span>
-<span class="r-in">   anno_df<span class="op">=</span><span class="va">anno_df</span>,</span>
-<span class="r-in">   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ##  (<span style="color: #00FFFF; font-weight: bold;">17:34:32</span>) 18Nov2021:  <span style="color: #FF8700;">nmatlist2heatmaps(): </span><span style="color: #00AFFF;">Preparing ComplexHeatmap::draw(HeatmapList)</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># invent anno_df data.frame of additional annotations</span></span></span>
+<span class="r-in"><span><span class="va">anno_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   tss_score<span class="op">=</span><span class="fu">EnrichedHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/enriched_score.html" class="external-link">enriched_score</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/log2signed.html" class="external-link">log2signed</a></span><span class="op">(</span><span class="va">nmatlist</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   h3k4me1_score<span class="op">=</span><span class="fu">EnrichedHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/enriched_score.html" class="external-link">enriched_score</a></span><span class="op">(</span><span class="fu">jamba</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jamba/man/log2signed.html" class="external-link">log2signed</a></span><span class="op">(</span><span class="va">nmatlist</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">anno_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">nmatlist</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>;</span></span>
+<span class="r-in"><span><span class="fu">nmatlist2heatmaps</span><span class="op">(</span><span class="va">nmatlist</span>,</span></span>
+<span class="r-in"><span>   title<span class="op">=</span><span class="st">"k-means clustering across both heatmaps"</span>,</span></span>
+<span class="r-in"><span>   k_clusters<span class="op">=</span><span class="fl">4</span>,</span></span>
+<span class="r-in"><span>   k_method<span class="op">=</span><span class="st">"pearson"</span>,</span></span>
+<span class="r-in"><span>   k_heatmap<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   ht_gap<span class="op">=</span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">6</span>, <span class="st">"mm"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   top_axis_side<span class="op">=</span><span class="st">"left"</span>,</span></span>
+<span class="r-in"><span>   anno_df<span class="op">=</span><span class="va">anno_df</span>,</span></span>
+<span class="r-in"><span>   transform<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"log2signed"</span>, <span class="st">"sqrt"</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ##  (<span style="color: #00FFFF; font-weight: bold;">12:31:46</span>) 21Sep2023:   <span style="color: #FF8700;">nmatlist2heatmaps(): </span><span style="color: #00AFFF;">Preparing ComplexHeatmap::draw(HeatmapList)</span> </span>
 <span class="r-plt img"><img src="nmatlist2heatmaps-8.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -532,7 +630,7 @@ and to enable optional multi-row heatmap layout.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

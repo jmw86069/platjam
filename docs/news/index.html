@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -47,6 +47,547 @@
       <small>Source: <a href="http://github.com/jmw86069/platjam/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.73.900" id="platjam-0073900">platjam 0.0.73.900<a class="anchor" aria-label="anchor" href="#platjam-0073900"></a></h2>
+<ul><li>dependency version bump for colorjam (&gt;= 0.0.26.900)</li>
+</ul><div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-73-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-73-900"></a></h3>
+<ul><li><p><code><a href="../reference/quick_complement_color.html">quick_complement_color()</a></code> was updated to match recent updates to colorjam version 0.0.26.900. This change also affected <code><a href="../reference/design2colors.html">design2colors()</a></code></p></li>
+<li>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code></p>
+<ul><li>
+<code>preset="dichromat2"</code> new default, so colors begin with yellow, more conducive for applying to control groups than starting with red.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.72.900" id="platjam-0072900">platjam 0.0.72.900<a class="anchor" aria-label="anchor" href="#platjam-0072900"></a></h2>
+<div class="section level3">
+<h3 id="migration-of-coverage-heatmap-functions-to-coverjam-0-0-72-900">migration of coverage heatmap functions to coverjam<a class="anchor" aria-label="anchor" href="#migration-of-coverage-heatmap-functions-to-coverjam-0-0-72-900"></a></h3>
+<p>The functions related to coverage heatmaps are being migrated into <code>"jmw86069/coverjam"</code> Github-hosted R package, for cleaner maintenance of those functions.</p>
+</div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.71.900" id="platjam-0071900">platjam 0.0.71.900<a class="anchor" aria-label="anchor" href="#platjam-0071900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-71-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-71-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_metabolomics_niehs.html">import_metabolomics_niehs()</a></code></p>
+<ul><li>added optional step to import <code>"compounds_pos.txt"</code> and <code>"compounds_neg.txt"</code> files, which contains important annotations for which measurements are imputed by the upstream software, and using which impute method.</li>
+<li>When the files above are not present, and the file <code>"1_DataProcessed.zip"</code> exists, it is used to extract the raw files as named above.</li>
+<li>When no matching files are detected, this import step is skipped.</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-0-0-71-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-71-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/convert_imputed_assays_to_na.html">convert_imputed_assays_to_na()</a></code></p>
+<ul><li>utility function used to apply filtering based upon the impute flags, thereby converting imputed data matching the relevant flags to <code>NA</code>, and storing in a new <code>assays()</code> entry for downstream analysis.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/process_metab_compounds_file.html">process_metab_compounds_file()</a></code></p>
+<ul><li>Internal function used to import full compounds data supplied as a <code>data.frame</code> after loading from the <code>"1_DataProcessed.zip"</code> file.</li>
+<li>The function will merge data into a <code>se_list</code> object if supplied, otherwise it will return the full <code>se</code> object including each assay name imported from the file.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.70.900" id="platjam-0070900">platjam 0.0.70.900<a class="anchor" aria-label="anchor" href="#platjam-0070900"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-70-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-70-900"></a></h3>
+<ul><li>
+<p>Added missing package prefix for several calls to <code><a href="https://rdrr.io/pkg/jamba/man/nameVector.html" class="external-link">jamba::nameVector()</a></code>, or <code><a href="https://rdrr.io/pkg/jamba/man/printDebug.html" class="external-link">jamba::printDebug()</a></code>. Affected functions:</p>
+<ul><li><code><a href="../reference/import_nanostring_rcc.html">import_nanostring_rcc()</a></code></li>
+<li><code><a href="../reference/coverage_matrix2nmat.html">coverage_matrix2nmat()</a></code></li>
+<li><code><a href="../reference/frequency_matrix2nmat.html">frequency_matrix2nmat()</a></code></li>
+<li><code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code></li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.69.900" id="platjam-0069900">platjam 0.0.69.900<a class="anchor" aria-label="anchor" href="#platjam-0069900"></a></h2>
+<ul><li>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code></p>
+<ul><li>input recognizes <code>DataFrame</code> which is commonly produced from <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment::colData()</a></code>.</li>
+<li>input recognizes <code>tbl_df</code> (tibble) and <code>matrix</code> by coercing to <code>data.frame</code>.</li>
+<li>column sort can be reversed with “-” prefix. For example <code>"-Treatment"</code> will reverse the sort order in column <code>"Treatment"</code>.</li>
+<li>allow empty <code>group_colnames</code> so colors are assigned in all columns</li>
+<li>tolerate various combinations of <code>group_colnames</code>, <code>class_colnames</code> with non-ideal cardinality, by using different workarounds strategies</li>
+<li>new arguments <code>Crange</code>,<code>Lrange</code> which are passed to <code><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">colorjam::rainbowJam()</a></code> to set a less saturated color palette by default.</li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.68.900" id="platjam-0068900">platjam 0.0.68.900<a class="anchor" aria-label="anchor" href="#platjam-0068900"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-68-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-68-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_metabolomics_niehs.html">import_metabolomics_niehs()</a></code></p>
+<ul><li>Fixed bug when importing files that may contain duplicated rows in metadata, and in each data matrix file. The issue appears to be pure duplication of rows, so the workaround is to print a warning, and retain non-duplicated records per SampleID value.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.67.900" id="platjam-0067900">platjam 0.0.67.900<a class="anchor" aria-label="anchor" href="#platjam-0067900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-67-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-67-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_metabolomics_niehs.html">import_metabolomics_niehs()</a></code></p>
+<ul><li>imports metabolomics data specifically in file formats used by the NIEHS Metabolomics Core Facility. The output is a <code>list</code> of <code>SummarizedExperiment</code> objects, typically including positive and negative ionization data.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/curate_se_colData.html">curate_se_colData()</a></code></p>
+<ul><li>wrapper function to <code><a href="../reference/curate_to_df_by_pattern.html">curate_to_df_by_pattern()</a></code> specifically for <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment::colData()</a></code>, updating data in place.</li>
+<li>optionally this step can subset columns for those that match curated patterns.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.66.900" id="platjam-0066900">platjam 0.0.66.900<a class="anchor" aria-label="anchor" href="#platjam-0066900"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-66-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-66-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_salmon_quant.html">import_salmon_quant()</a></code> was using the older version of <code><a href="../reference/curate_to_df_by_pattern.html">curate_to_df_by_pattern()</a></code> supplied by <code>slicejam</code> instead of the slightly updated version in <code>platjam</code> (this package). Not such a big issue except that <code>slicejam</code> is not yet public.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.65.900" id="platjam-0065900">platjam 0.0.65.900<a class="anchor" aria-label="anchor" href="#platjam-0065900"></a></h2>
+<div class="section level3">
+<h3 id="changes-0-0-65-900">changes<a class="anchor" aria-label="anchor" href="#changes-0-0-65-900"></a></h3>
+<ul><li>added genejam Github information to DESCRIPTION, previously this package was not properly referenced as part of Github and would cause the package dependency to fail.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.64.900" id="platjam-0064900">platjam 0.0.64.900<a class="anchor" aria-label="anchor" href="#platjam-0064900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-64-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-64-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_nanostring_csv.html">import_nanostring_csv()</a></code></p>
+<ul><li>new argument <code>curation_txt</code> for optional sample annotations during import; behaves exactly as with <code><a href="../reference/import_proteomics_mascot.html">import_proteomics_mascot()</a></code>.</li>
+<li>TODO: will add this argument to <code><a href="../reference/import_nanostring_rcc.html">import_nanostring_rcc()</a></code>
+</li>
+<li>TODO: will create generic function for curation into SE <code>colData()</code>
+</li>
+<li>fixed bug not prefixing <code>rowData()</code>
+</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/import_proteomics_mascot.html">import_proteomics_mascot()</a></code></p>
+<ul><li>updated to fix error when colnames are changed by <code>curation_txt</code>
+</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.63.900" id="platjam-0063900">platjam 0.0.63.900<a class="anchor" aria-label="anchor" href="#platjam-0063900"></a></h2>
+<ul><li>added testthis unit tests for some functions</li>
+</ul><div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-63-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-63-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/assign_numeric_colors.html">assign_numeric_colors()</a></code></p>
+<ul><li>new argument <code>color_max</code> to define a fixed upper <code>numeric</code> threshold for the maximum color in the color gradient.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code></p>
+<ul><li>Changes to enable <code>color_sub</code> to accept color ramp names in addition to accepting single colors.</li>
+<li>Slightly cleaned up some logic during color assignment.</li>
+<li>New argument <code>color_sub_max</code> intended to be passed to <code><a href="../reference/assign_numeric_colors.html">assign_numeric_colors()</a></code> argument <code>color_max</code> for particular column names.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.62.900" id="platjam-0062900">platjam 0.0.62.900<a class="anchor" aria-label="anchor" href="#platjam-0062900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-62-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-62-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_proteomics_mascot.html">import_proteomics_mascot()</a></code></p>
+<ul><li>Added more robust detection of changes in column order between the input Excel file and the curation_txt data.</li>
+<li>The output column order now matches the order of the curation_txt file, which should be helpful when defining the control group in statistical contrasts.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/curate_to_df_by_pattern.html">curate_to_df_by_pattern()</a></code></p>
+<ul><li>new argument <code>order_priority="df"</code> to indicate the order of rows in the <code>data.frame</code> returned will match the curation <code>df</code>.</li>
+<li>option <code>order_priority="x"</code> will order rows in the <code>data.frame</code> returned by the order of entries in <code>x</code>.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/import_lipotype_csv.html">import_lipotype_csv()</a></code></p>
+<ul><li>minor changes to ensure the order of curated rows and sample identifiers were matched when the curation data did not contain <code>"Filename"</code> column, by default uses the last column returned by <code><a href="../reference/curate_to_df_by_pattern.html">curate_to_df_by_pattern()</a></code>.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.61.900" id="platjam-0061900">platjam 0.0.61.900<a class="anchor" aria-label="anchor" href="#platjam-0061900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-61-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-61-900"></a></h3>
+<p>Proteomics data is sometimes provided in separate results files, which can later be merged into one larger format for downstream analysis.</p>
+<ul><li>
+<p><code><a href="../reference/merge_proteomics_se.html">merge_proteomics_se()</a></code></p>
+<ul><li>This function provides a specific method of merging two <code>SummarizedExperiment</code> objects, with heuristics appropriate for proteomics expression data.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.60.900" id="platjam-0060900">platjam 0.0.60.900<a class="anchor" aria-label="anchor" href="#platjam-0060900"></a></h2>
+<ul><li>
+<code>jamba</code> dependency was bumped to 0.0.89.900</li>
+<li>added <code>SummarizedExperiment</code> and <code>XML</code> to dependencies</li>
+</ul><div class="section level3">
+<h3 id="updates-to-existing-functions-0-0-60-900">updates to existing functions<a class="anchor" aria-label="anchor" href="#updates-to-existing-functions-0-0-60-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_nanostring_csv.html">import_nanostring_csv()</a></code> and <code><a href="../reference/import_nanostring_rcc.html">import_nanostring_rcc()</a></code></p>
+<ul><li>both functions now return data transformed with <code>log2(1 + x)</code>
+</li>
+<li>CSV import will name the assay <code>"norm"</code> if the CSV file contains that substring, otherwise defaults to <code>"raw"</code>, consistent with RCC import.</li>
+<li>The <code>assay_name</code> can be defined upfront for both functions.</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-in-development-0-0-60-900">new functions in development<a class="anchor" aria-label="anchor" href="#new-functions-in-development-0-0-60-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/validate_heatmap_params.html">validate_heatmap_params()</a></code></p>
+<ul><li>This function begins a process of making the coverage heatmaps into a command-line tool. Work in progress.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.59.900" id="platjam-0059900">platjam 0.0.59.900<a class="anchor" aria-label="anchor" href="#platjam-0059900"></a></h2>
+<div class="section level3">
+<h3 id="updates-to-existing-functions-0-0-59-900">updates to existing functions<a class="anchor" aria-label="anchor" href="#updates-to-existing-functions-0-0-59-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_salmon_quant.html">import_salmon_quant()</a></code></p>
+<ul><li>new arguments <code>curate_tx_from</code>, <code>curate_tx_to</code> to allow custom curation of transcript identifiers, specifically for transcripts where the FASTA workflow introduces <code>"(-)"</code> and <code>"(+)"</code> to the identifiers. This situation occurred when adding gene body transcripts to the Thuman T2Tv2.0 genome GTF entries.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code></p>
+<ul><li>argument <code>color_sub</code> will convert color names to hex format, for compatibility with some downstream uses, for example <code><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">knitr::kable()</a></code> and <code><a href="https://rdrr.io/pkg/jamba/man/kable_coloring.html" class="external-link">jamba::kable_coloring()</a></code> when used in an Rmarkdown document.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.58.900" id="platjam-0058900">platjam 0.0.58.900<a class="anchor" aria-label="anchor" href="#platjam-0058900"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-58-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-58-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_salmon_quant.html">import_salmon_quant()</a></code> was errantly checking the class of <code>tx2gene</code>, causing it to ignore user-supplied <code>tx2gene</code>. This issue affected import when <code>gtf</code> was not supplied, which was much more common.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-58-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-58-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_salmon_quant.html">import_salmon_quant()</a></code></p>
+<ul><li><p>the list of assays now use names directly from <code>tximport()</code>, specifically <code>c("counts", "abundance", "length")</code>, and not <code>c("counts", "tpm")</code>.</p></li>
+<li><p><code>TxSE</code> now contains assayName <code>"length"</code>, and metadata item <code>"countsFromAbundance"</code>, so the output can be used with <code><a href="https://rdrr.io/pkg/tximport/man/summarizeToGene.html" class="external-link">tximport::summarizeToGene()</a></code> as a second step outside this import process.</p></li>
+<li>
+<p>new argument option <code>import_types="gene_body"</code> designed specifically when the GTF or <code>tx2gene</code> contain entries representing unspliced multi-exon genes, in addition to spliced proper transcripts. When present:</p>
+<ul><li>
+<code>import_types="gene"</code> will summarize transcripts to gene level, excluding entries annotated <code>"gene_body"</code>, returned as <code>GeneSE</code>.</li>
+<li>
+<code>import_types="gene_body"</code> will summarize transcripts to gene level, including entries annotated <code>"gene_body"</code>, returned as <code>GeneBodySE</code>.</li>
+<li>
+<code>import_types="gene_tx"</code> will summarize transcripts to gene level, and separately represents <code>"gene_body"</code> entries, returned as <code>GeneTxSE</code>.</li>
+</ul></li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.57.900" id="platjam-0057900">platjam 0.0.57.900<a class="anchor" aria-label="anchor" href="#platjam-0057900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-57-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-57-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_nanostring_csv.html">import_nanostring_csv()</a></code> is a basic import function for the common CSV style export from Nanostring software. This version has minimal extra capabilities, and produces a simple <code>SummarizedExperiment</code> object.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.56.900" id="platjam-0056900">platjam 0.0.56.900<a class="anchor" aria-label="anchor" href="#platjam-0056900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-56-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-56-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_proteomics_PD.html">import_proteomics_PD()</a></code> was updated to fix an errant check of the protein colnames. This check occurs to verify that the accession colnames did not contain delimited values, which causes the colnames to be split into individual values by <code><a href="https://rdrr.io/pkg/jamba/man/makeNames.html" class="external-link">jamba::makeNames()</a></code> with suffix. When that happens, the original colname is added before the split columns so the original data can be verified.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-0-0-56-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-56-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_proteomics_mascot.html">import_proteomics_mascot()</a></code> is a version 1 importer for MASCOT and similar data, which expects protein-level data with <code>totalIntensity</code> and <code>numSpectra</code> columns for each sample.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.55.900" id="platjam-0055900">platjam 0.0.55.900<a class="anchor" aria-label="anchor" href="#platjam-0055900"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-55-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-55-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_proteomics_PD.html">import_proteomics_PD()</a></code> was updated to remove dependency on <code>slicejam</code> R package which is currently private during internal development. The only dependent function <code><a href="../reference/curate_to_df_by_pattern.html">curate_to_df_by_pattern()</a></code> was moved into this package.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.54.900" id="platjam-0054900">platjam 0.0.54.900<a class="anchor" aria-label="anchor" href="#platjam-0054900"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-54-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-54-900"></a></h3>
+<ul><li>
+<code><a href="../reference/design2colors.html">design2colors()</a></code> caused an error when there were no leftover categorical colors to be assigned after the initial group/class/lightness, then user-defined colors by colname. This bug has been fixed.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.53.900" id="platjam-0053900">platjam 0.0.53.900<a class="anchor" aria-label="anchor" href="#platjam-0053900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-53-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-53-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_nanostring_rlf.html">import_nanostring_rlf()</a></code> is an import function to load Nanostring codeset data provided in the form of an RLF file.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-53-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-53-900"></a></h3>
+<ul><li>
+<code><a href="../reference/design2colors.html">design2colors()</a></code> now calls <code><a href="https://rdrr.io/pkg/colorjam/man/blend_colors.html" class="external-link">colorjam::blend_colors()</a></code> to define colors for each class. The method is still in development, so the specific methods may change. The output is intended to represent the group colors contained in each class, we’ll see how well it fares.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-53-900">bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-53-900"></a></h3>
+<ul><li>
+<code><a href="../reference/design2colors.html">design2colors()</a></code> was updated to convert columns with class <code>"table"</code> into <code>"integer"</code>, otherwise weird things happened during coersion, causing an error.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.52.900" id="platjam-0052900">platjam 0.0.52.900<a class="anchor" aria-label="anchor" href="#platjam-0052900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-52-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-52-900"></a></h3>
+<ul><li>
+<code><a href="../reference/mean_hue.html">mean_hue()</a></code> is a simple function to return a mean hue in degrees.</li>
+<li>
+<code><a href="../reference/print_color_list.html">print_color_list()</a></code> is a convenience function to convert a color list that may contain color vectors, or color functions, into a list of named color vectors. It will print to the console using those colors.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-52-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-52-900"></a></h3>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code> was updated to to handle an edge condition.</p>
+<ul><li>
+<p>Refactoring the workflow:</p>
+<ul><li>
+<p>define colors by design:</p>
+<ul><li>define colors to <code>group_colnames</code> optionally partitioned by <code>class_colname</code>
+</li>
+<li>define gradient colors to <code>lightness_colnames</code>
+</li>
+<li>define class colors using the mean hue for groups contained in each class</li>
+</ul></li>
+<li>
+<p>Apply design colors to all matching columns:</p>
+<ul><li>Test all columns for compatible cardinality with group, lightness.</li>
+<li>Note: column names in <code>color_sub</code> will be ignored at this step, instead those columns use <code>color_sub</code> to generate a gradient.</li>
+<li>Assign colors to each compatible column.</li>
+<li>Note this step will include extra annotation columns that have consistent cardinality.</li>
+<li>(This might be the coolest step tbh, since it figures out which columns match the design.)</li>
+</ul></li>
+<li>
+<p>Expand <code>color_sub</code> with newly defined colors.</p>
+<ul><li>Intent is to assign consistent categorical colors to values present in other columns.</li>
+</ul></li>
+<li>
+<p>For columns without assigned colors:</p>
+<ul><li>Apply <code>color_sub</code> to the column when it matches the column name.</li>
+<li>Numeric columns produce a color function.</li>
+<li>Character columns produce a named color vector.</li>
+</ul></li>
+<li>
+<p>Assemble all remaining unassigned values:</p>
+<ul><li>Numeric columns use the column name as its “value”, to define one color to the column header.</li>
+<li>Remaining <code>character</code> values defined in <code>color_sub</code> are assigned.</li>
+<li>Remaining unassigned <code>character</code> values, and <code>character</code> column names of numeric columns are assigned categorical colors.</li>
+</ul></li>
+<li>
+<p>Apply new categorical colors</p>
+<ul><li>For <code>numeric</code> columns, generate color function using the categorical color assigned to that column name.</li>
+<li>For <code>character</code> columns, generate a color vector.</li>
+</ul></li>
+</ul></li>
+<li><p>Note that the mechanism used may change, I am still testing how the assumptions work with real world data.</p></li>
+<li><p>New behavior: When <code>color_sub</code> is assigned to a value in <code>colnames(x)</code>, the cardinality is not checked for consistency with group color assignments, and instead will use the color assigned for that column.</p></li>
+<li>
+<p>New argument <code>force_consistent_colors</code>:</p>
+<ul><li><p>During color assignment, sometimes a column value is assigned one color in a column, and a different color in another column. It usually happens when <code>color_sub</code> defines a color for a column, where that column unintentionally shares a value with another column that gets colors assigned earlier in the chain.</p></li>
+<li><p>New argument <code>force_consistent_colors=TRUE</code> forces values to be assigned only one color. It seems obvious to use this option, but why not always?</p></li>
+<li><p>For purely text strings, like “Treated” and “Untreated” one would think any time “Treated” appears in a graphic, it should use the same color. Yes. However, sometimes the number “2” appears in a column, as character or integer, it doesn’t matter for this purpose. I have seen something like “sample_num” with values “1”, “2”, “3”, etc. Their cardinality matches 1:1 with class/group/lightness color assignments defined by this function, so these values are usually also assigned to the group colors. However, these values may appear in another column defined by <code>color_sub</code>, intended to apply a gradient of that color to values in the column. What if that column contained values <code>c(2, 20, 500, 1000)</code>? Only these values would be colorized: <code>c(20, 50, 1000)</code>, while <code>2</code> would be assigned the color from group colors. It looks weird.</p></li>
+<li>
+<p>There are workarounds:</p>
+<ul><li>pre-filter columns which might have this effect. In the case above, remove <code>"sample_num"</code> before calling <code><a href="../reference/design2colors.html">design2colors()</a></code> so that column is not assigned a color.</li>
+<li>associate all numeric columns with <code>color_sub</code>
+</li>
+</ul></li>
+<li><p>The end result, which is intended, is to allow columns to have independent color assignments when values in those columns are not related. In the case above, the number <code>"2"</code> means something different in one column than another column.</p></li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.51.900" id="platjam-0051900">platjam 0.0.51.900<a class="anchor" aria-label="anchor" href="#platjam-0051900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-51-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-51-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code> was updated to adjust the low end of color gradient.</p>
+<ul><li>specifically when the low-high numeric range is above zero, for example <code>c(20, 50)</code>. The adjustment lowers the low end of color scale 5% the diff, so the low actual color will not be white.</li>
+<li>Also the function was using <code><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty()</a></code> to generate reasonable numeric steps across the numeric range, and was using those steps to define the color gradient. This method had weird effects, partly due to <code><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty()</a></code> making choices about the best visible number for display, instead of the point range. Instead, the color gradient is applied to the calculated number range, then that function is used to generate a color function across the <code><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty()</a></code> scale. I’m not sure it is ideal when <code><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty()</a></code> does not color the numeric range, but it seems reasonable so far.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.50.900" id="platjam-0050900">platjam 0.0.50.900<a class="anchor" aria-label="anchor" href="#platjam-0050900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-50-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-50-900"></a></h3>
+<ul><li>
+<p><code>import_proteomics_pd()</code> was updated to handle absence of <code>curation_txt</code> where sample names and labels may or may not be renamed for each abundance matrix.</p>
+<ul><li>Specifically <code>label_colname</code> is detected as <code>"Label"</code>, any column containing <code>"Label"</code>, then <code>"^Input$"</code>. Note <code>"Input"</code> is the default first colname produced when there is no <code>curation_txt</code> file, and should represent a unique column identifier.</li>
+</ul></li>
+<li>
+<p><code><a href="../reference/design2colors.html">design2colors()</a></code> was updated:</p>
+<ul><li>
+<code>class_colnames</code> is required to have 1-to-many cardinality with <code>group_colnames</code>, or throws an error. As a result, class is guaranteed to be associated only with one set of columns.</li>
+<li>class is assigned a color hue using the mean color hue of the groups it contains.</li>
+<li>
+<code>color_sub</code> will apply a gradient color to <code>numeric</code> column values.</li>
+<li>TODO: add some ability to pre-define class color with <code>color_sub</code>
+</li>
+<li>TODO: add some ability to define numeric colors or color function for columns that contain <code>numeric</code> data. They are currently handled as categorical values, which is not ideal.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.49.900" id="platjam-0049900">platjam 0.0.49.900<a class="anchor" aria-label="anchor" href="#platjam-0049900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-49-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-49-900"></a></h3>
+<ul><li>
+<code><a href="../reference/save_salmon_qc_xlsx.html">save_salmon_qc_xlsx()</a></code> new argument <code>verbose=FALSE</code>, thus changing the default which included some verbose output by default.</li>
+<li>
+<code><a href="../reference/df_to_numcolors.html">df_to_numcolors()</a></code> new argument <code>trimRamp</code> passed to <code><a href="https://rdrr.io/pkg/jamba/man/getColorRamp.html" class="external-link">jamba::getColorRamp()</a></code> to trim edge colors from linear color gradient, thus making the colors less dramatic.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.48.900" id="platjam-0048900">platjam 0.0.48.900<a class="anchor" aria-label="anchor" href="#platjam-0048900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-48-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-48-900"></a></h3>
+<ul><li>
+<code><a href="../reference/design2layout.html">design2layout()</a></code> is experimental, and is intended to determine appropriate plot panel layout dimensions, given experimental groups and batch information. It should help align panels within batch, then within group, into columns, so plots can be visually compared.</li>
+<li>
+<code><a href="../reference/cardinality.html">cardinality()</a></code> takes two vectors and determines the data cardinality, in terms of “one-to-one”, “one-to-many”, “many-to-many”, “many-to-one”. This function may help detect when experimental factors are compatible with color assignment by group or other factors.</li>
+<li>
+<code><a href="../reference/df_to_numcolors.html">df_to_numcolors()</a></code> is an experimental function only used to create a color substitution vector for use with <code><a href="https://rdrr.io/pkg/jamba/man/kable_coloring.html" class="external-link">kable_coloring()</a></code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.47.900" id="platjam-0047900">platjam 0.0.47.900<a class="anchor" aria-label="anchor" href="#platjam-0047900"></a></h2>
+<div class="section level3">
+<h3 id="new-function-import_lipotype-0-0-47-900">new function <code>import_lipotype()</code>
+<a class="anchor" aria-label="anchor" href="#new-function-import_lipotype-0-0-47-900"></a></h3>
+<ul><li>Intended to import CSV formats provided by LipoType lipidomics data</li>
+<li>Returns <code>SummarizedExperiment</code> object, with rowData and colData assigned as appropriate.</li>
+<li>Next iteration will parse optional <code>curation_txt</code> to assign sample annotation for experimental design, factors, etc.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-function-design2colors-in-development-0-0-47-900">new function <code>design2colors()</code> (in development)<a class="anchor" aria-label="anchor" href="#new-function-design2colors-in-development-0-0-47-900"></a></h3>
+<p>See examples <code>? design2colors()</code> for usage.</p>
+<ul><li><p>Intended as an extension to <code><a href="https://rdrr.io/pkg/colorjam/man/group2colors.html" class="external-link">colorjam::group2colors()</a></code> that also utilizes subgroup (smaller subsets of groups), and group class (which includes multiple groups together).</p></li>
+<li><p>If this function works well through early testing, it likely moves into <code>colorjam</code> for broader re-use.</p></li>
+<li>
+<p>I find myself assigning categorical colors by group, then using <code><a href="https://rdrr.io/pkg/jamba/man/color2gradient.html" class="external-link">jamba::color2gradient()</a></code> to split colors into light-to-dark gradient:</p>
+<ul><li>time course, 0-hr, 2-hr, 4-hr, 8-hr (light-to-dark)</li>
+<li>treatment: untreated, treated (light-to-dark)</li>
+<li>for each group: batch A, batch B (light-to-dark)</li>
+</ul></li>
+<li>
+<p>I find myself assigning these categorical colors to each SampleID, or to subgroups, or other factors, so the colors are consistent when used in tables, and <code>ComplexHeatmap</code> output.</p>
+<ul><li>assign colors to all annotation columns with appropriate cardinality</li>
+</ul></li>
+<li>
+<p>Finally, other factors need colors, they should differ from group colors</p>
+<ul><li>for each individual factor, assign unique categorical colors</li>
+<li>re-use colors when a factor level already has an assigned color</li>
+</ul></li>
+<li>
+<p>Default output:</p>
+<ul><li>colors assigned for every column, and every column value of the input <code>data.frame</code> argument <code>x</code>.</li>
+<li>Plots a graphical table of sample annotations showing color assignments using <code><a href="https://rdrr.io/pkg/jamba/man/imageByColors.html" class="external-link">jamba::imageByColors()</a></code>.</li>
+<li>
+<code>list</code> of colors, named by <code>colnames(x)</code>, suitable for use with <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">ComplexHeatmap::HeatmapAnnotation()</a></code>.</li>
+<li>optionally a color vector, named by factor level.</li>
+<li>optionally returns a <code>data.frame</code> with colors, in same order as input <code>x</code>, suitable for use directly in <code><a href="https://rdrr.io/pkg/jamba/man/imageByColors.html" class="external-link">jamba::imageByColors()</a></code>.</li>
+</ul></li>
+<li>
+<p>Relevant arguments</p>
+<ul><li><p><code>group_colnames</code>: defines categorical colors, one per group</p></li>
+<li><p><code>lightness_colnames</code>: assigns light-to-dark gradient to categorical colors</p></li>
+<li><p><code>class_colnames</code>: arranges groups into classes, so groups with same class are assigned similar color hues, with spacing between classes.</p></li>
+<li>
+<p><code>preset</code>: defines the color wheel used by <code><a href="https://rdrr.io/pkg/colorjam/man/rainbowJam.html" class="external-link">colorjam::rainbowJam()</a></code>:</p>
+<ul><li>
+<code>dichromat</code>: dichromat-friendly color wheel, largely removes green</li>
+<li>
+<code>ryb1</code>: red-yellow-blue (common painter’s color wheel for color mixing)</li>
+<li>
+<code>rgb</code>: red-green-blue (default R, shows how much of the wheel is green)</li>
+</ul></li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.46.900" id="platjam-0046900">platjam 0.0.46.900<a class="anchor" aria-label="anchor" href="#platjam-0046900"></a></h2>
+<div class="section level3">
+<h3 id="new-function-0-0-46-900">new function<a class="anchor" aria-label="anchor" href="#new-function-0-0-46-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/import_salmon_quant.html">import_salmon_quant()</a></code></p>
+<ul><li>does the job of <code><a href="https://rdrr.io/pkg/tximport/man/tximport.html" class="external-link">tximport::tximport()</a></code>, then associates sample annotations via <code>curation_txt</code> to produce <code>SummarizedExperiment</code> objects at transcript and/or gene level.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.45.900" id="platjam-0045900">platjam 0.0.45.900<a class="anchor" aria-label="anchor" href="#platjam-0045900"></a></h2>
+<div class="section level3">
+<h3 id="updates-to-existing-functions-0-0-45-900">updates to existing functions<a class="anchor" aria-label="anchor" href="#updates-to-existing-functions-0-0-45-900"></a></h3>
+<ul><li>
+<p><code><a href="../reference/get_salmon_meta.html">get_salmon_meta()</a></code></p>
+<ul><li>now parses the fragment length distribution if the file exists. It returns mean, median, mode, and 25/75 percentiles.</li>
+<li>Also the <code>names(metafile)</code> are maintaines as rownames in the output.</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-0-0-45-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-45-900"></a></h3>
+<ul><li>
+<code><a href="../reference/parse_salmon_flenfile.html">parse_salmon_flenfile()</a></code> parses the Salmon fragment length file usually named <code>"flenDist.txt"</code>, and return summary values: mean, median, mode, 25/75 percentiles.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.44.900" id="platjam-0044900">platjam 0.0.44.900<a class="anchor" aria-label="anchor" href="#platjam-0044900"></a></h2>
+<div class="section level3">
+<h3 id="updates-to-existing-functions-0-0-44-900">updates to existing functions<a class="anchor" aria-label="anchor" href="#updates-to-existing-functions-0-0-44-900"></a></h3>
+<ul><li>UCSC track hub function <code><a href="../reference/parse_ucsc_gokey.html">parse_ucsc_gokey()</a></code> was updated because apparently <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> added a new argument <code>.trim</code> to trim whitespace from every output line AND made <code>.trim=TRUE</code> the default value. Because why be consistent with past versions of <code>glue</code>. Thank you again to all the R package authors that have chosen not to change the output of the primary function in their package by default. :) Not shown: All the updates I did not have to do because other core functions keep working as normal.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.43.900" id="platjam-0043900">platjam 0.0.43.900<a class="anchor" aria-label="anchor" href="#platjam-0043900"></a></h2>
+<div class="section level3">
+<h3 id="updates-to-existing-functions-0-0-43-900">updates to existing functions<a class="anchor" aria-label="anchor" href="#updates-to-existing-functions-0-0-43-900"></a></h3>
+<ul><li>
+<code><a href="../reference/nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> was updated to handle transformation of data during k-means clustering. Previously this function was not correctly defined.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.42.900" id="platjam-0042900">platjam 0.0.42.900<a class="anchor" aria-label="anchor" href="#platjam-0042900"></a></h2>
+<div class="section level3">
+<h3 id="updates-to-existing-functions-0-0-42-900">updates to existing functions<a class="anchor" aria-label="anchor" href="#updates-to-existing-functions-0-0-42-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_proteomics_PD.html">import_proteomics_PD()</a></code> gained some options to handle PD data content, such as referring Protein gene annotations into the peptide data during import. Apparently sometimes they only annotate the protein level, so this step recovers some annotations otherwise lost. Also sometimes peptide data is split across multiple rows when the peptide may appear in multiple positions in the same protein.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.41.900" id="platjam-0041900">platjam 0.0.41.900<a class="anchor" aria-label="anchor" href="#platjam-0041900"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-0-41-900">new functions<a class="anchor" aria-label="anchor" href="#new-functions-0-0-41-900"></a></h3>
+<ul><li>
+<code><a href="../reference/import_proteomics_PD.html">import_proteomics_PD()</a></code> will import proteomics abundance data from Proteomics Discoverer software, focused on the Excel format in use in 2022 that includes protein abundance data, with nested sub-tables of peptide abundance data with different columns. The function will parse each type of row and return two <code>SummarizedExperiment</code> objects, one for protein data, one for peptide data. This function calls an internal helper function <code><a href="../reference/convert_PD_df_to_SE.html">convert_PD_df_to_SE()</a></code> which performs the work of parsing gene annotations, peptides, post-translational modifications, sample annotations, and optionally reads <code>"curation.txt"</code> to define specific sample group annotations for downstream analysis.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.0.40.900" id="platjam-0040900">platjam 0.0.40.900<a class="anchor" aria-label="anchor" href="#platjam-0040900"></a></h2>
+<div class="section level3">
+<h3 id="changes-to-existing-functions-0-0-40-900">changes to existing functions<a class="anchor" aria-label="anchor" href="#changes-to-existing-functions-0-0-40-900"></a></h3>
+<ul><li>
+<code><a href="../reference/parse_ucsc_gokey.html">parse_ucsc_gokey()</a></code> was updated to allow additional parameters to be defined through <code>...</code> dot list. These values will override all values defined in the track lines.
+<ul><li>Examples have been added to demonstrate minimal use of the function, showing composite track views, and multiWig overlay tracks.</li>
+<li>new experimental argument <code>multiwig_concat_header=TRUE</code> allows adjusting the format of multiWig superTrack names, being tested inside the UCSC genome browser.</li>
+</ul></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.0.39.900" id="platjam-0039900">platjam 0.0.39.900<a class="anchor" aria-label="anchor" href="#platjam-0039900"></a></h2>
 <div class="section level3">
@@ -329,7 +870,7 @@
 <ul><li>
 <code><a href="../reference/get_salmon_meta.html">get_salmon_meta()</a></code> is intended to load Salmon transcript quantification metadata from several output JSON files, returning results in a <code>data.frame</code> with one row per Salmon run. It combines various measured statistics from <code>"meta_info.json"</code>, <code>"cmd_info.json"</code>, and <code>"lib_format_counts.json"</code> so that multiple Salmon runs can be directly compared in a table format.</li>
 <li>
-<code><a href="../reference/get_salmon_root.html">get_salmon_root()</a></code> is a wrapper to <code><a href="https://rdrr.io/pkg/rprojroot/man/find_root.html" class="external-link">rprojroot::find_root()</a></code>, intended to find the root directory of a Salmon run given any Salmon output file. It searches for the root directory that contains the file <code>"cmd_info.json"</code>.</li>
+<code><a href="../reference/get_salmon_root.html">get_salmon_root()</a></code> is a wrapper to <code><a href="https://rprojroot.r-lib.org/reference/find_root.html" class="external-link">rprojroot::find_root()</a></code>, intended to find the root directory of a Salmon run given any Salmon output file. It searches for the root directory that contains the file <code>"cmd_info.json"</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -551,7 +1092,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

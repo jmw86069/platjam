@@ -92,7 +92,9 @@ Other jam import functions:
 \code{\link{import_lipotype_csv}()},
 \code{\link{import_metabolomics_niehs}()},
 \code{\link{import_nanostring_csv}()},
+\code{\link{import_nanostring_rlf}()},
 \code{\link{import_proteomics_PD}()},
+\code{\link{import_proteomics_mascot}()},
 \code{\link{import_salmon_quant}()},
 \code{\link{process_metab_compounds_file}()}
 }

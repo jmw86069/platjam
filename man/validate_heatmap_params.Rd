@@ -7,5 +7,15 @@
 validate_heatmap_params(param, ...)
 }
 \description{
-Validate coverage heatmap params for Rmarkdown
+Validate coverage heatmap params for Rmarkdown (INCOMPLETE)
 }
+\seealso{
+Other jam coverage heatmap functions: 
+\code{\link{coverage_matrix2nmat}()},
+\code{\link{get_nmat_ceiling}()},
+\code{\link{nmathm_row_order}()},
+\code{\link{nmatlist2heatmaps}()},
+\code{\link{zoom_nmatlist}()},
+\code{\link{zoom_nmat}()}
+}
+\concept{jam coverage heatmap functions}

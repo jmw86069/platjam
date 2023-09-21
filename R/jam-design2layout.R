@@ -8,7 +8,9 @@
 #' can be represented in a sensible layout, with appropriate
 #' number of panel columns, and number of panel rows.
 #'
-#' @return `list`
+#' @family jam utility functions
+#'
+#' @returns `list` with elements:
 #' * `nrow`: number of panel rows
 #' * `ncol`: number of panel columns
 #' * `blank_pos`: integer vector for blank panels, if any
@@ -18,9 +20,9 @@
 #' @export
 design2layout <- function
 (SE,
-   group_colname=NULL,
-   run_colname=NULL,
-   ...)
+ group_colname=NULL,
+ run_colname=NULL,
+ ...)
 {
    blank_pos <- NULL;
    if (!"data.frame" %in% class(SE)) {

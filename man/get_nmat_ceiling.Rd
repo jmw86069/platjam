@@ -32,6 +32,7 @@ Other jam coverage heatmap functions:
 \code{\link{coverage_matrix2nmat}()},
 \code{\link{nmathm_row_order}()},
 \code{\link{nmatlist2heatmaps}()},
+\code{\link{validate_heatmap_params}()},
 \code{\link{zoom_nmatlist}()},
 \code{\link{zoom_nmat}()}
 }

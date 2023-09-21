@@ -149,7 +149,9 @@ import_proteomics_PD <- function
 #' This function is intended to be called by `import_proteomics_PD()` after
 #' the Excel data is split into protein and peptide `data.frame` components.
 #'
+#' @family jam utility functions
 #'
+#' @export
 convert_PD_df_to_SE <- function
 (protein_df,
  ann_lib=c("org.Hs.eg.db"),

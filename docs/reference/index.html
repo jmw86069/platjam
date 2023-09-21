@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -55,25 +55,49 @@
         </td>
         <td><p>Import genome coverage matrix files</p></td>
       </tr><tr><td>
-          <p><code><a href="get_nmat_ceiling.html">get_nmat_ceiling()</a></code> </p>
+          <p><code><a href="deepTools_matrix2nmat.html">deepTools_matrix2nmat()</a></code> </p>
         </td>
-        <td><p>Helper function to calculate signal ceiling of numeric matrix</p></td>
+        <td><p>Import deepTools coverage matrix to normalizedMatrix</p></td>
       </tr><tr><td>
-          <p><code><a href="nmathm_row_order.html">nmathm_row_order()</a></code> </p>
+          <p><code><a href="frequency_matrix2nmat.html">frequency_matrix2nmat()</a></code> </p>
         </td>
-        <td><p>Row order for nmatlist coverage heatmap</p></td>
+        <td><p>Convert frequency matrix to normalizedMatrix format</p></td>
       </tr><tr><td>
-          <p><code><a href="nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> </p>
+          <p><code><a href="import_lipotype_csv.html">import_lipotype_csv()</a></code> </p>
         </td>
-        <td><p>Make multiple coverage heatmaps</p></td>
+        <td><p>Import LipoType lipidomics data from CSV file</p></td>
       </tr><tr><td>
-          <p><code><a href="zoom_nmat.html">zoom_nmat()</a></code> </p>
+          <p><code><a href="import_metabolomics_niehs.html">import_metabolomics_niehs()</a></code> </p>
         </td>
-        <td><p>Zoom the x-axis range for a normalizedMatrix coverage data</p></td>
+        <td><p>Import metabolomics data from NIEHS file formats</p></td>
       </tr><tr><td>
-          <p><code><a href="zoom_nmatlist.html">zoom_nmatlist()</a></code> </p>
+          <p><code><a href="import_nanostring_csv.html">import_nanostring_csv()</a></code> </p>
         </td>
-        <td><p>Zoom the x-axis range for a list of normalizedMatrix coverage data</p></td>
+        <td><p>Import Nanostring csv file</p></td>
+      </tr><tr><td>
+          <p><code><a href="import_nanostring_rcc.html">import_nanostring_rcc()</a></code> </p>
+        </td>
+        <td><p>Import Nanostring RCC files</p></td>
+      </tr><tr><td>
+          <p><code><a href="import_nanostring_rlf.html">import_nanostring_rlf()</a></code> </p>
+        </td>
+        <td><p>Import Nanostring RLF file for a codeset</p></td>
+      </tr><tr><td>
+          <p><code><a href="import_proteomics_PD.html">import_proteomics_PD()</a></code> </p>
+        </td>
+        <td><p>Import data from Proteomics Discoverer</p></td>
+      </tr><tr><td>
+          <p><code><a href="import_proteomics_mascot.html">import_proteomics_mascot()</a></code> </p>
+        </td>
+        <td><p>Import proteomics data from Mascot</p></td>
+      </tr><tr><td>
+          <p><code><a href="import_salmon_quant.html">import_salmon_quant()</a></code> </p>
+        </td>
+        <td><p>Import Salmon quant.sf files to SummarizedExperiment</p></td>
+      </tr><tr><td>
+          <p><code><a href="process_metab_compounds_file.html">process_metab_compounds_file()</a></code> </p>
+        </td>
+        <td><p>Process NIEHS compounds output files (internal)</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="coverage-heatmap-functions">Coverage heatmap functions <a href="#coverage-heatmap-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Coverage heatmap functions</p>
@@ -83,19 +107,59 @@
         </td>
         <td><p>Import genome coverage matrix files</p></td>
       </tr><tr><td>
-          <p><code><a href="deepTools_matrix2nmat.html">deepTools_matrix2nmat()</a></code> </p>
+          <p><code><a href="get_nmat_ceiling.html">get_nmat_ceiling()</a></code> </p>
         </td>
-        <td><p>Import deepTools coverage matrix to normalizedMatrix</p></td>
+        <td><p>Helper function to calculate signal ceiling of numeric matrix</p></td>
       </tr><tr><td>
-          <p><code><a href="frequency_matrix2nmat.html">frequency_matrix2nmat()</a></code> </p>
+          <p><code><a href="nmathm_row_order.html">nmathm_row_order()</a></code> </p>
         </td>
-        <td><p>Convert frequency matrix to normalizedMatrix format</p></td>
+        <td><p>Make coverage heatmaps</p></td>
       </tr><tr><td>
-          <p><code><a href="import_nanostring_rcc.html">import_nanostring_rcc()</a></code> </p>
+          <p><code><a href="nmatlist2heatmaps.html">nmatlist2heatmaps()</a></code> </p>
         </td>
-        <td><p>Import Nanostring RCC files</p></td>
+        <td><p>Make multiple coverage heatmaps</p></td>
+      </tr><tr><td>
+          <p><code><a href="validate_heatmap_params.html">validate_heatmap_params()</a></code> </p>
+        </td>
+        <td><p>Validate coverage heatmap params for Rmarkdown</p></td>
+      </tr><tr><td>
+          <p><code><a href="zoom_nmat.html">zoom_nmat()</a></code> </p>
+        </td>
+        <td><p>Zoom the x-axis range for a normalizedMatrix coverage data</p></td>
+      </tr><tr><td>
+          <p><code><a href="zoom_nmatlist.html">zoom_nmatlist()</a></code> </p>
+        </td>
+        <td><p>Zoom the x-axis range for a list of normalizedMatrix coverage data</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="ucsc-genome-browser-functions">UCSC genome browser functions <a href="#ucsc-genome-browser-functions" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="jam-color-functions">Jam color functions <a href="#jam-color-functions" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>color manipulation and assignment</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="assign_numeric_colors.html">assign_numeric_colors()</a></code> </p>
+        </td>
+        <td><p>Assign color function to a numeric vector</p></td>
+      </tr><tr><td>
+          <p><code><a href="design2colors.html">design2colors()</a></code> </p>
+        </td>
+        <td><p>Convert experiment design into categorical colors</p></td>
+      </tr><tr><td>
+          <p><code><a href="df_to_numcolors.html">df_to_numcolors()</a></code> </p>
+        </td>
+        <td><p>Convert data.frame to numeric color substitution</p></td>
+      </tr><tr><td>
+          <p><code><a href="mean_hue.html">mean_hue()</a></code> </p>
+        </td>
+        <td><p>Mean hue for a vector</p></td>
+      </tr><tr><td>
+          <p><code><a href="print_color_list.html">print_color_list()</a></code> </p>
+        </td>
+        <td><p>Print color list of color vectors or color functions</p></td>
+      </tr><tr><td>
+          <p><code><a href="quick_complement_color.html">quick_complement_color()</a></code> </p>
+        </td>
+        <td><p>Quick color complement function</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="ucsc-genome-browser-track-functions">UCSC genome browser track functions <a href="#ucsc-genome-browser-track-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions related to the UCSC genome browser</p>
         </th>
       </tr></tbody><tbody><tr><td>
@@ -127,6 +191,10 @@
         </td>
         <td><p>Get Salmon root directory</p></td>
       </tr><tr><td>
+          <p><code><a href="parse_salmon_flenfile.html">parse_salmon_flenfile()</a></code> </p>
+        </td>
+        <td><p>Parse Salmon fragment length file</p></td>
+      </tr><tr><td>
           <p><code><a href="save_salmon_qc_xlsx.html">save_salmon_qc_xlsx()</a></code> </p>
         </td>
         <td><p>Save Salmon QC to Xlsx</p></td>
@@ -135,13 +203,45 @@
           <p class="section-desc"></p><p>Extra utility functions</p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="cardinality.html">cardinality()</a></code> </p>
+        </td>
+        <td><p>Determine cardinality between two vectors</p></td>
+      </tr><tr><td>
           <p><code><a href="color_complement.html">color_complement()</a></code> </p>
         </td>
         <td><p>Create color complement by rotating the color hue</p></td>
       </tr><tr><td>
+          <p><code><a href="convert_PD_df_to_SE.html">convert_PD_df_to_SE()</a></code> </p>
+        </td>
+        <td><p>Internal function to convert Proteomics Discoverer data.frame to SummarizedExperiment</p></td>
+      </tr><tr><td>
+          <p><code><a href="convert_imputed_assays_to_na.html">convert_imputed_assays_to_na()</a></code> </p>
+        </td>
+        <td><p>Convert imputed metabolomics assay data to NA</p></td>
+      </tr><tr><td>
+          <p><code><a href="curate_se_colData.html">curate_se_colData()</a></code> </p>
+        </td>
+        <td><p>Curate Summarized Experiment colData</p></td>
+      </tr><tr><td>
+          <p><code><a href="curate_to_df_by_pattern.html">curate_to_df_by_pattern()</a></code> </p>
+        </td>
+        <td><p>Curate vector to data.frame by pattern matching</p></td>
+      </tr><tr><td>
+          <p><code><a href="design2layout.html">design2layout()</a></code> </p>
+        </td>
+        <td><p>Convert experiment design into reasonable plot panel layout</p></td>
+      </tr><tr><td>
           <p><code><a href="get_numeric_transform.html">get_numeric_transform()</a></code> </p>
         </td>
         <td><p>Get appropriate numeric transformation function</p></td>
+      </tr><tr><td>
+          <p><code><a href="handle_df_args.html">handle_df_args()</a></code> </p>
+        </td>
+        <td><p>Handle function arguments passed in the form of a data.frame</p></td>
+      </tr><tr><td>
+          <p><code><a href="merge_proteomics_se.html">merge_proteomics_se()</a></code> </p>
+        </td>
+        <td><p>merge proteomics SE objects</p></td>
       </tr><tr><td>
           <p><code><a href="rowNormScale.html">rowNormScale()</a></code> </p>
         </td>
@@ -167,7 +267,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

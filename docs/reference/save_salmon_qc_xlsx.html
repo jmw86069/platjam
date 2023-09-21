@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">platjam</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.73.9000</span>
       </span>
     </div>
 
@@ -52,20 +52,46 @@
     <p>Save Salmon QC to Xlsx</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">save_salmon_qc_xlsx</span><span class="op">(</span>
-  <span class="va">metajsons</span>,
-  salmon_qc_xlsx <span class="op">=</span> <span class="cn">NULL</span>,
-  adj_target_reads <span class="op">=</span> <span class="fl">7.5e+07</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">save_salmon_qc_xlsx</span><span class="op">(</span></span>
+<span>  <span class="va">metajsons</span>,</span>
+<span>  salmon_qc_xlsx <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  adj_target_reads <span class="op">=</span> <span class="fl">7.5e+07</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>metajsons</dt>
+<dd><p><code>data.frame</code> output from <code><a href="get_salmon_meta.html">get_salmon_meta()</a></code></p></dd>
+
+
+<dt>salmon_qc_xlsx</dt>
+<dd><p><code>character</code> path to file to be saved.</p></dd>
+
+
+<dt>adj_target_reads</dt>
+<dd><p><code>numeric</code> number indicating the target
+number of sequence reads per row, used to define color gradient
+range.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code>logical</code> indicating whether to print verbose output.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>additional arguments are passed to underlying functions.</p></dd>
+
+</dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other jam nextgen sequence functions: 
 <code><a href="get_salmon_meta.html">get_salmon_meta</a>()</code>,
-<code><a href="get_salmon_root.html">get_salmon_root</a>()</code></p></div>
-    </div>
+<code><a href="get_salmon_root.html">get_salmon_root</a>()</code>,
+<code><a href="parse_salmon_flenfile.html">parse_salmon_flenfile</a>()</code></p></div>
     </div>
 
   </div>
@@ -80,7 +106,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

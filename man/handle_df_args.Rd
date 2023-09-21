@@ -25,6 +25,9 @@ function arguments.}
 
 \item{...}{additional arguments are ignored.}
 }
+\value{
+\code{environment} containing variables parsed from \code{df}
+}
 \description{
 Handle function arguments passed in the form of a data.frame
 }
@@ -41,3 +44,17 @@ responsibility of the parent function.
 parent_fn <- nmatlist2heatmaps;
 
 }
+\seealso{
+Other jam utility functions: 
+\code{\link{cardinality}()},
+\code{\link{color_complement}()},
+\code{\link{convert_PD_df_to_SE}()},
+\code{\link{convert_imputed_assays_to_na}()},
+\code{\link{curate_se_colData}()},
+\code{\link{curate_to_df_by_pattern}()},
+\code{\link{design2layout}()},
+\code{\link{get_numeric_transform}()},
+\code{\link{merge_proteomics_se}()},
+\code{\link{rowNormScale}()}
+}
+\concept{jam utility functions}
