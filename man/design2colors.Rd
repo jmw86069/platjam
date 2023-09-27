@@ -13,8 +13,8 @@ design2colors(
   preset = "dichromat2",
   phase = 1,
   rotate_phase = -1,
-  class_pad = 1,
-  end_hue_pad = 2,
+  class_pad = 2,
+  end_hue_pad = 0,
   hue_offset = 0,
   desat = c(0, 0.4),
   dex = c(2, 5),
@@ -343,13 +343,13 @@ dfc <- design2colors(df,
 
 # same as above except assign colors to columns and some values
 dfc <- design2colors(df,
-   group_colnames="genotype",
+   group_colnames="sample_group",
    lightness_colnames="treatment",
-   class_colnames="class",
-   preset="dichromat",
-   color_sub=c(KO="firebrick3",
+   class_colnames="genotype",
+   class_pad=5,
+   preset="dichromat2",
+   color_sub=c(KO="darkorchid3",
       treatment="navy",
-      class="cyan",
       time="dodgerblue"))
 
 # same as above except assign specific group colors
@@ -357,10 +357,11 @@ dfc <- design2colors(df,
    group_colnames="genotype",
    lightness_colnames="treatment",
    class_colnames="class",
-   preset="dichromat",
+   preset="dichromat2",
    color_sub=c(
       WT="gold",
       KO="purple3",
+      age="firebrick",
       GeneAKO="firebrick3",
       GeneBKO="dodgerblue",
       treatment="navy",
@@ -370,14 +371,13 @@ dfc2 <- design2colors(df,
    group_colnames="genotype",
    lightness_colnames=c("time", "treatment"),
    class_colnames="class",
-   preset="dichromat")
+   preset="dichromat2")
 
 dfc3 <- design2colors(df,
    group_colnames=c("genotype"),
    lightness_colnames=c("time", "treatment"),
    class_colnames="genotype",
-   rotate_phase=TRUE,
-   preset="dichromat")
+   preset="dichromat2")
 
 df1 <- df;
 df2 <- subset(df, time \%in\% "early");

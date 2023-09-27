@@ -16,6 +16,8 @@
    so to speak, making the output colors appear weird.
    * Fixed application of `end_hue_pad` and `class_pad` together, previously
    it only applied `class_pad`.
+   * `class_pad` is applied partially at the start and end of the color wheel,
+   splitting the padding before the first and after the last color hue.
    * `color_sub` can substitute for `class` or `group` colors without
    requiring all values in the column be matched. Useful for altering one
    color in a set.

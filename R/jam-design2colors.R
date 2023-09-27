@@ -264,13 +264,13 @@
 #'
 #' # same as above except assign colors to columns and some values
 #' dfc <- design2colors(df,
-#'    group_colnames="genotype",
+#'    group_colnames="sample_group",
 #'    lightness_colnames="treatment",
-#'    class_colnames="class",
-#'    preset="dichromat",
-#'    color_sub=c(KO="firebrick3",
+#'    class_colnames="genotype",
+#'    class_pad=5,
+#'    preset="dichromat2",
+#'    color_sub=c(KO="darkorchid3",
 #'       treatment="navy",
-#'       class="cyan",
 #'       time="dodgerblue"))
 #'
 #' # same as above except assign specific group colors
@@ -278,10 +278,11 @@
 #'    group_colnames="genotype",
 #'    lightness_colnames="treatment",
 #'    class_colnames="class",
-#'    preset="dichromat",
+#'    preset="dichromat2",
 #'    color_sub=c(
 #'       WT="gold",
 #'       KO="purple3",
+#'       age="firebrick",
 #'       GeneAKO="firebrick3",
 #'       GeneBKO="dodgerblue",
 #'       treatment="navy",
@@ -291,14 +292,13 @@
 #'    group_colnames="genotype",
 #'    lightness_colnames=c("time", "treatment"),
 #'    class_colnames="class",
-#'    preset="dichromat")
+#'    preset="dichromat2")
 #'
 #' dfc3 <- design2colors(df,
 #'    group_colnames=c("genotype"),
 #'    lightness_colnames=c("time", "treatment"),
 #'    class_colnames="genotype",
-#'    rotate_phase=TRUE,
-#'    preset="dichromat")
+#'    preset="dichromat2")
 #'
 #' df1 <- df;
 #' df2 <- subset(df, time %in% "early");
@@ -324,8 +324,8 @@ design2colors <- function
  preset="dichromat2",
  phase=1,
  rotate_phase=-1,
- class_pad=1,
- end_hue_pad=2,
+ class_pad=2,
+ end_hue_pad=0,
  hue_offset=0,
  desat=c(0, 0.4),
  dex=c(2, 5),
@@ -689,10 +689,22 @@ design2colors <- function
    if (length(unique(gdf$class)) > 1) {
       ibreaks <- jamba::breaksByVector(gdf$class)$breakPoints;
       if (length(ibreaks) > 1) {
-         for (k in rev(ibreaks)) {
+         for (k1 in rev(seq_along(ibreaks))) {
+            k <- ibreaks[k1];
+            if (k1 == 1) {
+               hcp1 <- floor(class_pad * 1 / 2);
+               hcp2 <- class_pad;
+            } else if (k1 == length(ibreaks)) {
+               hcp1 <- 0;
+               hcp2 <- ceiling(class_pad * 1 / 2);
+            } else {
+               hcp1 <- 0;
+               hcp2 <- class_pad;
+            }
             gdf_list <- c(
+               rep(list(gdf0), hcp1),
                list(head(gdf, k)),
-               rep(list(gdf0), class_pad),
+               rep(list(gdf0), hcp2),
                list(tail(gdf, -k)));
             gdf <- jamba::rbindList(gdf_list);
          }
@@ -776,10 +788,14 @@ design2colors <- function
             c_weight=0.9,
             preset="ryb2")
          # now determine most vibrant color with this hue
-         icolor2 <- colorjam::vibrant_color_by_hue(
-            jamba::col2hcl(icolor1)["H",]);
-         # now blend the actual average with a more vibrant color in this hue
-         colorjam::blend_colors(c(icolor1, icolor2));
+         if (jamba::col2hcl(icolor1)["C",] < 85) {
+            icolor2 <- colorjam::vibrant_color_by_hue(
+               jamba::col2hcl(icolor1)["H",]);
+            # now blend the actual average with a more vibrant color in this hue
+            colorjam::blend_colors(c(icolor1, icolor2));
+         } else {
+            icolor1
+         }
       })
       gdf$class_color <- class_color[as.character(gdf$class)];
       if (all(as.character(gdf$class) %in% names(color_sub_atomic))) {
