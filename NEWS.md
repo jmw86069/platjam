@@ -1,3 +1,29 @@
+# platjam 0.0.74.900
+
+* `design2colors()`
+
+   * simplified how class and group colors are assigned overall
+   * simplified the call to `colorjam::rainbowJam()`, no longer
+   assigning color hue (then applying color warping in colorjam),
+   instead using `colorjam::rainbowJam()` since it has additional
+   logic for low `n` color hue assignments. Pushes all aesthetic
+   choices to `rainbowJam()`.
+   * Changed how `phase` is applied, so the ordered phase is applied only
+   to non-padded colors. When `class_pad` or `end_hue_pad` insert blank
+   colors to absorb the corresponding color hue, the phase is not consumed,
+   since phase is intended to be applied across the final set of colors.
+   Previously, the phase would be out of phase with the final colors,
+   so to speak, making the output colors appear weird.
+   * Fixed application of `end_hue_pad` and `class_pad` together, previously
+   it only applied `class_pad`.
+   * `color_sub` can substitute for `class` or `group` colors without
+   requiring all values in the column be matched. Useful for altering one
+   color in a set.
+   * Improved color saturation for `class` colors created when blending
+   corresponding group colors. The process uses
+   `colorjam::vibrant_color_by_hue()` to determine the most vibrant color
+   for the same hue, then blends this color with the original class color.
+
 # platjam 0.0.73.900
 
 * dependency version bump for colorjam (>= 0.0.26.900)

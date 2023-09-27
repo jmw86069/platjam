@@ -1,3 +1,17 @@
+# TODO 26sep2023
+
+* migrate `slicejam::import_featurecounts()`
+
+   * currently only imports the file format into `data.frame`
+   * goal is to create fully described `SummarizedExperiment`
+   using `rowRanges()` for genomic coordinates.
+   * add argument `curation_txt`
+
+* migrate `slicejam::fc_to_curation_txt()`
+
+   * convert input data into a reasonably good `"curation.txt"`
+
+
 # TODO 21sep2023
 
 * DONE. Update `design2colors()` consistent with colorjam 0.0.26.900 changes.

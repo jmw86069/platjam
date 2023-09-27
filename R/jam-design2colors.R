@@ -329,8 +329,8 @@ design2colors <- function
  hue_offset=0,
  desat=c(0, 0.4),
  dex=c(2, 5),
- Crange=c(70, 120),
- Lrange=c(45, 90),
+ Crange=NULL,#c(70, 120),
+ Lrange=NULL,#c(45, 90),
  color_sub=NULL,
  color_sub_max=NULL,
  na_color="grey75",
@@ -638,7 +638,6 @@ design2colors <- function
          x[[icol]] <- factor(x[[icol]],
             levels=unique(x[[icol]]));
       }
-      # jamba::printDebug("icol:", icol, ", levels:", levels(x[[icol]]));# debug
    }
 
    # generate output per class, group, lightness values
@@ -699,6 +698,12 @@ design2colors <- function
          }
       }
    }
+   if (length(end_hue_pad) > 0 && end_hue_pad > 0) {
+      gdf_list <- c(
+         list(gdf),
+         rep(list(gdf0), end_hue_pad));
+      gdf <- jamba::rbindList(gdf_list);
+   }
    if (verbose) {
       jamba::printDebug("design2colors(): ",
          "expanded unique class, group df:");
@@ -710,36 +715,53 @@ design2colors <- function
    #hue_offset <- 0;
    hue_seq <- head(seq(from=0 + hue_offset,
       to=360 + hue_offset,
-      length.out=n + end_hue_pad), n);
+      length.out=n + end_hue_pad + 1), n);
    gdf$hue <- hue_seq;
-   # adjust color hue
-   #gdf$hue2 <- colorjam::hw2h(hue_seq,
-   #   preset="dichromat");
-   gdf <- subset(gdf, !is.na(real))
 
    # subset of color_sub which is not a color ramp
-   color_sub_atomic <- jamba::vigrep("^#", color_sub)
+   color_sub_atomic <- jamba::vigrep("^#|[a-zA-Z]", color_sub)
 
    # assign colors
    class_group_hue1 <- jamba::nameVector(gdf[,c("hue", "class_group")])
    class_group_hue <- colorjam::hw2h(class_group_hue1,
       preset=preset);
-   if (all(as.character(gdf$class_group) %in% names(color_sub_atomic))) {
-      class_group_color <- color_sub_atomic[as.character(gdf$class_group)];
-      gdf$hue <- colorjam::h2hw(
-         jamba::col2hcl(class_group_color)["H",],
-            preset=preset);
+
+   # populate proper phase values
+   if (length(phase) == 1) {
+      phase_seq <- seq_len(sum(!is.na(gdf$real))) + abs(phase) - 1;
+      if (phase < 0) {
+         phase_seq <- rev(phase_seq);
+      }
    } else {
-      class_group_color <- colorjam::rainbowJam(n=length(class_group_hue),
-         hues=class_group_hue,
-         phase=phase,
-         preset=preset,
-         Crange=Crange,
-         Lrange=Lrange,
-         ...);
+      phase_seq <- rep(abs(phase),
+         length.out=sum(!is.na(gdf$real)));
+   }
+   gdf$phase <- 1;
+   gdf$phase[!is.na(gdf$real)] <- phase_seq;
+
+   # calculate all required colors
+   use_step <- colorjam::colorjam_presets(preset=preset)$default_step;
+   use_colors <- colorjam::rainbowJam(n=nrow(gdf),
+      phase=gdf$phase,
+      preset=preset,
+      Crange=Crange,
+      Lrange=Lrange,
+      ...);
+   gdf$class_group_color <- use_colors;
+   # subset for real entries, removing optional filler entries between classes
+   gdf <- subset(gdf, !is.na(real))
+   class_group_color <- gdf$class_group_color;
+   names(class_group_color) <- gdf$class_group;
+
+   # check for color_sub defined for each class_group
+   if (any(as.character(gdf$class_group) %in% names(color_sub_atomic))) {
+      # jamba::printDebug("Match color_sub to group name.");
+      imatch <- match(gdf$class_group, names(color_sub_atomic));
+      gdf$class_group_color[!is.na(imatch)] <- color_sub_atomic[
+         imatch[!is.na(imatch)]]
+      class_group_color <- gdf$class_group_color;
       names(class_group_color) <- gdf$class_group;
    }
-   gdf$class_group_color <- class_group_color;
 
    # get mean color hue per class
    class_hues <- NULL;
@@ -750,9 +772,14 @@ design2colors <- function
          if (length(icolors) == 2) {
             icolors <- icolors[c(1, 2, 2)];
          }
-         colorjam::blend_colors(icolors,
+         icolor1 <- colorjam::blend_colors(icolors,
             c_weight=0.9,
             preset="ryb2")
+         # now determine most vibrant color with this hue
+         icolor2 <- colorjam::vibrant_color_by_hue(
+            jamba::col2hcl(icolor1)["H",]);
+         # now blend the actual average with a more vibrant color in this hue
+         colorjam::blend_colors(c(icolor1, icolor2));
       })
       gdf$class_color <- class_color[as.character(gdf$class)];
       if (all(as.character(gdf$class) %in% names(color_sub_atomic))) {
