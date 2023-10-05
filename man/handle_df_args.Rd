@@ -55,6 +55,7 @@ Other jam utility functions:
 \code{\link{design2layout}()},
 \code{\link{get_numeric_transform}()},
 \code{\link{merge_proteomics_se}()},
+\code{\link{rmd_tab_iterator}()},
 \code{\link{rowNormScale}()}
 }
 \concept{jam utility functions}

@@ -1,3 +1,22 @@
+# platjam 0.0.75.900
+
+## new functions
+
+* `rmd_tab_iterator()`
+
+   * Intended to help RMarkdown documents generate tabbed output,
+   even allowing multiple layers of tabs,
+   usually to configure the same visualization with a few different options.
+   * Provide a list of vectors to use for tabs.
+   * It iterates each layer of tabs, defines variables in the appropriate
+   environment to be "seen" by subsequent layers of tabs.
+   * The base layer calls a function, usually producing a figure or table.
+   * The process clean up R code, preventing multiple layers of `for` loops
+   or `lapply()` calls.
+   * This function may be moved into `jamba` eventually, but for now is
+   being tested and may be updated rapidly based upon real use cases.
+
+
 # platjam 0.0.74.900
 
 * `design2colors()`

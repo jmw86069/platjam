@@ -131,6 +131,7 @@ Other jam utility functions:
 \code{\link{design2layout}()},
 \code{\link{get_numeric_transform}()},
 \code{\link{handle_df_args}()},
+\code{\link{rmd_tab_iterator}()},
 \code{\link{rowNormScale}()}
 }
 \concept{jam utility functions}
