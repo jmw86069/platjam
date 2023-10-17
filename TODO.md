@@ -1,3 +1,75 @@
+# TODO 13oct2023
+
+* `rmd_tab_iterator()`
+
+   * Need way to "hide" tabs:
+   
+      * when no plot is produced
+      
+         * Can code determine whether a plot is produced? probably not easily.
+      
+      * certain combinations of tab values that should be hidden
+      
+         * optional accessory function that returns TRUE or FALSE, on whether
+         to call `base_fn`.
+      
+      * driving example: MA-plots with `useRank=TRUE` are identical
+      for raw and normalized data, should be shown once, for raw data,
+      optionally for batch-adjusted data. Either need the MA-plot code to
+      "hide" unnecessary plots, or provide criteria for which tabs to hide.
+
+   * consider option to display heading label before each set of tabs
+
+      * Previous markdown example does not include the tab type, just
+      the tab value:
+         ```
+         # figures
+         
+         ## tab_list_1 value_1 {.tabset}
+   
+         ### tab_list_2 value_1
+         
+         {figure 1}
+         
+         ### tab_list_2 value_2
+         
+         {figure 2}
+   
+         ## tab_list_1 value_2 {.tabset}
+   
+         ### tab_list_2 value_1
+         
+         {figure 3}
+         ```
+
+      * New markdown example includes the tab type first, then the next
+      layer uses each tab value:
+      ```
+      # figures
+      
+      ## tab_list_1 label {.tabset}
+      
+      ### tab_list_1 value_1
+      
+      #### tab_list_2 label {.tabset}
+      
+      ##### tab_list_2 value_1
+      
+      {figure 1}
+      
+      ##### tab_list_2 value_2
+      
+      {figure 2}
+
+      ### tab_list_1 value_2
+
+      #### tab_list_2 label {.tabset}
+      
+      ##### tab_list_2 value_1
+      
+      {figure 3}
+      ```
+
 # TODO 26sep2023
 
 * migrate `slicejam::import_featurecounts()`

@@ -1844,8 +1844,10 @@ nmatlist2heatmaps <- function
       }
       if (do_plot &&
             (length(title) > 0 || length(caption) > 0)) {
-         jamba::printDebug("nmatlist2heatmaps(): ",
-            "Preparing ComplexHeatmap::draw(HeatmapList)");
+         if (verbose) {
+            jamba::printDebug("nmatlist2heatmaps(): ",
+               "Preparing ComplexHeatmap::draw(HeatmapList)");
+         }
          HM_drawn <- ComplexHeatmap::draw(HM_temp,
             column_title=title,
             ht_gap=ht_gap,

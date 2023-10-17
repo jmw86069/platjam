@@ -1,3 +1,13 @@
+# platjam 0.0.76.900
+
+Still in progress.
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()`
+
+   * silence verbose output `"Preparing ComplexHeatmap::draw()"`
+
 # platjam 0.0.75.900
 
 ## new functions
