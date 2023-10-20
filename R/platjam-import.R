@@ -875,7 +875,6 @@ nmatlist2heatmaps <- function
       if (any(is.na(partition_colors))) {
          partition_colors[is.na(partition_colors)] <- "#AAAAAA"
       }
-      jamba::printDebugI("partition_colors:");jamba::printDebugI(partition_colors);# debug
    }
 
    ## row_order must be named by rows
