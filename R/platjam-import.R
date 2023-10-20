@@ -1073,11 +1073,11 @@ nmatlist2heatmaps <- function
 
       ## 28aug2020 update to kmeans cluster within partitions
       if (length(partition) == 0) {
-         kpartition <- suppressMessages(
+         kpartition <- suppressMessages(suppressWarnings(
             kmeans(
                imatrix,
                iter.max=iter.max,
-               centers=k_clusters)$cluster);
+               centers=k_clusters)$cluster));
          ## Confirm that names(partition) match rows
          names(kpartition) <- rows;
          partition <- kpartition;
@@ -1118,11 +1118,11 @@ nmatlist2heatmaps <- function
                   rep("", length.out=length(prows)),
                   prows))
             }
-            kpartition <- suppressMessages(
+            kpartition <- suppressMessages(suppressWarnings(
                kmeans(
                   imatrix[match(prows, rownames(imatrix)), , drop=FALSE],
                   iter.max=iter.max,
-                  centers=use_k)$cluster);
+                  centers=use_k)$cluster));
             names(kpartition) <- prows;
             kpartition;
          })

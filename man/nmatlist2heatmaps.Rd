@@ -12,7 +12,7 @@ nmatlist2heatmaps(
   upstream_length = NULL,
   downstream_length = NULL,
   k_clusters = 0,
-  min_rows_per_k = 25,
+  min_rows_per_k = 100,
   k_subset = NULL,
   k_colors = NULL,
   k_width = grid::unit(5, "mm"),
@@ -116,8 +116,8 @@ will honor \code{levels(partition)}.}
 
 \item{min_rows_per_k}{\code{numeric} minimum rows required per k-means
 cluster, used only when \code{k_clusters} is greater than 1.
-With default \code{min_rows_per_k=25}, a partition with 25 or fewer rows
-can only have \code{k=1}, and partition with 26 rows can have \code{k=2}.
+With default \code{min_rows_per_k=10}, a partition with 100 or fewer rows
+can only have \code{k=1}, and partition with 101 rows can have \code{k=2}.
 This limit protects from k-means clustering small partitions.}
 
 \item{k_subset}{\code{integer} vector of k-means clusters to

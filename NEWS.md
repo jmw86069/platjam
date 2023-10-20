@@ -23,6 +23,8 @@ Still in progress.
    * New argument `min_rows_per_k=100` requires at least 100 rows per k-means
    cluster, to protect from clustering with a very small number of rows.
    The argument is most relevant when used together with `partition`.
+   * `kmeans()` warnings are suppressed, otherwise they interfere with
+   RMarkdown output.
    * `k_clusters` and `partition` work together
    
       * each partition is individually k-means clustered
