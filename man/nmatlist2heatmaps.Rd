@@ -16,7 +16,7 @@ nmatlist2heatmaps(
   k_subset = NULL,
   k_colors = NULL,
   k_width = grid::unit(5, "mm"),
-  k_method = c("euclidean", "pearson", "correlation"),
+  k_method = c("euclidean", "correlation", "pearson", "spearman"),
   k_heatmap = main_heatmap,
   partition = NULL,
   rows = NULL,
@@ -37,6 +37,9 @@ nmatlist2heatmaps(
   legend_base_nrow = 5,
   legend_max_labels = 40,
   show_heatmap_legend = TRUE,
+  heatmap_legend_param = NULL,
+  heatmap_legend_direction = "horizontal",
+  annotation_legend_param = NULL,
   hm_nrow = 1,
   transform = "none",
   signal_ceiling = NULL,
@@ -59,9 +62,6 @@ nmatlist2heatmaps(
   do_plot = TRUE,
   legend_width = grid::unit(3, "cm"),
   trim_legend_title = TRUE,
-  heatmap_legend_param = NULL,
-  heatmap_legend_direction = "horizontal",
-  annotation_legend_param = NULL,
   return_type = c("heatmaplist", "grid"),
   show_error = FALSE,
   verbose = FALSE,
@@ -136,7 +136,22 @@ bar, used with \code{k_clusters}.}
 used by k-means, where the common default is
 \code{"euclidean"}, however a useful alternative for
 sequence coverage data is \code{"correlation"} as implemented
-in \code{amap::Kmeans()}.}
+in \code{amap::Kmeans()}. Available methods:
+\itemize{
+\item \code{"euclidean"} (default) calculates the typical Euclidean distance,
+which tends to emphasize total signal moreso than the specific
+shape of the signal.
+\item \code{"correlation"} when the R package \code{amap} is available, this method
+emphasizes the shape of signal profiles, and is particularly effective.
+It is also called "centered Pearson" since data is centered prior
+to calculating correlation.
+\item \code{"pearson"} when the R package \code{amap} is available, this method
+is also called "not centered Pearson" since data is not centered
+prior to calculating correlation.
+\item \code{"spearman"} when the R package \code{amap} is available, this method
+computes distance based upon rank differences. It has not been tested
+much in this context.
+}}
 
 \item{k_heatmap}{\code{integer} with one or more values indicating which
 \code{nmatlist} entries to use for k-means clustering, used only when
@@ -208,6 +223,8 @@ Note that \code{k_heatmap} will override this option when provided.}
 
 \item{anno_df}{\code{data.frame} or object that can be coerced to \code{data.frame}
 whose \code{rownames(anno_df)} must match rownames in the nmatlist data.
+When \code{rownames(anno_df)} does not match, this function fails with
+an error message.
 \itemize{
 \item Data can optionally be sorted by defining \code{byCols}.
 \item When provided, data in \code{nmatlist} is automatically subsetted
@@ -332,6 +349,43 @@ more than this number of categorical colors, the legend is
 not displayed, in order to prevent the color legend from filling
 the entire plot device, thus hiding the heatmaps.}
 
+\item{show_heatmap_legend}{\code{logical} indicating whether to display the
+color legend for each heatmap entry in \code{nmatlist}. When \code{panel_groups}
+are supplied, color legends are displayed only for the first
+heatmap in each unique panel group, unless \code{show_heatmap_legend=FALSE},
+or unless \code{show_heatmap_legend} is already defined for every heatmap.}
+
+\item{heatmap_legend_param}{\code{list} with optional heatmap legend settings.
+By default \code{NULL} causes this argument to be defined internally,
+however when provided it overrides any internal settings and is used
+directly. The \code{list} should be \code{length(nmatlist)}, or is recycled
+to that length.}
+
+\item{heatmap_legend_direction}{\code{character} string used when
+\code{show_heatmap_legend=TRUE} and \code{heatmap_legend_param} is not already
+provided.
+\itemize{
+\item By default \code{heatmap_legend_direction="horizontal"} displays
+the color gradient in the legend horizontally as a continuous scale,
+with labels defined in \code{EnrichedHeatmap::EnrichedHeatmap()}, and
+width equal to \code{grid::unit(1, "npc")} which uses the full width of
+the color legend area.
+\item When \code{heatmap_legend_direction="vertical"} the color legend is
+displayed vertically, with width \code{grid::unit(5, "mm")}.
+}}
+
+\item{annotation_legend_param}{\code{list} optional parameters passed to
+the annotation legend functions, intended to provide customization.
+The \code{list} should be named by each annotation entry to be customized,
+and any annotation entries not defined \code{annotation_legend_param}
+use the default behavior of \code{ComplexHeatmap::HeatmapAnnotation()},
+which will assign its own set of colors and use default legend
+parameters by default.
+When \code{annotation_legend_param=NULL} (default) then all colors
+are defined, and all legends are displayed using this function
+defaults. When there are more labels than \code{legend_max_labels}
+the color legend will be hidden for that annotation legend entry.}
+
 \item{hm_nrow}{\code{integer} number of rows used to display
 the heatmap panels. This mechanism is somewhat experimental,
 and is used to split a large number of coverage heatmaps into
@@ -342,9 +396,21 @@ two rows of heatmaps.
 heatmap panels.
 }}
 
-\item{transform}{either \code{character} string referring to
-a numeric transformation, or a \code{function} that applies
-a numeric transformation. Valid \code{character} string values:
+\item{transform}{one of the following:
+\itemize{
+\item \code{character} string referring to a numeric transformation,
+passed to \code{get_numeric_transform()}. Commonly used strings:
+\itemize{
+\item \code{"log2signed"} calls \code{jamba::log2signed()}, which applies
+\code{log2(1+x)} to the absolute value, multiplied by \code{sign(x)}
+\item \code{"sqrt"} applies square root to the absolute value, multiplied
+by the \code{sign(x)}
+\item \code{"cubert"} applies cube root \code{x^(1/3)}
+\item \code{"qrt"} applies fourth root \code{x^(1/4)} to the absolute value,
+multiplied by the \code{sign(x)}
+}
+\item \code{function} that applies a numeric transformation.
+Valid \code{character} string values:
 \code{"log2signed"} applies \code{jamba::log2signed()} which applies
 \code{log2(1+x)} transform to the absolute value, then multiplies
 by the original \code{sign(x)}; \code{"sqrt"} applies square root;
@@ -354,69 +420,66 @@ values, the transformation is applied to absolute value,
 then multiplied by the original sign. Therefore, the
 transformation is applied to adjust the magnitude of
 the values. These values are passed to \code{get_numeric_transform()}
-which may have more information.}
+which may have more information.
+}}
 
 \item{signal_ceiling}{\code{numeric} vector whose values are recycled
-to length \code{length(nmatlist)}. The signal_ceiling
-applies a maximum numeric value to the
-color ramp for each matrix in \code{nmatlist}. The value is
-passed to \code{get_nmat_ceiling()}, which recognizes three
-numeric forms:
-\itemize{
-\item \code{signal_ceiling > 1}: this specific numeric value
-is applied as the ceiling
-\item \code{signal_ceiling > 0} and \code{signal_ceiling <= 1}: this numeric
-value is interpreted as a quantile threshold, for example
-\code{signal_ceiling=0.75} would calculate ceiling \code{quantile(x, probs=0.75)}.
-\item \code{signal_ceiling} is \code{NULL}: the maximum absolute value of each
-matrix is used as the ceiling.
+to length \code{length(nmatlist)}. The \code{signal_ceiling}
+defines the maximum numeric value to the color ramp for
+each matrix in \code{nmatlist}. The value is passed to \code{get_nmat_ceiling()},
+which recognizes three numeric forms:
+\enumerate{
+\item \code{signal_ceiling=NULL}: (default) the maximum absolute value
+is used as the ceiling.
+\item \code{signal_ceiling > 1}: the specific numeric value
+is applied as a fixed ceiling, even if the value is above or below
+the maximum absolute value in the data matrix. This setting is useful
+for defining a fixed meaningful threshold across \code{nmatlist} entries.
+\item \code{signal_ceiling > 0} and \code{signal_ceiling <= 1}: the numeric value
+defines a quantile threshold calculated using signal in the data matrix,
+excluding values of zero. For example \code{signal_ceiling=0.75} calculates
+ceiling \code{quantile(x, probs=0.75)}, using non-zero values.
 }
 
-Note that the ceiling is only applied to color scale and
-not to the underlying data, which is useful to know because any
-clustering and row ordering steps will use the full data
-as needed.
+Note that the ceiling is only applied to the color scale and
+not to the underlying data. The row clustering and row ordering
+steps use the full data range, after applying the appropriate
+\code{transform} where applicable.
 
-If data needs to be strictly controlled to a
-numeric ceiling, that processing should take place
-on \code{nmatlist} before calling \code{nmatlist2heatmaps()}.}
+To apply a numeric ceiling to the data itself, it should be done
+at the level of \code{nmatlist} beforehand.}
 
-\item{axis_name_gp}{x-axis label graphic parameters,
-as output from \code{grid::gpar()}. For example to define
-the x-axis font size, use the form
-\code{grid::gpar(fontsize=8)}.}
+\item{axis_name_gp}{object of \code{grid::gpar} applied to the x-axis label
+graphic parameters. For example, to customize the x-axis font size,
+use the form: \code{grid::gpar(fontsize=8)}.}
 
-\item{axis_name_rot}{numeric value either \code{0} or \code{90} indicating
-whether to rotate the x-axis names, where \code{90} will rotate
-labels, and \code{0} will leave labels horizontal.}
+\item{axis_name_rot}{\code{numeric} value either \code{0} or \code{90} indicating
+whether to rotate the x-axis names below each heatmap, where
+\code{axis_name_row=90} (default) will rotate labels vertically,
+and \code{axis_name_row=0} will display labels horizontally.}
 
-\item{column_title_gp}{heatmap title graphic parameters,
-as output from \code{grid::gpar()}. For example to define
-the x-axis font size, use the form
-\code{grid::gpar(fontsize=8)}. This argument is passed
-directly to \code{ComplexHeatmap::Heatmap()}.}
+\item{column_title_gp}{object \code{grid::gpar} or \code{list} of \code{grid::gpar}
+objects, applied across entries in \code{nmatlist} to customize the title
+displayed above each heatmap panel.
+For example to alter the font size, use \code{grid::gpar(fontsize=14)}.
+This argument is passed to \code{ComplexHeatmap::Heatmap()}, and can
+be customized for each heatmap as needed.}
 
-\item{lens}{numeric value used to scale each heatmap
-color ramp, using \code{getColorRamp()}. Values above zero
-apply the color gradient more rapidly starting from the
-lowest value, making the color appear more intense for
-lower numeric values. Values below zero apply the color gradient
-less rapidly, which makes lower numeric values appear
-less intense. This adjustment is intended to help
-apply suitable color contrast depending upon the range
-of numeric values. The \code{lens} values are applied to
-each matrix in \code{nmatlist}, and so it is recycled to
-\code{length(nmatlist)} as needed. Note that \code{signal_ceiling}
-is also intended to help apply the color gradient to
-a suitable numeric range, and the \code{lens} argument is
-applied relative to the numeric range being used.}
+\item{lens}{\code{numeric} adjustment to the intensity of the color gradient,
+used only when the corresponding \code{nmat_colors} entry uses a fixed
+set of colors. \code{lens} above zero create more rapid color changes,
+making the gradient more visually intense, values below zero reduce
+the intensity.
+The \code{lens} values are recycled to \code{length(nmatlist)} as needed.
+Note that \code{signal_ceiling} defines the \code{numeric} value at which
+the maximum color is applied, while \code{lens} adjusts the intensity of
+the intermediate values in the color gradient.}
 
-\item{anno_lens}{numeric value used to scale the annotation
-heatmap color scales, see \code{lens} for details. Values
-higher than 1 make the color gradient more intense,
-values below -1 make the color gradient less intense.}
+\item{anno_lens}{\code{numeric} value used to scale the annotation
+heatmap color scales, see \code{lens} for details. This value is applied
+to \code{numeric} columns only when \code{anno_df} is provided.}
 
-\item{seed}{numeric value used with \code{set.seed()} to
+\item{seed}{\code{numeric} value used with \code{set.seed()} to
 set the random seed. Set to \code{NULL} to avoid running
 \code{set.seed()}.}
 
@@ -424,14 +487,14 @@ set the random seed. Set to \code{NULL} to avoid running
 This argument is passed to \code{ComplexHeatmap::draw()}. An example
 is \code{grid::unit(8, "mm")} to specify 8 millimeters.}
 
-\item{profile_value}{character string to define the type of numeric
+\item{profile_value}{\code{character} string to define the type of numeric
 profile to display at the top of each heatmap. This argument is
 passed to \code{EnrichedHeatmap::anno_enriched()}. Values: \code{"mean"} the
 mean profile; \code{"sum"} the sum; \code{"abs_sum"} sum of absolute values;
 \code{"abs_mean"} the mean of absolute values.}
 
-\item{ylims}{\code{vector} of maximum y-axis values for each heatmap profile;
-or \code{list}}
+\item{ylims}{\code{numeric} vector of maximum y-axis values for each heatmap
+profile; or \code{list} of min,max values to apply to each \code{nmatlist} entry.}
 
 \item{border}{\code{logical} indicating whether to draw a border around the
 heatmap, which includes all heatmap panels in the event of
@@ -439,12 +502,13 @@ splitting by clustering. The \code{border} can be supplied as a vector,
 so the \code{border} can be applied specifically to each heatmap
 if needed.}
 
-\item{iter.max}{integer value indicating the maximum iterations
+\item{iter.max}{\code{integer} value indicating the maximum iterations
 performed by k-means clustering, only relevant when \code{k_clusters}
 is non-zero.}
 
-\item{use_raster}{logical indicating whether to create heatmaps
-using raster resizing, almost always recommended \code{TRUE}.}
+\item{use_raster}{\code{logical} indicating whether to create heatmaps
+using raster resizing, almost always recommended \code{TRUE}
+otherwise the output will be very sub-optimal.}
 
 \item{raster_quality}{\code{logical} passed to \code{ComplexHeatmap::Heatmap()},
 used when \code{use_raster=TRUE} and defines the level of detail retained,
@@ -461,22 +525,28 @@ there are error messages. When \code{"magick"} is not available,
 the rasterization is substantially slower, and may produce
 files much larger than normal.}
 
-\item{do_plot}{logical indicating whether to draw the heatmaps,
-where \code{FALSE} will return the data used to create heatmaps
-without actually drawing the heatmaps.}
+\item{do_plot}{\code{logical} indicating whether to draw the heatmaps,
+\code{do_plot=TRUE} (default) renders the plots as normal.
+\code{do_plot=FALSE} will return the data used to create heatmaps
+without drawing the heatmaps.}
 
-\item{return_type}{character string indicating the type of
-data to return: \code{"heatmaplist"} returns the list of heatmaps,
+\item{return_type}{\code{character} string indicating the type of
+data to return:
+\itemize{
+\item \code{"heatmaplist"} returns the list of heatmaps,
 which can separately be arranged together using
-\code{ComplexHeatmap::draw()} or \code{grid::grid.draw()}.}
+\code{ComplexHeatmap::draw()} or \code{grid::grid.draw()}.
+\item \code{"grid"} returns the \code{grid} graphical object which may be easier
+to render using something like the \code{patchwork} or \code{cowplot} R packages.
+}}
 
-\item{show_error}{logical indicating whether to add error
+\item{show_error}{\code{logical} indicating whether to add error
 bars to the profile plot at the top of each heatmap.
 These error bars are calculated by
 \code{EnrichedHeatmap::anno_enriched()} using
 \code{matrixStats::colSds(x)/nrow(x)}.}
 
-\item{verbose}{logical indicating whether to print verbose output.}
+\item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are passed to
 \code{EnrichedHeatmap::EnrichedHeatmap()} to allow greater

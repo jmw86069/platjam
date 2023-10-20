@@ -6,13 +6,21 @@ Still in progress.
 
 * `nmatlist2heatmaps()`
 
-   * silence verbose output `"Preparing ComplexHeatmap::draw()"`
-   * `names(partition)` is matched to `rownames(nmatlist[[1]])` and will
-   print error messages when there is no match, or no `names(partition)`
+   * Added more function param documentation, and edited existing
+   documentation for clarity.
+   * silenced verbose output `"Preparing ComplexHeatmap::draw()"`
+   * added more error-checking and specific error messages when matching
+   across the optional inputs, all of which must match when provided:
+   
+      * `rows`
+      * `rownames(nmat)`
+      * `rownames(anno_df)`
+      * `names(partition)`
+      
    * `partition` is handled internally as a `factor` so the level order
    is maintained. If supplied as `factor` the levels are honored as given,
    even when combined with `k_clusters` as below.
-   * New argument `min_rows_per_k=25` requires at least 25 rows per k-means
+   * New argument `min_rows_per_k=100` requires at least 100 rows per k-means
    cluster, to protect from clustering with a very small number of rows.
    The argument is most relevant when used together with `partition`.
    * `k_clusters` and `partition` work together
@@ -29,6 +37,9 @@ Still in progress.
       * partition colors are assigned to `partition` first, then colors are
       split by `jamba::color2gradient()` across k-means clusters within each
       partition.
+   
+   * `k_method` now also offers `"spearman"` for rank-based correlation metrics,
+   although this method has not been widely tested on genome coverage data.
 
 # platjam 0.0.75.900
 

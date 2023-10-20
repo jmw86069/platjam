@@ -18,9 +18,9 @@ a ceiling value \code{iceiling} and determines an appropriate numeric
 ceiling with the following rules:
 \itemize{
 \item if \code{iceiling} is \code{NULL}, it returns the highest absolute value in \code{imat}
-\item if \code{iceiling > 0} and \code{iceiling <= 1}, it calculates \code{quantile(abs(imat), probs=iceiline)}
-using only non-zero values
-\item otherwise \code{iceiling} is used as a numerical ceiling
+\item if \code{iceiling > 0} and \code{iceiling <= 1}, it calculates
+\code{quantile(abs(imat), probs=iceiline)}, excluding values of zero
+\item otherwise \code{iceiling} is used as a fixed numerical ceiling
 }
 
 In all cases, \code{iceiling} is rounded to 3 digits with \code{round(iceiling, digits=3)}

@@ -309,8 +309,8 @@ coverage_matrix2nmat <- function
 #'    will honor `levels(partition)`.
 #' @param min_rows_per_k `numeric` minimum rows required per k-means
 #'    cluster, used only when `k_clusters` is greater than 1.
-#'    With default `min_rows_per_k=25`, a partition with 25 or fewer rows
-#'    can only have `k=1`, and partition with 26 rows can have `k=2`.
+#'    With default `min_rows_per_k=10`, a partition with 100 or fewer rows
+#'    can only have `k=1`, and partition with 101 rows can have `k=2`.
 #'    This limit protects from k-means clustering small partitions.
 #' @param k_subset `integer` vector of k-means clusters to
 #'    retain. This option is intended when only `k_clusters` is provided,
@@ -325,7 +325,20 @@ coverage_matrix2nmat <- function
 #'    used by k-means, where the common default is
 #'    `"euclidean"`, however a useful alternative for
 #'    sequence coverage data is `"correlation"` as implemented
-#'    in `amap::Kmeans()`.
+#'    in `amap::Kmeans()`. Available methods:
+#'    * `"euclidean"` (default) calculates the typical Euclidean distance,
+#'    which tends to emphasize total signal moreso than the specific
+#'    shape of the signal.
+#'    * `"correlation"` when the R package `amap` is available, this method
+#'    emphasizes the shape of signal profiles, and is particularly effective.
+#'    It is also called "centered Pearson" since data is centered prior
+#'    to calculating correlation.
+#'    * `"pearson"` when the R package `amap` is available, this method
+#'    is also called "not centered Pearson" since data is not centered
+#'    prior to calculating correlation.
+#'    * `"spearman"` when the R package `amap` is available, this method
+#'    computes distance based upon rank differences. It has not been tested
+#'    much in this context.
 #' @param k_heatmap `integer` with one or more values indicating which
 #'    `nmatlist` entries to use for k-means clustering, used only when
 #'    `k_clusters` is greater than 1. This argument is useful for
@@ -382,6 +395,8 @@ coverage_matrix2nmat <- function
 #'    Note that `k_heatmap` will override this option when provided.
 #' @param anno_df `data.frame` or object that can be coerced to `data.frame`
 #'    whose `rownames(anno_df)` must match rownames in the nmatlist data.
+#'    When `rownames(anno_df)` does not match, this function fails with
+#'    an error message.
 #'    * Data can optionally be sorted by defining `byCols`.
 #'    * When provided, data in `nmatlist` is automatically subsetted
 #'    to the matching `rownames(anno_df)` also present in `nmatlist`.
@@ -416,18 +431,6 @@ coverage_matrix2nmat <- function
 #'    unique `partition` values, then if `k_clusters` is also supplied,
 #'    the partition colors are then split by `colorjam::color2gradient()`
 #'    across the k-means clusters for each partition.
-#' @param legend_max_ncol `integer` number indicating the maximum
-#'    number of columns allowed for a categorical color legend.
-#' @param legend_base_nrow integer number indicating the base
-#'    number of rows used for a categorical color legend, before
-#'    additional columns are added. Once the number of elements
-#'    exceeds `(legend_max_ncol * legend_base_nrow)` then
-#'    rows are added, but columns never exceed `legend_max_ncol`.
-#' @param legend_max_labels `integer` to define the maximum labels
-#'    to display as a color legend. When any `anno_df` column contains
-#'    more than this number of categorical colors, the legend is
-#'    not displayed, in order to prevent the color legend from filling
-#'    the entire plot device, thus hiding the heatmaps.
 #' @param anno_row_marks `character` optional vector of `rownames`
 #'    in `nmatlist` that should be labeled beside the heatmaps using
 #'    `ComplexHeatmap::anno_mark()`.
@@ -480,7 +483,49 @@ coverage_matrix2nmat <- function
 #'       when panel groups have a fairly large number of panels.
 #'       * `"none"`: display no axis labels
 #'       * `"all"`: display axis labels for every panel even within panel group.
-#'
+#' @param legend_max_ncol `integer` number indicating the maximum
+#'    number of columns allowed for a categorical color legend.
+#' @param legend_base_nrow integer number indicating the base
+#'    number of rows used for a categorical color legend, before
+#'    additional columns are added. Once the number of elements
+#'    exceeds `(legend_max_ncol * legend_base_nrow)` then
+#'    rows are added, but columns never exceed `legend_max_ncol`.
+#' @param legend_max_labels `integer` to define the maximum labels
+#'    to display as a color legend. When any `anno_df` column contains
+#'    more than this number of categorical colors, the legend is
+#'    not displayed, in order to prevent the color legend from filling
+#'    the entire plot device, thus hiding the heatmaps.
+#' @param show_heatmap_legend `logical` indicating whether to display the
+#'    color legend for each heatmap entry in `nmatlist`. When `panel_groups`
+#'    are supplied, color legends are displayed only for the first
+#'    heatmap in each unique panel group, unless `show_heatmap_legend=FALSE`,
+#'    or unless `show_heatmap_legend` is already defined for every heatmap.
+#' @param heatmap_legend_param `list` with optional heatmap legend settings.
+#'    By default `NULL` causes this argument to be defined internally,
+#'    however when provided it overrides any internal settings and is used
+#'    directly. The `list` should be `length(nmatlist)`, or is recycled
+#'    to that length.
+#' @param heatmap_legend_direction `character` string used when
+#'    `show_heatmap_legend=TRUE` and `heatmap_legend_param` is not already
+#'    provided.
+#'    * By default `heatmap_legend_direction="horizontal"` displays
+#'    the color gradient in the legend horizontally as a continuous scale,
+#'    with labels defined in `EnrichedHeatmap::EnrichedHeatmap()`, and
+#'    width equal to `grid::unit(1, "npc")` which uses the full width of
+#'    the color legend area.
+#'    * When `heatmap_legend_direction="vertical"` the color legend is
+#'    displayed vertically, with width `grid::unit(5, "mm")`.
+#' @param annotation_legend_param `list` optional parameters passed to
+#'    the annotation legend functions, intended to provide customization.
+#'    The `list` should be named by each annotation entry to be customized,
+#'    and any annotation entries not defined `annotation_legend_param`
+#'    use the default behavior of `ComplexHeatmap::HeatmapAnnotation()`,
+#'    which will assign its own set of colors and use default legend
+#'    parameters by default.
+#'    When `annotation_legend_param=NULL` (default) then all colors
+#'    are defined, and all legends are displayed using this function
+#'    defaults. When there are more labels than `legend_max_labels`
+#'    the color legend will be hidden for that annotation legend entry.
 #' @param hm_nrow `integer` number of rows used to display
 #'    the heatmap panels. This mechanism is somewhat experimental,
 #'    and is used to split a large number of coverage heatmaps into
@@ -488,9 +533,20 @@ coverage_matrix2nmat <- function
 #'    * The matrix data row order is consistent across all heatmap panels.
 #'    * The annotation data is displayed to the left of each row of
 #'    heatmap panels.
-#' @param transform either `character` string referring to
-#'    a numeric transformation, or a `function` that applies
-#'    a numeric transformation. Valid `character` string values:
+#' @param transform one of the following:
+#'    * `character` string referring to a numeric transformation,
+#'    passed to `get_numeric_transform()`. Commonly used strings:
+#'
+#'       * `"log2signed"` calls `jamba::log2signed()`, which applies
+#'       `log2(1+x)` to the absolute value, multiplied by `sign(x)`
+#'       * `"sqrt"` applies square root to the absolute value, multiplied
+#'       by the `sign(x)`
+#'       * `"cubert"` applies cube root `x^(1/3)`
+#'       * `"qrt"` applies fourth root `x^(1/4)` to the absolute value,
+#'       multiplied by the `sign(x)`
+#'
+#'    * `function` that applies a numeric transformation.
+#'    Valid `character` string values:
 #'    `"log2signed"` applies `jamba::log2signed()` which applies
 #'    `log2(1+x)` transform to the absolute value, then multiplies
 #'    by the original `sign(x)`; `"sqrt"` applies square root;
@@ -502,80 +558,77 @@ coverage_matrix2nmat <- function
 #'    the values. These values are passed to `get_numeric_transform()`
 #'    which may have more information.
 #' @param signal_ceiling `numeric` vector whose values are recycled
-#'    to length `length(nmatlist)`. The signal_ceiling
-#'    applies a maximum numeric value to the
-#'    color ramp for each matrix in `nmatlist`. The value is
-#'    passed to `get_nmat_ceiling()`, which recognizes three
-#'    numeric forms:
-#'    * `signal_ceiling > 1`: this specific numeric value
-#'    is applied as the ceiling
-#'    * `signal_ceiling > 0` and `signal_ceiling <= 1`: this numeric
-#'    value is interpreted as a quantile threshold, for example
-#'    `signal_ceiling=0.75` would calculate ceiling `quantile(x, probs=0.75)`.
-#'    * `signal_ceiling` is `NULL`: the maximum absolute value of each
-#'    matrix is used as the ceiling.
+#'    to length `length(nmatlist)`. The `signal_ceiling`
+#'    defines the maximum numeric value to the color ramp for
+#'    each matrix in `nmatlist`. The value is passed to `get_nmat_ceiling()`,
+#'    which recognizes three numeric forms:
+#'    1. `signal_ceiling=NULL`: (default) the maximum absolute value
+#'    is used as the ceiling.
+#'    2. `signal_ceiling > 1`: the specific numeric value
+#'    is applied as a fixed ceiling, even if the value is above or below
+#'    the maximum absolute value in the data matrix. This setting is useful
+#'    for defining a fixed meaningful threshold across `nmatlist` entries.
+#'    3. `signal_ceiling > 0` and `signal_ceiling <= 1`: the numeric value
+#'    defines a quantile threshold calculated using signal in the data matrix,
+#'    excluding values of zero. For example `signal_ceiling=0.75` calculates
+#'    ceiling `quantile(x, probs=0.75)`, using non-zero values.
 #'
-#'    Note that the ceiling is only applied to color scale and
-#'    not to the underlying data, which is useful to know because any
-#'    clustering and row ordering steps will use the full data
-#'    as needed.
+#'    Note that the ceiling is only applied to the color scale and
+#'    not to the underlying data. The row clustering and row ordering
+#'    steps use the full data range, after applying the appropriate
+#'    `transform` where applicable.
 #'
-#'    If data needs to be strictly controlled to a
-#'    numeric ceiling, that processing should take place
-#'    on `nmatlist` before calling `nmatlist2heatmaps()`.
-#' @param lens numeric value used to scale each heatmap
-#'    color ramp, using `getColorRamp()`. Values above zero
-#'    apply the color gradient more rapidly starting from the
-#'    lowest value, making the color appear more intense for
-#'    lower numeric values. Values below zero apply the color gradient
-#'    less rapidly, which makes lower numeric values appear
-#'    less intense. This adjustment is intended to help
-#'    apply suitable color contrast depending upon the range
-#'    of numeric values. The `lens` values are applied to
-#'    each matrix in `nmatlist`, and so it is recycled to
-#'    `length(nmatlist)` as needed. Note that `signal_ceiling`
-#'    is also intended to help apply the color gradient to
-#'    a suitable numeric range, and the `lens` argument is
-#'    applied relative to the numeric range being used.
-#' @param anno_lens numeric value used to scale the annotation
-#'    heatmap color scales, see `lens` for details. Values
-#'    higher than 1 make the color gradient more intense,
-#'    values below -1 make the color gradient less intense.
-#' @param axis_name_gp x-axis label graphic parameters,
-#'    as output from `grid::gpar()`. For example to define
-#'    the x-axis font size, use the form
-#'    `grid::gpar(fontsize=8)`.
-#' @param  axis_name_rot numeric value either `0` or `90` indicating
-#'    whether to rotate the x-axis names, where `90` will rotate
-#'    labels, and `0` will leave labels horizontal.
-#' @param column_title_gp heatmap title graphic parameters,
-#'    as output from `grid::gpar()`. For example to define
-#'    the x-axis font size, use the form
-#'    `grid::gpar(fontsize=8)`. This argument is passed
-#'    directly to `ComplexHeatmap::Heatmap()`.
-#' @param seed numeric value used with `set.seed()` to
+#'    To apply a numeric ceiling to the data itself, it should be done
+#'    at the level of `nmatlist` beforehand.
+#' @param lens `numeric` adjustment to the intensity of the color gradient,
+#'    used only when the corresponding `nmat_colors` entry uses a fixed
+#'    set of colors. `lens` above zero create more rapid color changes,
+#'    making the gradient more visually intense, values below zero reduce
+#'    the intensity.
+#'    The `lens` values are recycled to `length(nmatlist)` as needed.
+#'    Note that `signal_ceiling` defines the `numeric` value at which
+#'    the maximum color is applied, while `lens` adjusts the intensity of
+#'    the intermediate values in the color gradient.
+#' @param anno_lens `numeric` value used to scale the annotation
+#'    heatmap color scales, see `lens` for details. This value is applied
+#'    to `numeric` columns only when `anno_df` is provided.
+#' @param axis_name_gp object of `grid::gpar` applied to the x-axis label
+#'    graphic parameters. For example, to customize the x-axis font size,
+#'    use the form: `grid::gpar(fontsize=8)`.
+#' @param axis_name_rot `numeric` value either `0` or `90` indicating
+#'    whether to rotate the x-axis names below each heatmap, where
+#'    `axis_name_row=90` (default) will rotate labels vertically,
+#'    and `axis_name_row=0` will display labels horizontally.
+#' @param column_title_gp object `grid::gpar` or `list` of `grid::gpar`
+#'    objects, applied across entries in `nmatlist` to customize the title
+#'    displayed above each heatmap panel.
+#'    For example to alter the font size, use `grid::gpar(fontsize=14)`.
+#'    This argument is passed to `ComplexHeatmap::Heatmap()`, and can
+#'    be customized for each heatmap as needed.
+#' @param seed `numeric` value used with `set.seed()` to
 #'    set the random seed. Set to `NULL` to avoid running
 #'    `set.seed()`.
 #' @param ht_gap `unit` size to specify the gap between multiple heatmaps.
 #'    This argument is passed to `ComplexHeatmap::draw()`. An example
 #'    is `grid::unit(8, "mm")` to specify 8 millimeters.
-#' @param profile_value character string to define the type of numeric
+#' @param profile_value `character` string to define the type of numeric
 #'    profile to display at the top of each heatmap. This argument is
 #'    passed to `EnrichedHeatmap::anno_enriched()`. Values: `"mean"` the
 #'    mean profile; `"sum"` the sum; `"abs_sum"` sum of absolute values;
 #'    `"abs_mean"` the mean of absolute values.
-#' @param ylims `vector` of maximum y-axis values for each heatmap profile;
-#'    or `list`
+#' @param ylims `numeric` vector of maximum y-axis values for each heatmap
+#'    profile; or `list` of min,max values to apply to each `nmatlist` entry.
 #' @param border `logical` indicating whether to draw a border around the
 #'    heatmap, which includes all heatmap panels in the event of
 #'    splitting by clustering. The `border` can be supplied as a vector,
 #'    so the `border` can be applied specifically to each heatmap
 #'    if needed.
-#' @param iter.max integer value indicating the maximum iterations
+#' @param iter.max `integer` value indicating the maximum iterations
 #'    performed by k-means clustering, only relevant when `k_clusters`
 #'    is non-zero.
-#' @param use_raster logical indicating whether to create heatmaps
-#'    using raster resizing, almost always recommended `TRUE`.
+#' @param use_raster `logical` indicating whether to create heatmaps
+#'    using raster resizing, almost always recommended `TRUE`
+#'    otherwise the output will be very sub-optimal.
 #' @param raster_by_magick `logical` passed to `ComplexHeatmap::Heatmap()`,
 #'    to enable ImageMagick use during rasterization. By default this
 #'    option is `TRUE` and is only disabled when the R package
@@ -589,19 +642,23 @@ coverage_matrix2nmat <- function
 #'    used when `use_raster=TRUE` and defines the level of detail retained,
 #'    and is used only when `raster_by_magick=FALSE`. Using larger numbers
 #'    decreases speed substantially.
-#' @param do_plot logical indicating whether to draw the heatmaps,
-#'    where `FALSE` will return the data used to create heatmaps
-#'    without actually drawing the heatmaps.
-#' @param return_type character string indicating the type of
-#'    data to return: `"heatmaplist"` returns the list of heatmaps,
+#' @param do_plot `logical` indicating whether to draw the heatmaps,
+#'    `do_plot=TRUE` (default) renders the plots as normal.
+#'    `do_plot=FALSE` will return the data used to create heatmaps
+#'    without drawing the heatmaps.
+#' @param return_type `character` string indicating the type of
+#'    data to return:
+#'    * `"heatmaplist"` returns the list of heatmaps,
 #'    which can separately be arranged together using
 #'    `ComplexHeatmap::draw()` or `grid::grid.draw()`.
-#' @param show_error logical indicating whether to add error
+#'    * `"grid"` returns the `grid` graphical object which may be easier
+#'    to render using something like the `patchwork` or `cowplot` R packages.
+#' @param show_error `logical` indicating whether to add error
 #'    bars to the profile plot at the top of each heatmap.
 #'    These error bars are calculated by
 #'    `EnrichedHeatmap::anno_enriched()` using
 #'    `matrixStats::colSds(x)/nrow(x)`.
-#' @param verbose logical indicating whether to print verbose output.
+#' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to
 #'    `EnrichedHeatmap::EnrichedHeatmap()` to allow greater
 #'    customization of details. Note that many `...` arguments
@@ -697,11 +754,14 @@ nmatlist2heatmaps <- function
  upstream_length=NULL,
  downstream_length=NULL,
  k_clusters=0,
- min_rows_per_k=25,
+ min_rows_per_k=100,
  k_subset=NULL,
  k_colors=NULL,
  k_width=grid::unit(5, "mm"),
- k_method=c("euclidean", "pearson", "correlation"),
+ k_method=c("euclidean",
+    "correlation",
+    "pearson",
+    "spearman"),
  k_heatmap=main_heatmap,
  partition=NULL,
  rows=NULL,
@@ -722,9 +782,11 @@ nmatlist2heatmaps <- function
  legend_base_nrow=5,
  legend_max_labels=40,
  show_heatmap_legend=TRUE,
+ heatmap_legend_param=NULL,
+ heatmap_legend_direction="horizontal",
+ annotation_legend_param=NULL,
  hm_nrow=1,
  transform="none",
- #transform=jamba::log2signed,
  signal_ceiling=NULL,
  axis_name=NULL,
  axis_name_gp=grid::gpar(fontsize=8),
@@ -745,9 +807,6 @@ nmatlist2heatmaps <- function
  do_plot=TRUE,
  legend_width=grid::unit(3, "cm"),
  trim_legend_title=TRUE,
- heatmap_legend_param=NULL,
- heatmap_legend_direction="horizontal",
- annotation_legend_param=NULL,
  return_type=c("heatmaplist", "grid"),
  show_error=FALSE,
  verbose=FALSE,
@@ -783,28 +842,35 @@ nmatlist2heatmaps <- function
    }
 
    ## k_method
-   kmeans <- stats::kmeans;
-   k_method <- head(k_method, 1);
-   if (jamba::igrepHas("pearson|correlation|spearman|maximum|manhattan", k_method)) {
-      if (!suppressPackageStartupMessages(require(amap))) {
-         k_method <- "euclidean";
+   kmeans <- function(centers, ...){stats::kmeans(centers=centers, ...)};
+   # k_method <- head(k_method, 1);
+   k_method <- match.arg(k_method);
+   if (!jamba::check_pkg_installed("amap")) {
+      k_method <- "euclidean";
+      if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
-            "k_method requires the ",
+            "k_method requires the '",
             "amap",
-            " package, which is not installed. Setting k_method to ",
-            "euclidean");
+            "' package, which is not installed. Setting ",
+            "k_method='euclidean'");
       }
+   }
+   if (!"euclidean" %in%  k_method) {
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "Using amap::Kmeans()");
       }
-      kmeans <- function(centers,...){amap::Kmeans(..., centers=centers,method=k_method)};
-   }
-   if (length(k_method) == 0 || nchar(k_method) == 0) {
-      k_method <- "euclidean";
+      kmeans <- function(centers, ...){
+         amap::Kmeans(...,
+            centers=centers,
+            method=k_method)
+      };
    }
    nmat_rows <- Reduce("intersect",
       lapply(nmatlist, rownames));
+   if (length(nmat_rows) == 0) {
+      stop("There were no shared rownames across data matrices in nmatlist.");
+   }
    if (length(rows) == 0) {
       ## Make sure rows are present in all nmatlist entries.
       rows <- nmat_rows;
@@ -815,10 +881,16 @@ nmatlist2heatmaps <- function
       } else {
          rows <- rows[rows %in% nmat_rows];
       }
+      if (length(rows) == 0) {
+         stop("No values in rows matched any nmatlist rownames.");
+      }
    }
    ## Also optionally subset rows by rownames(anno_df)
    if (length(anno_df) > 0) {
-      rows <- rows[rows %in%  rownames(anno_df)];
+      rows <- rows[rows %in% rownames(anno_df)];
+      if (length(rows) == 0) {
+         stop("rownames(anno_df) did not match any values in rows.");
+      }
    }
    partition_colors <- NULL;
    if (length(partition) > 0) {
@@ -1001,10 +1073,11 @@ nmatlist2heatmaps <- function
 
       ## 28aug2020 update to kmeans cluster within partitions
       if (length(partition) == 0) {
-         kpartition <- kmeans(
-            imatrix,
-            iter.max=iter.max,
-            centers=k_clusters)$cluster;
+         kpartition <- suppressMessages(
+            kmeans(
+               imatrix,
+               iter.max=iter.max,
+               centers=k_clusters)$cluster);
          ## Confirm that names(partition) match rows
          names(kpartition) <- rows;
          partition <- kpartition;
@@ -1045,10 +1118,11 @@ nmatlist2heatmaps <- function
                   rep("", length.out=length(prows)),
                   prows))
             }
-            kpartition <- kmeans(
-               imatrix[match(prows, rownames(imatrix)), , drop=FALSE],
-               iter.max=iter.max,
-               centers=use_k)$cluster;
+            kpartition <- suppressMessages(
+               kmeans(
+                  imatrix[match(prows, rownames(imatrix)), , drop=FALSE],
+                  iter.max=iter.max,
+                  centers=use_k)$cluster);
             names(kpartition) <- prows;
             kpartition;
          })
@@ -2296,9 +2370,9 @@ get_numeric_transform <- function
 #' ceiling with the following rules:
 #'
 #' * if `iceiling` is `NULL`, it returns the highest absolute value in `imat`
-#' * if `iceiling > 0` and `iceiling <= 1`, it calculates `quantile(abs(imat), probs=iceiline)`
-#' using only non-zero values
-#' * otherwise `iceiling` is used as a numerical ceiling
+#' * if `iceiling > 0` and `iceiling <= 1`, it calculates
+#' `quantile(abs(imat), probs=iceiline)`, excluding values of zero
+#' * otherwise `iceiling` is used as a fixed numerical ceiling
 #'
 #' In all cases, `iceiling` is rounded to 3 digits with `round(iceiling, digits=3)`
 #'
