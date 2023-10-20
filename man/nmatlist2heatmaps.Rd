@@ -12,6 +12,7 @@ nmatlist2heatmaps(
   upstream_length = NULL,
   downstream_length = NULL,
   k_clusters = 0,
+  min_rows_per_k = 25,
   k_subset = NULL,
   k_colors = NULL,
   k_width = grid::unit(5, "mm"),
@@ -59,6 +60,7 @@ nmatlist2heatmaps(
   legend_width = grid::unit(3, "cm"),
   trim_legend_title = TRUE,
   heatmap_legend_param = NULL,
+  heatmap_legend_direction = "horizontal",
   annotation_legend_param = NULL,
   return_type = c("heatmaplist", "grid"),
   show_error = FALSE,
@@ -70,15 +72,61 @@ nmatlist2heatmaps(
 \item{nmatlist}{\code{list} containing \code{normalizedMatrix} objects,
 usually the output from \code{coverage_matrix2nmat()}.}
 
-\item{k_clusters}{integer number of k-means clusters to
+\item{panel_groups}{\code{character} vector with values for each \code{nmatlist}
+entry, which defines groups of heatmap panels.
+Each panel group shares:
+\itemize{
+\item numeric range for the heatmap color gradient, defined by the first
+\code{signal_ceiling} value for the group. Standard rules apply, such that
+values below 1 represent a quantile signal threshold, and values above 1
+represent a fixed numeric threshold.
+\item one color key, labeled by \code{names(panel_groups)} to represent all
+panels in the group
+\item \code{ylim} y-axis range for the profile plot, either determined dynamically
+or by the first \code{ylim} provided for the panel group
+\item When \code{nmat_colors} is not defined, each panel group is assigned
+one categorical color which is applied to all heatmaps in the group.
+\item When \code{nmat_colors} is defined, each panel uses the color as defined,
+however the color key only uses the color gradient from the first
+panel in the group.
+}}
+
+\item{title, caption}{\code{character} string used as an overall title or
+caption, respectively, displayed at the top of all heatmap output.}
+
+\item{upstream_length, downstream_length}{\code{numeric} optional range of
+coordinates to display across all heatmaps. This argument is intended
+when the input \code{nmatlist} contains a wider range of coordinates
+than should be displayed. The columns in \code{nmatlist} are subset
+to retain only those columns within the range \code{downstream_length}
+to \code{upstream_length}, assuming the middle coordinate is zero.
+This step calls \code{zoom_nmatlist()}.
+Note this step does not expand the displayed region.}
+
+\item{k_clusters}{\code{integer} number of k-means clusters to
 use to partition each heatmap. Use \code{0} or \code{NULL} for
-no clustering.}
+no clustering.
+Note \code{k_clusters} can be a vector, in which case it is applied
+across unique groupings defined in \code{partition} if provided.
+In this case if all unique values in \code{partition} are defined
+by \code{names(k_clusters)} they are assigned by name, otherwise
+\code{k_clusters} is recycled to the number of unique partition values,
+and assigned in order. When \code{partition} is a \code{factor} the order
+will honor \code{levels(partition)}.}
 
-\item{k_subset}{integer vector of k-means clusters to
-retain. Often one cluster contains mostly empty
-values, and can be removed using this mechanism.}
+\item{min_rows_per_k}{\code{numeric} minimum rows required per k-means
+cluster, used only when \code{k_clusters} is greater than 1.
+With default \code{min_rows_per_k=25}, a partition with 25 or fewer rows
+can only have \code{k=1}, and partition with 26 rows can have \code{k=2}.
+This limit protects from k-means clustering small partitions.}
 
-\item{k_colors}{vector of R colors, or \code{NULL} to use
+\item{k_subset}{\code{integer} vector of k-means clusters to
+retain. This option is intended when only \code{k_clusters} is provided,
+and not together with \code{partition}. This argument is intended to
+"zoom in" to one or more k-means clusters of interest as a drill down
+technique.}
+
+\item{k_colors}{\code{character} vector of R colors, or \code{NULL} to use
 the output of \code{colorjam::rainbowJam(k_clusters)}.}
 
 \item{k_width}{\code{unit} width of the k-means cluster color
@@ -90,99 +138,154 @@ used by k-means, where the common default is
 sequence coverage data is \code{"correlation"} as implemented
 in \code{amap::Kmeans()}.}
 
-\item{k_heatmap}{\code{integer} indicating which one or more
-\code{normalizedMatrix} objects in \code{nmatlist} will be used
-for k-means clustering, when \code{k_clusters} is defined
-more than 1.}
+\item{k_heatmap}{\code{integer} with one or more values indicating which
+\code{nmatlist} entries to use for k-means clustering, used only when
+\code{k_clusters} is greater than 1. This argument is useful for
+applying clustering across multiple coverage heatmaps.}
 
 \item{partition}{\code{character} or \code{factor} vector used to split rows
-of each matrix in \code{nmatlist}, named by rownames. This
-value is ignored when \code{k_clusters} is supplied.}
+of each matrix in \code{nmatlist}, named by rownames.
+This value is converted to \code{factor}, and will honor provided
+factor levels.
+\itemize{
+\item When \code{partition} and \code{k_clusters} are both defined, the
+data is first grouped by \code{partition} then each partition group
+is separately k-means clustered, using rules described for
+\code{k_clusters} and \code{min_rows_per_k}.
+Colors are assigned to each partition value, then colors are split
+by k clusters using \code{jamba::color2gradient()}.
+}}
 
-\item{rows}{\code{character} vector of \code{rownames(nmatlist)} or
-\code{integer} vector with index of rows to keep from each
-matrix in \code{nmatlist}.}
+\item{rows}{\code{character} optional vector of rownames to subset from
+\code{nmatlist}; or \code{integer} vector with row index values.
+Note that even when using a subset of \code{rows} the data may also be
+subset based upon available \code{names(partition)} and
+\code{rownames(anno_df)}.}
 
-\item{row_order}{integer vector used to order rows.
-When \code{TRUE} or \code{NULL} it uses
-the default for \code{EnrichedHeatmap::EnrichedHeatmap()}
-which is the \code{EnrichedHeatmap::enriched_score()}
-for the matrix \code{main_heatmap}. When \code{FALSE} the
-rows are ordered by the order they appear in \code{rows},
-which is either the order they appear in \code{nmatlist}
-or the order after sorting \code{anno_df}. When
-\code{TRUE} the default}
+\item{row_order}{\code{integer} vector used to order rows, intended to
+allow ordering data based upon a specific heatmap, or using
+different logic than the default.
+\itemize{
+\item When \code{row_order=NULL} (default) or \code{TRUE} it calls
+\code{EnrichedHeatmap::enriched_score()} using data from \code{main_heatmap}.
+This function generates a weighted score with heighest weight at
+the center position, with progressively lower weight working outward
+where the maximum distance has zero weight. The technique sorts signal
+which emphasizes highest enriched signal at the center of the matrix.
+\item When \code{row_order=FALSE} the data is ordered in the same order
+they appear in \code{nmatlist}, or when \code{anno_df} and \code{byCols} are supplied,
+the rows in \code{anno_df} are sorted using
+\code{jamba::mixedSort(anno_df, byCols=byCols)} and the resulting row order
+is used.
+}}
 
-\item{nmat_colors}{named character vector of R colors,
-to colorize each heatmap. When \code{NULL} then
-\code{colorjam::rainbowJam()} is used to create colors
-for each heatmap panel.}
+\item{nmat_colors}{\code{character} vector of R colors,
+to colorize each heatmap.
+\itemize{
+\item When \code{nmat_colors=NULL} (default) and \code{panel_groups} is not defined,
+\code{colorjam::rainbowJam()} is used to assign one unique color
+to each heatmap panel.
+\item When \code{nmat_colors=NULL} and \code{panel_groups} is defined,
+\code{colorjam::rainbowJam()} is used to assign one unique color
+to each unique panel group, and the same color is applied to each
+heatmap panel in each panel group.
+}}
 
-\item{middle_color}{\code{character} R compatible color used
-when creating a divergent color gradient, this color
-is used as the middle color. Usually this color should
-be either \code{"white"} or \code{"black"}.}
+\item{middle_color}{\code{character} R color, default \code{middle_color="white"},
+used as the middle color when creating a divergent color gradient.
+This color should usually be either \code{"white"} or \code{"black"}, but
+sometimes can be slightly off-white or off-black to apply some
+distinction from the background color.}
 
 \item{nmat_names}{\code{character} vector, or \code{NULL}, optional,
 used as custom names for each heatmap in \code{nmatlist}.
 When \code{nmat_names=NULL} the \code{signal_name} values are
-used from each \code{nmatlist} matrix.}
+used from each \code{nmatlist} entry attribute: \code{attr(nmat, "signal_name")}}
 
-\item{main_heatmap}{integer index referring to the
-entry in \code{nmatlist} to use for clustering and row
-ordering.}
+\item{main_heatmap}{\code{integer} index to define one entry in \code{nmatlist}
+as the main heatmap used for clustering and row ordering.
+Note that \code{k_heatmap} will override this option when provided.}
 
-\item{anno_df}{\code{data.frame} or object that can be coerced,
-used to annotate rows of each matrix. It must have
-\code{rownames(anno_df)} that match \code{rownames(nmatlist)}.
-When supplied, data can be sorted using \code{byCols}.
-Note that only the \code{rownames(anno_df)}
-present in both \code{nmatlist} and \code{anno_df} are
-used to display the heatmaps. These rows
-may also be subsetted using argument \code{rows}.}
+\item{anno_df}{\code{data.frame} or object that can be coerced to \code{data.frame}
+whose \code{rownames(anno_df)} must match rownames in the nmatlist data.
+\itemize{
+\item Data can optionally be sorted by defining \code{byCols}.
+\item When provided, data in \code{nmatlist} is automatically subsetted
+to the matching \code{rownames(anno_df)} also present in \code{nmatlist}.
+\item When \code{rows} is also defined, the data will be subsetted by
+the \code{rows} and by the \code{rownames(anno_df)} present in \code{nmatlist}.
+}}
 
-\item{byCols}{character vector of  values in
-\code{colnames(anno_df)} used to sort the data.frame
-via \code{jamba::mixedSortDF()}. Any colname with
-prefix \code{-} will be reverse-sorted.}
+\item{byCols}{\code{character} vector of \code{colnames(anno_df)} used to
+sort the \code{data.frame}. This argument is passed to
+\code{jamba::mixedSortDF()} and follows its rules, for example prefix \code{"-"}
+causes the column to be sorted in reverse. Multiple columns can be
+sorted, in the order they are provided, and factor levels are
+honored for factor columns.}
 
-\item{color_sub}{\verb{character vector} of R colors to be used
-as categorical colors, whose names match items to be
-colored. This argument is intended for \code{anno_df},
-for any column in \code{anno_df} where all values in that
-column are also in \code{names(color_sub)} will be colorized
-using \code{color_sub} instead of generating new colors.
-Also colors for partition and kmeans clusters, usually
-defined with \code{k_colors} can be defined in color_sub,
-if \code{names(color_sub)} match the partition labels.}
+\item{color_sub}{accepts input in two forms:
+\enumerate{
+\item \code{character} vector of R colors named by \code{character} values
+\item \code{list} output from \code{design2colors()} where each \code{list} element
+is named by colnames present in \code{anno_df},
+and each \code{list} value is either:
+\itemize{
+\item \code{character} vector of colors named by \code{character} value, or
+\item color \code{function} as defined by \code{circlize::colorRamp2()},
+which takes a \code{numeric} value and returns a \code{character} R color.
+}
+}
+\itemize{
+\item When values for any column in \code{anno_df} does not have colors
+assigned by one mechanism above, colors are assigned using
+\code{colorjam::group2colors()}.
+\item When \code{partition} is defined, colors are assigned either by
+matching unique partition values with \code{names(color_sub)},
+or with \code{attr(color_sub, "color_sub")} if present, which may contain
+the full set of name-color assignments when \code{color_sub} is
+provided as a \code{list}. Otherwise if \code{color_sub} is provided as a \code{list}
+each entry is compared with \code{partition} values until values can
+be fully matched. Failing these steps, colors are assigned to
+unique \code{partition} values, then if \code{k_clusters} is also supplied,
+the partition colors are then split by \code{colorjam::color2gradient()}
+across the k-means clusters for each partition.
+}}
 
-\item{anno_row_marks}{character vector of \code{rownames}
-which will be labeled beside the heatmaps, using
-the \code{ComplexHeatmap::anno_mark()} method. It currently
-requires \code{anno_df} be defined, since it uses the
-first column in \code{anno_df} as a one-column heatmap,
-to anchor the labels.}
+\item{anno_row_marks}{\code{character} optional vector of \code{rownames}
+in \code{nmatlist} that should be labeled beside the heatmaps using
+\code{ComplexHeatmap::anno_mark()}.
+\itemize{
+\item Note \code{anno_row_labels} can be used to supply custom labels,
+or one or more columns in \code{anno_df}.
+\item When \code{anno_row_labels=NULL} (default) it displays the value
+in \code{anno_row_marks} itself.
+}}
 
-\item{anno_row_labels}{character vector of optional
-character labels to use instead of \code{rownames}.
-If \code{NULL} then \code{anno_row_marks} are used. Or
-\code{anno_row_labels} may contain a character vector
-of \code{colnames(anno_df)} which will create labels
-by concatenating each column value separated by
-space \code{" "}.}
+\item{anno_row_labels}{\code{character} vector of optional labels to use
+when \code{anno_row_marks} is supplied.
+\itemize{
+\item When \code{anno_row_labels=NULL} (default) it uses rownames defined
+in `anno_row_marks.
+\item It can be a \code{character} vector of actual labels, with names
+that match \code{anno_row_marks} (thus rownames in \code{nmatlist}).
+\item It can be a \code{character} vector with one or more \code{colnames(anno_df)},
+which creates labels by concatenating values across columns,
+delimited with space \code{" "}.
+}}
 
 \item{top_annotation}{\code{HeatmapAnnotation} or \code{logical} or \code{list}:
 \itemize{
-\item \code{TRUE} to use the default approach
-\code{EnrichedHeatmap::anno_enriched()}
-\item \code{FALSE} to prevent the display of top annotation
-\item \code{HeatmapAnnotation} which should be in the form
+\item \code{top_annotation=TRUE} (default) uses the default
+\code{EnrichedHeatmap::anno_enriched()} to display the signal profile
+for each row partition and/or k-means cluster.
+\item \code{top_annotation=FALSE} does not display a top annotation.
+\item object \code{HeatmapAnnotation} as produced by
 \code{ComplexHeatmap::HeatmapAnnotation(EnrichedHeatmap::anno_enriched())}
 or equivalent. This form is required for the annotation
-function to be called on each coverage matrix heatmap.
-\item \code{list} of objects suitable to be passed as a
-\code{top_annotation} argument for each coverage heatmap,
-in order of \code{nmatlist}.
+function to be called successfully on each heatmap in \code{nmatlist}.
+\item a \code{list} of objects to be applied sequentially to
+each \code{nmatlist} coverage heatmap in order, intended to allow custom
+top annotation for each heatmap.
 }}
 
 \item{top_anno_height}{\code{unit} object to define the default
@@ -193,17 +296,28 @@ is not defined, the default method uses
 
 \item{top_axis_side}{\code{character} value indicating which side
 of the top annotation to place the y-axis labels.
-When there is one value, it is repeated to \code{length(nmatlist)},
-otherwise it is mainly used when \code{panel_groups} are
-provided, in which case only one top annotation is
-label per contiguous set of panels in the same panel group.
-In that case \code{"left"} will label the left side of the
-first panel in each group, \code{"right"} will label the
-right side of the last panel in each group.
-Values:
-"left", "right", "both", "none", "all".}
+\itemize{
+\item When only one value is defined, it is recycled across \code{nmatlist}.
+\item Otherwise it is used when \code{panel_groups} are defined,
+and the top annotation is labeled for only one panel in
+each panel group using the side as defined. Labels are displayed
+for each contiguous set of panel groups, so that heatmaps
+in the same panel group can be ordered in different subsets.
+Consider panel groups in this order: A, A, B, B, A, A. It would
+display one set of axis labels for the first two panels in A, then
+one axis label for the next two panels in B, then one axis label
+again for the final two panels in A.
+\item Values should be one of:
+\itemize{
+\item \code{"left"},\code{"right"}: axis labels on this side of each panel group
+\item \code{"both"}: axis labels on both sides of each panel group, useful
+when panel groups have a fairly large number of panels.
+\item \code{"none"}: display no axis labels
+\item \code{"all"}: display axis labels for every panel even within panel group.
+}
+}}
 
-\item{legend_max_ncol}{integer number indicating the maximum
+\item{legend_max_ncol}{\code{integer} number indicating the maximum
 number of columns allowed for a categorical color legend.}
 
 \item{legend_base_nrow}{integer number indicating the base
@@ -215,11 +329,18 @@ rows are added, but columns never exceed \code{legend_max_ncol}.}
 \item{legend_max_labels}{\code{integer} to define the maximum labels
 to display as a color legend. When any \code{anno_df} column contains
 more than this number of categorical colors, the legend is
-not displayed (because it would prevent display of the
-heatmaps at all).}
+not displayed, in order to prevent the color legend from filling
+the entire plot device, thus hiding the heatmaps.}
 
-\item{hm_nrow}{integer number of rows used to display
-the heatmap panels.}
+\item{hm_nrow}{\code{integer} number of rows used to display
+the heatmap panels. This mechanism is somewhat experimental,
+and is used to split a large number of coverage heatmaps into
+two rows of heatmaps.
+\itemize{
+\item The matrix data row order is consistent across all heatmap panels.
+\item The annotation data is displayed to the left of each row of
+heatmap panels.
+}}
 
 \item{transform}{either \code{character} string referring to
 a numeric transformation, or a \code{function} that applies
@@ -378,7 +499,7 @@ and to enable optional multi-row heatmap layout.
 }
 \examples{
 ## There is a small example file to use for testing
-library(jamba)
+# library(jamba)
 cov_file1 <- system.file("data", "tss_coverage.matrix", package="platjam");
 cov_file2 <- system.file("data", "h3k4me1_coverage.matrix", package="platjam");
 cov_files <- c(cov_file1, cov_file2);

@@ -7,6 +7,28 @@ Still in progress.
 * `nmatlist2heatmaps()`
 
    * silence verbose output `"Preparing ComplexHeatmap::draw()"`
+   * `names(partition)` is matched to `rownames(nmatlist[[1]])` and will
+   print error messages when there is no match, or no `names(partition)`
+   * `partition` is handled internally as a `factor` so the level order
+   is maintained. If supplied as `factor` the levels are honored as given,
+   even when combined with `k_clusters` as below.
+   * New argument `min_rows_per_k=25` requires at least 25 rows per k-means
+   cluster, to protect from clustering with a very small number of rows.
+   The argument is most relevant when used together with `partition`.
+   * `k_clusters` and `partition` work together
+   
+      * each partition is individually k-means clustered
+      * `k_clusters` can be a vector, applied to each `partition` in order,
+      or directed by `names(k_clusters)` if all partitions have an associated
+      value in `names(k_clusters)`. Otherwise `k_clusters` is recycled to
+      the number of partitions, then applied in order.
+      * For each partition, `k` requires at least 10 rows per `k` rounded up.
+      A partition with 10 rows can only have `k=1`, and partition with 11 rows
+      can have `k=2`, etc. This step protects from k-means clustering small
+      partitions.
+      * partition colors are assigned to `partition` first, then colors are
+      split by `jamba::color2gradient()` across k-means clusters within each
+      partition.
 
 # platjam 0.0.75.900
 
