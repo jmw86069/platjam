@@ -1,3 +1,34 @@
+# TODO 23oct2023
+
+* `nmatlist2heatmaps()`
+
+   * DONE. consider storing important function arguments in the returned object
+   
+      * `k_clusters`, `k_method`
+      * `rows`
+      * `anno_df` (?) it could be a large data object, or `colnames(anno_df)`
+      * `color_list` - the list of colors used for `anno_df`
+      * `nmat_colors` (as the final color function for each heatmap)
+      * `panel_groups` and the parameters for each panel group:
+      
+         * `ylims`
+         * `signal_ceiling`
+
+   * DONE. Consider figure caption with clustering information, similar to
+   the caption used by  `multienrichjam::mem_gene_path_heatmap()`:
+   
+      * caption is stored as `attr(hm, "caption")`
+      * the function that renders the caption is also stored:
+      `attr(hm, "draw_caption")`
+      * the caption is rendered using `grid::grid.textbox()`
+      * suggested caption contents:
+      
+         * `"N rows displayed"` OR
+         * `"N rows partitioned into M groups"`
+         * `"k-means method='correlation' using heatmap X"` OR
+         `"k-means method='correlation' using heatmaps X,Y,Z"`
+         
+
 # TODO 13oct2023
 
 * `rmd_tab_iterator()`

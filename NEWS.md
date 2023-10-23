@@ -1,13 +1,46 @@
-# platjam 0.0.76.900
+# platjam 0.0.76.950
 
 Still in progress.
 
 ## changes to existing functions
 
+* `zoom_nmat()` now accepts `""` or `"none"` to avoid transformation
 * `nmatlist2heatmaps()`
 
-   * Added more function param documentation, and edited existing
-   documentation for clarity.
+   * new default `main_heatmap=NULL` causes all heatmaps to be used for
+   row ordering. The enriched score is calculated for each heatmap,
+   summed by row, then used to produce decreasing order.
+   * new argument `transform_label` to customize transformation labels
+   included below each coverage heatmap title. By default it uses
+   the `character` string from `transform` for anything except `"none"`.
+   * new argument `padding` to add whitespace padding around the heatmap set.
+   * `axis_name` now accepts single `character` input to customize the
+   center label.
+   * A default caption is added to the bottom-right corner of the output,
+   which describes basic information about the figure: number of heatmaps,
+   number of rows, whether k-means was used and which method, the
+   total number of row partitions, and which heatmaps were used for
+   row ordering and k-means clustering.
+   * returned data include `fn_params` with a `list` of important parameters
+   associated with the heatmaps. Notably some values are calculated
+   on the fly, like when `panel_groups` is defined: `ylims`, `signal_ceiling`,
+   `nmat_colors`, etc.
+   * default color ramp is `"Reds"`
+   * `main_heatmap` can now accept multiple values, causing `row_order`
+   by default to order using the sum `EnrichedHeatmap::enriched_score()`
+   across each heatmap, before being ordered as usual.
+   * `row_order` will by default substitute `NA` values with `0`, in rare
+   cases that `NA` values may exist, maybe caused during transformation.
+   * argument `k_method="correlation"` is a new default, which falls back
+   to `"euclidean"` if the `amap` package is not installed.
+   * new argument `min_rows_per_k=100` requires at least 100 rows per k-means
+   cluster, to protect from clustering with a very small number of rows.
+   The argument was motivated by using `partition` and `k_clusters` together,
+   for which the number of rows in each partition is not (easily) known
+   upfront. However, it is also useful to set `k_clusters` and be assured
+   that at least `min_rows_per_k` on average are available during clustering.
+   * Added new example demonstrating use of `partition` and `k_clusters`.
+   * Added and updated function documentation for clarity.
    * silenced verbose output `"Preparing ComplexHeatmap::draw()"`
    * added more error-checking and specific error messages when matching
    across the optional inputs, all of which must match when provided:
@@ -16,13 +49,10 @@ Still in progress.
       * `rownames(nmat)`
       * `rownames(anno_df)`
       * `names(partition)`
-      
+
    * `partition` is handled internally as a `factor` so the level order
    is maintained. If supplied as `factor` the levels are honored as given,
    even when combined with `k_clusters` as below.
-   * New argument `min_rows_per_k=100` requires at least 100 rows per k-means
-   cluster, to protect from clustering with a very small number of rows.
-   The argument is most relevant when used together with `partition`.
    * `kmeans()` warnings are suppressed, otherwise they interfere with
    RMarkdown output.
    * `k_clusters` and `partition` work together

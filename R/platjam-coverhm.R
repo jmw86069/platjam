@@ -180,14 +180,16 @@ nmathm_row_order <- function
 #' @export
 zoom_nmatlist <- function
 (nmatlist,
-   upstream_length=500,
-   downstream_length=500,
-   ...)
+ upstream_length=500,
+ downstream_length=500,
+ ...)
 {
    #
-   upstream_length <- rep(upstream_length,
+   upstream_length <- rep(
+      jamba::rmNULL(upstream_length, nullValue=NA),
       length.out=length(nmatlist));
-   downstream_length <- rep(downstream_length,
+   downstream_length <- rep(
+      jamba::rmNULL(downstream_length, nullValue=NA),
       length.out=length(nmatlist));
    new_nmatlist <- lapply(seq_along(nmatlist), function(inmat){
       zoom_nmat(nmatlist[[inmat]],
@@ -234,16 +236,16 @@ zoom_nmatlist <- function
 #' @export
 zoom_nmat <- function
 (nmat,
-   upstream_length=500,
-   downstream_length=500,
-   ...)
+ upstream_length=500,
+ downstream_length=500,
+ ...)
 {
    #
-   if (length(upstream_length) == 0) {
+   if (length(upstream_length) == 0 || all(is.na(upstream_length))) {
       upstream_length <- Inf;
    }
    upstream_length <- abs(upstream_length);
-   if (length(downstream_length) == 0) {
+   if (length(downstream_length) == 0 || all(is.na(downstream_length))) {
       downstream_length <- Inf;
    }
    downstream_length <- abs(downstream_length);

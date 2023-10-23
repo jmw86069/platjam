@@ -16,7 +16,7 @@ nmatlist2heatmaps(
   k_subset = NULL,
   k_colors = NULL,
   k_width = grid::unit(5, "mm"),
-  k_method = c("euclidean", "correlation", "pearson", "spearman"),
+  k_method = c("correlation", "euclidean", "pearson", "spearman"),
   k_heatmap = main_heatmap,
   partition = NULL,
   rows = NULL,
@@ -24,7 +24,7 @@ nmatlist2heatmaps(
   nmat_colors = NULL,
   middle_color = "white",
   nmat_names = NULL,
-  main_heatmap = 1,
+  main_heatmap = NULL,
   anno_df = NULL,
   byCols = NULL,
   color_sub = NULL,
@@ -42,6 +42,7 @@ nmatlist2heatmaps(
   annotation_legend_param = NULL,
   hm_nrow = 1,
   transform = "none",
+  transform_label = NULL,
   signal_ceiling = NULL,
   axis_name = NULL,
   axis_name_gp = grid::gpar(fontsize = 8),
@@ -62,6 +63,7 @@ nmatlist2heatmaps(
   do_plot = TRUE,
   legend_width = grid::unit(3, "cm"),
   trim_legend_title = TRUE,
+  padding = grid::unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
   return_type = c("heatmaplist", "grid"),
   show_error = FALSE,
   verbose = FALSE,
@@ -120,11 +122,11 @@ With default \code{min_rows_per_k=10}, a partition with 100 or fewer rows
 can only have \code{k=1}, and partition with 101 rows can have \code{k=2}.
 This limit protects from k-means clustering small partitions.}
 
-\item{k_subset}{\code{integer} vector of k-means clusters to
-retain. This option is intended when only \code{k_clusters} is provided,
-and not together with \code{partition}. This argument is intended to
-"zoom in" to one or more k-means clusters of interest as a drill down
-technique.}
+\item{k_subset}{\code{integer} vector of k-means clusters to retain.
+This argument is intended to "zoom in" to one or more k-means
+clusters of interest as a drill down technique.
+When both \code{k_clusters} and \code{partition} are provided, this argument
+must exactly match the row title as displayed in the heatmap.}
 
 \item{k_colors}{\code{character} vector of R colors, or \code{NULL} to use
 the output of \code{colorjam::rainbowJam(k_clusters)}.}
@@ -217,9 +219,11 @@ used as custom names for each heatmap in \code{nmatlist}.
 When \code{nmat_names=NULL} the \code{signal_name} values are
 used from each \code{nmatlist} entry attribute: \code{attr(nmat, "signal_name")}}
 
-\item{main_heatmap}{\code{integer} index to define one entry in \code{nmatlist}
-as the main heatmap used for clustering and row ordering.
-Note that \code{k_heatmap} will override this option when provided.}
+\item{main_heatmap}{\code{integer} index to define one or more entries
+in \code{nmatlist} as the main heatmap used for clustering and row ordering.
+Note that \code{k_heatmap} will override this option when provided.
+By default \code{main_heatmap=NULL} will cause all heatmaps to be used for
+row ordering.}
 
 \item{anno_df}{\code{data.frame} or object that can be coerced to \code{data.frame}
 whose \code{rownames(anno_df)} must match rownames in the nmatlist data.
@@ -423,6 +427,15 @@ the values. These values are passed to \code{get_numeric_transform()}
 which may have more information.
 }}
 
+\item{transform_label}{\code{character} optional vector of transformation labels
+to use. When \code{transform_label=NULL} (default) it uses \code{names(transform)}
+if present, then the \code{character} string of \code{transform}, otherwise
+is left blank. When \code{transform="none"} no label is displayed.
+By default, transform labels are surrounded by parentheses, for example
+\code{"(log2signed)"} and placed on a new line below each coverage heatmap
+title. To suppress the transformation in the title, supply
+\code{transform_label=""}.}
+
 \item{signal_ceiling}{\code{numeric} vector whose values are recycled
 to length \code{length(nmatlist)}. The \code{signal_ceiling}
 defines the maximum numeric value to the color ramp for
@@ -449,6 +462,20 @@ steps use the full data range, after applying the appropriate
 To apply a numeric ceiling to the data itself, it should be done
 at the level of \code{nmatlist} beforehand.}
 
+\item{axis_name}{\code{character} string with optional custom label used for
+the target region label in each heatmap panel.
+\itemize{
+\item When \code{axis_name=NULL} (default), the \code{attr(nmat, "target_name")}
+label will be used, which is usually "target", along with the
+upstream and downstream length as stored in \code{attr(nmat, "extend")}.
+\item a \code{character} vector will be applied as the center
+(target) label on each heatmap, using the upstream and downstream
+length as stored in \code{attr(nmat, "extend")}.
+\item a \code{list} is expected to have three labels per vector element,
+corresponding to the upstream, target, and downstream axis label.
+This \code{list} is recycled to \code{length(nmatlist)}.
+}}
+
 \item{axis_name_gp}{object of \code{grid::gpar} applied to the x-axis label
 graphic parameters. For example, to customize the x-axis font size,
 use the form: \code{grid::gpar(fontsize=8)}.}
@@ -456,7 +483,12 @@ use the form: \code{grid::gpar(fontsize=8)}.}
 \item{axis_name_rot}{\code{numeric} value either \code{0} or \code{90} indicating
 whether to rotate the x-axis names below each heatmap, where
 \code{axis_name_row=90} (default) will rotate labels vertically,
-and \code{axis_name_row=0} will display labels horizontally.}
+and \code{axis_name_row=0} will display labels horizontally.
+\itemize{
+\item Note that \code{axis_name_rot} also controls the rotation of
+annotation (\code{anno_df}) and partition (\code{partition} or \code{k_clusters})
+annotation labels, below each annotation heatmap.
+}}
 
 \item{column_title_gp}{object \code{grid::gpar} or \code{list} of \code{grid::gpar}
 objects, applied across entries in \code{nmatlist} to customize the title
@@ -530,6 +562,11 @@ files much larger than normal.}
 \code{do_plot=FALSE} will return the data used to create heatmaps
 without drawing the heatmaps.}
 
+\item{padding}{\code{grid::unit} object used during \code{ComplexHeatmap::draw()}
+to add whitespace padding around the boundaries of the overall list
+of heatmaps. This padding is useful to enforce extra whitespace,
+or to prevent labels from exceeding the width of the figure.}
+
 \item{return_type}{\code{character} string indicating the type of
 data to return:
 \itemize{
@@ -553,6 +590,25 @@ These error bars are calculated by
 customization of details. Note that many \code{...} arguments
 are also passed to \code{ComplexHeatmap::Heatmap()}.}
 }
+\value{
+\code{list} with heatmap components that can be reviewed, or
+optionally rendered into a figure:
+\itemize{
+\item \code{"AHM"}: annotation heatmap
+\item \code{"PHM"}: partition heatmap
+\item \code{"EH_l"}: \code{list} of \code{ComplexHeatmap::Heatmap} objects
+\item \code{"MHM"}: marked heatmap, containing optional row labels
+\item \code{"HM_drawn"}: when \code{hm_nrow=1} this is the output after drawing the
+heatmap, in the form: \code{ComplexHeatmap::HeatmapList}. This object can
+be drawn again if needed, or used to determine exact row orders.
+\item \code{"fn_params"}: \code{list} of useful function parameters, including
+some calculated during processing such as \code{panel_groups}, \code{ylims},
+\code{signal_ceiling}, etc.
+\item \code{"hm_caption"}: \code{character} captions displayed on the heatmap
+\item \code{"draw_caption"}: \code{function} which will draw the heatmap caption
+in the bottom-right corner of the active display device.
+}
+}
 \description{
 Make multiple coverage heatmaps
 }
@@ -567,6 +623,78 @@ help keep each data matrix in order, to apply consistent
 clustering and filtering across all data matrices,
 and to enable optional multi-row heatmap layout.
 }
+\section{Annotation Data}{
+When \code{anno_df} is provided as a \code{data.frame} the rows are synchronized
+alongside the heatmap rows. Column values are color-coded, categorical
+for \code{character} columns, and using color gradient for \code{numeric} columns.
+
+Rows can optionally be split by argument \code{partition}, which can be a vector
+of group values associated with rows, or one or more columns in
+\code{colnames(anno_df)} whose values are used to sub-divide the rows.
+}
+
+\section{Row Clustering / Partitioning}{
+Rows can be clustered using k-means clustering with argument \code{k_clusters}.
+By default it uses \code{k_method="correlation"}, which applies a novel
+and effective correlation metric, clustering row data by the profile shape.
+The typical default, which is used when the \code{amap} R package is not
+installed, is to use \code{"euclidean"} distance, which tends to cluster
+based upon signal magnitude moreso than the shape.
+
+When k-means clustering \code{k_clusters} and \code{partition} are both enabled,
+each partition is independently k-means clustered, which improves
+results compared to applying global k-means before applying partitions.
+Use \code{min_rows_per_k} to adjust the relative number of \code{k} clusters
+based upon the number of observed rows.
+}
+
+\section{Display Layout}{
+Heatmaps are arranged in the following order, dependent upon
+the data provided:
+\itemize{
+\item Annotation heatmap, if \code{anno_df} is provided.
+\itemize{
+\item Color assignment can be provided using \code{color_sub} either as
+a named vector of R colors whose names match values in each column,
+or as a \code{list} named by \code{colnames(anno_df)}, with named color
+assignments, or a color \code{function} for \code{numeric} columns.
+}
+\item Partition heatmap, if \code{partition} is provided.
+\item Enrichment heatmaps, one for each entry in \code{nmatlist}.
+\itemize{
+\item Above each heatmap is the metaplot, drawn using
+\code{EnrichedHeatmap::anno_enriched()}.
+\item When \code{partition} and/or \code{k_clusters} are defined,
+the plot will include one profile line for each row grouping.
+\item When \code{show_error=TRUE} each line will also be shaded using 95\%
+standard deviation.
+\item The heatmap color gradient is applied starting at zero, extending to
+\code{signal_ceiling} for each heatmap. When \code{signal_ceiling} is <=1 it
+uses the quantile of non-zero values in the matrix data, otherwise
+it applies a fixed numeric maximum. Numeric values above the
+\code{signal_ceiling} threshold are colored using the maximum color.
+\item When there are negative values, the color key uses a divergent
+color scale. When \code{nmat_colors} value for the heatmap is a single color,
+the complementary color is used for negative values; otherwise it is
+assumed to define a divergent color scale.
+\item The y-axis range on metaplots is defined by observed values, and
+when \code{panel_groups} is defined, the y-axis \code{ylim} is shared among
+all heatmaps in each panel group.
+}
+\item Marked row heatmap, if \code{anno_row_marks} is provided. It uses an empty
+heatmap, associated with row mark annotations for a subset of row labels,
+in the same order as the coverage heatmaps.
+\item Color legends are displayed in the same order:
+\itemize{
+\item annotation colors for each column in \code{anno_df}
+\item partition/cluster colors
+\item color gradients for each coverage heatmap in order, or
+when \code{panel_groups} is provided it displays the color key for
+only the first heatmap in each panel group.
+}
+}
+}
+
 \examples{
 ## There is a small example file to use for testing
 # library(jamba)
@@ -643,6 +771,36 @@ nmatlist2heatmaps(nmatlist,
    top_axis_side="left",
    anno_df=anno_df,
    transform=rep(c("log2signed", "sqrt"), each=3));
+
+# example showing k-means clustering together with annotation groups
+anno_df <- data.frame(
+   group=sample(c("A", "B", "B"),
+      size=nrow(nmatlist[[1]]),
+      replace=TRUE),
+   row.names=rownames(nmatlist[[1]]))
+# note for this example the color legends are oriented vertically
+# showing how the width is adjusted
+nmatlist2heatmaps(nmatlist,
+   heatmap_legend_direction="vertical",
+   k_clusters=5,
+   min_rows_per_k=50,
+   ht_gap=grid::unit(1, "cm"),
+   k_method="correlation",
+   k_heatmap=1:2,
+   anno_df=anno_df,
+   partition="group",
+   row_title_rot=0)
+
+# same as above, partition and k_clusters together
+# except uses multiple values for k_clusters
+nmatlist2heatmaps(nmatlist,
+   k_clusters=c(1, 4),
+   min_rows_per_k=25,
+   k_heatmap=1:2,
+   k_method="correlation",
+   anno_df=anno_df,
+   partition="group",
+   row_title_rot=0)
 
 }
 \seealso{
