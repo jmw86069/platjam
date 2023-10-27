@@ -1241,12 +1241,14 @@ nmatlist2heatmaps <- function
       # for multiple k_heatmap values, cbind each transformed matrix
       if (length(k_heatmap) > 1) {
          imatrix <- do.call(cbind, lapply(k_heatmap, function(k_heatmap1){
+            kmatch <- match(rows, rownames(nmatlist[[k_heatmap1]]))
             transform[[k_heatmap1]](
-               nmatlist[[k_heatmap1]][rows, , drop=FALSE]);
+               nmatlist[[k_heatmap1]][kmatch, , drop=FALSE]);
          }));
       } else {
+         kmatch <- match(rows, rownames(nmatlist[[k_heatmap]]))
          imatrix <- transform[[k_heatmap]](
-            nmatlist[[k_heatmap]][rows, , drop=FALSE]);
+            nmatlist[[k_heatmap]][kmatch, , drop=FALSE]);
       }
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
@@ -1312,8 +1314,11 @@ nmatlist2heatmaps <- function
             names(kpartition) <- prows;
             kpartition;
          })
-         kpartition <- unlist(unname(kpartitions_list))[rows];
-         partition_df <- data.frame(partition=partition[rows],
+         kpartition <- jamba::rmNA(naValue=0,
+            unlist(unname(kpartitions_list))[rows]);
+         names(kpartition) <- rows;
+         partition_df <- data.frame(
+            partition=partition[rows],
             kpartition=kpartition[rows]);
          # create new partition that honors factor order where relevant
          partition_sep <- ": ";
@@ -1347,6 +1352,9 @@ nmatlist2heatmaps <- function
    if (length(partition) > 0) {
       ## Make sure to use the partition values with the properly ordered rows
       if (!all(rows %in% names(partition))) {
+         rows <- rows[rows %in% names(partition)];
+      }
+      if (!any(rows %in% names(partition))) {
          missing_rows <- setdiff(rows, names(partition));
          jamba::printDebug("missing_rows (", jamba::formatInt(length(missing_rows)), "):");
          print(head(missing_rows));
