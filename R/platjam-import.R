@@ -1734,6 +1734,9 @@ nmatlist2heatmaps <- function
          }
          ##################################
          ## Mark Heatmap
+         if (!"gpar" %in% class(anno_row_gp)) {
+            anno_row_gp <- grid::gpar(fontsize=14)
+         }
          MHM <- ComplexHeatmap::Heatmap(jamba::nameVector(anno_df[rows,1], rows),
             col=anno_colors_l[[1]],
             name=colnames(anno_df)[1],
@@ -2210,7 +2213,7 @@ nmatlist2heatmaps <- function
                ylim=ylim,
                axis=top_axis[i],
                axis_param=list(side=top_axis_side[i],
-                  gp=axis_name_gp),
+                  gp=axis_name_gp[[i]]),
                height=top_anno_height,
                show_error=show_error)
          )
