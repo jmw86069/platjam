@@ -535,6 +535,9 @@ coverage_matrix2nmat <- function
 #'    * It can be a `character` vector with one or more `colnames(anno_df)`,
 #'    which creates labels by concatenating values across columns,
 #'    delimited with space `" "`.
+#' @param anno_row_gp `grid::gpar` object used to customize the text label
+#'    displayed when `anno_row_marks` is defined. The default fontsize 14
+#'    is intended to be larger than other default values, for legibility.
 #' @param top_annotation `HeatmapAnnotation` or `logical` or `list`:
 #'    * `top_annotation=TRUE` (default) uses the default
 #'    `EnrichedHeatmap::anno_enriched()` to display the signal profile
@@ -573,7 +576,7 @@ coverage_matrix2nmat <- function
 #'       * `"all"`: display axis labels for every panel even within panel group.
 #' @param legend_max_ncol `integer` number indicating the maximum
 #'    number of columns allowed for a categorical color legend.
-#' @param legend_base_nrow integer number indicating the base
+#' @param legend_base_nrow `integer` number indicating the base
 #'    number of rows used for a categorical color legend, before
 #'    additional columns are added. Once the number of elements
 #'    exceeds `(legend_max_ncol * legend_base_nrow)` then
@@ -917,11 +920,12 @@ nmatlist2heatmaps <- function
  color_sub=NULL,
  anno_row_marks=NULL,
  anno_row_labels=NULL,
+ anno_row_gp=grid::gpar(fontsize=14),
  top_annotation=NULL,
  top_anno_height=grid::unit(3, "cm"),
  top_axis_side=c("right"),
  legend_max_ncol=2,
- legend_base_nrow=5,
+ legend_base_nrow=12,
  legend_max_labels=40,
  show_heatmap_legend=TRUE,
  heatmap_legend_param=NULL,
@@ -932,9 +936,9 @@ nmatlist2heatmaps <- function
  transform_label=NULL,
  signal_ceiling=NULL,
  axis_name=NULL,
- axis_name_gp=grid::gpar(fontsize=8),
+ axis_name_gp=grid::gpar(fontsize=10),
  axis_name_rot=90,
- column_title_gp=grid::gpar(fontsize=12),
+ column_title_gp=grid::gpar(fontsize=14),
  lens=-2,
  anno_lens=8,
  pos_line=FALSE,
@@ -1707,6 +1711,10 @@ nmatlist2heatmaps <- function
                anno_df[anno_rows,anno_row_labels,drop=FALSE],
                sep=" ");
          } else if (length(anno_row_labels) >= length(anno_rows)) {
+            if (length(names(anno_row_labels)) == 0 &&
+                  length(anno_row_labels) == length(anno_row_marks)) {
+               names(anno_row_labels) <- anno_row_marks;
+            }
             anno_row_labels <- anno_row_labels[anno_rows];
          } else {
             anno_row_labels <- anno_rows;
@@ -1734,6 +1742,7 @@ nmatlist2heatmaps <- function
             cluster_rows=FALSE,
             right_annotation=ComplexHeatmap::rowAnnotation(
                foo=anno_mark(at=anno_row_which,
+                  labels_gp=anno_row_gp,
                   labels=anno_row_labels)
             )
          );
@@ -2200,7 +2209,8 @@ nmatlist2heatmaps <- function
                value=profile_value,
                ylim=ylim,
                axis=top_axis[i],
-               axis_param=list(side=top_axis_side[i]),
+               axis_param=list(side=top_axis_side[i],
+                  gp=axis_name_gp),
                height=top_anno_height,
                show_error=show_error)
          )

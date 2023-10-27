@@ -1,3 +1,17 @@
+# TODO 27oct2023
+
+* `nmatlist2heatmaps()`
+
+   * more examples of customizing font sizes
+   * consider option for global adjustment of all font sizes together
+   * consider `legend_base_nrow` logic that inspects the label width,
+   to avoid multiple columns when labels are already very wide, it squishes
+   the coverage heatmap size making the heatmaps too narrow.
+   * investigate whether figure size can be calculated/predicted upfront,
+   instead of having to calculate by `length(nmatlist)` and estimating the
+   padding required for row annotations, heatmap gap spacing, and however
+   large the color legends might be.
+
 # TODO 23oct2023
 
 * `nmatlist2heatmaps()`

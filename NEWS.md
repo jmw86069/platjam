@@ -1,6 +1,23 @@
-# platjam 0.0.76.950
+# platjam 0.0.77.900
 
-Still in progress.
+* `nmatlist2heatmaps()`
+
+   * new argument `anno_row_gp` with default fontsize 14 for row
+   marks when `anno_row_marks` is provided.
+   * `anno_row_labels` now accepts one or more columns in `anno_df`
+   to define labels, when `anno_row_marks` is provided. Not super convenient,
+   because row labels are most likely not shown as `anno_df` columns.
+   * `anno_row_labels` now tolerates when `names(anno_row_labels)` is not
+   defined, and uses `anno_row_marks` by default.
+   * apply arg `axis_name_gp` to `anno_enriched()` axis labels, for consistent
+   font size for x-axis labels, and profile y-axis labels.
+   * `axis_name_gp` default fontsize 10, instead of 8 previously.
+   * `column_title_gp` default font size is 14, instead of 12 previously.
+   * `legend_base_nrow=12` is default, mainly to provide two columns for
+   human chromosomes, but one column for most other scenarios.
+
+
+# platjam 0.0.76.950
 
 ## changes to existing functions
 
