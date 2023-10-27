@@ -1032,7 +1032,8 @@ nmatlist2heatmaps <- function
       if (is.numeric(rows)) {
          rows <- rmNA(nmat_rows[rows]);
       } else {
-         rows <- rows[rows %in% nmat_rows];
+         rows <- intersect(rows, nmat_rows);
+         # rows <- rows[rows %in% nmat_rows];
       }
       if (length(rows) == 0) {
          stop("No values in rows matched any nmatlist rownames.");
@@ -1040,7 +1041,8 @@ nmatlist2heatmaps <- function
    }
    ## Also optionally subset rows by rownames(anno_df)
    if (length(anno_df) > 0) {
-      rows <- rows[rows %in% rownames(anno_df)];
+      rows <- intersect(rows, rownames(anno_df));
+      # rows <- rows[rows %in% rownames(anno_df)];
       if (length(rows) == 0) {
          stop("rownames(anno_df) did not match any values in rows.");
       }
@@ -1052,7 +1054,8 @@ nmatlist2heatmaps <- function
          names(partition) <- rownames(anno_df);
       }
       if (length(names(partition)) > 0) {
-         rows <- rows[rows %in% names(partition)];
+         rows <- intersect(rows, names(partition));
+         # rows <- rows[rows %in% names(partition)];
          if (length(rows) == 0) {
             stop("names(partition) did not match any rownames in nmatlist.");
          }
@@ -1352,7 +1355,8 @@ nmatlist2heatmaps <- function
    if (length(partition) > 0) {
       ## Make sure to use the partition values with the properly ordered rows
       if (!all(rows %in% names(partition))) {
-         rows <- rows[rows %in% names(partition)];
+         rows <- intersect(rows, names(partition));
+         # rows <- rows[rows %in% names(partition)];
       }
       if (!any(rows %in% names(partition))) {
          missing_rows <- setdiff(rows, names(partition));
@@ -1492,7 +1496,8 @@ nmatlist2heatmaps <- function
             anno_df <- jamba::mixedSortDF(anno_df,
                byCols=byCols);
          }
-         rows <- rownames(anno_df)[rownames(anno_df) %in% rows];
+         rows <- intersect(rownames(anno_df), rows);
+         # rows <- rownames(anno_df)[rownames(anno_df) %in% rows];
          if (verbose) {
             jamba::printDebug("nmatlist2heatmaps(): ",
                "Sorted rows by:",
