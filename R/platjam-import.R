@@ -895,6 +895,7 @@ nmatlist2heatmaps <- function
 (nmatlist,
  panel_groups=NULL,
  title=NULL,
+ title_gp=grid::gpar(fontsize=14),
  caption=NULL,
  upstream_length=NULL,
  downstream_length=NULL,
@@ -2354,6 +2355,7 @@ nmatlist2heatmaps <- function
          }
          HM_drawn <- ComplexHeatmap::draw(HM_temp,
             column_title=title,
+            column_title_gp=title_gp,
             ht_gap=ht_gap,
             adjust_annotation_extension=TRUE,
             main_heatmap=main_heatmap_temp,

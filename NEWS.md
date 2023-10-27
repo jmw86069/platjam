@@ -15,6 +15,7 @@
    * `column_title_gp` default font size is 14, instead of 12 previously.
    * `legend_base_nrow=12` is default, mainly to provide two columns for
    human chromosomes, but one column for most other scenarios.
+   * new argument `title_gp` with default fontsize 14 for the overall title.
 
 
 # platjam 0.0.76.950

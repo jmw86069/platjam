@@ -8,6 +8,7 @@ nmatlist2heatmaps(
   nmatlist,
   panel_groups = NULL,
   title = NULL,
+  title_gp = grid::gpar(fontsize = 14),
   caption = NULL,
   upstream_length = NULL,
   downstream_length = NULL,
