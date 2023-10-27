@@ -1290,8 +1290,9 @@ nmatlist2heatmaps <- function
          } else {
             k_clusters <- rep(k_clusters,
                length.out=length(partition_rows_list));
+            names(k_clusters) <- names(partition_rows_list);
          }
-         # requires 10 rows per cluster by default, or scales down k
+         # requires min_rows_per_k rows per cluster by default, or adjust k
          kpartitions_list <- lapply(seq_along(partition_rows_list), function(ipart){
             prows <- partition_rows_list[[ipart]];
             use_k <- k_clusters[[ipart]];
@@ -1346,11 +1347,14 @@ nmatlist2heatmaps <- function
    if (length(partition) > 0) {
       ## Make sure to use the partition values with the properly ordered rows
       if (!all(rows %in% names(partition))) {
+         missing_rows <- setdiff(rows, names(partition));
+         jamba::printDebug("missing_rows (", jamba::formatInt(length(missing_rows)), "):");
+         print(head(missing_rows));
          jamba::printDebug("head(partition):");
          print(head(partition));
          jamba::printDebug("head(rows):");
          print(head(rows));
-         print(table(all(rows) %in% names(partition)));
+         print(table(all(rows %in% names(partition))));
          stop("names(partition) must match rownames in nmatlist.");
       }
       partition <- partition[match(rows, names(partition))];

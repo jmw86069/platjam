@@ -12,6 +12,27 @@
    padding required for row annotations, heatmap gap spacing, and however
    large the color legends might be.
 
+* new functions
+
+   * `subset_nmatlist()` - convenience function to subset all matrices
+   in the list. Intended for row subsetting `rownames(nmatlist[[1]])`
+   but could also use nmat zoom options.
+
+* consider `normalizedMatrixList` object class?
+
+   * it would extend `EnrichedHeatmap::normalizedMatrix` and enable subsetting
+   functions such as `nmatlist[x, ]` which thereby subsets rows in all matrices
+   * it could become formal input to `nmatlist2heatmaps()`
+   * it might be able to store associated heatmap parameters:
+
+      * `signal_ceiling`
+      * `ylim` used by `anno_enriched()`
+      * `nmat_color` color function or color ramp
+      * `label` used as title above the heatmap
+   
+   * it could simplify pre-processing, such as creating "diff" matrices,
+   or any combination of matrices in the original `nmatlist`.
+
 # TODO 23oct2023
 
 * `nmatlist2heatmaps()`
