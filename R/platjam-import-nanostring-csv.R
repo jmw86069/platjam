@@ -27,16 +27,25 @@
 #'    assumed to be housekeeper genes, by typical convention of
 #'    NanoString codeset design.
 #' @param curation_txt either `data.frame` or `character` file path
-#'    to tab- or comma-delimited file. The first column should match the
+#'    to tab- or comma-delimited file.
+#'    The first column should match the
 #'    column headers after importing data, `colData(se)`.
 #'    Subsequent columns contain associated sample annotations.
 #'    For Nanostring data, the Nanostring sample annotations will already
 #'    be associated with the `colData(se)`, and `colnames(curation_df)`
 #'    will overwrite any that already exist.
-#'    Pro tip: The first column in `curation_txt` should contain `'.'`
+#'    * Pro tip: The first column in `curation_txt` should contain `'.'`
 #'    instead of punctuation/whitespace, to improve pattern matching
 #'    filenames where the punctuation characters may have been modified
 #'    during processing.
+#'    * Note also that when `curation_txt` is supplied, samples in `se`
+#'    will be subset to include only those samples that match `curation_txt`,
+#'    and in the order they appear in the `curation_txt` file.
+#'    This behavior allows the `curation_txt` to be used to define
+#'    the appropriate experimental ordering, which by default also
+#'    defines downstream control factor levels for statistical contrasts.
+#'    The first factor level is used as the control value in those
+#'    contrasts.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are ignored.
 #'
@@ -136,6 +145,13 @@ import_nanostring_csv <- function
             }
             SummarizedExperiment::colData(nano_se)[,add_colnames] <- (
                new_sample_df[sample_match, add_colnames, drop=FALSE])
+
+            # optionally subset data to those found in curation_txt
+            if (any(is.na(sample_match))) {
+               sample_order <- order(sample_match);
+               sample_reorder <- sample_order[!is.na(sample_match)]
+               nano_se <- nano_se[, sample_reorder];
+            }
          }
       } else {
          stop("curation_txt must be a single file path, or a data.frame")

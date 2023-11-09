@@ -7,7 +7,7 @@
 save_salmon_qc_xlsx(
   metajsons,
   salmon_qc_xlsx = NULL,
-  adj_target_reads = 75000000,
+  adj_target_reads = 7.5e+07,
   verbose = FALSE,
   ...
 )

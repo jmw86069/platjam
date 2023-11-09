@@ -41,16 +41,27 @@ assumed to be housekeeper genes, by typical convention of
 NanoString codeset design.}
 
 \item{curation_txt}{either \code{data.frame} or \code{character} file path
-to tab- or comma-delimited file. The first column should match the
+to tab- or comma-delimited file.
+The first column should match the
 column headers after importing data, \code{colData(se)}.
 Subsequent columns contain associated sample annotations.
 For Nanostring data, the Nanostring sample annotations will already
 be associated with the \code{colData(se)}, and \code{colnames(curation_df)}
 will overwrite any that already exist.
-Pro tip: The first column in \code{curation_txt} should contain \code{'.'}
+\itemize{
+\item Pro tip: The first column in \code{curation_txt} should contain \code{'.'}
 instead of punctuation/whitespace, to improve pattern matching
 filenames where the punctuation characters may have been modified
-during processing.}
+during processing.
+\item Note also that when \code{curation_txt} is supplied, samples in \code{se}
+will be subset to include only those samples that match \code{curation_txt},
+and in the order they appear in the \code{curation_txt} file.
+This behavior allows the \code{curation_txt} to be used to define
+the appropriate experimental ordering, which by default also
+defines downstream control factor levels for statistical contrasts.
+The first factor level is used as the control value in those
+contrasts.
+}}
 
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 

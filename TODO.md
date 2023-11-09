@@ -1,3 +1,19 @@
+# TODO 09nov2023
+
+* `curate_se_colData()`
+
+   * Add an option to reorder `se` samples based upon the order found
+   in the curation `df` data.
+
+* `import_nanostring_csv()`
+
+   * DONE. Update `import_nanostring_csv()` to subset by matched rows
+   in `curation_txt`, and reorder samples to match `curation_txt`.
+
+* `import_nanostring_rcc()`
+
+   * add argument `curation_txt` to behave as `import_nanostring_csv()`
+
 # TODO 27oct2023
 
 * `nmatlist2heatmaps()`

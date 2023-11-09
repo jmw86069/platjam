@@ -1,3 +1,11 @@
+# platjam 0.0.78.900
+
+* `import_nanostring_csv()` two changes when supplying `curation_txt`:
+   
+   1. The output `se` is subset to include only sample which were
+   annotated in the `curation_txt` file.
+   2. The order of samples now matches that with the `curation_txt` file.
+
 # platjam 0.0.77.900
 
 * `nmatlist2heatmaps()`
