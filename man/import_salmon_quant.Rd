@@ -17,8 +17,8 @@ import_salmon_quant(
   txFeatureType = "exon",
   countsFromAbundance = "lengthScaledTPM",
   gene_body_ids = NULL,
-  trim_tx_from = c("[(][-+][)]"),
-  trim_tx_to = c(""),
+  trim_tx_from = NULL,
+  trim_tx_to = NULL,
   verbose = FALSE,
   ...
 )
@@ -83,15 +83,22 @@ entries with \code{"gene_body"}, then all transcripts are used for
 \code{import_types="gene"}, and \code{import_types="gene_body"} is not valid
 and therefore is not returned.}
 
+\item{trim_tx_from, trim_tx_to}{\code{character} vector with one or more
+regular expression patterns used to curate the values in \code{tx_colname}
+prior to assigning them as \code{rownames()}, and back to \code{tx_colname}.
+These values are joined to \code{tx2gene[[tx_colname]]} to assign
+additional gene annotations.
+\itemize{
+\item The default as of version 0.0.79.900 is to leave strand information
+\code{"(-)"} and \code{"(+)"} without removing it, since in some rare cases a
+gene's unspliced transcripts can be present on two strands.
+\item The previous default (version <= 0.0.78.900) was to remove
+\code{"(-)"} and \code{"(+)"} from the transcript_id \code{tx_colname} column.
+}}
+
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are passed to supporting functions.}
-
-\item{curate_tx_from, curate_tx_to}{\code{character} vector of regular expression
-patterns to be used optionally to curate the values in \code{tx_colname} prior
-to joining those values to \code{tx2gene[[tx_colname]]}.
-The default is to remove \code{"(-)"} and \code{"(+)"} from the transcript_id
-(\code{tx_colname}) column.}
 }
 \value{
 \code{list} with \code{SummarizedExperiment} objects, each of which
@@ -103,8 +110,8 @@ The \code{SummarizedExperiment} objects by name:
 \item \code{"TxSE"}: transcript-level values imported from \code{quant.sf}.
 \item \code{"GeneSE"}: gene-level summary values, excluding
 \code{"gene_body"} entries.
-\item \code{"GeneBodySE"}: gene-level summary values, including
-\code{"gene_body"} entries.
+\item \code{"GeneBodySE"}: gene-level summary values, summarizing unspliced
+and spliced \code{"gene_body"} transcripts together for each gene.
 \item \code{"GeneTxSE"}: gene-level summary values, where transcripts are
 combined to gene level, and \code{"gene_body"} entries are represented
 separately, with suffix \code{"_gene_body"} added to the gene name.
@@ -136,6 +143,22 @@ and full gene entries into one summary transcript abundance.
 \item \code{import_types="gene_tx"} summarizes proper transcript to gene level,
 and separately represents \code{"gene_body"} entries for comparison.
 }
+
+The current recommendation is to use default values for \code{import_types}
+which imports all the following types of data:
+\enumerate{
+\item \code{TxSE} as transcripts per row
+\item \code{GeneSE} as genes per row, excluding unspliced \code{gene_body} transcripts.
+\item \code{GeneBodySE} as genes per row, summarizing unspliced
+and spliced \code{"gene_body"} transcripts together for each gene.
+\item \code{GeneTxSE} as spliced and unspliced genes per row, so that
+unspliced, spliced, or both can be analyzed together.
+}
+
+We typically use \code{GeneBodySE} and define a subset of \code{rownames(GeneBodySE)}
+to use only spliced transcripts during analysis. Optionally we may
+run \code{limma::diffSplice()} to compare the unspliced:spliced ratio
+across experiment groups.
 }
 \seealso{
 Other jam import functions: 

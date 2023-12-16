@@ -256,24 +256,78 @@ assign_numeric_colors <- function
 #'    The `list` is returned invisibly.
 #' @param colorized `logical` indicating whether to print output using
 #'    `jamba::printDebug()` with colorized output.
+#' @param digits `numeric` number of digits, passed to `signif()` to limit
+#'    the number of digits displayed as a label for color function entries
+#'    in `x`.
+#' @param max_entries `numeric` maximum number of entries displayed in any
+#'    given element of `x`.
 #' @param ... additional arguments are ignored.
+#'
+#' @returns `list` named by `names(x)` of the input data,
+#'    each element contains a `character` vector of R colors
+#'    named by respective label. The names are derived either directly
+#'    from the input color vector, or by the `attr(i, "breaks")`
+#'    encoded into the color function by `circlize::colorRamp2()`.
+#'
+#' @examples
+#' # generate example data.frame of annotations
+#' n <- 100;
+#' set.seed(12);
+#' anno_df <- data.frame(
+#'    group=sample(c("A", "B", "B"),
+#'       size=n,
+#'       replace=TRUE),
+#'    tss_score=rnorm(n) + 4,
+#'    h3k4me1_score=rnorm(n) + 4
+#' );
+#'
+#' # generate a list of colors for the data.frame
+#' scl <- design2colors(anno_df,
+#'    group_colnames="group",
+#'    color_sub=c(tss_score="royalblue",
+#'       h3k4me1_score="slateblue"),
+#'    plot_type="none")
+#'
+#' # print the list of colors, color functions, in colorized text
+#' print_color_list(scl)
 #'
 #' @export
 print_color_list <- function
 (x,
  do_print=TRUE,
  colorized=TRUE,
+ digits=4,
+ max_entries=Inf,
  ...)
 {
+   if (length(max_entries) == 0) {
+      max_entries <- Inf;
+   }
    x_str <- lapply(x, function(i){
       if (is.function(i)){
-         jamba::nameVector(jamba::rgb2col(attr(i, "colors")), attr(i, "breaks"))
+         icolors <- attr(i, "colors");
+         ibreaks <- attr(i, "breaks");
+         if (is.numeric(ibreaks)) {
+            ibreaks <- signif(ibreaks,
+               digits=digits)
+         }
+
+         if (any(grepl("#[a-zA-Z0-9]+", icolors))) {
+            j <- jamba::nameVector(
+               attr(i, "colors"),
+               attr(i, "breaks"))
+         } else {
+            j <- jamba::nameVector(
+               jamba::rgb2col(icolors),
+               attr(i, "breaks"))
+         }
       } else {
-         i
+         j <- i
       }
-   });
-   if (do_print) {
-      if (colorized) {
+      head(j, max_entries)
+   })
+   if (TRUE %in% do_print) {
+      if (TRUE %in% colorized) {
          for (i in names(x_str)) {
             jamba::printDebug(paste0("$", i, ""),
                timeStamp=FALSE,

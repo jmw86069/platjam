@@ -25,6 +25,20 @@
 #' * `import_types="gene_tx"` summarizes proper transcript to gene level,
 #' and separately represents `"gene_body"` entries for comparison.
 #'
+#' The current recommendation is to use default values for `import_types`
+#' which imports all the following types of data:
+#' 1. `TxSE` as transcripts per row
+#' 2. `GeneSE` as genes per row, excluding unspliced `gene_body` transcripts.
+#' 3. `GeneBodySE` as genes per row, summarizing unspliced
+#'    and spliced `"gene_body"` transcripts together for each gene.
+#' 4. `GeneTxSE` as spliced and unspliced genes per row, so that
+#' unspliced, spliced, or both can be analyzed together.
+#'
+#' We typically use `GeneBodySE` and define a subset of `rownames(GeneBodySE)`
+#' to use only spliced transcripts during analysis. Optionally we may
+#' run `limma::diffSplice()` to compare the unspliced:spliced ratio
+#' across experiment groups.
+#'
 #' @return `list` with `SummarizedExperiment` objects, each of which
 #'    contain assay names `c("counts", "abundance", "length)`, where
 #'    `c("counts", "abundance")` are transformed with `log2(1 + x)`.
@@ -33,8 +47,8 @@
 #'    * `"TxSE"`: transcript-level values imported from `quant.sf`.
 #'    * `"GeneSE"`: gene-level summary values, excluding
 #'    `"gene_body"` entries.
-#'    * `"GeneBodySE"`: gene-level summary values, including
-#'    `"gene_body"` entries.
+#'    * `"GeneBodySE"`: gene-level summary values, summarizing unspliced
+#'    and spliced `"gene_body"` transcripts together for each gene.
 #'    * `"GeneTxSE"`: gene-level summary values, where transcripts are
 #'    combined to gene level, and `"gene_body"` entries are represented
 #'    separately, with suffix `"_gene_body"` added to the gene name.
@@ -87,11 +101,16 @@
 #'    entries with `"gene_body"`, then all transcripts are used for
 #'    `import_types="gene"`, and `import_types="gene_body"` is not valid
 #'    and therefore is not returned.
-#' @param curate_tx_from,curate_tx_to `character` vector of regular expression
-#'    patterns to be used optionally to curate the values in `tx_colname` prior
-#'    to joining those values to `tx2gene[[tx_colname]]`.
-#'    The default is to remove `"(-)"` and `"(+)"` from the transcript_id
-#'    (`tx_colname`) column.
+#' @param trim_tx_from,trim_tx_to `character` vector with one or more
+#'    regular expression patterns used to curate the values in `tx_colname`
+#'    prior to assigning them as `rownames()`, and back to `tx_colname`.
+#'    These values are joined to `tx2gene[[tx_colname]]` to assign
+#'    additional gene annotations.
+#'    * The default as of version 0.0.79.900 is to leave strand information
+#'    `"(-)"` and `"(+)"` without removing it, since in some rare cases a
+#'    gene's unspliced transcripts can be present on two strands.
+#'    * The previous default (version <= 0.0.78.900) was to remove
+#'    `"(-)"` and `"(+)"` from the transcript_id `tx_colname` column.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to supporting functions.
 #'
@@ -112,8 +131,8 @@ import_salmon_quant <- function
  txFeatureType="exon",
  countsFromAbundance="lengthScaledTPM",
  gene_body_ids=NULL,
- trim_tx_from=c("[(][-+][)]"),
- trim_tx_to=c(""),
+ trim_tx_from=NULL,#c("[(][-+][)]"),
+ trim_tx_to=NULL,
  verbose=FALSE,
  ...)
 {
@@ -206,8 +225,16 @@ import_salmon_quant <- function
 
    # optionally curate transcript rownames
    if (length(trim_tx_from) > 0) {
+      if (length(trim_tx_to) == 0) {
+         trim_tx_to <- "";
+      }
       trim_tx_to <- rep(trim_tx_to,
          length.out=length(trim_tx_from));
+      if (verbose) {
+         jamba::printDebug("import_salmon_quant(): ",
+            "trimming rownames using: ",
+            c("trim_tx_from", "trim_tx_to"));
+      }
       for (itype in c("counts", "abundance", "length")) {
          for (iseq in seq_along(trim_tx_from)) {
             rownames(txiTx[[itype]]) <- gsub(trim_tx_from[[iseq]],
@@ -232,7 +259,9 @@ import_salmon_quant <- function
          ...);
       isamples1 <- rownames(sample_df);
       if (!all(isamples1 %in% isamples)) {
-         filename_colname <- jamba::vigrep("^filename$", colnames(sample_df));
+         filename_colname <- head(jamba::vigrep("^filename$",
+            colnames(sample_df)),
+            1);
          isamples_match <- match(sample_df[[filename_colname]],
             isamples);
          isamples_from <- isamples[isamples_match];

@@ -1,3 +1,46 @@
+# platjam 0.0.79.900
+
+* `rmd_tab_iterator()` - major update
+
+   * `base_fn()` can now contain optional argument `test=TRUE` to determine
+   whether a particular tab should be displayed.
+   
+      * When `base_fn()` is called with `test=TRUE` it is expected to
+      return `logical` indicating whether the tab should be displayed,
+      and should provide no other output. It will be called again
+      with `test=FALSE` if the tab should be displayed, in which case
+      the function should generate output.
+      * When `base_fn()` does not contain named argument `test`, the
+      tab is always displayed, the function is called only once, and
+      it should generate output as normal.
+
+   * `base_fn` and `fn_list` functions are all wrapped inside `tryCatch()`
+   which prints the error message and does not exit the iterator.
+   * `fn_list` will likely be deprecated and retired in the near future,
+   relying upon `base_fn` for all tasks.
+
+* `import_salmon_quant()`
+
+   * Fixed rare error `"duplicate 'row.names' are not allowed"` caused
+   by `"gene_body"` transcripts (unspliced transcripts) which also
+   contained the strand `"(+)"` or `"(-)"` and were being removed
+   by the default argument: `trim_tx_from=c("[(][-+][)]")`.
+   This situation occurs when one gene locus (defined by `"gene_name"`)
+   is present on two strands (which probably should never happen,
+   but in some Gencode files it does; perhaps by using `gene_name` and
+   not `gene_id`). The argument default is now `trim_tx_from=NULL`
+   which also makes sense that the default condition is not to change
+   the rownames, nor the values in `txColname="transcript_id"`.
+   * Fixed argument help docs, which incorrectly used `curate_tx_from`,
+   `curate_tx_to` instead of `trim_tx_from`, `trim_tx_to`.
+
+* `print_color_list()`
+
+   * fixed error with function elements using the updated hex style
+   from `circlize::colorRamp2()`.
+   * added examples.
+
+
 # platjam 0.0.78.900
 
 * `import_nanostring_csv()` two changes when supplying `curation_txt`:

@@ -38,13 +38,38 @@ This function should create the tab content, and should not print
 the tab header itself.
 }}
 
-\item{...}{additional arguments are ignored.}
+\item{base_fn}{\code{function} called at the bottom layer of tabs.
+\itemize{
+\item Note that this function is typically the only function recommended,
+and will be called for each combination of values in \code{tab_list}.
+\item If \code{fn_list} is also defined, then the corresponding function is
+called first, then \code{base_fn} is called if defined.
+\item \code{base_fn} is typically defined with format \code{base_fn <- function(...){}}
+\item \code{base_fn} can contain argument \code{test} for example in this format
+\code{base_fn <- function(..., test=FALSE){}}.
+\item When argument \code{test} is defined in \code{base_fn} then for each tab,
+a call is made to \code{base_fn(..., test=TRUE)} which should return
+\code{logical} indicating whether to print the corresponding tab.
+Only when it returns \code{TRUE} will the tab be displayed, otherwise the
+tab is skipped.
+}}
 
-\item{final_fn}{\code{function} called at the bottom layer of tabs, after
-the corresponding function from \code{fn_list} is called, if it exists.
-This function is optional, and is intended to be a convenient place
-for the core function in the stack, without having to include this
-function in the final layer of \code{fn_list}.}
+\item{heading_level}{\code{numeric} heading level to use, where
+\code{heading_level=2} will use the markdown heading \code{"##"}, and
+tabs beneath this depth will use \code{"###"} and so no.}
+
+\item{verbose}{\code{logical} indicating whether to print verbose output.
+Note that output will honor \code{htmlOut} which encodes output in
+HTML format.}
+
+\item{htmlOut}{\code{logical} passed to \code{jamba::printDebug()} when \code{verbose=TRUE}}
+
+\item{envir}{\code{environment} used for internal iterative calls, used
+to pass each layer of tab value when iterating the different values
+in \code{tab_list}.}
+
+\item{...}{additional arguments are ignored but passed to iterative
+calls to this function.}
 }
 \value{
 \code{NULL} invisibly, this function is called for the by-product
@@ -71,6 +96,57 @@ Output can be defined in the final \code{fn_list} layer, however it is cleaner
 to use the argument \code{base_fn} to generate final output such as figure
 or table. The functions in \code{fn_list} should be limited to those required
 for updates during the process.
+\subsection{Helpful Tips}{
+\itemize{
+\item To store data objects generated within each call to \code{base_fn()}:
+\itemize{
+\item First define an output object as \code{list()} upfront.
+For example, this call beforehand: \code{output_heatmap_list <- list()}
+\item Then inside \code{base_fn} assign data to that object using variables
+in \code{tab_list}, using \verb{<<-} parent environment assignment.
+For example:
+\code{output_heatmap_list[[tab_name1]][[tab_name2]] <<- hm_drawn}
+\item Of course, multiple types of data can be stored by using different
+\code{list} objects.
+}
+\item It may be helpful to catch errors, then display the error message
+for debugging. (Error handling is being implemented but may still be
+helpful in context of \code{base_fn} to indicate the specific step.)
+\itemize{
+\item For example:
+}
+
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{tryCatch(
+   \{
+      x
+   \},
+   error=function(e)\{
+      jamba::printDebugHtml("Error during x:");
+      jamba::printDebugHtml(e);
+   \})
+}\if{html}{\out{</div>}}
+\itemize{
+\item The function \code{jamba::printDebugHtml()} will output HTML formatted
+text suitable for use in RMarkdown being rendered into HTML.
+An alternative is to use \code{print()} or \code{jamba::printDebug()},
+however the output may not render legibly in HTML format (but in
+that case the text will still be readable in the HTML source).
+}
+}
+}
+
+\subsection{TODO}{
+\itemize{
+\item Implement tab visibility within \code{fn_list} so that tabs can be
+hidden at the corresponding level of particular tab values.
+In this case it should also hide all child tabs.
+\itemize{
+\item Consider a situation with three layers of tabs, a particular
+value in the second layer may be hidden, in which case all values
+in the third layer will also be hidden.
+}
+}
+}
 }
 \examples{
 tab_labels <- list(

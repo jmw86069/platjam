@@ -21,6 +21,50 @@
 #' or table. The functions in `fn_list` should be limited to those required
 #' for updates during the process.
 #'
+#' ## Helpful Tips
+#'
+#' * To store data objects generated within each call to `base_fn()`:
+#'
+#'    * First define an output object as `list()` upfront.
+#'    For example, this call beforehand: `output_heatmap_list <- list()`
+#'    * Then inside `base_fn` assign data to that object using variables
+#'    in `tab_list`, using `<<-` parent environment assignment.
+#'    For example:
+#'    `output_heatmap_list[[tab_name1]][[tab_name2]] <<- hm_drawn`
+#'    * Of course, multiple types of data can be stored by using different
+#'    `list` objects.
+#'
+#' * It may be helpful to catch errors, then display the error message
+#' for debugging. (Error handling is being implemented but may still be
+#' helpful in context of `base_fn` to indicate the specific step.)
+#'
+#'    * For example:
+#'    ```R
+#'    tryCatch(
+#'       {
+#'          x
+#'       },
+#'       error=function(e){
+#'          jamba::printDebugHtml("Error during x:");
+#'          jamba::printDebugHtml(e);
+#'       })
+#'    ```
+#'    * The function `jamba::printDebugHtml()` will output HTML formatted
+#'    text suitable for use in RMarkdown being rendered into HTML.
+#'    An alternative is to use `print()` or `jamba::printDebug()`,
+#'    however the output may not render legibly in HTML format (but in
+#'    that case the text will still be readable in the HTML source).
+#'
+#' ## TODO
+#'
+#' * Implement tab visibility within `fn_list` so that tabs can be
+#' hidden at the corresponding level of particular tab values.
+#' In this case it should also hide all child tabs.
+#'
+#'    * Consider a situation with three layers of tabs, a particular
+#'    value in the second layer may be hidden, in which case all values
+#'    in the third layer will also be hidden.
+#'
 #' @returns `NULL` invisibly, this function is called for the by-product
 #'    of printing RMarkdown-compatible output.
 #'
@@ -41,12 +85,31 @@
 #'    the function to be applied at the specified layer of tabs.
 #'    This function should create the tab content, and should not print
 #'    the tab header itself.
-#' @param final_fn `function` called at the bottom layer of tabs, after
-#'    the corresponding function from `fn_list` is called, if it exists.
-#'    This function is optional, and is intended to be a convenient place
-#'    for the core function in the stack, without having to include this
-#'    function in the final layer of `fn_list`.
-#' @param ... additional arguments are ignored.
+#' @param base_fn `function` called at the bottom layer of tabs.
+#'    * Note that this function is typically the only function recommended,
+#'    and will be called for each combination of values in `tab_list`.
+#'    * If `fn_list` is also defined, then the corresponding function is
+#'    called first, then `base_fn` is called if defined.
+#'    * `base_fn` is typically defined with format `base_fn <- function(...){}`
+#'    * `base_fn` can contain argument `test` for example in this format
+#'    `base_fn <- function(..., test=FALSE){}`.
+#'    * When argument `test` is defined in `base_fn` then for each tab,
+#'    a call is made to `base_fn(..., test=TRUE)` which should return
+#'    `logical` indicating whether to print the corresponding tab.
+#'    Only when it returns `TRUE` will the tab be displayed, otherwise the
+#'    tab is skipped.
+#' @param heading_level `numeric` heading level to use, where
+#'    `heading_level=2` will use the markdown heading `"##"`, and
+#'    tabs beneath this depth will use `"###"` and so no.
+#' @param verbose `logical` indicating whether to print verbose output.
+#'    Note that output will honor `htmlOut` which encodes output in
+#'    HTML format.
+#' @param htmlOut `logical` passed to `jamba::printDebug()` when `verbose=TRUE`
+#' @param envir `environment` used for internal iterative calls, used
+#'    to pass each layer of tab value when iterating the different values
+#'    in `tab_list`.
+#' @param ... additional arguments are ignored but passed to iterative
+#'    calls to this function.
 #'
 #' @examples
 #' tab_labels <- list(
@@ -90,7 +153,13 @@ rmd_tab_iterator <- function
  ...)
 {
    #
-   printRmd <- function(..., htmlOut1=htmlOut, comment=FALSE, timeStamp=FALSE){
+   printRmd <- function
+   (...,
+    htmlOut1=htmlOut,
+    comment=FALSE,
+    timeStamp=FALSE)
+   {
+      # wrapper around printDebug when printing in RMarkdown context
       jamba::printDebug(...,
          htmlOut=htmlOut1,
          timeStamp=timeStamp,
@@ -129,11 +198,22 @@ rmd_tab_iterator <- function
       # TODO: suppress the header when no content is present,
       # which probably requires assembling each sub-component to determine
       # whether there is any output... Not going to happen for now.
-      cat(paste0("\n\n",
-         heading_string, " ",
-         tab_label, " ",
-         tab_suffix,
-         "\n\n"))
+      # check for argument 'test' in base_fn()
+      display_tab <- TRUE;
+      test_tab_visibility <- FALSE;
+      if ("function" %in% class(base_fn)) {
+         if ("test" %in% names(formals(base_fn))) {
+            display_tab <- FALSE;
+            test_tab_visibility <- TRUE;
+         }
+      }
+      if (FALSE %in% test_tab_visibility && TRUE %in% display_tab) {
+         cat(paste0("\n\n",
+            heading_string, " ",
+            tab_label, " ",
+            tab_suffix,
+            "\n\n"))
+      }
 
       # assign value to the environment
       assign(x=tab_name,
@@ -160,7 +240,16 @@ rmd_tab_iterator <- function
             printRmd("rmd_tab_iterator(): ",
                "calling the tab function");
          }
-         tab_fn(...)
+         # tryCatch()
+         tryCatch({
+            tab_fn(...)
+         }, error=function(e){
+            jamba::printDebug("rmd_tab_iterator(): ",
+               c("Error during: ", "tab_fn(...)",
+                  ". The error message is shown below:"),
+               sep="");
+            printRmd(e);
+         })
       }
 
       # define the next iterator
@@ -198,12 +287,58 @@ rmd_tab_iterator <- function
       } else if ("function" %in% class(base_fn)) {
          # if present, call the final function
          environment(base_fn) <- envir;
-         # call this function
-         if (verbose) {
-            printRmd("rmd_tab_iterator(): ",
-               "calling the ", "base_fn", " function");
+
+         if (TRUE %in% test_tab_visibility) {
+            # call base_fn(test=TRUE)
+            if (verbose) {
+               printRmd("rmd_tab_iterator(): ",
+                  "calling ", "base_fn(..., test=TRUE)");
+            }
+            # tryCatch()
+            display_tab <- tryCatch({
+               base_fn(..., test=TRUE)
+            }, error=function(e){
+               jamba::printDebug("rmd_tab_iterator(): ",
+                  c("Error during: ", "base_fn()",
+                     ". The error message is shown below:"),
+                  sep="");
+               printRmd(e);
+               return(FALSE);
+            })
+            if (length(display_tab) == 0) {
+               display_tab <- FALSE
+            }
          }
-         base_fn(...)
+         if (TRUE %in% display_tab) {
+            cat(paste0("\n\n",
+               heading_string, " ",
+               tab_label, " ",
+               tab_suffix,
+               "\n\n"))
+         }
+
+         # call this function
+         if (FALSE %in% test_tab_visibility || TRUE %in% display_tab) {
+            if (verbose) {
+               printRmd("rmd_tab_iterator(): ",
+                  "calling ", "base_fn(...)");
+            }
+            # tryCatch()
+            tryCatch({
+               base_fn(...)
+            }, error=function(e){
+               jamba::printDebug("rmd_tab_iterator(): ",
+                  c("Error during: ", "base_fn()",
+                  ". The error message is shown below:"),
+                  sep="");
+               printRmd(e);
+            })
+         } else {
+            if (verbose) {
+               printRmd("rmd_tab_iterator(): ",
+                  "(a tab was skipped)");
+            }
+         }
       }
    }
    return(invisible(NULL))

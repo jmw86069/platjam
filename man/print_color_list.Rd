@@ -4,7 +4,14 @@
 \alias{print_color_list}
 \title{Print color list of color vectors or color functions}
 \usage{
-print_color_list(x, do_print = TRUE, colorized = TRUE, ...)
+print_color_list(
+  x,
+  do_print = TRUE,
+  colorized = TRUE,
+  digits = 4,
+  max_entries = Inf,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{list} of \code{character} color vectors, or \code{function} defined by
@@ -17,10 +24,47 @@ The \code{list} is returned invisibly.}
 \item{colorized}{\code{logical} indicating whether to print output using
 \code{jamba::printDebug()} with colorized output.}
 
+\item{digits}{\code{numeric} number of digits, passed to \code{signif()} to limit
+the number of digits displayed as a label for color function entries
+in \code{x}.}
+
+\item{max_entries}{\code{numeric} maximum number of entries displayed in any
+given element of \code{x}.}
+
 \item{...}{additional arguments are ignored.}
+}
+\value{
+\code{list} named by \code{names(x)} of the input data,
+each element contains a \code{character} vector of R colors
+named by respective label. The names are derived either directly
+from the input color vector, or by the \code{attr(i, "breaks")}
+encoded into the color function by \code{circlize::colorRamp2()}.
 }
 \description{
 Print color list of color vectors or color functions
+}
+\examples{
+# generate example data.frame of annotations
+n <- 100;
+set.seed(12);
+anno_df <- data.frame(
+   group=sample(c("A", "B", "B"),
+      size=n,
+      replace=TRUE),
+   tss_score=rnorm(n) + 4,
+   h3k4me1_score=rnorm(n) + 4
+);
+
+# generate a list of colors for the data.frame
+scl <- design2colors(anno_df,
+   group_colnames="group",
+   color_sub=c(tss_score="royalblue",
+      h3k4me1_score="slateblue"),
+   plot_type="none")
+
+# print the list of colors, color functions, in colorized text
+print_color_list(scl)
+
 }
 \seealso{
 Other jam color functions: 

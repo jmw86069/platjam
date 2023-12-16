@@ -1,4 +1,56 @@
+# TODO 15dec2023
+
+* `import_salmon_quant()`
+
+   * Done. Debug and fix occasional error `"duplicate 'row.names' are not allowed"`
+
+# TODO 06dec2023
+
+* migrate `slicejam::import_featurecounts()` here
+
+   * add argument `curation_txt` to populate `colData()` consistent with
+   other uses in this package.
+
+## `rmd_tab_iterator()`
+
+* allow tabs to be hidden
+
+   * DONE. design idea: optional argument to `base_fn` `test=TRUE` will return
+   `logical` indicating whether to display the tab.
+   * DONE. When `test` argument is defined for `base_fn()`, for example
+   `base_fn <- function(..., test=TRUE){ 1 }`:
+   
+      1. First call: `base_fn(test=TRUE, ...)`
+      2. If `FALSE` the tab is hidden and proceeds to the next iteration.
+      3. If `TRUE` the tab is shown, then call: `base_fn(x, test=FALSE, ...)`
+      4. If the return value is not `logical`, we assume the tab contents
+      have already been displayed.
+   
+   * When `test` argument is not defined for `base_fn()`, for example
+   `base_fn <- function(...){ 1 }`
+   
+      1. Tab is displayed, and a call is made to `base_fn(...)`
+
+* catch errors in `base_fn` so the tabs will continue to iterate
+
+   * consider returning `logical` for success (`TRUE`) or any error (`FALSE`),
+   or `integer` number of errors, so `0` indicates zero errors, `4` indicates
+   four total tabs caused an error.
+   * consider `tryCatch()` around the `base_fn()` calls.
+
 # TODO 09nov2023
+
+* `rmd_tab_iterator()`
+
+   * it has been useful to wrap `base_fn` inside `tryCatch()` which
+   continues and prints the error, without crashing the RMarkdown.
+   Consider how this may be added into this function as a default action.
+   * Need option to hide a tab, most commonly when there is no suitable
+   plot to be produced given the combination of parameters.
+   
+      * Design idea: return value `FALSE` indicates the tab should not
+      be displayed? Unclear how the order of steps might permit
+      hiding a tab...
 
 * `curate_se_colData()`
 
@@ -17,6 +69,10 @@
 # TODO 27oct2023
 
 * `nmatlist2heatmaps()`
+
+   * **Migrate into coverjam**
+   
+      * replace these functions with dependency on Github `"jmw86069/coverjam"`
 
    * more examples of customizing font sizes
    * consider option for global adjustment of all font sizes together
