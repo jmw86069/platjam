@@ -104,6 +104,9 @@
 #' @param verbose `logical` indicating whether to print verbose output.
 #'    Note that output will honor `htmlOut` which encodes output in
 #'    HTML format.
+#' @param quiet `logical` indicating whether to silent all error messages
+#'    and verbose output. When `quiet=TRUE` it also sets `verbose=FALSE`,
+#'    and silences error messages.
 #' @param htmlOut `logical` passed to `jamba::printDebug()` when `verbose=TRUE`
 #' @param envir `environment` used for internal iterative calls, used
 #'    to pass each layer of tab value when iterating the different values
@@ -148,11 +151,15 @@ rmd_tab_iterator <- function
  tab_labels=NULL,
  heading_level=2,
  verbose=FALSE,
+ quiet=TRUE,
  htmlOut=TRUE,
  envir=NULL,
  ...)
 {
    #
+   if (TRUE %in% quiet) {
+      verbose <- FALSE;
+   }
    printRmd <- function
    (...,
     htmlOut1=htmlOut,
@@ -200,19 +207,14 @@ rmd_tab_iterator <- function
       # whether there is any output... Not going to happen for now.
       # check for argument 'test' in base_fn()
       display_tab <- TRUE;
+      # display_tab_header <- TRUE;
       test_tab_visibility <- FALSE;
       if ("function" %in% class(base_fn)) {
          if ("test" %in% names(formals(base_fn))) {
             display_tab <- FALSE;
+            # display_tab_header <- FALSE;
             test_tab_visibility <- TRUE;
          }
-      }
-      if (FALSE %in% test_tab_visibility && TRUE %in% display_tab) {
-         cat(paste0("\n\n",
-            heading_string, " ",
-            tab_label, " ",
-            tab_suffix,
-            "\n\n"))
       }
 
       # assign value to the environment
@@ -244,17 +246,31 @@ rmd_tab_iterator <- function
          tryCatch({
             tab_fn(...)
          }, error=function(e){
-            jamba::printDebug("rmd_tab_iterator(): ",
-               c("Error during: ", "tab_fn(...)",
-                  ". The error message is shown below:"),
-               sep="");
-            printRmd(e);
+            if (!TRUE %in% quiet) {
+               printRmd("rmd_tab_iterator(): ",
+                  c("Error during: ", "tab_fn(...)",
+                     ". The error message is shown below:"),
+                  sep="");
+               printRmd(e);
+            }
          })
       }
 
       # define the next iterator
       new_tab_list <- tail(tab_list, -1);
       if (length(new_tab_list) > 0) {
+         # there are more layers of tabs to render
+
+         # render this tab layer independent of visibility
+         # if (FALSE %in% test_tab_visibility && TRUE %in% display_tab) {
+            # display_tab_header <- FALSE;
+            cat(paste0("\n\n",
+               heading_string, " ",
+               tab_label, " ",
+               tab_suffix,
+               "\n\n"))
+         # }
+
          new_fn_list <- fn_list[!names(fn_list) %in% tab_name]
          new_tab_labels <- tab_labels[!names(tab_labels) %in% tab_name]
          new_heading_level <- heading_level + 1;
@@ -267,6 +283,7 @@ rmd_tab_iterator <- function
             heading_level=new_heading_level,
             htmlOut1=htmlOut,
             verbose1=verbose,
+            quiet1=quiet,
             ...)
          {
             rmd_tab_iterator(tab_list=tab_list,
@@ -276,6 +293,7 @@ rmd_tab_iterator <- function
                heading_level=heading_level,
                htmlOut=htmlOut1,
                verbose=verbose1,
+               quiet=quiet1,
                envir=envir,
                ...)
          }
@@ -285,9 +303,8 @@ rmd_tab_iterator <- function
          }
          next_iterator(...)
       } else if ("function" %in% class(base_fn)) {
-         # if present, call the final function
-         environment(base_fn) <- envir;
-
+         # this is the final layer of tabs
+         # so we test visibility here
          if (TRUE %in% test_tab_visibility) {
             # call base_fn(test=TRUE)
             if (verbose) {
@@ -298,24 +315,39 @@ rmd_tab_iterator <- function
             display_tab <- tryCatch({
                base_fn(..., test=TRUE)
             }, error=function(e){
-               jamba::printDebug("rmd_tab_iterator(): ",
-                  c("Error during: ", "base_fn()",
-                     ". The error message is shown below:"),
-                  sep="");
-               printRmd(e);
+               if (!TRUE %in% quiet) {
+                  printRmd("rmd_tab_iterator(): ",
+                     c("Error during: ", "base_fn()",
+                        ". The error message is shown below:"),
+                     sep="");
+                  printRmd(e);
+               }
                return(FALSE);
             })
+            # empty return value is assumed to be FALSE
             if (length(display_tab) == 0) {
                display_tab <- FALSE
             }
-         }
-         if (TRUE %in% display_tab) {
+            if (TRUE %in% display_tab) {
+               cat(paste0("\n\n",
+                  heading_string, " ",
+                  tab_label, " ",
+                  tab_suffix,
+                  "\n\n"))
+            }
+         } else {
+            # if (FALSE %in% test_tab_visibility && TRUE %in% display_tab) {
+            # display_tab_header <- FALSE;
             cat(paste0("\n\n",
                heading_string, " ",
                tab_label, " ",
                tab_suffix,
-               "\n\n"))
+               "\n\n"));
+            display_tab <- TRUE;
          }
+
+         # if present, call the final function
+         environment(base_fn) <- envir;
 
          # call this function
          if (FALSE %in% test_tab_visibility || TRUE %in% display_tab) {
@@ -325,13 +357,15 @@ rmd_tab_iterator <- function
             }
             # tryCatch()
             tryCatch({
-               base_fn(...)
+               base_fn(..., test=FALSE)
             }, error=function(e){
-               jamba::printDebug("rmd_tab_iterator(): ",
-                  c("Error during: ", "base_fn()",
-                  ". The error message is shown below:"),
-                  sep="");
-               printRmd(e);
+               if (!TRUE %in% quiet) {
+                  printRmd("rmd_tab_iterator(): ",
+                     c("Error during: ", "base_fn()",
+                     ". The error message is shown below:"),
+                     sep="");
+                  printRmd(e);
+               }
             })
          } else {
             if (verbose) {
