@@ -40,10 +40,12 @@
 #'    spike-in probes on the codeset
 #'
 #' @param rlf `character` path to a Nanostring RLF file
-#' @param plot_type `character` string passed to `design2colors()` to define
-#'    colors for the Class data. Use `plot_type="none"` to suppress plotting
-#'    the colot table.
-#' @param color_sub,desat arguments passed to `design2colors()`.
+#' @param plot_type `character` string passed to `design2colors()` to assign
+#'    colors to RLF data.
+#'    Default `plot_type="none"` creates no plot.
+#' @param color_sub,desat arguments passed to `design2colors()`, where
+#'    `color_sub` is a name-color pairing to assign specific colors to
+#'    values, or colnames.
 #' @param ... additional arguments are passed to `design2colors()`.
 #'
 #' @returns `SummarizedExperiment` object
@@ -53,7 +55,9 @@
 #' @export
 import_nanostring_rlf <- function
 (rlf,
- plot_type=c("table", "list", "none"),
+ plot_type=c("none",
+    "table",
+    "list"),
  color_sub=c(
     Endogenous="darkorange",
     Positive="greenyellow",
@@ -116,6 +120,7 @@ import_nanostring_rlf <- function
          force_consistent_colors=FALSE,
          color_sub=color_sub,
          desat=desat,
+         plot_type=plot_type,
          ...)
    }, error=function(e){
       print(e)

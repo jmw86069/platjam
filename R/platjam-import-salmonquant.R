@@ -305,6 +305,7 @@ import_salmon_quant <- function
       # usually occurs when rownames do not match tx2gene, which is
       # often the version numbers ENST000012.1_1
       rownames(rowData_tx) <- rowData_tx[[tx_colname]];
+
       # Create tx SummarizedExperiment
       TxSE <- SummarizedExperiment(
          assays=list(

@@ -239,7 +239,7 @@ import_nanostring_rcc <- function
          )
       );
       rcc.data <- read.table(
-         text=pasteByRow(sep="\t", rcc.data1),
+         text=jamba::pasteByRow(sep="\t", rcc.data1),
          stringsAsFactors=FALSE,
          sep="\t",
          header=TRUE,
@@ -317,7 +317,7 @@ import_nanostring_rcc <- function
 
    nano_samples <- read.table(
       text=c(paste(rownames(x$header), collapse="\t"),
-         pasteByRow(sep="\t",
+         jamba::pasteByRow(sep="\t",
             condenseBlanks=FALSE,
             t(x$header))),
       stringsAsFactors=FALSE,
@@ -336,10 +336,10 @@ import_nanostring_rcc <- function
    # add probe control_type if needed
    if (!"control_type" %in% colnames(rowData(nano_se))) {
       SummarizedExperiment::rowData(nano_se)$control_type <- ifelse(
-         grepl("^POS", rownames(nano_se)),
+         grepl("^POS_", rownames(nano_se)),
          "POS",
          ifelse(
-            grepl("^NEG", rownames(nano_se)),
+            grepl("^NEG_", rownames(nano_se)),
             "NEG",
             NA))
    }

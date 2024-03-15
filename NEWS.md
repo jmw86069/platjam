@@ -1,3 +1,21 @@
+# platjam 0.0.80.900
+
+## bug fixes
+
+* `import_nanostring_rcc()`
+
+   * added prefix to call `jamba::pasteByRow()`
+   * changed detection of positive/negative control probes to use `"^POS_"`
+   and `"^NEG_"` instead of previous `"^POS"`, `"^NEG"`. Previous approach
+   would mark `"POSTN"` a positive control, when it is an endogenous gene.
+
+## changes to existing functions
+
+* `import_nanostring_rlf()`
+
+   * changed default `plot_type="none"` so the default is not to create
+   a color assignment plot.
+
 # platjam 0.0.79.900
 
 * `rmd_tab_iterator()` - major update

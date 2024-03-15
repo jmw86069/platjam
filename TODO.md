@@ -1,3 +1,19 @@
+# TODO 01mar2024
+
+* `get_salmon_meta()`
+
+   * when a JSON file is missing, give an error with that information,
+   for example when `meta_info.json` is absent, the error should
+   say that, to help the user find and fix the problem.
+
+# TODO 26jan2024
+
+* `rmd_tab_iterator()`
+
+   * Consider option to define the active tab for each layer of tabs,
+   see https://bookdown.org/yihui/rmarkdown-cookbook/html-tabs.html
+   `### Tab name {.active}`
+
 # TODO 15dec2023
 
 * `import_salmon_quant()`

@@ -6,7 +6,7 @@
 \usage{
 import_nanostring_rlf(
   rlf,
-  plot_type = c("table", "list", "none"),
+  plot_type = c("none", "table", "list"),
   color_sub = c(Endogenous = "darkorange", Positive = "greenyellow", Negative =
     "firebrick3", Housekeeping = "gold", Binding = "steelblue4", Purification =
     "steelblue2", Reserved = "mediumpurple1", ClassDate = "blue", ClassName_count =
@@ -18,11 +18,13 @@ import_nanostring_rlf(
 \arguments{
 \item{rlf}{\code{character} path to a Nanostring RLF file}
 
-\item{plot_type}{\code{character} string passed to \code{design2colors()} to define
-colors for the Class data. Use \code{plot_type="none"} to suppress plotting
-the colot table.}
+\item{plot_type}{\code{character} string passed to \code{design2colors()} to assign
+colors to RLF data.
+Default \code{plot_type="none"} creates no plot.}
 
-\item{color_sub, desat}{arguments passed to \code{design2colors()}.}
+\item{color_sub, desat}{arguments passed to \code{design2colors()}, where
+\code{color_sub} is a name-color pairing to assign specific colors to
+values, or colnames.}
 
 \item{...}{additional arguments are passed to \code{design2colors()}.}
 }
