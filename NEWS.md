@@ -11,6 +11,10 @@
 
 ## changes to existing functions
 
+* `import_nanostring_rcc()`
+
+   * New argument `curation_txt` to include sample curation during import.
+   
 * `import_nanostring_rlf()`
 
    * changed default `plot_type="none"` so the default is not to create

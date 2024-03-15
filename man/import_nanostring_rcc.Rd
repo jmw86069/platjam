@@ -14,6 +14,7 @@ import_nanostring_rcc(
   control_greps = c(POS = "^POS", NEG = "^NEG"),
   hk_count = 10,
   assay_name = NULL,
+  curation_txt = NULL,
   return_type = c("SummarizedExperiment", "NanoString"),
   debug = FALSE,
   verbose = FALSE,
@@ -51,6 +52,12 @@ NanoString codeset design.}
 \item{assay_name}{\code{character} string of optional assay name used
 in the \code{SummarizedExperiment} object created. When \code{NULL} the
 default is \code{"raw"}.}
+
+\item{curation_txt}{\code{data.frame} whose first column should match the
+sample column headers found in the PD abundance columns, and
+subsequent columns contain associated sample annotations.
+If \code{curation_txt} is not supplied, then values will be split into
+columns by \verb{_} underscore or \code{" "} whitespace characters.}
 
 \item{return_type}{\code{character} string indicating the format to return.
 SummarizedExperiment is recommended, as the NanoString format

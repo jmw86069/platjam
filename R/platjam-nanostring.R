@@ -48,6 +48,11 @@
 #' @param assay_name `character` string of optional assay name used
 #'    in the `SummarizedExperiment` object created. When `NULL` the
 #'    default is `"raw"`.
+#' @param curation_txt `data.frame` whose first column should match the
+#'    sample column headers found in the PD abundance columns, and
+#'    subsequent columns contain associated sample annotations.
+#'    If `curation_txt` is not supplied, then values will be split into
+#'    columns by `_` underscore or `" "` whitespace characters.
 #' @param debug logical indicating whether to send intermediate data
 #'    before full processing, useful for debugging file format errors.
 #' @param verbose logical indicating whether to print verbose output.
@@ -64,6 +69,7 @@ import_nanostring_rcc <- function
  control_greps=c(POS="^POS", NEG="^NEG"),
  hk_count=10,
  assay_name=NULL,
+ curation_txt=NULL,
  return_type=c("SummarizedExperiment", "NanoString"),
  debug=FALSE,
  verbose=FALSE,
@@ -315,6 +321,7 @@ import_nanostring_rcc <- function
       nano_genes[names(nano_controls),"control_type"] <- nano_controls;
    }
 
+   # parse sample annotations from Nanostring
    nano_samples <- read.table(
       text=c(paste(rownames(x$header), collapse="\t"),
          jamba::pasteByRow(sep="\t",
@@ -325,9 +332,65 @@ import_nanostring_rcc <- function
       header=TRUE,
       comment.char="");
    rownames(nano_samples) <- colnames(x$header);
+
+   # import sample annotations
+   isamples <- rownames(nano_samples);
+   if (length(curation_txt) > 0) {
+      if (verbose) {
+         jamba::printDebug("import_nanostring_rcc(): ",
+            "applying sample annotations via curation_txt.");
+      }
+      # sample_df
+      sample_df <- curate_to_df_by_pattern(
+         isamples,
+         df=curation_txt,
+         ...);
+      isamples1 <- rownames(sample_df);
+
+      # match the order to nano_samples
+      filename_colname <- head(jamba::vigrep("^filename$",
+         colnames(sample_df)),
+         1);
+      nano_sample_match <- match(sample_df[[filename_colname]],
+         rownames(nano_samples))
+      use_nano_samples <- nano_samples[nano_sample_match, , drop=FALSE];
+      colnames(use_nano_samples) <- tail(makeNames(c(
+         colnames(sample_df), colnames(nano_samples))),
+         ncol(nano_samples))
+      sample_df[, colnames(use_nano_samples)] <- use_nano_samples[
+         nano_sample_match, , drop=FALSE];
+
+      if (!all(isamples1 == isamples)) {
+         # synchronize sample order
+         isamples_match <- match(sample_df[[filename_colname]],
+            isamples);
+         isamples_from <- isamples[isamples_match];
+         isamples_to <- isamples1;
+         if (verbose > 1) {
+            jamba::printDebug("import_nanostring_rcc(): ",
+               "renaming sample colnames to match sample_df:");
+            print(data.frame(isamples_from,
+               isamples_to));
+         }
+         # rename matrix colnames
+         nano_assays <- jamba::renameColumn(nano_assays,
+            from=isamples_from,
+            to=isamples_to);
+      }
+      isamples <- isamples1;
+      if (verbose) {
+         if (verbose > 1) {
+            jamba::printDebug("import_salmon_quant(): ",
+               "sample_df:");
+            print(sample_df);
+         }
+      }
+      nano_samples <- sample_df;
+   }
+
    nano_se <- SummarizedExperiment::SummarizedExperiment(
-      assays=list(raw=nano_assays),
-      colData=nano_samples,
+      assays=list(raw=nano_assays[, isamples, drop=FALSE]),
+      colData=nano_samples[match(isamples, rownames(nano_samples)), , drop=FALSE],
       rowData=nano_genes);
    if (length(assay_name) > 0) {
       names(SummarizedExperiment::assays(nano_se)) <- head(assay_name, 1);
