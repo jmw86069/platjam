@@ -304,6 +304,10 @@ rmd_tab_iterator <- function
          next_iterator(...)
       } else if ("function" %in% class(base_fn)) {
          # this is the final layer of tabs
+
+         # in order to test visibility we must set the environment
+         environment(base_fn) <- envir;
+
          # so we test visibility here
          if (TRUE %in% test_tab_visibility) {
             # call base_fn(test=TRUE)
@@ -328,6 +332,10 @@ rmd_tab_iterator <- function
             if (length(display_tab) == 0) {
                display_tab <- FALSE
             }
+            if (verbose) {
+               printRmd("rmd_tab_iterator(): ",
+                  "display_tab: ", display_tab);
+            }
             if (TRUE %in% display_tab) {
                cat(paste0("\n\n",
                   heading_string, " ",
@@ -336,8 +344,7 @@ rmd_tab_iterator <- function
                   "\n\n"))
             }
          } else {
-            # if (FALSE %in% test_tab_visibility && TRUE %in% display_tab) {
-            # display_tab_header <- FALSE;
+            # if we are testing visibility, then display the tab
             cat(paste0("\n\n",
                heading_string, " ",
                tab_label, " ",
@@ -347,8 +354,6 @@ rmd_tab_iterator <- function
          }
 
          # if present, call the final function
-         environment(base_fn) <- envir;
-
          # call this function
          if (FALSE %in% test_tab_visibility || TRUE %in% display_tab) {
             if (verbose) {

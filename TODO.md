@@ -1,3 +1,20 @@
+# TODO 16apr2024
+
+* DONE. `rmd_tab_iterator()`
+
+   * DONE. The `test=TRUE` functionality is not working properly for nested tabs.
+
+# TODO 10apr2024
+
+* `design2colors()`
+
+   * Consider method to assign categorical colors to a column name,
+   for example `Sample_ID="rainbowJam"` would create categorical colors
+   for all values in this column, preventing it from assuming the
+   same color as the sample group.
+   * Consider allowing `color_sub` to be a `list` which may contain
+   a `function` to use for color assignment of column values.
+
 # TODO 01mar2024
 
 * `get_salmon_meta()`

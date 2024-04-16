@@ -1,3 +1,14 @@
+# platjam 0.0.81.900
+
+## bug fixes
+
+* `rmd_tab_iterator()`
+
+   * Fixed bug when `base_fn` contained argument `test`, the environment
+   was not properly defined before testing whether the tab should be
+   visible, even though the environment was properly defined before
+   calling the subsequent function `base_fn(..., test=FALSE)`.
+
 # platjam 0.0.80.900
 
 ## bug fixes
