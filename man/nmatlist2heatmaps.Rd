@@ -61,8 +61,10 @@ nmatlist2heatmaps(
   iter.max = 20,
   use_raster = TRUE,
   raster_quality = 1,
-  raster_by_magick = TRUE,
+  raster_by_magick = jamba::check_pkg_installed("magick"),
   do_plot = TRUE,
+  do_caption = TRUE,
+  caption_fontsize = 10,
   legend_width = grid::unit(3, "cm"),
   trim_legend_title = TRUE,
   padding = grid::unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
@@ -567,6 +569,10 @@ files much larger than normal.}
 \code{do_plot=TRUE} (default) renders the plots as normal.
 \code{do_plot=FALSE} will return the data used to create heatmaps
 without drawing the heatmaps.}
+
+\item{do_caption}{\code{logical} indicating whether to include a small caption
+at the bottom-right of the plot, describing the number of rows and
+columns, the partition, k-means clustering, and main heatmap.}
 
 \item{padding}{\code{grid::unit} object used during \code{ComplexHeatmap::draw()}
 to add whitespace padding around the boundaries of the overall list

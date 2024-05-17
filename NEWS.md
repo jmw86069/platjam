@@ -1,3 +1,31 @@
+# platjam 0.0.82.900
+
+* Added `stringi` to package dependencies, for word wrap without incurring
+heavy dependencies from `stringr` (which calls `stringi` anyway).
+
+* `nmatlist2heatmaps()`
+
+   * Added option to hide the caption, but `do_caption=TRUE` is default.
+   * New arg `caption_fontsize=10` to control caption text size.
+   * The caption includes `byCols` columns in the `anno_df` used to
+   order the rows.
+   * When data is transformed, the transform is no longer printed
+   inside parentheses.
+   * The color legend now uses `adjust_annotation_extension=TRUE` to
+   ensure the legend does not overlap the annotation labels.
+   * Color legend titles are word-wrapped at 15 characters, to handle
+   very wide multi-word labels.
+   * `raster_by_magick` by default checks that `magick` is available.
+
+## new functions
+
+* `apply_word_wrap()` - calls `stringi::stri_wrap()` and combines
+vectors by `sep`, default `"\n"` for multi-line word wrap by default.
+It improves `base::strwrap()` by also offering `whitespace_only=TRUE`
+so that strings can be split at `"-"` and other light punctuation,
+instead of requiring a space `" "`.
+
+
 # platjam 0.0.81.900
 
 ## bug fixes

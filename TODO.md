@@ -1,3 +1,10 @@
+# TODO 17may2024
+
+* `nmatlist2heatmaps()`
+
+   * DONE. Consider applying word-wrap to color legend titles, so the title
+   does not become unreasonably long.
+
 # TODO 16apr2024
 
 * DONE. `rmd_tab_iterator()`

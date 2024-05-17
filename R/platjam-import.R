@@ -759,6 +759,9 @@ coverage_matrix2nmat <- function
 #'    `do_plot=TRUE` (default) renders the plots as normal.
 #'    `do_plot=FALSE` will return the data used to create heatmaps
 #'    without drawing the heatmaps.
+#' @param do_caption `logical` indicating whether to include a small caption
+#'    at the bottom-right of the plot, describing the number of rows and
+#'    columns, the partition, k-means clustering, and main heatmap.
 #' @param padding `grid::unit` object used during `ComplexHeatmap::draw()`
 #'    to add whitespace padding around the boundaries of the overall list
 #'    of heatmaps. This padding is useful to enforce extra whitespace,
@@ -951,8 +954,10 @@ nmatlist2heatmaps <- function
  iter.max=20,
  use_raster=TRUE,
  raster_quality=1,
- raster_by_magick=TRUE,
+ raster_by_magick=jamba::check_pkg_installed("magick"),
  do_plot=TRUE,
+ do_caption=TRUE,
+ caption_fontsize=10,
  legend_width=grid::unit(3, "cm"),
  trim_legend_title=TRUE,
  padding=grid::unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
@@ -1606,8 +1611,9 @@ nmatlist2heatmaps <- function
       if (verbose) {
          jamba::printDebug("nmatlist2heatmaps(): ",
             "sdim(anno_colors_l):");
-         print(sdim(anno_colors_l));
-         str(anno_colors_l);
+         print(jamba::sdim(anno_colors_l));
+         # str(anno_colors_l);
+         platjam::print_color_list(anno_colors_l);
       }
 
       ## annotation_legend_param
@@ -1630,7 +1636,7 @@ nmatlist2heatmaps <- function
             a_num <- length(setdiff(unique(i1), c("", NA)));
             a_ncol <- min(c(ceiling(a_num / legend_base_nrow), legend_max_ncol));
             a_nrow <- ceiling(a_num / a_ncol);
-            i_title <- jamba::cPaste(strwrap(i, width=15), sep="\n");
+            i_title <- apply_word_wrap(i, width=15, sep="\n")
             if (a_num <= 10) {
                ## display distinct steps
                if (is.numeric(i1)) {
@@ -1666,7 +1672,7 @@ nmatlist2heatmaps <- function
                }
                list(
                   direction="horizontal",
-                  title=i,
+                  title=i_title,
                   labels_rot=90,
                   legend_width=legend_width,
                   title_position="topleft",
@@ -1686,7 +1692,7 @@ nmatlist2heatmaps <- function
                   i1_labels <- gsub("\n", " ", i1_at);
                }
                list(
-                  title=i,
+                  title=i_title,
                   title_position="topleft",
                   at=i1_at,
                   labels=i1_labels,
@@ -2095,8 +2101,8 @@ nmatlist2heatmaps <- function
          # otherwise consider adding transform_label suffix
          if (nchar(transform_label[[i]]) > 0 &&
                !any(c(NA, "none") %in% transform_label[[i]])) {
-            signal_name <- paste0(signal_name, "\n(",
-               transform_label[[i]], ")")
+            signal_name <- paste0(signal_name, "\n",
+               transform_label[[i]])
          } else if (any(nchar(transform_label) > 0)) {
             signal_name <- paste0(signal_name, "\n ")
          }
@@ -2296,6 +2302,7 @@ nmatlist2heatmaps <- function
          ht_1 <- grid::grid.grabExpr(
             ComplexHeatmap::draw(HM_temp,
                ht_gap=ht_gap,
+               adjust_annotation_extension=TRUE,
                main_heatmap=main_heatmap_temp));
          ht_1;
       });
@@ -2419,6 +2426,10 @@ nmatlist2heatmaps <- function
          "\n", np,
          " partition", ifelse(np > 1, "s", ""));
    }
+   if (length(byCols) > 0) {
+      hm_caption <- paste0(hm_caption,
+         "\nsorted by: ", jamba::cPaste(byCols, sep="\n   "))
+   }
    if (any(k_clusters > 1)) {
       hm_caption <- paste0(hm_caption,
          "\nk-means '", k_method, "' ",
@@ -2457,8 +2468,8 @@ nmatlist2heatmaps <- function
       })
       return(invisible(drawn))
    }
-   if (TRUE %in% do_plot) {
-      draw_caption();
+   if (TRUE %in% do_plot && TRUE %in% do_caption) {
+      draw_caption(fontsize=caption_fontsize);
    }
 
    ret_list <- list(AHM=AHM,
