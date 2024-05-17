@@ -125,9 +125,14 @@ coverage_matrix2nmat <- function
       if (all(file.exists(x))) {
          xseq <- jamba::nameVector(seq_along(x), names(x));
          nmatlist <- lapply(xseq, function(i){
+            if (length(signal_name) >= i) {
+               use_name <- signal_name[i];
+            } else {
+               use_name <- names(x)[i]
+            }
             coverage_matrix2nmat(x=x[i],
                filename=NULL,
-               signal_name=names(x)[i],
+               signal_name=use_name,
                target_name=target_name,
                background=background,
                smooth=smooth,
@@ -165,7 +170,7 @@ coverage_matrix2nmat <- function
             if (length(names(filename)) > 0 && nchar(head(names(filename), 1)) > 0) {
                signal_name <- head(names(filename), 1);
             } else {
-               signal_name <- basename(head(filename, 1));
+               signal_name <- gsub("[.]matrix$", "", basename(head(filename, 1)));
             }
          }
       }
@@ -183,7 +188,7 @@ coverage_matrix2nmat <- function
          if (length(names(filename)) > 0 && nchar(head(names(filename), 1)) > 0) {
             signal_name <- head(names(filename), 1);
          } else {
-            signal_name <- basename(head(filename, 1));
+            signal_name <- gsub("[.]matrix$", "", basename(head(filename, 1)));
          }
       }
    }
@@ -795,7 +800,8 @@ coverage_matrix2nmat <- function
 #' names(cov_files) <- gsub("[.]matrix",
 #'    "",
 #'    basename(cov_files));
-#' nmatlist <- lapply(cov_files, coverage_matrix2nmat);
+#' nmatlist <- coverage_matrix2nmat(cov_files, verbose=TRUE);
+#' sapply(nmatlist, function(nmat){attr(nmat, "signal_name")})
 #' nmatlist2heatmaps(nmatlist);
 #'
 #' # sometimes data transform can be helpful
@@ -803,7 +809,7 @@ coverage_matrix2nmat <- function
 #'    transform=c("log2signed", "sqrt"));
 #'
 #' # k-means clusters, default uses euclidean distance
-#' nmatlist2heatmaps(nmatlist, k_clusters=4,
+#' nmatlist2heatmaps(nmatlist, k_clusters=4,,
 #'    transform=c("log2signed", "sqrt"));
 #'
 #' # k-means clusters, "correlation" or "pearson" sometimes works better
@@ -850,7 +856,8 @@ coverage_matrix2nmat <- function
 #' # invent anno_df data.frame of additional annotations
 #' anno_df <- data.frame(
 #'    tss_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[1]])),
-#'    h3k4me1_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[2]]))
+#'    h3k4me1_score=EnrichedHeatmap::enriched_score(jamba::log2signed(nmatlist[[2]])),
+#'    chromosome=paste0("chr", sample(1:4, replace=TRUE, size=nrow(nmatlist[[1]])))
 #' );
 #' rownames(anno_df) <- rownames(nmatlist[[1]]);
 #' nmatlist2heatmaps(nmatlist,
@@ -880,7 +887,8 @@ coverage_matrix2nmat <- function
 #'    k_heatmap=1:2,
 #'    anno_df=anno_df,
 #'    partition="group",
-#'    row_title_rot=0)
+#'    row_title_rot=0,
+#'    transform=rep(c("log2signed", "sqrt"), each=3));
 #'
 #' # same as above, partition and k_clusters together
 #' # except uses multiple values for k_clusters
