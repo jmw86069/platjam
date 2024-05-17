@@ -872,7 +872,7 @@ coverage_matrix2nmat <- function
 #'
 #' # example showing k-means clustering together with annotation groups
 #' anno_df <- data.frame(
-#'    group=sample(c("A", "B", "B"),
+#'    group=sample(c(1, -1, -1),
 #'       size=nrow(nmatlist[[1]]),
 #'       replace=TRUE),
 #'    row.names=rownames(nmatlist[[1]]))
@@ -880,7 +880,9 @@ coverage_matrix2nmat <- function
 #' # showing how the width is adjusted
 #' nmatlist2heatmaps(nmatlist,
 #'    heatmap_legend_direction="vertical",
-#'    k_clusters=5,
+#'    k_clusters=0,
+#'    color_sub=c(`A`="firebrick", `B`="darkorchid"),
+#'    k_colors=c("firebrick", "dodgerblue"),
 #'    min_rows_per_k=50,
 #'    ht_gap=grid::unit(1, "cm"),
 #'    k_method="correlation",
@@ -1064,7 +1066,17 @@ nmatlist2heatmaps <- function
    partition_colors <- NULL;
    if (length(partition) > 0) {
       if (length(anno_df) > 0 && all(partition %in% colnames(anno_df))) {
-         partition <- jamba::pasteByRowOrdered(anno_df[, partition, drop=FALSE])
+         partition_df <- data.frame(check.names=FALSE,
+            anno_df[, partition, drop=FALSE]);
+         for (pcol in partition) {
+            if (is.numeric(partition_df[[pcol]])) {
+               # sort numeric columns decreasing order
+               # so numbers will be ordered bottom to top (like scatterplots)
+               partition_df[[pcol]] <- factor(partition_df[[pcol]],
+                  levels=rev(sort(unique(partition_df[[pcol]]))))
+            }
+         }
+         partition <- jamba::pasteByRowOrdered(partition_df)
          names(partition) <- rownames(anno_df);
       }
       if (length(names(partition)) > 0) {
@@ -1087,7 +1099,11 @@ nmatlist2heatmaps <- function
       }
       partition_values <- levels(factor(partition));
       if (length(color_sub) > 0) {
-         if ("color_sub" %in% names(attributes(color_sub))) {
+         if (is.atomic(color_sub)) {
+            if (all(partition_values %in% names(color_sub))) {
+               partition_colors <- color_sub[partition_values];
+            }
+         } else if ("color_sub" %in% names(attributes(color_sub))) {
             color_sub_v <- attr(color_sub, "color_sub");
             if (all(partition_values %in% names(color_sub_v))) {
                partition_colors <- color_sub_v[partition_values];
@@ -1110,8 +1126,13 @@ nmatlist2heatmaps <- function
       }
       # fallback to categorical assignment
       if (length(partition_colors) == 0) {
-         partition_colors <- colorjam::group2colors(x=partition_values,
-            sortFunc=c)
+         if (length(k_colors) >= length(partition_values)) {
+            partition_colors <- head(k_colors, length(partition_values));
+            names(partition_colors) <- partition_values;
+         } else {
+            partition_colors <- colorjam::group2colors(x=partition_values,
+               sortFunc=c)
+         }
       }
       # replace any NA colors with grey?
       if (any(is.na(partition_colors))) {
@@ -1218,7 +1239,7 @@ nmatlist2heatmaps <- function
 
    ##################################
    ## Optional k-means clustering
-   if (length(k_clusters) > 0 && any(k_clusters > 0)) {
+   if (length(k_clusters) > 0 && any(k_clusters > 1)) {
       # expand k_clusters to the number of partitions
       if (length(partition) > 0) {
          k_clusters <- rep(k_clusters,
@@ -1394,12 +1415,14 @@ nmatlist2heatmaps <- function
       ## Define colors if not provided
       if (length(k_colors) == 0) {
          k_colors <- jamba::nameVector(
-            colorjam::rainbowJam(length(levels(partition)),
-               ...),
+            # colorjam::rainbowJam(length(levels(partition)), ...),
+            partition_colors[levels(partition)],
             levels(partition));
          # k_colors <- k_colors[sort(names(k_colors))];
       } else {
-         k_colors <- k_colors[levels(partition)]
+         if (all(levels(partition) %in% names(k_colors))) {
+            k_colors <- k_colors[levels(partition)]
+         }
       }
 
       ## Optional subset of k-means clusters
