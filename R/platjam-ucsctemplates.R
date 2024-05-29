@@ -15,19 +15,49 @@
 #' * composite_parent - equivalent to a composite view within a composite track
 #' * composite_track - individual track within the composite track.
 #'
-#' @return `environment` which contains the default values, and template
-#'    values.
+#' @returns `environment` which contains each template chunk for each
+#'    type of track section, and the corresponding default values.
 #'
 #' @family jam ucsc browser functions
 #'
 #' @param env `environment` in which to store the default values
-#'    and track templates.
+#'    and track templates. If the input `env` already contains any of the
+#'    environment names, they will be used as-is without modification.
+#'
+#'    Therefore, to use custom default values, or a custom template:
+#'    * call `default_env <- get_track_defaults()`
+#'    * edit the environment,
+#'    * call `parse_ucsc_gokey(..., default_env=default_env)`
+#'
+#'    Relevant default values are stored in these `list` elements:
+#'    * composite_bed_defaults
+#'    * composite_defaults
+#'    * overlay_defaults
+#'
+#' @examples
+#' default_env <- get_track_defaults();
+#' # describe the contents
+#' jamba::sdim(default_env)
+#'
+#' # customize view default to "PEAKS" instead of "JUNC"
+#' default_env$composite_bed_defaults$view <- "PEAKS"
+#' # change type to bigBed 10
+#' default_env$composite_bed_defaults$type <- "bigBed 10"
+#' data.frame(composite_bed_defaults=unlist(default_env$composite_bed_defaults))
+#'
+#' # customize multiWig aggregate to "none"
+#' default_env$overlay_defaults$aggregate <- "none";
 #'
 #' @export
 get_track_defaults <- function
 (env=new.env())
 {
-   overlay_header <- "
+   # if input env is NULL, create a new environment
+   if ("NULL" %in% class(env)) {
+      env <- new.env();
+   }
+   if (!"overlay_header" %in% ls(env)) {
+      env$overlay_header <- "
 
 track                {superTrack}
 superTrack           on show
@@ -37,8 +67,10 @@ configurable         on
 priority             {priority}
 
 ";
+   }
 
-   overlay_parent <- "
+   if (!"overlay_parent" %in% ls(env)) {
+      env$overlay_parent <- "
 
    track                  {parent}
    superTrack             {superTrack} full
@@ -58,8 +90,9 @@ priority             {priority}
    priority               {priority}
 
 ";
-
-   overlay_track <- "
+   }
+   if (!"overlay_track" %in% ls(env)) {
+      env$overlay_track <- "
 
       track             {track}
       parent            {parent}
@@ -71,21 +104,26 @@ priority             {priority}
       priority          {priority}
 
 ";
-   overlay_defaults <- list(
-      type="bigwig",
-      container="multiWig",
-      aggregate="transparentOverlay",
-      alwaysZero="on",
-      graphTypeDefault="bar",
-      centerLabelsDense="on",
-      maxHeightPixels="100:66:5",
-      windowingFunction="mean+whiskers",
-      autoScale="on",
-      visibility="full",
-      color="0,0,150"
-   );
+   }
 
-   composite_header <- "
+   if (!"overlay_defaults" %in% ls(env)) {
+      env$overlay_defaults <- list(
+         type="bigwig",
+         container="multiWig",
+         aggregate="transparentOverlay",
+         alwaysZero="on",
+         graphTypeDefault="bar",
+         centerLabelsDense="on",
+         maxHeightPixels="100:66:5",
+         windowingFunction="mean+whiskers",
+         autoScale="on",
+         visibility="full",
+         color="0,0,150"
+      );
+   }
+
+   if (!"composite_header" %in% ls(env)) {
+      env$composite_header <- "
 
 track             {superTrack}
 compositeTrack    on
@@ -101,9 +139,11 @@ visibility        {visibility}
 priority          {priority}
 
 ";
+   }
    #type              bed 3
 
-   composite_parent <- "
+   if (!"composite_parent" %in% ls(env)) {
+      env$composite_parent <- "
 
    track                {parent}
    parent               {superTrack} on
@@ -125,10 +165,12 @@ priority          {priority}
    priority             {priority}
 
 ";
+   }
    #   viewLimits           {viewLimits}
    #   compositeTrack       on
 
-   composite_track <- "
+   if (!"composite_track" %in% ls(env)) {
+      env$composite_track <- "
 
       track                {track}
       parent               {parent} on
@@ -146,25 +188,29 @@ priority          {priority}
       priority             {priority}
 
 ";
+   }
    #      viewLimits           {viewLimits}
 
-   composite_defaults <- list(
-      visibility="full",
-      view="COV",
-      type="bigwig",
-      maxHeightPixels="100:35:5",
-      transformFunc="NONE",
-      gridDefault="on",
-      centerLabelsDense="on",
-      autoScale="on",
-      alwaysZero="on",
-      viewLimits="",
-      smoothingWindow="off",
-      windowingFunction="mean+whiskers",
-      color="0,0,150"
-   );
+   if (!"composite_defaults" %in% ls(env)) {
+      env$composite_defaults <- list(
+         visibility="full",
+         view="COV",
+         type="bigwig",
+         maxHeightPixels="100:35:5",
+         transformFunc="NONE",
+         gridDefault="on",
+         centerLabelsDense="on",
+         autoScale="on",
+         alwaysZero="on",
+         viewLimits="",
+         smoothingWindow="off",
+         windowingFunction="mean+whiskers",
+         color="0,0,150"
+      );
+   }
 
-   composite_bed_header <- "
+   if (!"composite_bed_header" %in% ls(env)) {
+      env$composite_bed_header <- "
 
 track             {superTrack}
 compositeTrack    on
@@ -180,8 +226,10 @@ visibility        {visibility}
 priority          {priority}
 
 ";
+   }
 
-   composite_bed_parent <- "
+   if (!"composite_bed_parent" %in% ls(env)) {
+      env$composite_bed_parent <- "
 
    track                {parent}
    parent               {superTrack} on
@@ -200,8 +248,10 @@ priority          {priority}
    priority             {priority}
 
 ";
+   }
 
-   composite_bed_track <- "
+   if (!"composite_bed_track" %in% ls(env)) {
+      env$composite_bed_track <- "
 
       track                {track}
       parent               {parent} on
@@ -215,44 +265,47 @@ priority          {priority}
       priority             {priority}
 
 ";
-
-   composite_bed_defaults <- list(
-      visibility="pack",
-      view="JUNC",
-      type="bigBed 12",
-      allButtonPair="on",
-      centerLabelsDense="on",
-      dragAndDrop="on",
-      thickDrawItem="on",
-      scoreFilter="5",
-      scoreFilterLimits="1:1000",
-      viewUi="on",
-      gridDefault="on",
-      autoScale="on",
-      alwaysZero="on",
-      viewLimits="",
-      smoothingWindow="off",
-      windowingFunction="mean+whiskers",
-      color="0,0,150"
-   );
-
-   default_names <- c("overlay_header",
-      "overlay_parent",
-      "overlay_track",
-      "overlay_defaults",
-      "composite_header",
-      "composite_parent",
-      "composite_track",
-      "composite_defaults",
-      "composite_bed_header",
-      "composite_bed_parent",
-      "composite_bed_track",
-      "composite_bed_defaults");
-   for (default_name in default_names) {
-      assign(default_name,
-         value=get(default_name),
-         envir=env);
    }
-   invisible(env);
+
+   if (!"composite_bed_defaults" %in% ls(env)) {
+      env$composite_bed_defaults <- list(
+         visibility="pack",
+         view="JUNC",
+         type="bigBed 12",
+         allButtonPair="on",
+         centerLabelsDense="on",
+         dragAndDrop="on",
+         thickDrawItem="on",
+         scoreFilter="5",
+         scoreFilterLimits="1:1000",
+         viewUi="on",
+         gridDefault="on",
+         autoScale="on",
+         alwaysZero="on",
+         viewLimits="",
+         smoothingWindow="off",
+         windowingFunction="mean+whiskers",
+         color="0,0,150"
+      );
+   }
+
+   # default_names <- c("overlay_header",
+   #    "overlay_parent",
+   #    "overlay_track",
+   #    "overlay_defaults",
+   #    "composite_header",
+   #    "composite_parent",
+   #    "composite_track",
+   #    "composite_defaults",
+   #    "composite_bed_header",
+   #    "composite_bed_parent",
+   #    "composite_bed_track",
+   #    "composite_bed_defaults");
+   # for (default_name in default_names) {
+   #    assign(default_name,
+   #       value=get(default_name),
+   #       envir=env);
+   # }
+   return(invisible(env));
 }
 

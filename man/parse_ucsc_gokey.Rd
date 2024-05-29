@@ -6,20 +6,22 @@
 \usage{
 parse_ucsc_gokey(
   track_lines,
-  overlay_grep = c("[ -._](plus|minus|F|R|pos|neg)($|[ -._])"),
+  overlay_grep = c("[ -._](plus|minus|pos|neg)($|[ -._])"),
   priority = 5000,
   output_format = c("text", "list"),
   debug = c("none"),
   multiwig_concat_header = TRUE,
+  group_header_delim = ": ",
+  default_env = new.env(),
   verbose = FALSE,
   ...
 )
 }
 \arguments{
-\item{track_lines}{character vector containing lines read from
+\item{track_lines}{\code{character} vector containing lines read from
 a track file, or valid path or connection to a track file.}
 
-\item{overlay_grep}{character vector containing valid regular
+\item{overlay_grep}{\code{character} vector containing valid regular
 expression patterns used to recognize when a track should
 be considered an overlay coverage track. For example
 \verb{track name="trackA F"} and \verb{track name="trackA R"} would
@@ -29,10 +31,10 @@ named \code{"trackA"}. Overlay tracks are handled using the UCSC
 To disable overlay_grep, use \code{overlay_grep="^$"}. To enable
 overlay_grep for all tracks, use \code{overlay_grep="$"}.}
 
-\item{priority}{integer value indicating the priority to
+\item{priority}{\code{integer} value indicating the priority to
 start when assigning priority to each track.}
 
-\item{output_format}{character string indicating the
+\item{output_format}{\code{character} string indicating the
 output format, where \code{"text"} will return one long character
 string, and \code{"list"} will return a \code{list} with one track
 per list element with class \verb{"glue","character"}.}
@@ -47,6 +49,12 @@ per list element with class \verb{"glue","character"}.}
 \item{multiwig_concat_header}{\code{logical} indicating whether
 multiWig parent tracks should be named by concatenating
 \code{header1} and \code{header2} values.}
+
+\item{group_header_delim}{\code{character} string used as delimiter
+between track group and track header label, where for example
+\code{"headingA1"} and \code{"headingA2"} would be combined with
+delimiter \code{": "} to form \code{"headingA1: headingA2"} as the
+visible label for each group of tracks.}
 
 \item{verbose}{\code{logical} indicating whether to print verbose
 output during processing.}
@@ -84,10 +92,21 @@ are configured as \code{multiWig} overlay tracks. This configuration
 uses the UCSC multiWig format as described here
 https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#aggregate
 \itemize{
-\item More specifically, a parent track is configured as a \code{superTrack}.
-\item Each track matching \code{overlay_grep} is converted to a shared track
-name after removing the relevant grep pattern. Each unique track group
-is used as an intermediate track with \code{"container multiWig"}.
+\item Tracks must be named such that after \code{overlay_grep} is removed, the
+resulting string defines a set of tracks. The tracks that share this
+string are assigned to the same multiWig track.
+\item To customize the default aggregate method, supply for example
+\code{aggregate="none"} in the \code{...} arguments to this function, which
+will cause multiWig tracks to use \code{"none"} when tracks are displayed.
+\item Each parent track is configured as a \code{superTrack}, which contains
+one or more multiWig tracks beneath it.
+\item It is recommended to have one heading \code{"ChIP-seq"} with sub-heading
+\code{"coverage"}, then each track is grouped by name after removing the
+pattern matched by \code{overlay_grep}. This configuration will create
+one pulldown entry in the track hub configuration representing the
+superTrack. The superTrack will contain one multiWig track for each unique
+name (after removing \code{overlap_grep}), each of which contains all
+tracks that match that name.
 \item Each track group is assigned priority in order of each unique track
 group defined in the track config lines.
 \item Individual tracks are configured as child tracks to the track groups.
@@ -173,7 +192,8 @@ track_lines <- unlist(strsplit(track_lines_text, "\n"));
 cat(parse_ucsc_gokey(track_lines))
 track_df <- parse_ucsc_gokey(track_lines, debug="df")
 
-# example of two composite track top-level parent tracks
+# example of two multiWig track top-level parent tracks
+# each of which contain two tracks with positive/negative coverage
 track_lines_text2 <- c("headingA1
 headingA2
 track name=trackname1_pos shortLabel=trackname1_pos bigDataUrl=some_url

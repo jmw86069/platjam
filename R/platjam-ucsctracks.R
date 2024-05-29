@@ -62,10 +62,21 @@
 #' uses the UCSC multiWig format as described here
 #' https://genome.ucsc.edu/goldenPath/help/trackDb/trackDbHub.html#aggregate
 #'
-#' * More specifically, a parent track is configured as a `superTrack`.
-#' * Each track matching `overlay_grep` is converted to a shared track
-#' name after removing the relevant grep pattern. Each unique track group
-#' is used as an intermediate track with `"container multiWig"`.
+#' * Tracks must be named such that after `overlay_grep` is removed, the
+#' resulting string defines a set of tracks. The tracks that share this
+#' string are assigned to the same multiWig track.
+#' * To customize the default aggregate method, supply for example
+#' `aggregate="none"` in the `...` arguments to this function, which
+#' will cause multiWig tracks to use `"none"` when tracks are displayed.
+#' * Each parent track is configured as a `superTrack`, which contains
+#' one or more multiWig tracks beneath it.
+#' * It is recommended to have one heading `"ChIP-seq"` with sub-heading
+#' `"coverage"`, then each track is grouped by name after removing the
+#' pattern matched by `overlay_grep`. This configuration will create
+#' one pulldown entry in the track hub configuration representing the
+#' superTrack. The superTrack will contain one multiWig track for each unique
+#' name (after removing `overlap_grep`), each of which contains all
+#' tracks that match that name.
 #' * Each track group is assigned priority in order of each unique track
 #' group defined in the track config lines.
 #' * Individual tracks are configured as child tracks to the track groups.
@@ -136,9 +147,9 @@
 #'
 #' @family jam ucsc browser functions
 #'
-#' @param track_lines character vector containing lines read from
+#' @param track_lines `character` vector containing lines read from
 #'    a track file, or valid path or connection to a track file.
-#' @param overlay_grep character vector containing valid regular
+#' @param overlay_grep `character` vector containing valid regular
 #'    expression patterns used to recognize when a track should
 #'    be considered an overlay coverage track. For example
 #'    `track name="trackA F"` and `track name="trackA R"` would
@@ -147,9 +158,9 @@
 #'    `"multiWig"` approach, and not the composite track approach.
 #'    To disable overlay_grep, use `overlay_grep="^$"`. To enable
 #'    overlay_grep for all tracks, use `overlay_grep="$"`.
-#' @param priority integer value indicating the priority to
+#' @param priority `integer` value indicating the priority to
 #'    start when assigning priority to each track.
-#' @param output_format character string indicating the
+#' @param output_format `character` string indicating the
 #'    output format, where `"text"` will return one long character
 #'    string, and `"list"` will return a `list` with one track
 #'    per list element with class `"glue","character"`.
@@ -160,6 +171,11 @@
 #' @param multiwig_concat_header `logical` indicating whether
 #'    multiWig parent tracks should be named by concatenating
 #'    `header1` and `header2` values.
+#' @param group_header_delim `character` string used as delimiter
+#'    between track group and track header label, where for example
+#'    `"headingA1"` and `"headingA2"` would be combined with
+#'    delimiter `": "` to form `"headingA1: headingA2"` as the
+#'    visible label for each group of tracks.
 #' @param verbose `logical` indicating whether to print verbose
 #'    output during processing.
 #' @param ... additional arguments are treated as a named list
@@ -187,7 +203,8 @@
 #' cat(parse_ucsc_gokey(track_lines))
 #' track_df <- parse_ucsc_gokey(track_lines, debug="df")
 #'
-#' # example of two composite track top-level parent tracks
+#' # example of two multiWig track top-level parent tracks
+#' # each of which contain two tracks with positive/negative coverage
 #' track_lines_text2 <- c("headingA1
 #' headingA2
 #' track name=trackname1_pos shortLabel=trackname1_pos bigDataUrl=some_url
@@ -214,11 +231,13 @@
 #' @export
 parse_ucsc_gokey <- function
 (track_lines,
- overlay_grep=c("[ -._](plus|minus|F|R|pos|neg)($|[ -._])"),
+ overlay_grep=c("[ -._](plus|minus|pos|neg)($|[ -._])"),
  priority=5000,
  output_format=c("text", "list"),
  debug=c("none"),
  multiwig_concat_header=TRUE,
+ group_header_delim=": ",
+ default_env=new.env(),
  verbose=FALSE,
  ...)
 {
@@ -236,6 +255,26 @@ parse_ucsc_gokey <- function
          stop("track_lines should be a character vector of track lines, or a single entry filename.");
       }
    }
+   # detect inline newline characters, and split into lines
+   if (any(grepl("[\r]", track_lines))) {
+      # simply remove Windows \r (since it usually occurs as "\r\n"
+      track_lines <- gsub("\r", "", track_lines);
+   }
+   if (any(grepl("[\n]", track_lines))) {
+      track_lines <- unlist(strsplit(track_lines, "[\n]+"));
+   }
+
+   # Skip lines with comment
+   drop_lines <- grepl("^[ ]*[#]", track_lines);
+   if (any(drop_lines)) {
+      if (verbose) {
+         jamba::printDebug("parse_ucsc_gokey(): ",
+            "Dropped ", jamba::formatInt(sum(drop_lines)),
+            " comment lines.");
+      }
+      track_lines <- track_lines[!drop_lines]
+   }
+
    # Get rid of any non-ASCII characters (for now)
    track_lines <- gsub("[^-_ a-zA-Z0-9:/=\"'.,]", "", track_lines);
 
@@ -307,7 +346,8 @@ parse_ucsc_gokey <- function
       track_df$is_overlay &
          !track_df$group == track_df$header &
          multiwig_concat_header,
-      jamba::pasteByRow(track_df[,c("group","header")], sep=": "),
+      jamba::pasteByRow(track_df[,c("group","header")],
+         sep=group_header_delim),
       track_df$group);
    track_df$parent <- ifelse(track_df$is_overlay,
       gsub(overlay_grep, "", track_df$name),
@@ -350,7 +390,7 @@ parse_ucsc_gokey <- function
    }
 
    ## Get track defaults and templates
-   default_env <- get_track_defaults();
+   default_env <- get_track_defaults(default_env);
 
    ## overlay tracks
    trackline_list <- list();

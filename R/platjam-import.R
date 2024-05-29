@@ -380,7 +380,9 @@ coverage_matrix2nmat <- function
 #'    panel in the group.
 #' @param title,caption `character` string used as an overall title or
 #'    caption, respectively, displayed at the top of all heatmap output.
-#' @param upstream_length,downstream_length `numeric` optional range of
+#' @param title_gp `grid::gpar` object to customize the title fontsize,
+#'    fontface, color (col), etc.
+#' @param upstream_length,downstream_length `numeric` (optional) range of
 #'    coordinates to display across all heatmaps. This argument is intended
 #'    when the input `nmatlist` contains a wider range of coordinates
 #'    than should be displayed. The columns in `nmatlist` are subset
@@ -390,28 +392,36 @@ coverage_matrix2nmat <- function
 #'    Note this step does not expand the displayed region.
 #' @param k_clusters `integer` number of k-means clusters to
 #'    use to partition each heatmap. Use `0` or `NULL` for
-#'    no clustering.
-#'    Note `k_clusters` can be a vector, in which case it is applied
-#'    across unique groupings defined in `partition` if provided.
-#'    In this case if all unique values in `partition` are defined
-#'    by `names(k_clusters)` they are assigned by name, otherwise
-#'    `k_clusters` is recycled to the number of unique partition values,
-#'    and assigned in order. When `partition` is a `factor` the order
-#'    will honor `levels(partition)`.
+#'    no clustering (default).
+#'    Note `k_clusters` can be a `numeric` vector, in which case it is applied
+#'    across unique groups defined by `partition` if provided.
+#'    If `names(k_clusters)` match values in `partition` they will be applied
+#'    by name, otherwise they are applied in the order the clusters are
+#'    defined by `partition`.
+#'    Each group is clustered to that many k clusters, provided it
+#'    also meets the threshold `min_row_per_k` - which is intended to prevent
+#'    clustering 10 rows into 10 k-means clusters.
 #' @param min_rows_per_k `numeric` minimum rows required per k-means
 #'    cluster, used only when `k_clusters` is greater than 1.
 #'    With default `min_rows_per_k=10`, a partition with 100 or fewer rows
 #'    can only have `k=1`, and partition with 101 rows can have `k=2`.
 #'    This limit protects from k-means clustering small partitions.
 #' @param k_subset `integer` vector of k-means clusters to retain.
-#'    This argument is intended to "zoom in" to one or more k-means
-#'    clusters of interest as a drill down technique.
+#'    This argument is intended to "zoom in" (or "drill down") to one
+#'    or more k-means clusters of interest.
 #'    When both `k_clusters` and `partition` are provided, this argument
 #'    must exactly match the row title as displayed in the heatmap.
 #' @param k_colors `character` vector of R colors, or `NULL` to use
 #'    the output of `colorjam::rainbowJam(k_clusters)`.
+#'    These colors are applied to `k_clusters` and/or `partition`:
+#'    * When `partition` is provided, `names(k_colors)` are used when present,
+#'    otherwise colors are assigned in order of `partition` groups.
+#'    When `k_clusters` is also defined, each partition color is split into
+#'    a light-to-dark gradient based upon the number of k_clusters.
+#'    * When `partition` is not provided, `k_colors` are applied to k-means
+#'    clusters in the order the colors are provided.
 #' @param k_width `unit` width of the k-means cluster color
-#'    bar, used with `k_clusters`.
+#'    bar, used with `k_clusters`, default is 5 mm width.
 #' @param k_method `character` string indicating the distance
 #'    used by k-means, where the common default is
 #'    `"euclidean"`, however a useful alternative for
@@ -431,33 +441,52 @@ coverage_matrix2nmat <- function
 #'    computes distance based upon rank differences. It has not been tested
 #'    much in this context.
 #' @param k_heatmap `integer` with one or more values indicating which
-#'    `nmatlist` entries to use for k-means clustering, used only when
+#'    `nmatlist` entries to use for k-means clustering,
+#'    default uses `main_heatmap`. This value is only used when
 #'    `k_clusters` is greater than 1. This argument is useful for
-#'    applying clustering across multiple coverage heatmaps.
+#'    clustering multiple coverage heatmaps together.
 #' @param partition `character` or `factor` vector used to split rows
-#'    of each matrix in `nmatlist`, named by rownames.
+#'    of each matrix in `nmatlist`, and **must named by rownames**
+#'    in `nmatlist`.
 #'    This value is converted to `factor`, and will honor provided
-#'    factor levels.
+#'    factor levels if already defined.
 #'    * When `partition` and `k_clusters` are both defined, the
 #'    data is first grouped by `partition` then each partition group
 #'    is separately k-means clustered, using rules described for
 #'    `k_clusters` and `min_rows_per_k`.
-#'    Colors are assigned to each partition value, then colors are split
-#'    by k clusters using `jamba::color2gradient()`.
-#' @param rows `character` optional vector of rownames to subset from
-#'    `nmatlist`; or `integer` vector with row index values.
+#'    Colors from `k_colors` are assigned to each partition value,
+#'    then colors are split to light-to-dark gradient
+#'    using `jamba::color2gradient()`.
+#' @param partition_counts `logical` indicating whether to include the
+#'    number of rows in each partition, default `TRUE`.
+#'    Note that this setting is active if `k_clusters` and/or `partition`
+#'    are supplied. Any situation where rows are split, the number of
+#'    rows will be displayed.
+#' @param partition_count_template `character` format used when
+#'    `partition_counts=TRUE`, used together with `glue::glue()` to format
+#'    each row partition. The default: `"{partition_name}\n({counts} rows)"`
+#'    will print for example: `"A\n(125 rows)"`
+#' @param rows optional vector to define subset rows, or specific row order:
+#'    * `character` vector of rownames in `nmatlist`, or
+#'    * `integer` vector with row numbers (row index) values.
+#'
 #'    Note that even when using a subset of `rows` the data may also be
 #'    subset based upon available `names(partition)` and
 #'    `rownames(anno_df)`.
 #' @param row_order `integer` vector used to order rows, intended to
 #'    allow ordering data based upon a specific heatmap, or using
 #'    different logic than the default.
-#'    * When `row_order=NULL` (default) or `TRUE` it calls
+#'    * When `row_order=NULL` (default) or `row_order=TRUE` it calls
 #'    `EnrichedHeatmap::enriched_score()` using data from `main_heatmap`.
-#'    This function generates a weighted score with heighest weight at
-#'    the center position, with progressively lower weight working outward
-#'    where the maximum distance has zero weight. The technique sorts signal
-#'    which emphasizes highest enriched signal at the center of the matrix.
+#'    When there are multiple values for `main_heatmap` (which is default),
+#'    then scores are calculated for each matrix, then the average score
+#'    is used per row.
+#'
+#'    The `enriched_score()` function generates a weighted score with
+#'    heighest weight at the center position, with progressively lower
+#'    weight working outward where the maximum distance has zero weight.
+#'    The technique sorts signal which emphasizes highest enriched signal
+#'    at the center of the matrix.
 #'    * When `row_order=FALSE` the data is ordered in the same order
 #'    they appear in `nmatlist`, or when `anno_df` and `byCols` are supplied,
 #'    the rows in `anno_df` are sorted using
@@ -734,6 +763,12 @@ coverage_matrix2nmat <- function
 #'    passed to `EnrichedHeatmap::anno_enriched()`. Values: `"mean"` the
 #'    mean profile; `"sum"` the sum; `"abs_sum"` sum of absolute values;
 #'    `"abs_mean"` the mean of absolute values.
+#' @param profile_linetype `numeric` or `character` passed to `grid::gpar(lty)`
+#'    to define the metaplot line type. Default lty=1 is a solid line.
+#'    Values are recycled to the number of profile plots.
+#' @param profile_linewidth `numeric` line width passed to `grid::gpar(lwd)`
+#'    to control the line width. Default uses lwd=1.5.
+#'    Values are recycled to the number of profile plots.
 #' @param ylims `numeric` vector of maximum y-axis values for each heatmap
 #'    profile; or `list` of min,max values to apply to each `nmatlist` entry.
 #' @param border `logical` indicating whether to draw a border around the
@@ -800,7 +835,7 @@ coverage_matrix2nmat <- function
 #' names(cov_files) <- gsub("[.]matrix",
 #'    "",
 #'    basename(cov_files));
-#' nmatlist <- coverage_matrix2nmat(cov_files, verbose=TRUE);
+#' nmatlist <- coverage_matrix2nmat(cov_files, verbose=FALSE);
 #' sapply(nmatlist, function(nmat){attr(nmat, "signal_name")})
 #' nmatlist2heatmaps(nmatlist);
 #'
@@ -923,6 +958,8 @@ nmatlist2heatmaps <- function
     "spearman"),
  k_heatmap=main_heatmap,
  partition=NULL,
+ partition_counts=TRUE,
+ partition_count_template="{partition_name}\n({counts} rows)",
  rows=NULL,
  row_order=NULL,
  nmat_colors=NULL,
@@ -957,8 +994,15 @@ nmatlist2heatmaps <- function
  anno_lens=8,
  pos_line=FALSE,
  seed=123,
- ht_gap=grid::unit(3, "mm"),
- profile_value=c("mean", "sum", "abs_mean", "abs_sum"),
+ ht_gap=grid::unit(4, "mm"),
+ row_anno_padding=grid::unit(4, "mm"),
+ column_anno_padding=grid::unit(4, "mm"),
+ profile_value=c("mean",
+    "sum",
+    "abs_mean",
+    "abs_sum"),
+ profile_linetype=1,
+ profile_linewidth=1.5,
  ylims=NULL,
  border=TRUE,
  iter.max=20,
@@ -1010,6 +1054,25 @@ nmatlist2heatmaps <- function
          downstream_length=downstream_length);
    }
 
+   # store original (default) heatmap annotation padding
+   ROW_ANNO_PADDING <- ComplexHeatmap::ht_opt("ROW_ANNO_PADDING")
+   COLUMN_ANNO_PADDING <- ComplexHeatmap::ht_opt("COLUMN_ANNO_PADDING")
+   # define custom row/column heatmap annotation padding
+   if (length(row_anno_padding) == 0) {
+      row_anno_padding <- grid::unit(4, "mm");
+   }
+   if (length(column_anno_padding) == 0) {
+      column_anno_padding <- grid::unit(4, "mm");
+   }
+   if (is.numeric(row_anno_padding)) {
+      row_anno_padding <- grid::unit(row_anno_padding, "mm")
+   }
+   if (is.numeric(column_anno_padding)) {
+      column_anno_padding <- grid::unit(column_anno_padding, "mm")
+   }
+   # define custom row/column heatmap annotation padding
+   ComplexHeatmap::ht_opt("ROW_ANNO_PADDING"=row_anno_padding)
+   ComplexHeatmap::ht_opt("COLUMN_ANNO_PADDING"=column_anno_padding)
    ## k_method
    kmeans <- function(centers, ...){stats::kmeans(centers=centers, ...)};
    # k_method <- head(k_method, 1);
@@ -1266,7 +1329,7 @@ nmatlist2heatmaps <- function
                rev(head(
                   jamba::color2gradient(k_colors,
                      n=k_multiplier,
-                     gradientWtFactor=1/3),
+                     gradientWtFactor=2/3),
                   k_clusters)),
                seq_len(k_clusters));
          } else if (length(names(k_colors)) == 0) {
@@ -1380,7 +1443,9 @@ nmatlist2heatmaps <- function
          # k_colors <- colorjam::group2colors(levels(partition),
          #    colorSub=color_sub);
       }
-
+   }
+   if (length(k_colors) > 0) {
+      jamba::printDebug("post k-means k_colors: ");jamba::printDebug(k_colors);print(k_colors);# debug
    }
    # End k-means clustering
    ##################################
@@ -1420,10 +1485,20 @@ nmatlist2heatmaps <- function
             levels(partition));
          # k_colors <- k_colors[sort(names(k_colors))];
       } else {
+         if (length(names(k_colors)) == 0) {
+            if (length(k_colors) >= length(levels(partition))) {
+               k_colors <- head(k_colors, length(levels(partition)));
+               names(k_colors) <- levels(partition);
+            } else {
+               k_colors <- colorjam::rainbowJam(length(levels(partition)), ...)
+               names(k_colors) <- levels(partition);
+            }
+         }
          if (all(levels(partition) %in% names(k_colors))) {
             k_colors <- k_colors[levels(partition)]
          }
       }
+      jamba::printDebug("partition step 1 k_colors: ");jamba::printDebug(k_colors);print(k_colors);# debug
 
       ## Optional subset of k-means clusters
       if (length(k_subset) > 0) {
@@ -1476,13 +1551,42 @@ nmatlist2heatmaps <- function
       p_nrow <- ceiling(p_num / p_ncol);
       # p_at <- jamba::mixedSort(unique(partition[rows]));
       p_at <- levels(factor(partition[rows]))
-      p_labels <- gsub("\n", " ", p_at);
+      ## p_labels is defined without row counts
+      # p_labels <- gsub("\n", " ", p_at);
+      p_labels <- p_at;
+
+      ## Optionally rename partitions to include row counts
+      # partition_counts <- TRUE;
+      # partition_count_template <- "{partition_name}\n({counts} rows)";
+      if (TRUE %in% partition_counts) {
+         partition_cts <- table(factor(partition[rows]));
+         p_after <- sapply(seq_along(partition_cts), function(ip){
+            partition_name <- p_at[ip];
+            counts <- partition_cts[[partition_name]];
+            glue::glue(partition_count_template,
+               partition_name=partition_name,
+               counts=jamba::formatInt(counts))
+         })
+         p_before_after <- data.frame(before=p_at,
+            after=p_after)
+         level_match <- match(p_before_after$before, levels(partition))
+         levels(partition)[level_match] <- p_before_after$after;
+         level_k_match <- match(p_before_after$before, names(k_colors))
+         names(k_colors)[level_k_match] <- p_before_after$after;
+         p_at <- p_before_after$after;
+      }
+
       p_heatmap_legend_param <- list(
+         title="Cluster",
          title_position="topleft",
+         type="boxplot",
+         pch=26:28,
          border="black",
          nrow=p_nrow,
          at=p_at,
-         labels=p_labels
+         labels=p_labels,
+         legend_gp=grid::gpar(lty=profile_linetype,
+            lwd=profile_linewidth)
       )
       PHM <- ComplexHeatmap::Heatmap(partition[rows],
          border=FALSE,
@@ -1837,6 +1941,9 @@ nmatlist2heatmaps <- function
                sep="; ")
          }
          ## Calculate shared ylims per panel_group
+         # Advanced todo: Consider calculating the std error so
+         # the y-axis can be expanded to accomodate added range
+         # when show_error=TRUE.
          panel_ylims <- lapply(panel_split, function(idxs){
             idx_ranges <- lapply(idxs, function(idx){
                nmat <- nmatlist[[idx]][rows,,drop=FALSE];
@@ -1947,11 +2054,16 @@ nmatlist2heatmaps <- function
    }
    if (length(axis_name) == 0) {
       axis_name <- lapply(nmatlist, function(nmat){
+         extend1 <- signif(attr(nmat, "extend")[1], digits=2);
+         extend2 <- signif(attr(nmat, "extend")[2], digits=2);
+         # off-by-one is assumed to be identical
+         if (extend1 == (extend2 + 1)) {
+            extend2 <- extend2 + 1;
+         }
          c(
-            paste0("-",
-               jamba::formatInt(attr(nmat, "extend")[1])),
+            paste0("-", jamba::formatInt(extend1)),
             attr(nmat, "target_name"),
-            jamba::formatInt(attr(nmat, "extend")[2]))
+            jamba::formatInt(extend2))
       })
    } else if (is.list(axis_name)) {
       axis_name <- rep(axis_name,
@@ -2121,10 +2233,21 @@ nmatlist2heatmaps <- function
          "Iterating each heatmap.");
    }
 
+   signal_name_hash <- list();
+   top_legend <- list();
+
    EH_l <- lapply(seq_along(nmatlist), function(i){
       nmat <- nmatlist[[i]][rows,,drop=FALSE];
       signal_name <- attr(nmat, "signal_name");
       target_name <- attr(nmat, "target_name");
+      ## Check for duplicated signal_name
+      if (signal_name %in% names(signal_name_hash)) {
+         # append Excel-style column alphabetic lettering
+         signal_name_hash[[signal_name]] <<- 1;
+         signal_name <- paste0(signal_name, "_rep",
+            jamba::colNum2excelName(i))
+      }
+      signal_name_hash[[signal_name]] <<- 1;
       s_name <- gsub("_at_", "\nat_", signal_name);
       if (length(nmat_names) > 0) {
          signal_name <- nmat_names[i];
@@ -2252,6 +2375,9 @@ nmatlist2heatmaps <- function
             use_colors <- colorjam::rainbowJam(n);
          }
       }
+      if (length(use_colors) == 1 && length(names(use_colors)) == 0) {
+         names(use_colors) <- "Overall";
+      }
 
       ######################################
       # process top_annotation
@@ -2261,9 +2387,35 @@ nmatlist2heatmaps <- function
       if (length(top_annotation) > 0 && is.logical(top_annotation) && !top_annotation) {
          top_annotation <- NULL;
       } else {
+         if (length(profile_linetype) == 0) {
+            profile_linetype <- 1;
+         }
+         if (length(profile_linewidth) == 0) {
+            profile_linewidth <- 1.5;
+         }
+         # Define top_legend
+         use_linewidths <- rep(profile_linewidth, length.out=length(use_colors))
+         use_linetypes <- rep(profile_linetype, length.out=length(use_colors))
+         top_legend <<- ComplexHeatmap::Legend(title="Profiles",
+            title_position="topleft",
+            type="lines",
+            at=names(use_colors),
+            labels=names(use_colors),
+            border=FALSE,
+            nrow=length(use_colors),
+            grid_width=grid::unit(14, "mm"),
+            background="white",
+            legend_gp=grid::gpar(
+               col=use_colors,
+               lty=use_linetypes,
+               lwd=use_linewidths)
+         )
+         # Define top_annotation
          top_annotation <- ComplexHeatmap::HeatmapAnnotation(
             lines=EnrichedHeatmap::anno_enriched(
-               gp=grid::gpar(col=use_colors),
+               gp=grid::gpar(col=use_colors,
+                  lty=profile_linetype,
+                  lwd=profile_linewidth),
                value=profile_value,
                ylim=ylim,
                axis=top_axis[i],
@@ -2277,7 +2429,7 @@ nmatlist2heatmaps <- function
       ######################################
       # create coverage heatmap
       EH <- EnrichedHeatmap::EnrichedHeatmap(imat[rows,],
-         split=partition[rows],
+         row_split=partition[rows],
          pos_line=pos_line[[i]],
          use_raster=use_raster,
          raster_quality=raster_quality,
@@ -2357,6 +2509,8 @@ nmatlist2heatmaps <- function
       ## Single row layout
       HM_temp <- Reduce("+", EH_l);
       main_heatmap_temp <- head(main_heatmap, 1);
+      ## test to force first heatmap to have row labels
+      main_heatmap_temp <- 1;
 
       ht_gap <- rep(ht_gap,
          length.out=max(c(1, length(nmatlist)-1)));
@@ -2396,7 +2550,9 @@ nmatlist2heatmaps <- function
             column_title_gp=title_gp,
             ht_gap=ht_gap,
             adjust_annotation_extension=TRUE,
+            annotation_legend_list=list(top_legend),
             main_heatmap=main_heatmap_temp,
+            merge_legends=TRUE,
             padding=padding)
          if (FALSE) {
             jamba::printDebug("nmatlist2heatmaps(): ",
@@ -2419,11 +2575,17 @@ nmatlist2heatmaps <- function
             HM_drawn <- ComplexHeatmap::draw(HM_temp,
                ht_gap=ht_gap,
                adjust_annotation_extension=TRUE,
+               annotation_legend_list=list(top_legend),
                main_heatmap=main_heatmap_temp,
+               merge_legends=TRUE,
                padding=padding)
          }
       }
    }
+
+   # revert custom row/column heatmap annotation padding
+   ComplexHeatmap::ht_opt("ROW_ANNO_PADDING"=ROW_ANNO_PADDING)
+   ComplexHeatmap::ht_opt("COLUMN_ANNO_PADDING"=COLUMN_ANNO_PADDING)
 
    # 0.0.76.900 - store important function parameters in returned object
    anno_df_colnames <- NULL;

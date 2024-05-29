@@ -1,6 +1,45 @@
-# TODO 17may2024
+# TODO 20may2024
+
+* `parse_ucsc_gokey()`
+
+   * Consider mechanism to define custom default track settings.
+   For example `get_track_defaults()` could be used to define
+   settings in the package environment, which could then be edited.
+   Similar to `igraph::add_shapes()` and `igraph:::.igraph.shapes`,
+   an `environment` which is created during package loading.
+   This `environment` can be adjusted.
+
+* Add `nmat2coverage_matrix()`
+
+   * Intended to save a matrix file in tab-delimited format.
+   * Workflow would be to manipulate the matrix, possibly calculating
+   sum, mean, subtraction, etc. Then save the result to a file for
+   easier, more consistent re-use.
+
+* Add coverage heatmap automation functions. So far they include:
+
+   * `make_cov_config()` - create `config_df` for matrix files
+   * `rbind_cov_config()` - to combine multiple `config_df`
+   * `auto_cov_heatmaps()`
 
 * `nmatlist2heatmaps()`
+
+   * Debug why the `k_colors`, `color_sub` usage is not working properly
+   with `row_split`.
+   * Handle situation when input data is all zero. The detected range
+   should be set to c(0, 1).
+   * Handle empty matrix (entirely NULL) as if it were zero.
+
+* `coverage_matrix2nmat()`
+
+   * Consider handling missing file by creating a matrix with zeros?
+   Use case is to intentionally create empty matrix to be filled with
+   derived data, for example matrix 3 minus matrix 2; or mean of matrix 1
+   through matrix 8.
+
+# TODO 17may2024
+
+* DONE. `nmatlist2heatmaps()`
 
    * DONE. Consider applying word-wrap to color legend titles, so the title
    does not become unreasonably long.

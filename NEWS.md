@@ -1,3 +1,31 @@
+# platjam 0.0.84.900
+
+## Updates to existing functions
+
+* `nmatlist2heatmaps()`
+
+   * New arguments `partition_counts=TRUE` by default appends the
+   number of rows in each row partition (and/or k-cluster).
+   Format is controlled with `partition_count_template` using `glue()`.
+   * When duplicate heatmap names are supplied, they are resolved without error.
+   * New arguments `row_anno_padding` and `column_anno_padding` add
+   default 4 mm padding between heatmaps and annotation, to give
+   clear separation between heatmap and annotations.
+
+
+# platjam 0.0.83.900
+
+## Updates to existing functions
+
+* `parse_ucsc_gokey()`
+
+   * Splits input `track_lines` by newline when detected.
+   * Ignores comment lines beginning with optional whitespace then `"#"`.
+   * Argument `overlay_grep` no longer uses `"R"` and `"L"`
+   (case-insensitive) to detect stranded tracks, problematic for
+   tracks with any form of "L" or "R". Ouch, haha.
+   
+
 # platjam 0.0.82.900
 
 * Added `stringi` to package dependencies, for word wrap without incurring

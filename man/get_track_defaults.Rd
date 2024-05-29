@@ -8,11 +8,26 @@ get_track_defaults(env = new.env())
 }
 \arguments{
 \item{env}{\code{environment} in which to store the default values
-and track templates.}
+and track templates. If the input \code{env} already contains any of the
+environment names, they will be used as-is without modification.
+
+Therefore, to use custom default values, or a custom template:
+\itemize{
+\item call \code{default_env <- get_track_defaults()}
+\item edit the environment,
+\item call \code{parse_ucsc_gokey(..., default_env=default_env)}
+}
+
+Relevant default values are stored in these \code{list} elements:
+\itemize{
+\item composite_bed_defaults
+\item composite_defaults
+\item overlay_defaults
+}}
 }
 \value{
-\code{environment} which contains the default values, and template
-values.
+\code{environment} which contains each template chunk for each
+type of track section, and the corresponding default values.
 }
 \description{
 Get UCSC track default values and track templates
@@ -29,6 +44,21 @@ and composite:
 \item composite_parent - equivalent to a composite view within a composite track
 \item composite_track - individual track within the composite track.
 }
+}
+\examples{
+default_env <- get_track_defaults();
+# describe the contents
+jamba::sdim(default_env)
+
+# customize view default to "PEAKS" instead of "JUNC"
+default_env$composite_bed_defaults$view <- "PEAKS"
+# change type to bigBed 10
+default_env$composite_bed_defaults$type <- "bigBed 10"
+data.frame(composite_bed_defaults=unlist(default_env$composite_bed_defaults))
+
+# customize multiWig aggregate to "none"
+default_env$overlay_defaults$aggregate <- "none";
+
 }
 \seealso{
 Other jam ucsc browser functions: 

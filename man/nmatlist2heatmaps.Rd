@@ -20,6 +20,8 @@ nmatlist2heatmaps(
   k_method = c("correlation", "euclidean", "pearson", "spearman"),
   k_heatmap = main_heatmap,
   partition = NULL,
+  partition_counts = TRUE,
+  partition_count_template = "{partition_name}\\n({counts} rows)",
   rows = NULL,
   row_order = NULL,
   nmat_colors = NULL,
@@ -54,8 +56,12 @@ nmatlist2heatmaps(
   anno_lens = 8,
   pos_line = FALSE,
   seed = 123,
-  ht_gap = grid::unit(3, "mm"),
+  ht_gap = grid::unit(4, "mm"),
+  row_anno_padding = grid::unit(4, "mm"),
+  column_anno_padding = grid::unit(4, "mm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
+  profile_linetype = 1,
+  profile_linewidth = 1.5,
   ylims = NULL,
   border = TRUE,
   iter.max = 20,
@@ -100,7 +106,10 @@ panel in the group.
 \item{title, caption}{\code{character} string used as an overall title or
 caption, respectively, displayed at the top of all heatmap output.}
 
-\item{upstream_length, downstream_length}{\code{numeric} optional range of
+\item{title_gp}{\code{grid::gpar} object to customize the title fontsize,
+fontface, color (col), etc.}
+
+\item{upstream_length, downstream_length}{\code{numeric} (optional) range of
 coordinates to display across all heatmaps. This argument is intended
 when the input \code{nmatlist} contains a wider range of coordinates
 than should be displayed. The columns in \code{nmatlist} are subset
@@ -111,14 +120,15 @@ Note this step does not expand the displayed region.}
 
 \item{k_clusters}{\code{integer} number of k-means clusters to
 use to partition each heatmap. Use \code{0} or \code{NULL} for
-no clustering.
-Note \code{k_clusters} can be a vector, in which case it is applied
-across unique groupings defined in \code{partition} if provided.
-In this case if all unique values in \code{partition} are defined
-by \code{names(k_clusters)} they are assigned by name, otherwise
-\code{k_clusters} is recycled to the number of unique partition values,
-and assigned in order. When \code{partition} is a \code{factor} the order
-will honor \code{levels(partition)}.}
+no clustering (default).
+Note \code{k_clusters} can be a \code{numeric} vector, in which case it is applied
+across unique groups defined by \code{partition} if provided.
+If \code{names(k_clusters)} match values in \code{partition} they will be applied
+by name, otherwise they are applied in the order the clusters are
+defined by \code{partition}.
+Each group is clustered to that many k clusters, provided it
+also meets the threshold \code{min_row_per_k} - which is intended to prevent
+clustering 10 rows into 10 k-means clusters.}
 
 \item{min_rows_per_k}{\code{numeric} minimum rows required per k-means
 cluster, used only when \code{k_clusters} is greater than 1.
@@ -127,16 +137,25 @@ can only have \code{k=1}, and partition with 101 rows can have \code{k=2}.
 This limit protects from k-means clustering small partitions.}
 
 \item{k_subset}{\code{integer} vector of k-means clusters to retain.
-This argument is intended to "zoom in" to one or more k-means
-clusters of interest as a drill down technique.
+This argument is intended to "zoom in" (or "drill down") to one
+or more k-means clusters of interest.
 When both \code{k_clusters} and \code{partition} are provided, this argument
 must exactly match the row title as displayed in the heatmap.}
 
 \item{k_colors}{\code{character} vector of R colors, or \code{NULL} to use
-the output of \code{colorjam::rainbowJam(k_clusters)}.}
+the output of \code{colorjam::rainbowJam(k_clusters)}.
+These colors are applied to \code{k_clusters} and/or \code{partition}:
+\itemize{
+\item When \code{partition} is provided, \code{names(k_colors)} are used when present,
+otherwise colors are assigned in order of \code{partition} groups.
+When \code{k_clusters} is also defined, each partition color is split into
+a light-to-dark gradient based upon the number of k_clusters.
+\item When \code{partition} is not provided, \code{k_colors} are applied to k-means
+clusters in the order the colors are provided.
+}}
 
 \item{k_width}{\code{unit} width of the k-means cluster color
-bar, used with \code{k_clusters}.}
+bar, used with \code{k_clusters}, default is 5 mm width.}
 
 \item{k_method}{\code{character} string indicating the distance
 used by k-means, where the common default is
@@ -160,25 +179,43 @@ much in this context.
 }}
 
 \item{k_heatmap}{\code{integer} with one or more values indicating which
-\code{nmatlist} entries to use for k-means clustering, used only when
+\code{nmatlist} entries to use for k-means clustering,
+default uses \code{main_heatmap}. This value is only used when
 \code{k_clusters} is greater than 1. This argument is useful for
-applying clustering across multiple coverage heatmaps.}
+clustering multiple coverage heatmaps together.}
 
 \item{partition}{\code{character} or \code{factor} vector used to split rows
-of each matrix in \code{nmatlist}, named by rownames.
+of each matrix in \code{nmatlist}, and \strong{must named by rownames}
+in \code{nmatlist}.
 This value is converted to \code{factor}, and will honor provided
-factor levels.
+factor levels if already defined.
 \itemize{
 \item When \code{partition} and \code{k_clusters} are both defined, the
 data is first grouped by \code{partition} then each partition group
 is separately k-means clustered, using rules described for
 \code{k_clusters} and \code{min_rows_per_k}.
-Colors are assigned to each partition value, then colors are split
-by k clusters using \code{jamba::color2gradient()}.
+Colors from \code{k_colors} are assigned to each partition value,
+then colors are split to light-to-dark gradient
+using \code{jamba::color2gradient()}.
 }}
 
-\item{rows}{\code{character} optional vector of rownames to subset from
-\code{nmatlist}; or \code{integer} vector with row index values.
+\item{partition_counts}{\code{logical} indicating whether to include the
+number of rows in each partition, default \code{TRUE}.
+Note that this setting is active if \code{k_clusters} and/or \code{partition}
+are supplied. Any situation where rows are split, the number of
+rows will be displayed.}
+
+\item{partition_count_template}{\code{character} format used when
+\code{partition_counts=TRUE}, used together with \code{glue::glue()} to format
+each row partition. The default: \code{"{partition_name}\\n({counts} rows)"}
+will print for example: \code{"A\\n(125 rows)"}}
+
+\item{rows}{optional vector to define subset rows, or specific row order:
+\itemize{
+\item \code{character} vector of rownames in \code{nmatlist}, or
+\item \code{integer} vector with row numbers (row index) values.
+}
+
 Note that even when using a subset of \code{rows} the data may also be
 subset based upon available \code{names(partition)} and
 \code{rownames(anno_df)}.}
@@ -187,12 +224,19 @@ subset based upon available \code{names(partition)} and
 allow ordering data based upon a specific heatmap, or using
 different logic than the default.
 \itemize{
-\item When \code{row_order=NULL} (default) or \code{TRUE} it calls
+\item When \code{row_order=NULL} (default) or \code{row_order=TRUE} it calls
 \code{EnrichedHeatmap::enriched_score()} using data from \code{main_heatmap}.
-This function generates a weighted score with heighest weight at
-the center position, with progressively lower weight working outward
-where the maximum distance has zero weight. The technique sorts signal
-which emphasizes highest enriched signal at the center of the matrix.
+When there are multiple values for \code{main_heatmap} (which is default),
+then scores are calculated for each matrix, then the average score
+is used per row.
+}
+
+The \code{enriched_score()} function generates a weighted score with
+heighest weight at the center position, with progressively lower
+weight working outward where the maximum distance has zero weight.
+The technique sorts signal which emphasizes highest enriched signal
+at the center of the matrix.
+\itemize{
 \item When \code{row_order=FALSE} the data is ordered in the same order
 they appear in \code{nmatlist}, or when \code{anno_df} and \code{byCols} are supplied,
 the rows in \code{anno_df} are sorted using
@@ -533,6 +577,14 @@ passed to \code{EnrichedHeatmap::anno_enriched()}. Values: \code{"mean"} the
 mean profile; \code{"sum"} the sum; \code{"abs_sum"} sum of absolute values;
 \code{"abs_mean"} the mean of absolute values.}
 
+\item{profile_linetype}{\code{numeric} or \code{character} passed to \code{grid::gpar(lty)}
+to define the metaplot line type. Default lty=1 is a solid line.
+Values are recycled to the number of profile plots.}
+
+\item{profile_linewidth}{\code{numeric} line width passed to \code{grid::gpar(lwd)}
+to control the line width. Default uses lwd=1.5.
+Values are recycled to the number of profile plots.}
+
 \item{ylims}{\code{numeric} vector of maximum y-axis values for each heatmap
 profile; or \code{list} of min,max values to apply to each \code{nmatlist} entry.}
 
@@ -716,7 +768,7 @@ cov_files <- c(cov_file1, cov_file2);
 names(cov_files) <- gsub("[.]matrix",
    "",
    basename(cov_files));
-nmatlist <- coverage_matrix2nmat(cov_files, verbose=TRUE);
+nmatlist <- coverage_matrix2nmat(cov_files, verbose=FALSE);
 sapply(nmatlist, function(nmat){attr(nmat, "signal_name")})
 nmatlist2heatmaps(nmatlist);
 
@@ -788,7 +840,7 @@ nmatlist2heatmaps(nmatlist,
 
 # example showing k-means clustering together with annotation groups
 anno_df <- data.frame(
-   group=sample(c("A", "B", "B"),
+   group=sample(c(1, -1, -1),
       size=nrow(nmatlist[[1]]),
       replace=TRUE),
    row.names=rownames(nmatlist[[1]]))
@@ -796,7 +848,9 @@ anno_df <- data.frame(
 # showing how the width is adjusted
 nmatlist2heatmaps(nmatlist,
    heatmap_legend_direction="vertical",
-   k_clusters=5,
+   k_clusters=0,
+   color_sub=c(`A`="firebrick", `B`="darkorchid"),
+   k_colors=c("firebrick", "dodgerblue"),
    min_rows_per_k=50,
    ht_gap=grid::unit(1, "cm"),
    k_method="correlation",
