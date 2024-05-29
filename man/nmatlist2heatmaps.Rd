@@ -20,6 +20,7 @@ nmatlist2heatmaps(
   k_method = c("correlation", "euclidean", "pearson", "spearman"),
   k_heatmap = main_heatmap,
   partition = NULL,
+  row_title_rot = 0,
   partition_counts = TRUE,
   partition_count_template = "{partition_name}\\n({counts} rows)",
   rows = NULL,
@@ -198,6 +199,11 @@ Colors from \code{k_colors} are assigned to each partition value,
 then colors are split to light-to-dark gradient
 using \code{jamba::color2gradient()}.
 }}
+
+\item{row_title_rot}{\code{numeric} value in degrees, to rotate the
+partition labels on the left, when either \code{partition} or
+\code{k_clusters} are provided. The default \code{0} uses horizontal
+text. For long labels, it may be better to use \code{30} or \code{60}.}
 
 \item{partition_counts}{\code{logical} indicating whether to include the
 number of rows in each partition, default \code{TRUE}.

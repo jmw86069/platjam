@@ -457,6 +457,10 @@ coverage_matrix2nmat <- function
 #'    Colors from `k_colors` are assigned to each partition value,
 #'    then colors are split to light-to-dark gradient
 #'    using `jamba::color2gradient()`.
+#' @param row_title_rot `numeric` value in degrees, to rotate the
+#'    partition labels on the left, when either `partition` or
+#'    `k_clusters` are provided. The default `0` uses horizontal
+#'    text. For long labels, it may be better to use `30` or `60`.
 #' @param partition_counts `logical` indicating whether to include the
 #'    number of rows in each partition, default `TRUE`.
 #'    Note that this setting is active if `k_clusters` and/or `partition`
@@ -958,6 +962,7 @@ nmatlist2heatmaps <- function
     "spearman"),
  k_heatmap=main_heatmap,
  partition=NULL,
+ row_title_rot=0,
  partition_counts=TRUE,
  partition_count_template="{partition_name}\n({counts} rows)",
  rows=NULL,
@@ -2445,6 +2450,7 @@ nmatlist2heatmaps <- function
          name=signal_name,
          column_title=signal_name,
          row_order=row_order[rows],
+         row_title_rot=row_title_rot,
          column_title_gp=column_title_gp[[i]],
          ...);
       EH;
