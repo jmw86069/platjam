@@ -117,7 +117,7 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
       pos_line=FALSE,
       use_raster=TRUE,
       col=jamba::getColorRamp(color, n=10),
-      top_annotation=HeatmapAnnotation(
+      top_annotation=ComplexHeatmap::HeatmapAnnotation(
          lines=anno_enriched(gp=grid::gpar(col=colorjam::rainbowJam(k)))
       ),
       axis_name_gp=grid::gpar(fontsize=8),

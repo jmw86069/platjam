@@ -354,11 +354,12 @@ import_nanostring_rcc <- function
       nano_sample_match <- match(sample_df[[filename_colname]],
          rownames(nano_samples))
       use_nano_samples <- nano_samples[nano_sample_match, , drop=FALSE];
-      colnames(use_nano_samples) <- tail(makeNames(c(
-         colnames(sample_df), colnames(nano_samples))),
-         ncol(nano_samples))
-      sample_df[, colnames(use_nano_samples)] <- use_nano_samples[
-         nano_sample_match, , drop=FALSE];
+      if (any(colnames(use_nano_samples) %in% colnames(sample_df))) {
+         colnames(use_nano_samples) <- tail(makeNames(c(
+            colnames(sample_df), colnames(nano_samples))),
+            ncol(nano_samples))
+      }
+      sample_df[, colnames(use_nano_samples)] <- use_nano_samples;
 
       if (!all(isamples1 == isamples)) {
          # synchronize sample order

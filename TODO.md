@@ -1,8 +1,49 @@
+# TODO 12jun2024
+
+* Consider generic importer for tab-delimited, csv-delimited data
+that produces a `SummarizedExperiment` object.
+
+   * Bonus points for some mechanism to recognize multiple header rows,
+   so they can be added to `colData()`.
+   * Bonus points for option to specify whether rows or columns are
+   measurements or samples, i.e. `rowData()` or `colData()`.
+
+# TODO 03jun2024
+
+* `nmatlist2heatmaps()`
+
+   * Consider new argument `max_partition_rows` to limit the number
+   of rows for any given partition. This option needs to be done here
+   particularly so it can be used together with `k_clusters` which
+   produces clusters whose sizes are not known beforehand.
+   * Consider option to rotate color legend labels 90 degrees (vertical)
+   so they take less width.
+
+# TODO 30may2024
+
+* Coverage heatmap automation functions. So far they include:
+
+   * `make_cov_config()` - create `config_df` for matrix files
+   * `auto_cov_heatmaps()` - given `config_df`, "draw the rest of the owl"
+   (Do all the things required to make a consistent set of heatmaps.)
+   * `rbind_cov_config()` - to combine multiple independent `config_df`
+   * `process_cov_files()`
+   
+      * Confirm matrix files exist
+      * When provided coverage (and not matrix), call `make_heatmap`
+      to create matrix files
+      * No doubt this is a stop-gap specific to certain systems, e.g.
+
+         * call `system()` or `system2()`
+         * call `sys::exec_wait()` or `sys::exec_background()`
+         * call `processx::run()` - preferred for multiple concurrent processes
+
+
 # TODO 20may2024
 
 * `parse_ucsc_gokey()`
 
-   * Consider mechanism to define custom default track settings.
+   * DONE. Consider mechanism to define custom default track settings.
    For example `get_track_defaults()` could be used to define
    settings in the package environment, which could then be edited.
    Similar to `igraph::add_shapes()` and `igraph:::.igraph.shapes`,
@@ -16,15 +57,9 @@
    sum, mean, subtraction, etc. Then save the result to a file for
    easier, more consistent re-use.
 
-* Add coverage heatmap automation functions. So far they include:
-
-   * `make_cov_config()` - create `config_df` for matrix files
-   * `rbind_cov_config()` - to combine multiple `config_df`
-   * `auto_cov_heatmaps()`
-
 * `nmatlist2heatmaps()`
 
-   * Debug why the `k_colors`, `color_sub` usage is not working properly
+   * DONE. Debug why the `k_colors`, `color_sub` usage is not working properly
    with `row_split`.
    * Handle situation when input data is all zero. The detected range
    should be set to c(0, 1).

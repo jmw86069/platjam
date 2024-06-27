@@ -1,3 +1,24 @@
+# platjam 0.0.85.900
+
+## Bug fixes
+
+* `import_nanostring_rcc()`
+
+   * Fixed bug causing the order of internal Nanostring annotation
+   to be mismatched with rows supplied by `curation_txt`. The bug
+   is limited to Nanostring RCC annotations and does not affect
+   the correct order of annotations supplied by `curation_txt`, however
+   it could cause the Nanostring annotations to be out of order.
+   These annotations are not typically used downstream, however it would
+   impact things like `"Lane_CartridgeID"`, `"Lane_BindingDensity"`,
+   `"Lane_FovCounted"`.
+
+* `nmatlist2heatmaps()`
+
+   * Added missing package prefix when `anno_mark_rows` is supplied, calling
+   `ComplexHeatmap::anno_mark()`.
+
+
 # platjam 0.0.84.900
 
 ## Updates to existing functions

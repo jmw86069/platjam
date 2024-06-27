@@ -83,7 +83,7 @@
 #'       pos_line=FALSE,
 #'       use_raster=TRUE,
 #'       col=jamba::getColorRamp(color, n=10),
-#'       top_annotation=HeatmapAnnotation(
+#'       top_annotation=ComplexHeatmap::HeatmapAnnotation(
 #'          lines=anno_enriched(gp=grid::gpar(col=colorjam::rainbowJam(k)))
 #'       ),
 #'       axis_name_gp=grid::gpar(fontsize=8),
@@ -1908,7 +1908,7 @@ nmatlist2heatmaps <- function
             width=k_width,
             cluster_rows=FALSE,
             right_annotation=ComplexHeatmap::rowAnnotation(
-               foo=anno_mark(at=anno_row_which,
+               foo=ComplexHeatmap::anno_mark(at=anno_row_which,
                   labels_gp=anno_row_gp,
                   labels=anno_row_labels)
             )
@@ -2401,6 +2401,9 @@ nmatlist2heatmaps <- function
          # Define top_legend
          use_linewidths <- rep(profile_linewidth, length.out=length(use_colors))
          use_linetypes <- rep(profile_linetype, length.out=length(use_colors))
+         # This assignment looks bad, but top_legend was defined within
+         # this function, which means <<- will assign the value to the
+         # internal function variable and not to .GlobalEnv
          top_legend <<- ComplexHeatmap::Legend(title="Profiles",
             title_position="topleft",
             type="lines",
