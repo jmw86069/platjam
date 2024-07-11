@@ -1,3 +1,18 @@
+# platjam 0.0.86.900
+
+* Added `cli` as package dependency, mostly for messaging.
+
+## New functions
+
+* `import_omics_data()`
+
+   * generic data import, convenient way to create `SummarizedExperiment`.
+   * It recognized `curation_txt` consistent with other import functions,
+   to add sample annotations, and possibly re-order or subset data
+   to match the order and content of the `curation_txt` data.
+   * This function may need some real world testing to confirm its
+   feature set.
+
 # platjam 0.0.85.900
 
 ## Bug fixes

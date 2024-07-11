@@ -1,3 +1,23 @@
+# TODO 10jul2024
+
+* Consider new function `import_omics_data()`
+
+   * Generic data matrix import routine.
+   * Optional `curation_txt`, consistent with other import functions.
+   * Column headers are assumed to be samples, only one row of headers
+   is permitted (for now).
+   * First column is expected to contain rownames.
+   * There can be multiple row annotation columns, to be stored in `rowData()`.
+
+
+# TODO 28jun2024
+
+* Consider function to display a `data.frame` using `sample_color_list`
+output from `design2colors()`.
+
+   * It should essentially do the same thing as `design2colors()` except
+   re-use the `sample_color_list`
+
 # TODO 12jun2024
 
 * Consider generic importer for tab-delimited, csv-delimited data
