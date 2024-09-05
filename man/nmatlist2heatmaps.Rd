@@ -60,8 +60,9 @@ nmatlist2heatmaps(
   ht_gap = grid::unit(4, "mm"),
   row_anno_padding = grid::unit(4, "mm"),
   column_anno_padding = grid::unit(4, "mm"),
+  legend_padding = grid::unit(1, "cm"),
   profile_value = c("mean", "sum", "abs_mean", "abs_sum"),
-  profile_linetype = 1,
+  profile_linetype = c(1, 5, 3),
   profile_linewidth = 1.5,
   ylims = NULL,
   border = TRUE,
@@ -577,13 +578,27 @@ set the random seed. Set to \code{NULL} to avoid running
 This argument is passed to \code{ComplexHeatmap::draw()}. An example
 is \code{grid::unit(8, "mm")} to specify 8 millimeters.}
 
+\item{row_anno_padding, column_anno_padding, legend_padding}{\code{grid::unit}
+to define the padding between heatmap body, and row annotation,
+column annotation, and heatmap color legend, respectively.
+\itemize{
+\item The default values are intended to provide more space between heatmap
+and these features than between heatmap subsections (\code{row_gap}).
+The defaults are 4mm for row and column annotations, and 1cm
+for the color legend.
+\item The \code{legend_padding} is useful to minimize overlap with
+legend and the y-axis labels from the metaplots at the top
+of each heatmap.
+}}
+
 \item{profile_value}{\code{character} string to define the type of numeric
 profile to display at the top of each heatmap. This argument is
 passed to \code{EnrichedHeatmap::anno_enriched()}. Values: \code{"mean"} the
 mean profile; \code{"sum"} the sum; \code{"abs_sum"} sum of absolute values;
 \code{"abs_mean"} the mean of absolute values.}
 
-\item{profile_linetype}{\code{numeric} or \code{character} passed to \code{grid::gpar(lty)}
+\item{profile_linetype}{\code{numeric} or \code{character} default c(1, 5, 3)
+passed to \code{grid::gpar(lty)}
 to define the metaplot line type. Default lty=1 is a solid line.
 Values are recycled to the number of profile plots.}
 
@@ -783,12 +798,13 @@ nmatlist2heatmaps(nmatlist,
    transform=c("log2signed", "sqrt"));
 
 # k-means clusters, default uses euclidean distance
-nmatlist2heatmaps(nmatlist, k_clusters=4,,
+nmatlist2heatmaps(nmatlist, k_clusters=4,
    transform=c("log2signed", "sqrt"));
 
 # k-means clusters, "correlation" or "pearson" sometimes works better
 nmatlist2heatmaps(nmatlist,
    k_clusters=4,
+   min_rows_per_k=20,
    k_method="pearson",
    transform=c("log2signed", "sqrt"));
 

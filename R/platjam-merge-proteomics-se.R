@@ -216,7 +216,7 @@ merge_proteomics_se <- function
    }
 
    # Replace empty rowname1 value with rownames(SE1)
-   rowData(SE1)[[rowname1]] <- ifelse(
+   SummarizedExperiment::rowData(SE1)[[rowname1]] <- ifelse(
       nchar(SummarizedExperiment::rowData(SE1)[[rowname1]]) > 0,
       SummarizedExperiment::rowData(SE1)[[rowname1]],
       rownames(SE1))
@@ -226,7 +226,7 @@ merge_proteomics_se <- function
       startN=startN,
       ...)
    # Replace empty rowname2 value with rownames(SE2)
-   rowData(SE2)[[rowname2]] <- ifelse(
+   SummarizedExperiment::rowData(SE2)[[rowname2]] <- ifelse(
       nchar(SummarizedExperiment::rowData(SE2)[[rowname2]]) > 0,
       SummarizedExperiment::rowData(SE2)[[rowname2]],
       rownames(SE2))
@@ -346,11 +346,11 @@ merge_proteomics_se <- function
    row_match1 <- match(rownames_union, rownames(SE1));
    row_match2 <- match(rownames_union, rownames(SE2));
    assay_list <- lapply(assay_names, function(iassay){
-      assay1 <- assays(SE1[row_match1, , drop=FALSE])[[iassay]];
-      assay2 <- assays(SE2[row_match2, , drop=FALSE])[[iassay]];
+      assay1 <- SummarizedExperiment::assays(SE1[row_match1, , drop=FALSE])[[iassay]];
+      assay2 <- SummarizedExperiment::assays(SE2[row_match2, , drop=FALSE])[[iassay]];
       m <- cbind(
-         assays(SE1[row_match1, , drop=FALSE])[[iassay]],
-         assays(SE2[row_match2, , drop=FALSE])[[iassay]])
+         SummarizedExperiment::assays(SE1[row_match1, , drop=FALSE])[[iassay]],
+         SummarizedExperiment::assays(SE2[row_match2, , drop=FALSE])[[iassay]])
       rownames(m) <- rownames_union;
       colnames(m) <- colnames_union;
       m;

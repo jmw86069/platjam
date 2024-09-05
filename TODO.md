@@ -1,3 +1,50 @@
+
+# TODO 08aug2024
+
+* `rmd_tab_iterator()`
+
+   * Consider option to print the variable name with the first tab:
+   
+      * Instead of: 
+      ```
+      [Expression], [Correlation]
+      [Cohort], [Age]
+      ```
+      * It would be:
+      ```
+      [Data: Expression], [Correlation]
+      [Centering: Cohort], [Age]
+      ```
+
+
+* `design2colors()`
+
+   * `class_colnames` appears to be broken, it does not seem to assign
+   class colors as expected.
+   
+      * It should use class to define range of color hues.
+      * Group colors are assigned within each range of hues.
+      * This part appears to be correct.
+      * It should then assign class hue by the middle hue in the range,
+      which does not appear to be correct.
+      * It appears that class columns are assigned categorical colors
+      as any other categorical column.
+      * Also it defines `class_group_color` and `class_group_lightness_color`,
+      but there should be `class_color` that corresponds to the one-or-more
+      values in `class_colnames`.
+   
+   * Consider adding a function to plot the matrix separately, table format,
+   as done by default in `design2colors()`. The `showColors()` and
+   `print_color_list()` are not great when there is this much data.
+   * It needs more intuitive "default behavior", for example define
+   `class_colnames` then `group_colnames` and have it use the last value
+   as `lightness_colnames`?
+   
+      * Can it use some logic to order factors by number of levels?
+      Take only columns with at least 2+ replicated values, order from
+      most to least replicated values to define:
+      `class_colnames`, `group_colnames`, then `lightness_colnames`.
+
 # TODO 10jul2024
 
 * Consider new function `import_omics_data()`

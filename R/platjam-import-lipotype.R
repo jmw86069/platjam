@@ -53,7 +53,7 @@ import_lipotype_csv <- function
             ...);
       });
       SE_names <- sapply(SE_list, function(iSE){
-         names(assays(iSE))
+         names(SummarizedExperiment::assays(iSE))
       });
       names(SE_list) <- SE_names;
       identical_rowData <- sapply(tail(SE_list, -1), function(iSE){

@@ -1,3 +1,35 @@
+# platjam 0.0.87.900
+
+## changes to existing functions
+
+* `import_proteomics_PD()`, `import_lipotype_csv()`, `import_nanostring_rcc()`
+
+   * fixed missing package prefix `SummarizedExperiment::rowData()`, also for
+   `colData()`, `assays()`
+
+* `convert_PD_df_to_SE()` used by `import_proteomics_PD()`
+
+   * Added `include_source=TRUE` when `ann_lib` has multiple values,
+   consistent with behavior in `import_proteomics_mascot()`.
+
+* `nmatlist2heatmaps()`
+
+   * The caption is now rendered using `ComplexHeatmap::Legend()` so
+   it uses the same positioning and font size, instead of being tucked
+   into the corner where it often overlapped other text.
+   The Legend also includes the sort column(s) `byCols` and indicates
+   whether rows are ordered by Enrichment Score, or with user-provided values.
+   * Default change `profile_linetype=c(1, 5, 3)` so the default condition
+   uses different linetypes, easier to distinguish visually.
+   Previous was `profile_linetype=1`.
+   * New argument `legend_padding` to adjust whitespace beside heatmaps
+   before the color legend is drawn. It is applied to HEATMAP_LEGEND_PADDING
+   and ANNOTATION_LEGEND_PADDING.
+   * `row_order` is much more rigorously handled
+   
+      * values must be unique integers, consistent with `order()` output.
+      * `row_order` is applied properly after `byCols` when both are provided.
+
 # platjam 0.0.86.900
 
 * Added `cli` as package dependency, mostly for messaging.

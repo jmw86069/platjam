@@ -381,7 +381,7 @@ import_nanostring_rcc <- function
       isamples <- isamples1;
       if (verbose) {
          if (verbose > 1) {
-            jamba::printDebug("import_salmon_quant(): ",
+            jamba::printDebug("import_nanostring_rcc(): ",
                "sample_df:");
             print(sample_df);
          }
@@ -398,7 +398,7 @@ import_nanostring_rcc <- function
    }
 
    # add probe control_type if needed
-   if (!"control_type" %in% colnames(rowData(nano_se))) {
+   if (!"control_type" %in% colnames(SummarizedExperiment::rowData(nano_se))) {
       SummarizedExperiment::rowData(nano_se)$control_type <- ifelse(
          grepl("^POS_", rownames(nano_se)),
          "POS",

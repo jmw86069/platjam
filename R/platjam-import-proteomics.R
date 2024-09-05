@@ -115,10 +115,10 @@ import_proteomics_PD <- function
       # prepare xref data.frame from protein data
       if (length(xref_df) == 0 && "ProteinSE" %in% names(ret_list)) {
          reuse_colnames <- jamba::provigrep(c("Accession", "Description", "ENTREZID", "SYMBOL", "GENENAME"),
-            colnames(rowData(ret_list$ProteinSE)));
+            colnames(SummarizedExperiment::rowData(ret_list$ProteinSE)));
          if (length(reuse_colnames) > 1) {
             xref_df <- data.frame(check.names=FALSE,
-               rowData(ret_list$ProteinSE)[,reuse_colnames]);
+               SummarizedExperiment::rowData(ret_list$ProteinSE)[,reuse_colnames]);
          }
       }
 
@@ -358,6 +358,7 @@ convert_PD_df_to_SE <- function
    protein_genejam_df <- genejam::freshenGenes3(
       data.frame(protein_df[, accession_colname, drop=FALSE],
          GN=prot_gn_values),
+      include_source=(length(ann_lib) > 1),
       intermediate="ENTREZID",
       ann_lib=ann_lib);
 
