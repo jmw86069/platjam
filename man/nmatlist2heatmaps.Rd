@@ -8,7 +8,7 @@ nmatlist2heatmaps(
   nmatlist,
   panel_groups = NULL,
   title = NULL,
-  title_gp = grid::gpar(fontsize = 14),
+  title_gp = grid::gpar(fontsize = 16),
   caption = NULL,
   upstream_length = NULL,
   downstream_length = NULL,
@@ -35,6 +35,13 @@ nmatlist2heatmaps(
   anno_row_marks = NULL,
   anno_row_labels = NULL,
   anno_row_gp = grid::gpar(fontsize = 14),
+  recenter_heatmap = NULL,
+  recenter_range = NULL,
+  recenter_invert = FALSE,
+  restrand_heatmap = NULL,
+  restrand_range = NULL,
+  restrand_buffer = NULL,
+  restrand_invert = FALSE,
   top_annotation = NULL,
   top_anno_height = grid::unit(3, "cm"),
   top_axis_side = c("right"),
@@ -72,7 +79,7 @@ nmatlist2heatmaps(
   raster_by_magick = jamba::check_pkg_installed("magick"),
   do_plot = TRUE,
   do_caption = TRUE,
-  caption_fontsize = 10,
+  legend_fontsize = 10,
   legend_width = grid::unit(3, "cm"),
   trim_legend_title = TRUE,
   padding = grid::unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
@@ -352,6 +359,17 @@ delimited with space \code{" "}.
 \item{anno_row_gp}{\code{grid::gpar} object used to customize the text label
 displayed when \code{anno_row_marks} is defined. The default fontsize 14
 is intended to be larger than other default values, for legibility.}
+
+\item{recenter_heatmap, recenter_range, recenter_invert}{arguments
+are passed to \code{recenter_nmatlist()} to apply re-centering.
+\itemize{
+\item Note that recenter will always occur before restrand.
+}}
+
+\item{restrand_heatmap, restrand_range, restrand_buffer, restrand_invert}{arguments are passed to \code{restrand_nmatlist()} to apply re-stranding.
+\itemize{
+\item Note that recenter will always occur before restrand.
+}}
 
 \item{top_annotation}{\code{HeatmapAnnotation} or \code{logical} or \code{list}:
 \itemize{
@@ -647,6 +665,13 @@ without drawing the heatmaps.}
 at the bottom-right of the plot, describing the number of rows and
 columns, the partition, k-means clustering, and main heatmap.}
 
+\item{legend_fontsize}{\code{numeric} fontsize to use for all legend text,
+default 10.
+\itemize{
+\item Optionally two values can be defined, the first is used for
+legend title, the second is used for legend labels.
+}}
+
 \item{padding}{\code{grid::unit} object used during \code{ComplexHeatmap::draw()}
 to add whitespace padding around the boundaries of the overall list
 of heatmaps. This padding is useful to enforce extra whitespace,
@@ -679,8 +704,9 @@ are also passed to \code{ComplexHeatmap::Heatmap()}.}
 \code{list} with heatmap components that can be reviewed, or
 optionally rendered into a figure:
 \itemize{
-\item \code{"AHM"}: annotation heatmap
-\item \code{"PHM"}: partition heatmap
+\item \code{"AHM"}: annotation heatmap, when \code{anno_df} is supplied
+\item \code{"PHM"}: partition heatmap, when partitioning and/or k-means clustering
+is used
 \item \code{"EH_l"}: \code{list} of \code{ComplexHeatmap::Heatmap} objects
 \item \code{"MHM"}: marked heatmap, containing optional row labels
 \item \code{"HM_drawn"}: when \code{hm_nrow=1} this is the output after drawing the
@@ -689,9 +715,12 @@ be drawn again if needed, or used to determine exact row orders.
 \item \code{"fn_params"}: \code{list} of useful function parameters, including
 some calculated during processing such as \code{panel_groups}, \code{ylims},
 \code{signal_ceiling}, etc.
-\item \code{"hm_caption"}: \code{character} captions displayed on the heatmap
-\item \code{"draw_caption"}: \code{function} which will draw the heatmap caption
-in the bottom-right corner of the active display device.
+\item \code{"hm_caption"}: \code{character} version of heatmap captions
+\item \code{"adjust_df"}: \code{data.frame} when \code{recenter_heatmap} or
+\code{restrand_heatmap} are defined, which contains a summary of each
+row, with colnames:
+\code{"summit_name"} for recentering; and
+\code{"restrand"} for restranding.
 }
 }
 \description{
@@ -899,6 +928,8 @@ Other jam coverage heatmap functions:
 \code{\link{coverage_matrix2nmat}()},
 \code{\link{get_nmat_ceiling}()},
 \code{\link{nmathm_row_order}()},
+\code{\link{recenter_nmatlist}()},
+\code{\link{restrand_nmatlist}()},
 \code{\link{validate_heatmap_params}()},
 \code{\link{zoom_nmatlist}()},
 \code{\link{zoom_nmat}()}

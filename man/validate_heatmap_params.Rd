@@ -15,6 +15,8 @@ Other jam coverage heatmap functions:
 \code{\link{get_nmat_ceiling}()},
 \code{\link{nmathm_row_order}()},
 \code{\link{nmatlist2heatmaps}()},
+\code{\link{recenter_nmatlist}()},
+\code{\link{restrand_nmatlist}()},
 \code{\link{zoom_nmatlist}()},
 \code{\link{zoom_nmat}()}
 }

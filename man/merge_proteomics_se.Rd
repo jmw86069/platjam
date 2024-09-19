@@ -131,7 +131,10 @@ Other jam utility functions:
 \code{\link{design2layout}()},
 \code{\link{get_numeric_transform}()},
 \code{\link{handle_df_args}()},
+\code{\link{nmat_summary}()},
+\code{\link{nmatlist_summary}()},
 \code{\link{rmd_tab_iterator}()},
-\code{\link{rowNormScale}()}
+\code{\link{rowNormScale}()},
+\code{\link{summit_from_vector}()}
 }
 \concept{jam utility functions}

@@ -1,3 +1,70 @@
+# platjam 0.0.88.900
+
+## new functions
+
+Two new capabilities for coverage heatmaps, re-center and re-strand
+coverage matrix data. The driving use case is to re-center data
+using coverage under ATAC-seq peaks, then define strandedness using
+"+" and "-" strand RNA-seq or 4sU-seq (nascent RNA-seq) coverage data.
+Re-centered peaks should show some focusing of other coverage tracks,
+including visualization of +1 and +2 nucleosomes beside the ATAC-seq peaks.
+
+* `recenter_nmatlist()`
+
+   * Intended workflow:
+   
+      * create coverage matrix data with wider range than needed (e.g. 10kb)
+      * recenter data by the summit, which creates missing data at the edges
+      * create heatmaps with desired range (e.g. 2kb) to avoid missing data
+      
+   * Takes input `nmatlist`, one or more entries are used to define a
+   new summit position. Then all `nmatlist` data is shifted to the summit.
+   * The summit is defined using `smooth.spline()` to smooth out the
+   noise spikes, making the estimate much more accurate than using
+   the single-point maximum.
+   * The option `invert_coverage` inverts coverage with (max - x) so it
+   can also be used to find the "trough" (inverted peak, the low-point).
+
+* `restrand_nmatlist()`
+
+   * Intended workflow:
+   
+      * Create coverage files centered ATACseq or TF-ChIPseq peak.
+      Expectation is that it may associate with enhancers or other
+      transcription in strand-specific manner.
+      * Define "strandedness" using another coverage track, use the
+      side with higher coverage: "use left", or "use right".
+      * Reverse the orientation of signal data for rows with "use left".
+   
+   * Takes input `nmatlist`, one or more entries are used to define
+   strandedness.
+   * The option `invert_coverage` inverts coverage with (max - x), which
+   also reverses the strandedness. It allows providing "+" strand and
+   "-" strand data as separate tracks, using `invert_coverage=TRUE` for
+   the "-" strand data.
+
+* `summit_from_vector()` - to determine a summit position given a
+`numeric` vector, using `smooth.spline()`.
+
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()`
+
+   * small change, the enrichment score is now calculated using
+   transformed data when `transform` is defined. Previously it used
+   un-transformed data, though in practice it makes little difference.
+   * New arguments `recenter` and `restrand` enable the new functions
+   `recenter_nmatlist()` and `restrand_nmatlist()`, passing all arguments
+   to those functions.
+   * Output includes `adjust_df` when recenter or restrand is enabled,
+   which contains the output from that adjustment.
+   * The heatmap caption includes `"Adjustments"` when recenter or
+   restrand is enabled, with the heatmaps used.
+   * New argument `legend_fontsize` to adjust all legend fonts.
+   When two values are provided, they are applied to the title, and labels,
+   respectively.
+
 # platjam 0.0.87.900
 
 ## changes to existing functions

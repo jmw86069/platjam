@@ -66,6 +66,9 @@ Other jam utility functions:
 \code{\link{get_numeric_transform}()},
 \code{\link{handle_df_args}()},
 \code{\link{merge_proteomics_se}()},
-\code{\link{rmd_tab_iterator}()}
+\code{\link{nmat_summary}()},
+\code{\link{nmatlist_summary}()},
+\code{\link{rmd_tab_iterator}()},
+\code{\link{summit_from_vector}()}
 }
 \concept{jam utility functions}

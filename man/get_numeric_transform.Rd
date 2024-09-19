@@ -75,7 +75,10 @@ Other jam utility functions:
 \code{\link{design2layout}()},
 \code{\link{handle_df_args}()},
 \code{\link{merge_proteomics_se}()},
+\code{\link{nmat_summary}()},
+\code{\link{nmatlist_summary}()},
 \code{\link{rmd_tab_iterator}()},
-\code{\link{rowNormScale}()}
+\code{\link{rowNormScale}()},
+\code{\link{summit_from_vector}()}
 }
 \concept{jam utility functions}
