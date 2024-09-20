@@ -1,3 +1,16 @@
+# platjam 0.0.89.900
+
+## bug fixed
+
+* `import_proteomics_PD()`
+
+   * Fixed bug caused by presence of columns containing `NA` values,
+   which then were incorrectly removed, causing a colnames-to-data
+   mismatch in length.
+   * Bumped `jamba` version to 0.0.103.900 to include a fix in
+   `readOpenxlsx()` when using a vector of `rows`, which was causing
+   colnames to be incorrectly populated with data from the wrong row.
+
 # platjam 0.0.88.900
 
 ## new functions

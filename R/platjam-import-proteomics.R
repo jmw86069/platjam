@@ -183,10 +183,13 @@ convert_PD_df_to_SE <- function
       for (na_col in rev(which(na_colnames))) {
          if (all(protein_df[[na_col]] %in% c(NA, ""))) {
             protein_df <- protein_df[, -na_col, drop=FALSE];
-            na_colnames[na_col] <- FALSE;
+            na_colnames <- na_colnames[-na_col];
          }
       }
       if (any(na_colnames)) {
+         new_na_colnames <- jamba::makeNames(
+            rep("NA", sum(na_colnames)),
+            suffix="");
          colnames(protein_df)[na_colnames] <- jamba::makeNames(
             rep("NA", sum(na_colnames)),
             suffix="");

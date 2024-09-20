@@ -1,6 +1,6 @@
 Package: platjam
 Title: Platform Jam, biological platform importers.
-Version: 0.0.88.900
+Version: 0.0.89.900
 Authors@R: person(given="James M.", family="Ward",
     email="jmw86069@gmail.com", role=c("aut", "cre"))
 Description: Platform data import methods for biological platform
@@ -8,7 +8,7 @@ Description: Platform data import methods for biological platform
     proteomics data from Proteomics Discoverer (PD) and PEAKS.
 biocViews:
 Depends: R (>= 3.6.0)
-Imports: jamba (>= 0.0.89.900),
+Imports: jamba (>= 0.0.103.900),
     colorjam (>= 0.0.26.900),
     data.table,
     glue (>= 1.3.2),
