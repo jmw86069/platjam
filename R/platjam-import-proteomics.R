@@ -114,11 +114,22 @@ import_proteomics_PD <- function
       }
       # prepare xref data.frame from protein data
       if (length(xref_df) == 0 && "ProteinSE" %in% names(ret_list)) {
-         reuse_colnames <- jamba::provigrep(c("Accession", "Description", "ENTREZID", "SYMBOL", "GENENAME"),
-            colnames(SummarizedExperiment::rowData(ret_list$ProteinSE)));
+         reuse_colnames <- jamba::unvigrep("PTM|Modification",
+            jamba::provigrep(
+               c("Accession",
+                  "Description",
+                  "ENTREZID",
+                  "SYMBOL",
+                  "GENENAME"),
+            colnames(SummarizedExperiment::rowData(ret_list$ProteinSE))));
          if (length(reuse_colnames) > 1) {
-            xref_df <- data.frame(check.names=FALSE,
-               SummarizedExperiment::rowData(ret_list$ProteinSE)[,reuse_colnames]);
+            xref_df <- unique(data.frame(check.names=FALSE,
+               SummarizedExperiment::rowData(
+                  ret_list$ProteinSE)[, reuse_colnames, drop=FALSE]));
+            if (verbose > 1) {
+               jamba::printDebug("head(xref_df):");# debug
+               print(head(xref_df, 10));# debug
+            }
          }
       }
 
@@ -174,38 +185,50 @@ convert_PD_df_to_SE <- function
    }
    # first repair any NA colnames
    if (any(is.na(colnames(protein_df)))) {
+      na_colnames <- is.na(colnames(protein_df));
       if (verbose) {
          jamba::printDebug("convert_PD_df_to_SE(): ",
-            "NA columns detected. Printing first 4 rows (input):");
-         print(head(protein_df, 4));
+            "NA colnames detected. First 4 rows of NA colnums:",
+            which(na_colnames));
+         print(head(protein_df[, na_colnames, drop=FALSE], 4));
       }
-      na_colnames <- is.na(colnames(protein_df));
-      for (na_col in rev(which(na_colnames))) {
+      na_nums <- rev(which(na_colnames));
+      # when colname is NA and all values are blank, remove column
+      na_col_blanks <- numeric(0);
+      for (na_col in na_nums) {
          if (all(protein_df[[na_col]] %in% c(NA, ""))) {
+            na_col_blanks <- c(na_col_blanks, na_col);
             protein_df <- protein_df[, -na_col, drop=FALSE];
             na_colnames <- na_colnames[-na_col];
          }
       }
+      if (verbose && length(na_col_blanks) > 0) {
+         jamba::printDebug("convert_PD_df_to_SE(): ",
+            "NA colnames with blank values were removed: ",
+            na_col_blanks);
+      }
+      # if any remaining NA colnames, assign character names
+      na_colnames <- is.na(colnames(protein_df));
       if (any(na_colnames)) {
          new_na_colnames <- jamba::makeNames(
             rep("NA", sum(na_colnames)),
+            renameOnes=TRUE,
             suffix="");
-         colnames(protein_df)[na_colnames] <- jamba::makeNames(
-            rep("NA", sum(na_colnames)),
-            suffix="");
-      }
-      if (verbose) {
-         jamba::printDebug("convert_PD_df_to_SE(): ",
-            "NA columns detected. Printing first 4 rows (after):");
-         print(head(protein_df, 4));
+         colnames(protein_df)[na_colnames] <- new_na_colnames;
+         if (verbose) {
+            jamba::printDebug("convert_PD_df_to_SE(): ",
+               "NA colnames detected. First 4 rows of NA colnums (after):",
+               which(na_colnames));
+            print(head(protein_df[, na_colnames, drop=FALSE], 4));
+         }
       }
    }
 
    # assign rownames and clean up sequence and post-translational modifications
    accession_colname <- "Accession";
    if (!accession_colname %in% colnames(protein_df)) {
-      accession_colname <- jamba::vigrep("accession",
-         colnames(protein_df));
+      accession_colname <- head(jamba::vigrep("accession[s]*$",
+         colnames(protein_df)), 1);
    }
 
    # optional manual curation of accession numbers
@@ -286,7 +309,12 @@ convert_PD_df_to_SE <- function
          }
 
          # assign SeqPTM
-         protein_df$SeqPTM <- jamba::pasteByRow(protein_df[, c(sequence_colname, "PTM")]);
+         if (verbose) {
+            jamba::printDebug("convert_PD_df_to_SE(): ",
+               "Assigning rownames by SeqPTM");
+         }
+         protein_df$SeqPTM <- jamba::pasteByRow(
+            protein_df[, c(sequence_colname, "PTM"), drop=FALSE]);
 
          # remove duplicate peptide sequence rows
          dupe_seqs <- duplicated(protein_df$SeqPTM);
@@ -299,14 +327,27 @@ convert_PD_df_to_SE <- function
                   jamba::formatInt(sum(!dupe_seqs)),
                   " rows.");
             }
-            protein_df <- protein_df[!dupe_seqs, , drop=FALSE];
+            if (verbose > 1) {
+               jamba::printDebug("convert_PD_df_to_SE(): ",
+                  "head(duplicate_rows, 20):",
+                  head(which(dupe_seqs), 20))
+               jamba::printDebug("convert_PD_df_to_SE(): ",
+                  "head(duplicate_sequence_PTM, 20):",
+                  protein_df$SeqPTM[head(which(dupe_seqs), 20)])
+            }
+            protein_df <- subset(protein_df, !dupe_seqs);
          }
 
          if ("peptide" %in% type) {
             rownames(protein_df) <- jamba::makeNames(protein_df$SeqPTM);
          }
       } else {
-         protein_df$AccessionPTM <- jamba::pasteByRow(protein_df[,c(accession_colname, "PTM")]);
+         if (verbose) {
+            jamba::printDebug("convert_PD_df_to_SE(): ",
+               "Assigning rownames by AccessionPTM");
+         }
+         protein_df$AccessionPTM <- jamba::pasteByRow(
+            protein_df[, c(accession_colname, "PTM"), drop=FALSE]);
          if ("peptide" %in% type) {
             rownames(protein_df) <- jamba::makeNames(protein_df$AccessionPTM);
          }
@@ -315,11 +356,16 @@ convert_PD_df_to_SE <- function
 
    # optionally merge xref_df data.frame with current data
    if (length(xref_df) > 0 && length(accession_colname) > 0) {
-      xref_acc_colname <- head(jamba::vigrep("Accession", colnames(xref_df)), 1);
+      xref_acc_colname <- head(jamba::vigrep("Accession",
+         colnames(xref_df)), 1);
       if (length(xref_acc_colname) == 0) {
          xref_df <- NULL;
       } else {
-         xref_match <- match(protein_df[[accession_colname]],
+         # xref_match <- match(protein_df[[accession_colname]],
+         #    xref_df[[xref_acc_colname]]);
+         # 0.0.89.900 - updated logic
+         xref_match <- match(
+            gsub("[; ]/*", "", protein_df[[accession_colname]]),
             xref_df[[xref_acc_colname]]);
          merge_colnames <- setdiff(colnames(xref_df),
             c(xref_acc_colname,
@@ -327,9 +373,12 @@ convert_PD_df_to_SE <- function
          for (icol in merge_colnames) {
             if (icol %in% colnames(protein_df)) {
                update_rows <- (!is.na(xref_match) &
-                     !xref_df[xref_match, icol] %in% c(NA, "") &
-                     protein_df[,icol] %in% c(NA, ""));
-               protein_df[update_rows, icol] <- xref_df[xref_match[update_rows], icol];
+                     protein_df[, icol] %in% c(NA, "") &
+                     !xref_df[xref_match, icol] %in% c(NA, ""))
+               if (any(update_rows)) {
+                  protein_df[update_rows, icol] <- xref_df[
+                     xref_match[update_rows], icol];
+               }
             } else {
                protein_df[[icol]] <- jamba::rmNA(naValue="",
                   xref_df[xref_match, icol]);
@@ -361,6 +410,7 @@ convert_PD_df_to_SE <- function
    protein_genejam_df <- genejam::freshenGenes3(
       data.frame(protein_df[, accession_colname, drop=FALSE],
          GN=prot_gn_values),
+      split="[;,/ ]+",
       include_source=(length(ann_lib) > 1),
       intermediate="ENTREZID",
       ann_lib=ann_lib);
