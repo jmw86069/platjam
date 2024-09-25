@@ -306,7 +306,8 @@ summit_from_vector <- function
       summith <- head(x, 1);
    } else {
       # call smooth.spline
-      smth <- smooth.spline(x=seq_along(x),
+      smth <- jamba::call_fn_ellipsis(smooth.spline,
+         x=seq_along(x),
          y=x,
          spar=spar,
          ...);

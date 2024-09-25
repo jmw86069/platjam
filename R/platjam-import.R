@@ -154,12 +154,12 @@ coverage_matrix2nmat <- function
    ## Other single-entry input types
    if (length(x) == 0) {
       if (length(filename) == 0) {
-         stop("Must suppled x as data.frame, or filename.");
+         stop("Must supply x as a data.frame, or supply one filename.");
       } else if (!file.exists(head(x, 1))) {
          stop("No x supplied as data.frame, and filename is not found.");
       } else {
          if (verbose) {
-            jamba::printDebug("matrix2nmat(): ",
+            jamba::printDebug("coverage_matrix2nmat(): ",
                "Importing data from filename:",
                filename);
          }
@@ -170,33 +170,36 @@ coverage_matrix2nmat <- function
             if (length(names(filename)) > 0 && nchar(head(names(filename), 1)) > 0) {
                signal_name <- head(names(filename), 1);
             } else {
-               signal_name <- gsub("[.]matrix$", "", basename(head(filename, 1)));
+               signal_name <- gsub("[.](matrix|matrix.gz)$", "",
+                  basename(head(filename, 1)));
             }
          }
       }
-   } else if (jamba::igrepHas("character", class(x)) && file.exists(head(x, 1))) {
+   } else if (jamba::igrepHas("character", class(x)) &&
+         file.exists(head(x, 1))) {
       if (verbose) {
-         jamba::printDebug("matrix2nmat(): ",
+         jamba::printDebug("coverage_matrix2nmat(): ",
             "Importing data from filename sent as x:",
             x);
       }
       filename <- x;
       x <- data.table::fread(head(filename, 1),
-         data.table=FALSE,
-         sep="\t");
+         sep="\t",
+         data.table=FALSE);
       if (length(signal_name) == 0) {
          if (length(names(filename)) > 0 && nchar(head(names(filename), 1)) > 0) {
             signal_name <- head(names(filename), 1);
          } else {
-            signal_name <- gsub("[.]matrix$", "", basename(head(filename, 1)));
+            signal_name <- gsub("[.](matrix|matrix.gz)$", "",
+               basename(head(filename, 1)));
          }
       }
    }
    if (verbose) {
-      jamba::printDebug("matrix2nmat(): ",
+      jamba::printDebug("coverage_matrix2nmat(): ",
          "signal_name:",
          signal_name);
-      jamba::printDebug("matrix2nmat(): ",
+      jamba::printDebug("coverage_matrix2nmat(): ",
          "names(filename):",
          names(filename));
    }
@@ -206,7 +209,8 @@ coverage_matrix2nmat <- function
    }
 
    if (!jamba::igrepHas("data.frame|dataframe|tibble|data.table", class(x))) {
-      stop("Supplied x must be class data.frame, DataFrame, data.table, or tibble.");
+      stop(paste0("Supplied x must be class ",
+         "data.frame, DataFrame, data.table, or tibble."));
    }
    if (jamba::igrepHas("data.table", class(x))) {
       x <- as.data.frame(x);
@@ -218,7 +222,7 @@ coverage_matrix2nmat <- function
       stop("No coordinate colnames found matching pattern.");
    }
    if (verbose) {
-      jamba::printDebug("matrix2nmat(): ",
+      jamba::printDebug("coverage_matrix2nmat(): ",
          "mat_colnames:",
          mat_colnames);
    }

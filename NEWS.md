@@ -1,3 +1,15 @@
+# platjam 0.0.90.900
+
+## updates to existing functions
+
+* `coverage_matrix2nmat()`
+
+   * Updated to accept `".matrix"` and `".matrix.gz"` files.
+
+* `summit_from_vector()` called during recentering, now uses
+`jamba::call_fn_ellipsis()` to ensure `...` are recognized
+arguments.
+
 # platjam 0.0.89.900
 
 ## bug fixed
