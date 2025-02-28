@@ -1,3 +1,39 @@
+# TODO 21feb2025
+
+* Consider `heatmaps2nmatlist()` as an inverse to `nmatlist2heatmaps()`
+* Review ways to cache/reuse the recentering values with `nmatlist2heatmaps()`
+
+# TODO 13nov2024
+
+* Add GeoMx data processing functions.
+* `design2colors()` - needs improvements - not nearly as automated as hoped
+
+   * Fix error when supplying data that contains `NA` or empty values.
+   * Fix warning:
+   `"matrix(ncol=2, byrow=TRUE, add_hue), data length is not a multiple"`
+   * Consider adding `default_colors` with common categories:
+   Male/Female, TRUE/FALSE, Yes/No, positive/negative.
+   Maybe `"Wildtype"`,`"WT"`?
+   * Allow `sample_color_list` to inform "everything" when supplied.
+   E.g. absence of `group_colnames`, `lightness_colnames`, `class_colnames`
+   it should still be able to apply every column function.
+   * `color_sub` - should accept `list` input, named by column,
+   * `lightness_colnames` - should still use `color_sub` when matched?
+   It should apply the lightness to the group color, if not the other colors.
+   * When supplied group colors, consider defining class colors using group
+   median color hue.
+   * Consider option for columns to make their own categorical colors.
+   * Consider matching cardinality of other columns to class, group, lightness,
+   other columns with colors assigned.
+   E.g. If "Genotype" and "Knockout" have values that are always 1:1 the same,
+   it's good to share categorical colors.
+   This could affect many columns, which is also fine.
+
+* `rmd_tab_iterator()`
+
+   * Consider `quiet=FALSE` default, which prints errors but continues,
+   and is otherwise not verbose.
+
 
 # TODO 08aug2024
 

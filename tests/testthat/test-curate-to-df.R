@@ -1,5 +1,5 @@
 
-context("curate_to_df_by_pattern")
+# context("curate_to_df_by_pattern")
 
 # define test data
 df <- data.frame(

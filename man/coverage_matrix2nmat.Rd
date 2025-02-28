@@ -144,8 +144,8 @@ Other jam coverage heatmap functions:
 \code{\link{recenter_nmatlist}()},
 \code{\link{restrand_nmatlist}()},
 \code{\link{validate_heatmap_params}()},
-\code{\link{zoom_nmatlist}()},
-\code{\link{zoom_nmat}()}
+\code{\link{zoom_nmat}()},
+\code{\link{zoom_nmatlist}()}
 
 Other jam import functions: 
 \code{\link{deepTools_matrix2nmat}()},

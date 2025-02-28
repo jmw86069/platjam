@@ -86,6 +86,11 @@
 #'    transform=c("log2signed", "sqrt"));
 #' head(data.frame(summit_name=attr(nmatlist2i[[1]], "summit_name")))
 #'
+#' # re-use summits
+#' summit_names <- setNames(attr(nmatlist2i[[1]], "summit_name"),
+#'    attr(nmatlist2i[[1]], "dimnames")[[1]])
+#' nmatlist2i_reuse <- recenter_nmatlist(nmatlist, summit_names=summit_names)
+#'
 #' nmatlist2is <- restrand_nmatlist(nmatlist2i, restrand_heatmap=2, recenter_invert=FALSE)
 #' nmatlist2heatmaps(nmatlist2is,
 #'    title="Input data, recentered by inverted h3k4me1 signal,\nrestranded by tss",
@@ -97,6 +102,21 @@
 #'    summit_name=attr(nmatlist2is[[1]], "summit_name"),
 #'    restrand=attr(nmatlist2is[[1]], "restrand")))
 #'
+#' nhm <- nmatlist2heatmaps(nmatlist,
+#'    title="Input data",
+#'    recenter_heatmap=2,
+#'    transform=c("log2signed", "sqrt"));
+#' jamba::sdim(nhm)
+#'
+#' nhm2 <- nmatlist2heatmaps(nmatlist,
+#'    title="Input data",
+#'    summit_names=jamba::nameVector(nhm$adjust_df[, c("summit_name", "row")]),
+#'    transform=c("log2signed", "sqrt"));
+#' nhm2 <- nmatlist2heatmaps(nmatlist,
+#'    title="Input data",
+#'    summit_names=nhm$adjust_df$summit_name,
+#'    transform=c("log2signed", "sqrt"));
+#'
 #' @export
 recenter_nmatlist <- function
 (nmatlist,
@@ -106,6 +126,7 @@ recenter_nmatlist <- function
  spar=0.5,
  edge_buffer=0,
  empty_value=0,
+ summit_names=NULL,
  verbose=FALSE,
  ...)
 {
@@ -127,74 +148,94 @@ recenter_nmatlist <- function
    #    bin_width <- round(attr(nmat, "extend")[1] /  length(attr(nmat, "upstream_index")))
    # })
 
-   ## Define the nmatlist with appropriate range to use for recentering
-   if (length(recenter_invert) == 0) {
-      recenter_invert <- FALSE;
-   }
-   recenter_invert <- rep(recenter_invert,
-      length.out=length(recenter_heatmap));
-   recenter_nmatlist <- lapply(nmatlist[recenter_heatmap], function(nmat){
-      if (length(recenter_range) == 1 && recenter_range > 0) {
-         nmat <- zoom_nmat(nmat,
-            upstream_length=recenter_range,
-            downstream_length=recenter_range,
-            ...)
+   ## summit_names
+   if (length(summit_names) > 0) {
+      if (length(summit_names) == nrow(nmatlist[[1]]) &&
+            length(names(summit_names)) == 0) {
+         jamba::printDebug("Used unnamed summit_names in the order supplied.");
+      } else {
+         if (length(names(summit_names)) == 0) {
+            stop("summit_names must equal nrow(nmatlist[[1]]) or have names matching rownames(nmatlist[[1]]).")
+         }
+         imatch <- match(rownames(nmatlist[[1]]), names(summit_names));
+         if (any(is.na(imatch))) {
+            stop("all rownames(nmatlist[[1]]) must be provided in names(summit_names).")
+         }
+         jamba::printDebug("Re-ordered summit_names.");
+         summit_names <- summit_names[imatch];
       }
-      nmat;
-   })
-   nmatlist_nrow <- sapply(nmatlist, nrow);
-   if (length(unique(nmatlist_nrow)) > 1) {
-      stop("nrow must be identical across all nmatlist entries.")
-   }
+      new_summits <- list();
+      new_summits$summit_name <- summit_names;
+   } else {
 
-   ## Define which colnames to use
-   recenter_ncols <- lapply(recenter_nmatlist, ncol)
-   recenter_colnames_list <- lapply(recenter_nmatlist, colnames)
-   # use the superset of colnames available
-   recenter_colnames <- jamba::mixedSort(
-      Reduce("union", recenter_colnames_list),
-      keepNegative=TRUE);
-   # expand colnames as needed
-   if (length(unique(recenter_ncols)) > 1) {
-      jamba::printDebug("recenter_nmatlist(): ",
-         "Note that nmatlist contains inconsitent columns.",
-         " Adjusting accordingly.");
-   }
-   # Actually, convert all to numeric matrix for convenience
-   recenter_nmatlist <- lapply(seq_along(recenter_nmatlist), function(inum){
-      nmat <- recenter_nmatlist[[inum]];
-      match_col <- match(recenter_colnames, colnames(nmat));
-      nmat_rownames <- rownames(nmat);
-      nmat <- jamba::rmNA(naValue=0,
-         nmat[, match_col, drop=FALSE]);
-      colnames(nmat) <- recenter_colnames;
-      rownames(nmat) <- nmat_rownames;
-      if (TRUE %in% recenter_invert[[inum]]) {
-         nmat <- max(nmat, na.rm=TRUE) - nmat;
+      ## Define the nmatlist with appropriate range to use for recentering
+      if (length(recenter_invert) == 0) {
+         recenter_invert <- FALSE;
       }
-      nmat;
-   });
-   recenter_mat <- Reduce("+", recenter_nmatlist);
+      recenter_invert <- rep(recenter_invert,
+         length.out=length(recenter_heatmap));
+      recenter_nmatlist <- lapply(nmatlist[recenter_heatmap], function(nmat){
+         if (length(recenter_range) == 1 && recenter_range > 0) {
+            nmat <- zoom_nmat(nmat,
+               upstream_length=recenter_range,
+               downstream_length=recenter_range,
+               ...)
+         }
+         nmat;
+      })
+      nmatlist_nrow <- sapply(nmatlist, nrow);
+      if (length(unique(nmatlist_nrow)) > 1) {
+         stop("nrow must be identical across all nmatlist entries.")
+      }
 
-   ## Phase One: Determine summit position per row
-   use_rows <- rownames(recenter_mat);
-   new_summits <- data.frame(check.names=FALSE, jamba::rbindList(
-      lapply(jamba::nameVector(use_rows), function(irow){
-         x <- recenter_mat[irow, ]
-         x_summit <- summit_from_vector(x,
-            spar=spar,
-            edge_buffer=edge_buffer,
-            ...);
-         # summit <- x_summit["summit"];
-         # summit_height <- x_summit[["summit_height"]];
-         x_summit;
-      })))
-   new_summits$summit_name <- recenter_colnames[new_summits$summit];
-   ret_vals <- list();
-   ret_vals$summits <- new_summits;
+      ## Define which colnames to use
+      recenter_ncols <- lapply(recenter_nmatlist, ncol)
+      recenter_colnames_list <- lapply(recenter_nmatlist, colnames)
+      # use the superset of colnames available
+      recenter_colnames <- jamba::mixedSort(
+         Reduce("union", recenter_colnames_list),
+         keepNegative=TRUE);
+      # expand colnames as needed
+      if (length(unique(recenter_ncols)) > 1) {
+         jamba::printDebug("recenter_nmatlist(): ",
+            "Note that nmatlist contains inconsitent columns.",
+            " Adjusting accordingly.");
+      }
+      # Actually, convert all to numeric matrix for convenience
+      recenter_nmatlist <- lapply(seq_along(recenter_nmatlist), function(inum){
+         nmat <- recenter_nmatlist[[inum]];
+         match_col <- match(recenter_colnames, colnames(nmat));
+         nmat_rownames <- rownames(nmat);
+         nmat <- jamba::rmNA(naValue=0,
+            nmat[, match_col, drop=FALSE]);
+         colnames(nmat) <- recenter_colnames;
+         rownames(nmat) <- nmat_rownames;
+         if (TRUE %in% recenter_invert[[inum]]) {
+            nmat <- max(nmat, na.rm=TRUE) - nmat;
+         }
+         nmat;
+      });
+      recenter_mat <- Reduce("+", recenter_nmatlist);
 
+      ## Phase One: Determine summit position per row
+      use_rows <- rownames(recenter_mat);
+      new_summits <- data.frame(check.names=FALSE, jamba::rbindList(
+         lapply(jamba::nameVector(use_rows), function(irow){
+            x <- recenter_mat[irow, ]
+            x_summit <- summit_from_vector(x,
+               spar=spar,
+               edge_buffer=edge_buffer,
+               ...);
+            # summit <- x_summit["summit"];
+            # summit_height <- x_summit[["summit_height"]];
+            x_summit;
+         })))
+      new_summits$summit_name <- recenter_colnames[new_summits$summit];
+      ret_vals <- list();
+      ret_vals$summits <- new_summits;
+   }
 
-   ## Phase Two: Adjust each matrix
+   ## Phase Two: Adjust each matrix using summit_name
    new_nmatlist <- lapply(nmatlist, function(nmat){
       # even_ncol <- (ncol(nmat) %% 2) == 0;
       len1 <- ceiling(ncol(nmat) / 2);

@@ -138,7 +138,7 @@ Other jam coverage heatmap functions:
 \code{\link{nmatlist2heatmaps}()},
 \code{\link{recenter_nmatlist}()},
 \code{\link{validate_heatmap_params}()},
-\code{\link{zoom_nmatlist}()},
-\code{\link{zoom_nmat}()}
+\code{\link{zoom_nmat}()},
+\code{\link{zoom_nmatlist}()}
 }
 \concept{jam coverage heatmap functions}

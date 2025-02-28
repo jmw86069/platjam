@@ -1,3 +1,30 @@
+# platjam 0.0.92.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()` and `recenter_nmatlist()`
+
+   * new argument `summit_names` to re-use pre-calculated summit_names
+   as a form of data caching, useful for large datasets where the
+   recentering takes some time, and can be re-used with subsequent
+   runs.
+
+# platjam 0.0.91.900
+
+## new functions
+
+GeoMx data import functions have been added, for NanoString GeoMx processing.
+
+* `revcomp()` - to be fair, potentially wider scope than GeoMx, it creates
+reverse-complement of a DNA or RNA sequence.
+* `import_geomx_samplesheet()`
+
+   * importer for multi-section `"SampleSheet.csv"` files.
+   By default it returns a `list` of `data.frame` but can also
+   return the expected barcode indices, useful for demuxbyname.sh.
+   * it also works with NanoString `"GNP_config.ini"` files, which
+   have the same general format.
+
 # platjam 0.0.90.900
 
 ## updates to existing functions

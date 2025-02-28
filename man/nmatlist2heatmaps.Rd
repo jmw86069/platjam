@@ -36,6 +36,7 @@ nmatlist2heatmaps(
   anno_row_labels = NULL,
   anno_row_gp = grid::gpar(fontsize = 14),
   recenter_heatmap = NULL,
+  summit_names = NULL,
   recenter_range = NULL,
   recenter_invert = FALSE,
   restrand_heatmap = NULL,
@@ -365,6 +366,10 @@ are passed to \code{recenter_nmatlist()} to apply re-centering.
 \itemize{
 \item Note that recenter will always occur before restrand.
 }}
+
+\item{summit_names}{\code{character} default NULL, optional colnames to
+use for recentering, which applies a previously defined set of
+summit positions to use. It ignores all other recenter arguments.}
 
 \item{restrand_heatmap, restrand_range, restrand_buffer, restrand_invert}{arguments are passed to \code{restrand_nmatlist()} to apply re-stranding.
 \itemize{
@@ -931,7 +936,7 @@ Other jam coverage heatmap functions:
 \code{\link{recenter_nmatlist}()},
 \code{\link{restrand_nmatlist}()},
 \code{\link{validate_heatmap_params}()},
-\code{\link{zoom_nmatlist}()},
-\code{\link{zoom_nmat}()}
+\code{\link{zoom_nmat}()},
+\code{\link{zoom_nmatlist}()}
 }
 \concept{jam coverage heatmap functions}

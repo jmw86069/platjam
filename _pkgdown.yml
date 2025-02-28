@@ -26,6 +26,10 @@ reference:
   desc: Functions related to the nextgen sequence data
   contents:
   - has_concept("jam nextgen sequence functions")
+- title: NanoString GeoMx functions
+  desc: Functions related to NanoString GeoMx data
+  contents:
+  - has_concept("jam GeoMx functions")
 - title: Utility functions
   desc: Extra utility functions
   contents:

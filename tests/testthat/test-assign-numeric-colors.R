@@ -1,5 +1,5 @@
 
-context("assign_numeric_colors")
+# context("assign_numeric_colors")
 
 
 # utility function only used when creating tests below

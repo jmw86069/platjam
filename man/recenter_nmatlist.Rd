@@ -12,6 +12,7 @@ recenter_nmatlist(
   spar = 0.5,
   edge_buffer = 0,
   empty_value = 0,
+  summit_names = NULL,
   verbose = FALSE,
   ...
 )
@@ -111,6 +112,11 @@ nmatlist2heatmaps(nmatlist2i,
    transform=c("log2signed", "sqrt"));
 head(data.frame(summit_name=attr(nmatlist2i[[1]], "summit_name")))
 
+# re-use summits
+summit_names <- setNames(attr(nmatlist2i[[1]], "summit_name"),
+   attr(nmatlist2i[[1]], "dimnames")[[1]])
+nmatlist2i_reuse <- recenter_nmatlist(nmatlist, summit_names=summit_names)
+
 nmatlist2is <- restrand_nmatlist(nmatlist2i, restrand_heatmap=2, recenter_invert=FALSE)
 nmatlist2heatmaps(nmatlist2is,
    title="Input data, recentered by inverted h3k4me1 signal,\nrestranded by tss",
@@ -122,6 +128,21 @@ head(data.frame(
    summit_name=attr(nmatlist2is[[1]], "summit_name"),
    restrand=attr(nmatlist2is[[1]], "restrand")))
 
+nhm <- nmatlist2heatmaps(nmatlist,
+   title="Input data",
+   recenter_heatmap=2,
+   transform=c("log2signed", "sqrt"));
+jamba::sdim(nhm)
+
+nhm2 <- nmatlist2heatmaps(nmatlist,
+   title="Input data",
+   summit_names=jamba::nameVector(nhm$adjust_df[, c("summit_name", "row")]),
+   transform=c("log2signed", "sqrt"));
+nhm2 <- nmatlist2heatmaps(nmatlist,
+   title="Input data",
+   summit_names=nhm$adjust_df$summit_name,
+   transform=c("log2signed", "sqrt"));
+
 }
 \seealso{
 Other jam coverage heatmap functions: 
@@ -131,7 +152,7 @@ Other jam coverage heatmap functions:
 \code{\link{nmatlist2heatmaps}()},
 \code{\link{restrand_nmatlist}()},
 \code{\link{validate_heatmap_params}()},
-\code{\link{zoom_nmatlist}()},
-\code{\link{zoom_nmat}()}
+\code{\link{zoom_nmat}()},
+\code{\link{zoom_nmatlist}()}
 }
 \concept{jam coverage heatmap functions}

@@ -1,6 +1,6 @@
 Package: platjam
 Title: Platform Jam, biological platform importers.
-Version: 0.0.90.900
+Version: 0.0.92.900
 Authors@R: person(given="James M.", family="Ward",
     email="jmw86069@gmail.com", role=c("aut", "cre"))
 Description: Platform data import methods for biological platform
@@ -30,7 +30,7 @@ Encoding: UTF-8
 LazyData: true
 URL: http://github.com/jmw86069/platjam
 BugReports: http://github.com/jmw86069/platjam/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Remotes: github::jmw86069/jamba,
     github::jmw86069/colorjam,

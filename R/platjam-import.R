@@ -587,6 +587,9 @@ coverage_matrix2nmat <- function
 #' @param recenter_heatmap,recenter_range,recenter_invert arguments
 #'    are passed to `recenter_nmatlist()` to apply re-centering.
 #'    * Note that recenter will always occur before restrand.
+#' @param summit_names `character` default NULL, optional colnames to
+#'    use for recentering, which applies a previously defined set of
+#'    summit positions to use. It ignores all other recenter arguments.
 #' @param restrand_heatmap,restrand_range,restrand_buffer,restrand_invert
 #'    arguments are passed to `restrand_nmatlist()` to apply re-stranding.
 #'    * Note that recenter will always occur before restrand.
@@ -1008,6 +1011,7 @@ nmatlist2heatmaps <- function
  anno_row_labels=NULL,
  anno_row_gp=grid::gpar(fontsize=14),
  recenter_heatmap=NULL,
+ summit_names=NULL,
  recenter_range=NULL,
  recenter_invert=FALSE,
  restrand_heatmap=NULL,
@@ -1092,9 +1096,10 @@ nmatlist2heatmaps <- function
 
    ##############################################################
    # Optionally re-center rows
-   if (length(recenter_heatmap) > 0) {
+   if (length(recenter_heatmap) > 0 || length(summit_names) > 0) {
       nmatlist <- recenter_nmatlist(nmatlist=nmatlist,
          recenter_heatmap=recenter_heatmap,
+         summit_names=summit_names,
          recenter_range=recenter_range,
          recenter_invert=recenter_invert,
          verbose=verbose,
