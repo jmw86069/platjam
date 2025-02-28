@@ -161,7 +161,6 @@ recenter_nmatlist <- function
          if (any(is.na(imatch))) {
             stop("all rownames(nmatlist[[1]]) must be provided in names(summit_names).")
          }
-         jamba::printDebug("Re-ordered summit_names.");
          summit_names <- summit_names[imatch];
       }
       new_summits <- list();
