@@ -2,6 +2,15 @@
 
 * Consider `heatmaps2nmatlist()` as an inverse to `nmatlist2heatmaps()`
 * Review ways to cache/reuse the recentering values with `nmatlist2heatmaps()`
+* Consider wrapper `nmathm2df()`
+
+   * Convert coverage heatmap data to some type of `data.frame` suitable
+   to save in Excel or tab-delimited format. Goal is to capture things
+   like row clusters, row order, and row annotations, alongside
+   the peak/row names.
+   * Consider other helper functions to extract data or prepare useful
+   data consistent with the heatmaps. For example, profile metaplots,
+   so they could be plotted again separately.
 
 # TODO 13nov2024
 

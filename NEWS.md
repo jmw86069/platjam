@@ -1,3 +1,12 @@
+# platjam 0.0.93.900
+
+## changes to existing functions
+
+* `recenter_nmatlist()`
+
+   * fixed bug utilizing `summit_names`
+   * fixed bug utilizing `recenter_range` provided as two values.
+
 # platjam 0.0.92.900
 
 ## changes to existing functions

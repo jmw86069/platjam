@@ -101,21 +101,27 @@ nmatlist2heatmaps(nmatlist,
    title="Input data",
    transform=c("log2signed", "sqrt"));
 
-nmatlist1 <- recenter_nmatlist(nmatlist)
+# recenter on the fly within nmatlist2heatmaps()
+nhm <- nmatlist2heatmaps(nmatlist,
+   recenter_heatmap=2, recenter_invert=TRUE, recenter_range=c(-300, 300),
+   #use_raster=FALSE,
+   title="Input data, recentered by tss signal",
+   transform=c("log2signed", "sqrt"));
+
+# re-use summit_names to avoid re-calculating
+summit_names <- jamba::nameVector(nhm$adjust_df[, c("summit_name", "row")])
+nhm2 <- nmatlist2heatmaps(nmatlist,
+   summit_names=summit_names,
+   title="Input data, recentered by tss signal",
+   transform=c("log2signed", "sqrt"));
+
+# re-center upfront and use the results
+nmatlist1 <- recenter_nmatlist(nmatlist,
+   recenter_heatmap=2, recenter_range=c(-300, 300), recenter_invert=TRUE)
 nmatlist2heatmaps(nmatlist1,
    title="Input data, recentered by tss signal",
    transform=c("log2signed", "sqrt"));
 
-nmatlist2i <- recenter_nmatlist(nmatlist, recenter_heatmap=2, recenter_invert=TRUE)
-nmatlist2heatmaps(nmatlist2i,
-   title="Input data, recentered by inverted h3k4me1 signal",
-   transform=c("log2signed", "sqrt"));
-head(data.frame(summit_name=attr(nmatlist2i[[1]], "summit_name")))
-
-# re-use summits
-summit_names <- setNames(attr(nmatlist2i[[1]], "summit_name"),
-   attr(nmatlist2i[[1]], "dimnames")[[1]])
-nmatlist2i_reuse <- recenter_nmatlist(nmatlist, summit_names=summit_names)
 
 nmatlist2is <- restrand_nmatlist(nmatlist2i, restrand_heatmap=2, recenter_invert=FALSE)
 nmatlist2heatmaps(nmatlist2is,
