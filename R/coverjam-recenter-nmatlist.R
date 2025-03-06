@@ -165,7 +165,22 @@ recenter_nmatlist <- function
          }
          imatch <- match(rownames(nmatlist[[1]]), names(summit_names));
          if (any(is.na(imatch))) {
-            stop("all rownames(nmatlist[[1]]) must be provided in names(summit_names).")
+            jamba::printDebug("recenter_nmatlist(): ",
+               "Not all rownames(nmatlist[[1]]) were present in ",
+               "names(summit_names).");
+            jamba::printDebug("recenter_nmatlist(): ",
+               "head(rownames(nmatlist[[1]])): ",
+               head(rownames(nmatlist[[1]])))
+            jamba::printDebug("recenter_nmatlist(): ",
+               "head(names(summit_names)): ",
+               head(names(summit_names)));
+            missing_rownames <- setdiff(rownames(nmatlist[[1]]),
+               names(summit_names));
+            jamba::printDebug("recenter_nmatlist(): ",
+               "head(missing_rownames): ",
+               head(missing_rownames));
+            stop(paste0("all rownames(nmatlist[[1]]) ",
+               "must be provided in names(summit_names)."))
          }
          summit_names <- summit_names[imatch];
       }
