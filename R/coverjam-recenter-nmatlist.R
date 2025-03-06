@@ -269,6 +269,11 @@ recenter_nmatlist <- function
          lapply(seq_along(new_summits$summit_name), function(inum){
             icol <- new_summits$summit_name[inum];
             match_icol <- match(icol, colnames(nmat));
+            if (is.na(match_icol)) {
+               jamba::printDebug("recenter_nmatlist(): ",
+                  "match_icol is NA. inum:", inum, ", icol:", icol,
+                  ", head(colnames(nmat)):", head(colnames(nmat)));
+            }
             keep1 <- jamba::noiseFloor(
                seq(to=match_icol, by=1, length.out=len1),
                minimum=1,
