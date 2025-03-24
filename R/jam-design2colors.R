@@ -1307,7 +1307,7 @@ design2colors <- function
    attr(all_colors_list, "df") <- x_input;
    attr(all_colors_list, "color_df") <- x_colors;
    attr(all_colors_list, "color_sub") <- all_colors_v;
-   return(all_colors_list)
+   return(invisible(all_colors_list))
 }
 
 
