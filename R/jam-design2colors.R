@@ -182,16 +182,17 @@
 #'    * When multiple values are defined for `color_sub_max`, then
 #'    `names(color_sub_max)` are used to associate to the appropriate
 #'    column matching with `colnames(x)`.
-#' @param na_color `character` string with R color, used to assign a
-#'    specific color to `NA` values.
-#'    (This assignment is not yet implemented.)
-#' @param shuffle_colors `logical` indicating whether to shuffle categorical
+#' @param na_color `character` string, default "grey90", R color assigned
+#'    to `NA` values.
+#' @param use_naValue `character` string, default `"<NA>"`, used to assign
+#'    a name to the color defined by `na_color`.
+#' @param shuffle_colors `logical`, default FALSE, whether to shuffle
 #'    color assignments for values not already assigned by
-#'    class/group/lightness, nor by `color_sub`. The effect is that colors
-#'    are less likely to be similar for adjacent column values.
-#' @param force_consistent_colors `logical` indicating whether to force
-#'    color substitutions across multiple columns, when those columns
-#'    share one or more of the same values.
+#'    class/group/lightness, nor by `color_sub`.
+#'    The effect is that colors are less likely to be similar for
+#'    adjacent column values.
+#' @param force_consistent_colors `logical`, default TRUE, whether to force
+#'    color substitutions for the same character string across columns.
 #'    Note: This scenario is most
 #'    likely to occur when using `color_sub` to assign colors to a
 #'    specific column in `colnames(x)`, and where that column may contain
@@ -333,7 +334,8 @@ design2colors <- function
  Lrange=NULL,#c(45, 90),
  color_sub=NULL,
  color_sub_max=NULL,
- na_color="grey75",
+ na_color="grey90",
+ use_naValue="<NA>",
  shuffle_colors=FALSE,
  force_consistent_colors=TRUE,
  plot_type=c("table",
@@ -899,6 +901,9 @@ design2colors <- function
       add_new_colors)
    # also add discrete colors to color_sub_atomic
    color_sub_atomic[names(add_new_colors)] <- add_new_colors
+   if (!use_naValue %in% names(color_sub_atomic)) {
+      color_sub_atomic[use_naValue] <- na_color;
+   }
 
    ############################################
    # now generate colors for remaining columns
@@ -952,7 +957,8 @@ design2colors <- function
                   jamba::printDebug("design2colors(): ",
                      c("   is.factor=", "FALSE"), sep="");
                }
-               ivalues <- unique(as.character(x_input[[icol]]));
+               ivalues <- jamba::rmNA(#naValue=use_naValue,
+                  unique(as.character(x_input[[icol]])));
             }
             # use ivalues to define colors
             icolors <- jamba::nameVector(
@@ -1004,12 +1010,16 @@ design2colors <- function
                unique(rownames(x))
             } else {
                if (is.factor(x_input[[icol]])) {
-                  levels(x_input[[icol]])
+                  # Todo: consider alternate naValue
+                  jamba::rmNA(naValue=use_naValue,
+                     levels(x_input[[icol]]))
                } else if (is.numeric(x_input[[icol]])) {
                   # for numeric columns assign a color to the colname
                   icol;
                } else {
-                  unique(as.character(x_input[[icol]]))
+                  # Todo: consider alternate naValue
+                  jamba::rmNA(naValue=use_naValue,
+                     unique(as.character(x_input[[icol]])))
                }
             }
          })
@@ -1040,6 +1050,7 @@ design2colors <- function
          # add_colors_v1 <- c(new_colors_v,
          #    color_sub)[add_match];
       }
+      add_values <- setdiff(add_values, c(NA, "<NA>"))
       add_n <- length(add_values);
       if (verbose > 1) {
          jamba::printDebug("design2colors(): ",
@@ -1124,7 +1135,8 @@ design2colors <- function
                      color=color_sub[[icol]]);
                } else {
                   icolors <- color_sub_atomic[unique(
-                     as.character(x_input[[icol]]))]
+                     jamba::rmNA(naValue=use_naValue,
+                     as.character(x_input[[icol]])))]
                }
             }
             icolors;
@@ -1183,7 +1195,7 @@ design2colors <- function
       # print(add_colors);
       jamba::printDebug("design2colors(): ",
          "all_colors_list1: ");
-      print(sdim(all_colors_list1));
+      print(jamba::sdim(all_colors_list1));
       print_color_list(all_colors_list1);
       jamba::printDebug("design2colors(): ",
          "all_colors_v: ");
@@ -1220,19 +1232,22 @@ design2colors <- function
             round(x_input[[i]],
                digits=3));
       } else {
-         all_colors_list[[i]][as.character(x_input[[i]])]
+         all_colors_list[[i]][jamba::rmNA(naValue=use_naValue,
+            as.character(x_input[[i]]))]
       }
    });
-   x_colors_list <- (
-      lapply(jamba::nameVector(colnames(x_input)), function(i){
-         if (is.function(all_colors_list[[i]])) {
-            jamba::nameVector(all_colors_list[[i]](x_input[[i]]),
-               round(x_input[[i]],
-                  digits=3));
-         } else {
-            all_colors_list[[i]][as.character(x_input[[i]])]
-         }
-      }));
+   jamba::printDebug("x_colors_list:");print(x_colors_list);# debug
+   # x_colors_list <- (lapply(jamba::nameVector(colnames(x_input)), function(i){
+   #       if (is.function(all_colors_list[[i]])) {
+   #          jamba::nameVector(all_colors_list[[i]](x_input[[i]]),
+   #             round(x_input[[i]],
+   #                digits=3));
+   #       } else {
+   #          all_colors_list[[i]][jamba::rmNA(naValue=use_naValue,
+   #             as.character(x_input[[i]]))]
+   #       }
+   #    }));
+   # jamba::printDebug("x_colors_list:");print(x_colors_list);# debug
    x_colors <- as.data.frame(x_colors_list);
    if ("table" %in% plot_type) {
       opar <- par(no.readonly=TRUE);

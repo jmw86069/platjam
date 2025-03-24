@@ -22,7 +22,8 @@ design2colors(
   Lrange = NULL,
   color_sub = NULL,
   color_sub_max = NULL,
-  na_color = "grey75",
+  na_color = "grey90",
+  use_naValue = "<NA>",
   shuffle_colors = FALSE,
   force_consistent_colors = TRUE,
   plot_type = c("table", "list", "none"),
@@ -120,18 +121,20 @@ a \code{numeric} column.
 column matching with \code{colnames(x)}.
 }}
 
-\item{na_color}{\code{character} string with R color, used to assign a
-specific color to \code{NA} values.
-(This assignment is not yet implemented.)}
+\item{na_color}{\code{character} string, default "grey90", R color assigned
+to \code{NA} values.}
 
-\item{shuffle_colors}{\code{logical} indicating whether to shuffle categorical
+\item{use_naValue}{\code{character} string, default \code{"<NA>"}, used to assign
+a name to the color defined by \code{na_color}.}
+
+\item{shuffle_colors}{\code{logical}, default FALSE, whether to shuffle
 color assignments for values not already assigned by
-class/group/lightness, nor by \code{color_sub}. The effect is that colors
-are less likely to be similar for adjacent column values.}
+class/group/lightness, nor by \code{color_sub}.
+The effect is that colors are less likely to be similar for
+adjacent column values.}
 
-\item{force_consistent_colors}{\code{logical} indicating whether to force
-color substitutions across multiple columns, when those columns
-share one or more of the same values.
+\item{force_consistent_colors}{\code{logical}, default TRUE, whether to force
+color substitutions for the same character string across columns.
 Note: This scenario is most
 likely to occur when using \code{color_sub} to assign colors to a
 specific column in \code{colnames(x)}, and where that column may contain

@@ -104,7 +104,9 @@
 #' @param verbose `logical` indicating whether to print verbose output.
 #'    Note that output will honor `htmlOut` which encodes output in
 #'    HTML format.
-#' @param quiet `logical` indicating whether to silent all error messages
+#' @param quiet `logical`, default FALSE, whether to silent all messages.
+#'    The default is to show messages only when relevant, because they
+#'    are helpful to confirm the correct behavior of the function.
 #'    and verbose output. When `quiet=TRUE` it also sets `verbose=FALSE`,
 #'    and silences error messages.
 #' @param htmlOut `logical` passed to `jamba::printDebug()` when `verbose=TRUE`
@@ -151,7 +153,7 @@ rmd_tab_iterator <- function
  tab_labels=NULL,
  heading_level=2,
  verbose=FALSE,
- quiet=TRUE,
+ quiet=FALSE,
  htmlOut=TRUE,
  envir=NULL,
  ...)

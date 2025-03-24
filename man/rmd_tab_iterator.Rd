@@ -11,7 +11,7 @@ rmd_tab_iterator(
   tab_labels = NULL,
   heading_level = 2,
   verbose = FALSE,
-  quiet = TRUE,
+  quiet = FALSE,
   htmlOut = TRUE,
   envir = NULL,
   ...
@@ -63,7 +63,9 @@ tabs beneath this depth will use \code{"###"} and so no.}
 Note that output will honor \code{htmlOut} which encodes output in
 HTML format.}
 
-\item{quiet}{\code{logical} indicating whether to silent all error messages
+\item{quiet}{\code{logical}, default FALSE, whether to silent all messages.
+The default is to show messages only when relevant, because they
+are helpful to confirm the correct behavior of the function.
 and verbose output. When \code{quiet=TRUE} it also sets \code{verbose=FALSE},
 and silences error messages.}
 

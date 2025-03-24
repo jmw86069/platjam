@@ -1,3 +1,30 @@
+# TODO 24mar2025
+
+Grand ideas for `rmd_tab_iterator()`:
+
+* Create battery of functions to use with  for
+Rmarkdown Omics analysis workflows:
+
+   * `maplot_tab_fn()`
+   * `heatmap_tab_fn()`
+   * `volcanoplot_tab_fn()`
+   * `covheatmap_tab_fn()`
+   * Each could provide optional list to populate with data for inspection.
+
+* Consider method to use `knitr::knit_child()` to allow custom output
+figure sizes.
+See: https://github.com/quarto-dev/quarto-cli/discussions/11042
+* Try to silence multi-level tabs when all child tabs are also empty.
+(This seems difficult*.)
+
+* Improve `design2colors()`
+
+   * It should be able to "figure out" a reasonably good default from
+   inspecting the data.
+   * It should more intuitively honor the given settings.
+   * Add common defaults: Male/Female (M/F), Treatment, Time, Age,
+   Control/Vehicle/Untreated, etc.
+
 # TODO 21feb2025
 
 * Consider `heatmaps2nmatlist()` as an inverse to `nmatlist2heatmaps()`
@@ -11,6 +38,7 @@
    * Consider other helper functions to extract data or prepare useful
    data consistent with the heatmaps. For example, profile metaplots,
    so they could be plotted again separately.
+
 
 # TODO 13nov2024
 

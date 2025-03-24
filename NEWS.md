@@ -1,3 +1,19 @@
+# platjam 0.0.94.900
+
+## changes to existing functions
+
+* `design2colors()`
+
+   * Implemented `na_color` and added `use_naValu="<NA>"` to define the
+   name assigned to the NA color. Downstream use of the NA color
+   should therefore convert `NA` to `use_naValue` for string matching.
+
+* `rmd_tab_iterator()`
+
+   * Default changed to `quiet=FALSE` so messages are visible by default,
+   typically useful when a function fails for some reason.
+   
+
 # platjam 0.0.93.900
 
 ## changes to existing functions
