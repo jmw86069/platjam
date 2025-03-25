@@ -84,6 +84,7 @@
 #'    with higher values increasing the rate of increase in color intensity,
 #'    and negative values decreasing this rate. This argument is passed
 #'    to `jamba::getColorRamp()`.
+#' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are ignored.
 #'
 #' @export
@@ -99,6 +100,9 @@ assign_numeric_colors <- function
  verbose=FALSE,
  ...)
 {
+   if (inherits(x, "integer64")) {
+      x <- as.numeric(x)
+   }
    # define numeric range of the data
    irange <- range(x, na.rm=TRUE);
 

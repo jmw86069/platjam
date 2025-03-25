@@ -1,3 +1,19 @@
+# platjam 0.0.95.900
+
+## changes to existing functions
+
+* Removed extraneous verbose output.
+
+## Bug fixes
+
+* `design2colors()`
+
+   * Corrected numerous edge cases with `NA` values in character and
+   factor columns.
+   * Corrected bugs when handling `integer64` column types. Yeesh.
+   * Fixed bug with `blend_colors()` which caused class colors to be
+   incorrect for the colorspace used.
+
 # platjam 0.0.94.900
 
 ## changes to existing functions

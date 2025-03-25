@@ -55,6 +55,8 @@ with higher values increasing the rate of increase in color intensity,
 and negative values decreasing this rate. This argument is passed
 to \code{jamba::getColorRamp()}.}
 
+\item{verbose}{\code{logical} indicating whether to print verbose output.}
+
 \item{...}{additional arguments are ignored.}
 }
 \value{

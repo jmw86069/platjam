@@ -372,6 +372,21 @@ design2colors <- function
       x <- x[,setdiff(colnames(x), ignore_colnames), drop=FALSE];
    }
 
+   # check for duplicated colnames
+   if (any(duplicated(colnames(x)))) {
+      # Todo: Consider a warning
+      if (verbose) {
+         jamba::printDebug("design2colors(): ",
+            paste0(
+               "Note some colnames were duplicated, ",
+               "the first is retained, others are renamed: "),
+            unique(colnames(x)[duplicated(colnames(x))]));
+      }
+      colnames(x) <- jamba::makeNames(colnames(x),
+         renameFirst=FALSE,
+         ...)
+   }
+
    # validate arguments
    plot_type <- match.arg(plot_type);
    return_type <- match.arg(return_type);
@@ -587,6 +602,31 @@ design2colors <- function
          "resolved class_colnames:     ", class_colnames);
    }
 
+   # quick function to add NA as factor level
+   factor_NA_level <- function(x, do_sort=FALSE){
+      if (inherits(x, "numeric")) {
+         return(x)
+      }
+      if (inherits(x, "factor") &&
+            any(is.na(x)) &&
+            !any(NA %in% levels(x))) {
+         # add NA as a formal factor level
+         x <- factor(x,
+            exclude=NULL,
+            levels=c(levels(x), NA))
+      } else {
+         if (TRUE %in% do_sort) {
+            x <- factor(x,
+               exclude=NULL,
+               levels=jamba::mixedSort(unique(x)))
+         } else {
+            x <- factor(x,
+               exclude=NULL,
+               levels=unique(x))
+         }
+      }
+      x
+   }
 
    # sort by class, group, lightness to make downstream steps consistent
    x_input <- x;
@@ -606,19 +646,11 @@ design2colors <- function
          lightness_colnames));
    for (xcol in all_colnames1) {
       if (xcol %in% colnames(x)) {
-         if (!is.factor(x[[xcol]])) {
-            x[[xcol]] <- factor(x[[xcol]],
-               levels=unique(x[[xcol]]));
-         }
-         # jamba::printDebug("xcol:", xcol, ", levels:", levels(x[[xcol]]));# debug
+         x[[xcol]] <- factor_NA_level(x[[xcol]])
       } else {
          xcol1 <- gsub("^-", "", xcol);
          if (xcol1 %in% colnames(x)) {
-            if (!is.factor(x[[xcol1]])) {
-               x[[xcol1]] <- factor(x[[xcol1]],
-                  levels=rev(unique(x[[xcol1]])));
-            }
-            # jamba::printDebug("xcol1:", xcol1, ", levels:", levels(x[[xcol1]]));# debug
+            x[[xcol1]] <- factor_NA_level(x[[xcol1]])
          }
       }
    }
@@ -626,7 +658,6 @@ design2colors <- function
       byCols=c(class_colnames,
          group_colnames,
          lightness_colnames));
-   # jamba::printDebug("Sorted class,group,lightness data.frame:");print(x);# debug
    class_colnames <- gsub("^[-]", "", class_colnames);
    group_colnames <- gsub("^[-]", "", group_colnames);
    lightness_colnames <- gsub("^[-]", "", lightness_colnames);
@@ -636,10 +667,7 @@ design2colors <- function
 
    # convert character to factor to apply order each appears
    for (icol in all_colnames) {
-      if (!is.factor(x[[icol]])) {
-         x[[icol]] <- factor(x[[icol]],
-            levels=unique(x[[icol]]));
-      }
+      x[[icol]] <- factor_NA_level(x[[icol]])
    }
 
    # generate output per class, group, lightness values
@@ -653,10 +681,12 @@ design2colors <- function
       xlist);
 
    # add class_group and class_group_lightness column values
-   xdf$class_group <- jamba::pasteByRowOrdered(
-      xdf[,c("group"), drop=FALSE]);
-   xdf$class_group_lightness <- jamba::pasteByRowOrdered(
-      xdf[,c("group", "lightness"), drop=FALSE]);
+   xdf$class_group <- jamba::gsubOrdered("^$", use_naValue,
+      jamba::pasteByRowOrdered(
+         xdf[,c("group"), drop=FALSE]));
+   xdf$class_group_lightness <- jamba::gsubOrdered("^$", use_naValue,
+      jamba::pasteByRowOrdered(
+         xdf[,c("group", "lightness"), drop=FALSE]));
 
    # sort table by class, group, lightness
    xdf <- jamba::mixedSortDF(xdf,
@@ -667,24 +697,27 @@ design2colors <- function
          "class_group_lightness"));
    if (verbose) {
       jamba::printDebug("design2colors(): ",
-         "full class, group, lightness df:");
+         "full class, group, lightness df (xdf):");
       print(xdf);
    }
    udf <- unique(xdf);
    if (verbose) {
       jamba::printDebug("design2colors(): ",
-         "unique class, group, lightness df:");
+         "unique class, group, lightness df (udf):");
       print(udf);
    }
 
    gdf <- unique(udf[,c("class", "group", "class_group"), drop=FALSE]);
    gdf$real <- 1;
    gdf0 <- head(gdf, 1);
-   gdf0[1,] <- NA
+   gdf0[1,] <- NA;
    rownames(gdf0) <- "class_pad";
+   if (any(use_naValue %in% gdf$class_group)) {
+      gdf$real[gdf$class_group %in% use_naValue] <- 0;
+   }
    if (verbose) {
       jamba::printDebug("design2colors(): ",
-         "unique class, group df:");
+         "unique class, group df (gdf):");
       print(gdf);
    }
 
@@ -720,20 +753,23 @@ design2colors <- function
    }
    if (verbose) {
       jamba::printDebug("design2colors(): ",
-         "expanded unique class, group df:");
+         "expanded unique class, group df (gdf):");
       print(gdf);
    }
 
    # assign color hue
-   n <- nrow(gdf);
+   n <- sum(gdf$real %in% c(1, NA));
+
    #hue_offset <- 0;
    hue_seq <- head(seq(from=0 + hue_offset,
       to=360 + hue_offset,
       length.out=n + end_hue_pad + 1), n);
-   gdf$hue <- hue_seq;
+   gdf$hue <- NA;
+   gdf$hue[gdf$real %in% c(1, NA)] <- hue_seq;
 
    # subset of color_sub which is not a color ramp
    color_sub_atomic <- jamba::vigrep("^#|[a-zA-Z]", color_sub)
+   color_sub_atomic[use_naValue] <- na_color;
 
    # assign colors
    class_group_hue1 <- jamba::nameVector(gdf[,c("hue", "class_group")])
@@ -742,32 +778,36 @@ design2colors <- function
 
    # populate proper phase values
    if (length(phase) == 1) {
-      phase_seq <- seq_len(sum(!is.na(gdf$real))) + abs(phase) - 1;
+      phase_seq <- seq_len(sum(gdf$real %in% c(1))) + abs(phase) - 1;
       if (phase < 0) {
          phase_seq <- rev(phase_seq);
       }
    } else {
       phase_seq <- rep(abs(phase),
-         length.out=sum(!is.na(gdf$real)));
+         length.out=sum(gdf$real %in% c(1)));
    }
    gdf$phase <- 1;
-   gdf$phase[!is.na(gdf$real)] <- phase_seq;
+   gdf$phase[gdf$real %in% c(1)] <- phase_seq;
 
    # calculate all required colors
    use_step <- colorjam::colorjam_presets(preset=preset)$default_step;
-   use_colors <- colorjam::rainbowJam(n=nrow(gdf),
+   do_colors <- (gdf$real %in% c(NA, 1));
+   use_colors <- colorjam::rainbowJam(n=sum(do_colors),
       phase=gdf$phase,
       preset=preset,
       Crange=Crange,
       Lrange=Lrange,
       ...);
-   gdf$class_group_color <- use_colors;
+   # do_colors
+   gdf$class_group_color <- na_color;
+   gdf$class_group_color[do_colors] <- use_colors;
    # subset for real entries, removing optional filler entries between classes
    gdf <- subset(gdf, !is.na(real))
    class_group_color <- gdf$class_group_color;
    names(class_group_color) <- gdf$class_group;
 
    # check for color_sub defined for each class_group
+   # jamba::printDebug("color_sub_atomic:");print(color_sub_atomic);# debug
    if (any(as.character(gdf$class_group) %in% names(color_sub_atomic))) {
       # jamba::printDebug("Match color_sub to group name.");
       imatch <- match(gdf$class_group, names(color_sub_atomic));
@@ -781,14 +821,17 @@ design2colors <- function
    class_hues <- NULL;
    if (length(class_colnames) > 0) {
       # calculate mean hue per class
-      class_color <- sapply(split(gdf$class_group_color, gdf$class), function(icolors){
+      gdf_split <- split(gdf$class_group_color,
+         gsub("^$", use_naValue,
+            jamba::rmNA(naValue=use_naValue, gdf$class)))
+      class_color <- sapply(gdf_split, function(icolors){
          #ihue <- jamba::col2hcl(icolors)["H",]
          if (length(icolors) == 2) {
-            icolors <- icolors[c(1, 2, 2)];
+            icolors <- icolors[c(1, 1, 1, 2, 2)];
          }
          icolor1 <- colorjam::blend_colors(icolors,
             c_weight=0.9,
-            preset="ryb2")
+            preset="dichromat")
          # now determine most vibrant color with this hue
          if (jamba::col2hcl(icolor1)["C",] < 85) {
             icolor2 <- colorjam::vibrant_color_by_hue(
@@ -799,7 +842,8 @@ design2colors <- function
             icolor1
          }
       })
-      gdf$class_color <- class_color[as.character(gdf$class)];
+      gdf$class_color <- class_color[jamba::rmNA(naValue=use_naValue,
+         as.character(gdf$class))];
       if (all(as.character(gdf$class) %in% names(color_sub_atomic))) {
          class_color <- color_sub_atomic[as.character(gdf$class)];
       }
@@ -874,12 +918,12 @@ design2colors <- function
       } else {
          ivalues <- x[,icol, drop=FALSE]
       }
+      ivalues[[1]] <- jamba::rmNA(as.character(ivalues[[1]]),
+         naValue=use_naValue);
       for (kcolname in kcolnames) {
-         # jamba::printDebug("      kcolname: ", kcolname);
          idf <- unique(data.frame(check.names=FALSE,
             ivalues,
             xdf[xmatch, kcolname, drop=FALSE]));
-         # jamba::printDebug("idf:");print(idf);# debug
          if (any(duplicated(idf[[icol]]))) {
             next;
          } else {
@@ -892,6 +936,7 @@ design2colors <- function
       }
       return(NULL);
    });
+
    # create color vector
    new_colors_v <- unlist(unname(new_colors));
    new_color_list <- c(new_colors);
@@ -918,23 +963,26 @@ design2colors <- function
       # if color_sub matches colname,
       # use that color with gradient effect
       colname_colnames <- NULL;
+
       if (any(add_colnames %in% names(color_sub))) {
          colname_colnames <- intersect(add_colnames, names(color_sub));
          add_colnames <- setdiff(add_colnames, colname_colnames);
 
          # iterate remaining colnames and assign colors
-         colname_colors <- lapply(jamba::nameVector(colname_colnames), function(icol){
+         colname_colors <- lapply(jamba::nameVector(colname_colnames),
+         function(icol){
             if (verbose > 1) {
                jamba::printDebug("design2colors(): ",
                   "colname_icol: ", icol);
             }
             # handle by column data type
-            if (is.factor(x_input[[icol]])) {
+            if (inherits(x_input[[icol]], "factor")) {
                if (verbose > 1) {
                   jamba::printDebug("design2colors(): ",
                      c("   is.factor=", "TRUE"), sep="");
                }
-               ivalues <- levels(x_input[[icol]]);
+               ivalues <- levels(factor_NA_level(x_input[[icol]]));
+            # } else if (inherits(x_input[[icol]], "numeric")) {
             } else if (is.numeric(x_input[[icol]])) {
                # numeric columns will receive gradient color function
                if (verbose > 1) {
@@ -957,15 +1005,19 @@ design2colors <- function
                   jamba::printDebug("design2colors(): ",
                      c("   is.factor=", "FALSE"), sep="");
                }
-               ivalues <- jamba::rmNA(#naValue=use_naValue,
-                  unique(as.character(x_input[[icol]])));
+               ivalues <- unique(as.character(x_input[[icol]]));
             }
+            ivalues <- jamba::rmNA(ivalues);
             # use ivalues to define colors
             icolors <- jamba::nameVector(
                jamba::color2gradient(color_sub[[icol]],
                   dex=dex[2],
                   n=length(ivalues)),
                ivalues);
+            if (any(is.na(x_input[[icol]]))) {
+               icolors <- c(icolors,
+                  jamba::nameVector(na_color, use_naValue))
+            }
             if (verbose > 1) {
                jamba::printDebug("design2colors(): ",
                   "ivalues: ", ivalues);
@@ -1009,15 +1061,13 @@ design2colors <- function
             if ("rownames" %in% icol) {
                unique(rownames(x))
             } else {
-               if (is.factor(x_input[[icol]])) {
-                  # Todo: consider alternate naValue
+               if (inherits(x_input[[icol]], "factor")) {
                   jamba::rmNA(naValue=use_naValue,
-                     levels(x_input[[icol]]))
+                     levels(factor_NA_level(x_input[[icol]])))
                } else if (is.numeric(x_input[[icol]])) {
                   # for numeric columns assign a color to the colname
                   icol;
                } else {
-                  # Todo: consider alternate naValue
                   jamba::rmNA(naValue=use_naValue,
                      unique(as.character(x_input[[icol]])))
                }
@@ -1044,17 +1094,12 @@ design2colors <- function
             names(color_sub_atomic));
          add_colors_1 <- color_sub_atomic[add_values_1];
          add_values <- setdiff(add_values, add_values_1);
-         # add_match <- match(add_values_1,
-         #    c(names(new_colors_v),
-         #       names(color_sub)));
-         # add_colors_v1 <- c(new_colors_v,
-         #    color_sub)[add_match];
       }
-      add_values <- setdiff(add_values, c(NA, "<NA>"))
+      add_values <- setdiff(add_values, c(NA, use_naValue))
       add_n <- length(add_values);
       if (verbose > 1) {
          jamba::printDebug("design2colors(): ",
-            "add_values: ", add_values);
+            "Remaining add_values: ", add_values);
       }
 
       # check if any values remain to be assigned new colors
@@ -1116,12 +1161,18 @@ design2colors <- function
       # added new colors
       if (length(add_colors_1) > 0) {
          # now re-apply these color_sub to each add_colnames
+         if (verbose > 1) {
+            jamba::printDebug("design2colors(): ",
+               "Assigning colors back into add_colnames: ", add_colnames);
+         }
          add_colname_colors <- lapply(jamba::nameVector(add_colnames), function(icol){
             if ("rownames" %in% icol) {
                icolors <- color_sub_atomic[unique(rownames(x))]
             } else {
                if (is.factor(x_input[[icol]])) {
-                  icolors <- color_sub_atomic[levels(x_input[[icol]])]
+                  ilevels <- jamba::rmNA(naValue=use_naValue,
+                     levels(factor_NA_level(x_input[[icol]])))
+                  icolors <- color_sub_atomic[ilevels];
                } else if (is.numeric(x_input[[icol]])) {
                   color_max <- NULL;
                   if (length(color_sub_max) == 1) {
@@ -1136,7 +1187,7 @@ design2colors <- function
                } else {
                   icolors <- color_sub_atomic[unique(
                      jamba::rmNA(naValue=use_naValue,
-                     as.character(x_input[[icol]])))]
+                        as.character(x_input[[icol]])))];
                }
             }
             icolors;
@@ -1159,6 +1210,7 @@ design2colors <- function
       x_keep_colnames <- setdiff(colnames(x_input), "added_rownames");
       x_input <- x_input[, x_keep_colnames, drop=FALSE];
    }
+
    all_colors_list1 <- jamba::rmNULL(
       c(new_color_list[colnames(x_input)],
          list(
@@ -1228,65 +1280,60 @@ design2colors <- function
    # another option is to display the input data.frame colorized
    x_colors_list <- lapply(jamba::nameVector(colnames(x_input)), function(i){
       if (is.function(all_colors_list[[i]])) {
-         jamba::nameVector(all_colors_list[[i]](x_input[[i]]),
-            round(x_input[[i]],
-               digits=3));
+         jamba::nameVector(
+            jamba::rmNA(naValue=na_color,
+               all_colors_list[[i]](as.numeric(x_input[[i]]))),
+            jamba::rmNA(naValue=use_naValue,
+               round(x_input[[i]], digits=3)));
       } else {
-         all_colors_list[[i]][jamba::rmNA(naValue=use_naValue,
-            as.character(x_input[[i]]))]
+         ivalues <- jamba::rmNA(naValue=use_naValue,
+            as.character(x_input[[i]]))
+         ipalette <- all_colors_list[[i]]
+         # jamba::printDebug("debug column i:", i, ", palette:");print(ipalette);# debug
+         # jamba::printDebug("debug column i:", i, ", values:");print(ivalues);# debug
+         ipalette[ivalues]
       }
    });
-   jamba::printDebug("x_colors_list:");print(x_colors_list);# debug
-   # x_colors_list <- (lapply(jamba::nameVector(colnames(x_input)), function(i){
-   #       if (is.function(all_colors_list[[i]])) {
-   #          jamba::nameVector(all_colors_list[[i]](x_input[[i]]),
-   #             round(x_input[[i]],
-   #                digits=3));
-   #       } else {
-   #          all_colors_list[[i]][jamba::rmNA(naValue=use_naValue,
-   #             as.character(x_input[[i]]))]
-   #       }
-   #    }));
+   # remove entries entirely empty
+   x_colors_list <- x_colors_list[lengths(x_colors_list) > 0];
    # jamba::printDebug("x_colors_list:");print(x_colors_list);# debug
    x_colors <- as.data.frame(x_colors_list);
    if ("table" %in% plot_type) {
-      opar <- par(no.readonly=TRUE);
-      on.exit(par(opar), add=TRUE);
-      # jamba::adjustAxisLabelMargins(
-      #    x=rownames(x_colors),
-      #    margin=2)
-      # jamba::adjustAxisLabelMargins(
-      #    x=colnames(x_colors),
-      #    margin=1)
-      x_colors_note <- data.frame(check.names=FALSE, lapply(x_input, function(i){
-         if (length(jamba::breaksByVector(i)$breakPoints) > 100) {
-            rep("...", length(i))
-         } else {
-            i
-         }
-      }))
-      x_colors_note_cex <- lapply(x_colors_note, function(i){
-         bbv <- jamba::breaksByVector(as.character(i))
-         k <- unname(diff(c(0, bbv$breakPoints)));
-         k1 <- (jamba::noiseFloor(
-            (k/length(i) / 0.2)^(1/3),
-            minimum=0.4,
-            ceiling=0.9))
-         names(k1) <- head(bbv$useLabels, length(k1))
-         (rep(k1, k));
+      withr::with_par(list(xpd=TRUE), {
+         x_colors_note <- data.frame(check.names=FALSE, lapply(x_input, function(i){
+            bpl <- tryCatch({
+               length(jamba::breaksByVector(as.character(i))$breakPoints)
+            }, error=function(e){
+               1
+            })
+            if (bpl > 100) {
+               rep("...", length(i))
+            } else {
+               i
+            }
+         }))
+         x_colors_note_cex <- lapply(x_colors_note, function(i){
+            bbv <- jamba::breaksByVector(as.character(i))
+            k <- unname(diff(c(0, bbv$breakPoints)));
+            k1 <- (jamba::noiseFloor(
+               (k/length(i) / 0.2)^(1/3),
+               minimum=0.4,
+               ceiling=0.9))
+            names(k1) <- head(bbv$useLabels, length(k1))
+            (rep(k1, k));
+         })
+         jamba::imageByColors(x_colors,
+            #cellnote=if(nrow(x_colors) < 500){ x_input} else {NULL},
+            cellnote=x_colors_note,
+            groupByColors=FALSE,
+            groupBy="column",
+            adjBy="column",
+            adjustMargins=TRUE,
+            flip="y",
+            cexCellnote=x_colors_note_cex,
+            maxRatioFix=300,
+            ...)
       })
-      par("xpd"=TRUE);
-      jamba::imageByColors(x_colors,
-         #cellnote=if(nrow(x_colors) < 500){ x_input} else {NULL},
-         cellnote=x_colors_note,
-         groupByColors=FALSE,
-         groupBy="column",
-         adjBy="column",
-         adjustMargins=TRUE,
-         flip="y",
-         cexCellnote=x_colors_note_cex,
-         maxRatioFix=300,
-         ...)
       # par(opar);
    }
 
