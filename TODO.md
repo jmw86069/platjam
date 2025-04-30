@@ -1,3 +1,11 @@
+# TODO 18apr2025
+
+* `import_salmon_quant()`
+
+   * Allow importing data without GTF file, for example "tx" only.
+   * Add `SummarizedExperiment::SummarizedExperiment()` prefix. Ugh.
+   * Debug `curation_txt` argument when provided as filename. Ugh.
+
 # TODO 24mar2025
 
 Grand ideas for `rmd_tab_iterator()`:
