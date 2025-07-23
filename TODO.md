@@ -1,4 +1,10 @@
-# TODO 18apr2025
+# TODO for platjam
+
+## 23jul2025
+
+* Improve `deepTools_matrix2nmat()`
+
+## 18apr2025
 
 * `import_salmon_quant()`
 
@@ -6,7 +12,7 @@
    * Add `SummarizedExperiment::SummarizedExperiment()` prefix. Ugh.
    * Debug `curation_txt` argument when provided as filename. Ugh.
 
-# TODO 24mar2025
+## 24mar2025
 
 Grand ideas for `rmd_tab_iterator()`:
 
@@ -33,7 +39,7 @@ See: https://github.com/quarto-dev/quarto-cli/discussions/11042
    * Add common defaults: Male/Female (M/F), Treatment, Time, Age,
    Control/Vehicle/Untreated, etc.
 
-# TODO 21feb2025
+## 21feb2025
 
 * Consider `heatmaps2nmatlist()` as an inverse to `nmatlist2heatmaps()`
 * Review ways to cache/reuse the recentering values with `nmatlist2heatmaps()`
@@ -48,7 +54,7 @@ See: https://github.com/quarto-dev/quarto-cli/discussions/11042
    so they could be plotted again separately.
 
 
-# TODO 13nov2024
+## 13nov2024
 
 * Add GeoMx data processing functions.
 * `design2colors()` - needs improvements - not nearly as automated as hoped
@@ -80,7 +86,7 @@ See: https://github.com/quarto-dev/quarto-cli/discussions/11042
    and is otherwise not verbose.
 
 
-# TODO 08aug2024
+## 08aug2024
 
 * `rmd_tab_iterator()`
 
@@ -126,7 +132,7 @@ See: https://github.com/quarto-dev/quarto-cli/discussions/11042
       most to least replicated values to define:
       `class_colnames`, `group_colnames`, then `lightness_colnames`.
 
-# TODO 10jul2024
+## 10jul2024
 
 * Consider new function `import_omics_data()`
 
@@ -138,7 +144,7 @@ See: https://github.com/quarto-dev/quarto-cli/discussions/11042
    * There can be multiple row annotation columns, to be stored in `rowData()`.
 
 
-# TODO 28jun2024
+## 28jun2024
 
 * Consider function to display a `data.frame` using `sample_color_list`
 output from `design2colors()`.
@@ -146,7 +152,7 @@ output from `design2colors()`.
    * It should essentially do the same thing as `design2colors()` except
    re-use the `sample_color_list`
 
-# TODO 12jun2024
+## 12jun2024
 
 * Consider generic importer for tab-delimited, csv-delimited data
 that produces a `SummarizedExperiment` object.
@@ -156,7 +162,7 @@ that produces a `SummarizedExperiment` object.
    * Bonus points for option to specify whether rows or columns are
    measurements or samples, i.e. `rowData()` or `colData()`.
 
-# TODO 03jun2024
+## 03jun2024
 
 * `nmatlist2heatmaps()`
 
@@ -167,7 +173,7 @@ that produces a `SummarizedExperiment` object.
    * Consider option to rotate color legend labels 90 degrees (vertical)
    so they take less width.
 
-# TODO 30may2024
+## 30may2024
 
 * Coverage heatmap automation functions. So far they include:
 
@@ -187,7 +193,7 @@ that produces a `SummarizedExperiment` object.
          * call `processx::run()` - preferred for multiple concurrent processes
 
 
-# TODO 20may2024
+## 20may2024
 
 * `parse_ucsc_gokey()`
 
@@ -220,20 +226,20 @@ that produces a `SummarizedExperiment` object.
    derived data, for example matrix 3 minus matrix 2; or mean of matrix 1
    through matrix 8.
 
-# TODO 17may2024
+## 17may2024
 
 * DONE. `nmatlist2heatmaps()`
 
    * DONE. Consider applying word-wrap to color legend titles, so the title
    does not become unreasonably long.
 
-# TODO 16apr2024
+## 16apr2024
 
 * DONE. `rmd_tab_iterator()`
 
    * DONE. The `test=TRUE` functionality is not working properly for nested tabs.
 
-# TODO 10apr2024
+## 10apr2024
 
 * `design2colors()`
 
@@ -244,7 +250,7 @@ that produces a `SummarizedExperiment` object.
    * Consider allowing `color_sub` to be a `list` which may contain
    a `function` to use for color assignment of column values.
 
-# TODO 01mar2024
+## 01mar2024
 
 * `get_salmon_meta()`
 
@@ -252,7 +258,7 @@ that produces a `SummarizedExperiment` object.
    for example when `meta_info.json` is absent, the error should
    say that, to help the user find and fix the problem.
 
-# TODO 26jan2024
+## 26jan2024
 
 * `rmd_tab_iterator()`
 
@@ -260,13 +266,13 @@ that produces a `SummarizedExperiment` object.
    see https://bookdown.org/yihui/rmarkdown-cookbook/html-tabs.html
    `### Tab name {.active}`
 
-# TODO 15dec2023
+## 15dec2023
 
 * `import_salmon_quant()`
 
    * Done. Debug and fix occasional error `"duplicate 'row.names' are not allowed"`
 
-# TODO 06dec2023
+## 06dec2023
 
 * migrate `slicejam::import_featurecounts()` here
 
@@ -300,7 +306,7 @@ that produces a `SummarizedExperiment` object.
    four total tabs caused an error.
    * consider `tryCatch()` around the `base_fn()` calls.
 
-# TODO 09nov2023
+## 09nov2023
 
 * `rmd_tab_iterator()`
 
@@ -328,7 +334,7 @@ that produces a `SummarizedExperiment` object.
 
    * add argument `curation_txt` to behave as `import_nanostring_csv()`
 
-# TODO 27oct2023
+## 27oct2023
 
 * `nmatlist2heatmaps()`
 
@@ -367,7 +373,7 @@ that produces a `SummarizedExperiment` object.
    * it could simplify pre-processing, such as creating "diff" matrices,
    or any combination of matrices in the original `nmatlist`.
 
-# TODO 23oct2023
+## 23oct2023
 
 * `nmatlist2heatmaps()`
 
@@ -398,7 +404,7 @@ that produces a `SummarizedExperiment` object.
          `"k-means method='correlation' using heatmaps X,Y,Z"`
          
 
-# TODO 13oct2023
+## 13oct2023
 
 * `rmd_tab_iterator()`
 
@@ -470,7 +476,7 @@ that produces a `SummarizedExperiment` object.
       {figure 3}
       ```
 
-# TODO 26sep2023
+## 26sep2023
 
 * migrate `slicejam::import_featurecounts()`
 
@@ -484,11 +490,11 @@ that produces a `SummarizedExperiment` object.
    * convert input data into a reasonably good `"curation.txt"`
 
 
-# TODO 21sep2023
+## 21sep2023
 
 * DONE. Update `design2colors()` consistent with colorjam 0.0.26.900 changes.
 
-# TODO 31jul2023
+## 31jul2023
 
 * `import_salmon_quant()`
 
@@ -515,7 +521,7 @@ that produces a `SummarizedExperiment` object.
    of those colors. It would effective split the color hue into a slightly
    wider range of hues, centered on the class color hue.
 
-# TODO 19jul2023
+## 19jul2023
 
 * DONE: add importer for metabolomics data
 
@@ -523,7 +529,7 @@ that produces a `SummarizedExperiment` object.
    processed by the NIEHS Metabolomics Core Facility, with defined file
    formats.
 
-# TODO 18apr2023
+## 18apr2023
 
 * `nmatlist2heatmaps()`
 
@@ -541,7 +547,7 @@ that produces a `SummarizedExperiment` object.
    * make the color assignment more similar to `jamses::heatmap_se()`,
    in the form of color `color_list` named by column.
 
-# TODO 22feb2023
+## 22feb2023
 
 * `design2colors()`
 
@@ -564,20 +570,20 @@ that produces a `SummarizedExperiment` object.
    from output, or renaming each to use the combination of actual colnames
    assembled to form those colors.
 
-# TODO 10jan2023
+## 10jan2023
 
 * `get_salmon_meta()` - please fix the file ordering as described below.
 
-# TODO 20sep2022
+## 20sep2022
 
 * `get_salmon_meta()` should return data in the same order the filenames
 were provided, in fact it's weird that it would not already do that.
 
-# TODO 13sep2022
+## 13sep2022
 
 * (COMPLETE) Add import function for Mascot proteomics type data format.
 
-# TODO 13may2022
+## 13may2022
 
 * `design2colors()`
 
@@ -590,7 +596,7 @@ were provided, in fact it's weird that it would not already do that.
    proceed as it does now, when the user supplies a `color_sub`
    for that column name.
 
-# TODO 05apr2022
+## 05apr2022
 
 ## Salmon import to SummarizedExperiment?
 
@@ -609,7 +615,7 @@ Goal is to parse this file to determine the weighted mean
 fragment length, likely extending `get_salmon_meta()`.
 
 
-# TODO 21mar2022
+## 21mar2022
 
 ## UCSC track hubs
 
@@ -640,7 +646,7 @@ fragment length, likely extending `get_salmon_meta()`.
 
 
 
-# TODO for platjam
+## for platjam
 
 ## `nmatlist2heatmaps()`
 
@@ -666,7 +672,7 @@ as input
    * spectrum="off", scoreMin=0, scoreMax=1000
 
 
-# TODO for platjam 28aug2020
+## for platjam 28aug2020
 
 
 ## Specific usability
@@ -747,7 +753,7 @@ For k=4, it ends up making 8 clusters, which are mostly just
 Would be better to k-means within each partition, to make proper
 subclusters for each partition.
 
-# TODO for platjam 22may2020
+## for platjam 22may2020
 
 ## Dynamic ylims (DONE)
 
