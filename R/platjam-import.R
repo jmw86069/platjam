@@ -453,22 +453,35 @@ coverage_matrix2nmat <- function
 #'    default uses `main_heatmap`. This value is only used when
 #'    `k_clusters` is greater than 1. This argument is useful for
 #'    clustering multiple coverage heatmaps together.
-#' @param partition `character` or `factor` vector used to split rows
-#'    of each matrix in `nmatlist`, and **must named by rownames**
-#'    in `nmatlist`.
-#'    This value is converted to `factor`, and will honor provided
-#'    factor levels if already defined.
-#'    * When `partition` and `k_clusters` are both defined, the
-#'    data is first grouped by `partition` then each partition group
-#'    is separately k-means clustered, using rules described for
-#'    `k_clusters` and `min_rows_per_k`.
-#'    Colors from `k_colors` are assigned to each partition value,
-#'    then colors are split to light-to-dark gradient
-#'    using `jamba::color2gradient()`.
 #' @param row_title_rot `numeric` value in degrees, to rotate the
 #'    partition labels on the left, when either `partition` or
 #'    `k_clusters` are provided. The default `0` uses horizontal
 #'    text. For long labels, it may be better to use `30` or `60`.
+#' @param partition `character` or `factor` vector used to split rows
+#'    of each matrix in `nmatlist`, and **must named by rownames**
+#'    in `nmatlist`.
+#'    * When NULL, and when `anno_df` is defined, it looks for partitioning
+#'    colnames: 'partition', 'group', 'row_split', and uses one or more
+#'    that match these values, case-insensitively. In this case, the vector
+#'    is created using `jamba::pasteByRowsOrdered()` which will preserve any
+#'    factor ordering that is present, and then names the vector by rownames.
+#'    * When provided one or more `character` values that all match
+#'    `colnames(anno_df)`, it uses those values to generate a vector
+#'    named by `rownames(anno_df)`.
+#'    * When `partition` and `k_clusters` are both defined, the
+#'    data is first grouped by `partition` then each partition group
+#'    is separately k-means clustered, using rules described for
+#'    `k_clusters` and `min_rows_per_k`.
+#'    * Colors defined in `k_colors` are assigned to each partition value,
+#'    then colors are split to light-to-dark gradient
+#'    using `jamba::color2gradient()` for each k-means cluster, when
+#'    `k_clusters` is also defined with value greater than 1.
+#' @param partition_label `character` optional label used for the partition
+#'    annotation, default is NULL. When `anno_df` contains a partitioning
+#'    column, one or more are used for partitioning. In this case, when
+#'    `partition_label` is not defined, the colnames used for partitioning
+#'    are concatenated with '_' (underscore) and used to create the label.
+#'    Otherwise, the default becomes 'Cluster'.
 #' @param partition_counts `logical` indicating whether to include the
 #'    number of rows in each partition, default `TRUE`.
 #'    Note that this setting is active if `k_clusters` and/or `partition`
@@ -531,6 +544,12 @@ coverage_matrix2nmat <- function
 #'    whose `rownames(anno_df)` must match rownames in the nmatlist data.
 #'    When `rownames(anno_df)` does not match, this function fails with
 #'    an error message.
+#'    * When `anno_df` is not supplied, and `attr(nmatlist, "anno_df")` is
+#'    defined, it is used as `anno_df` by default. This mechanism allows
+#'    importing data into nmatlist and defining appropriate `anno_df`
+#'    at the same time, then using it directly.
+#'    * When `partition` is not defined, columns in `anno_df` may be used
+#'    for row partitioning, see info for argument `partition`.
 #'    * Data can optionally be sorted by defining `byCols`.
 #'    * When provided, data in `nmatlist` is automatically subsetted
 #'    to the matching `rownames(anno_df)` also present in `nmatlist`.
@@ -994,10 +1013,11 @@ nmatlist2heatmaps <- function
     "pearson",
     "spearman"),
  k_heatmap=main_heatmap,
- partition=NULL,
  row_title_rot=0,
+ partition=NULL,
  partition_counts=TRUE,
  partition_count_template="{partition_name}\n({counts} rows)",
+ partition_label=NULL,
  rows=NULL,
  row_order=NULL,
  nmat_colors=NULL,
@@ -1036,7 +1056,7 @@ nmatlist2heatmaps <- function
  axis_name_gp=grid::gpar(fontsize=10),
  axis_name_rot=90,
  column_title_gp=grid::gpar(fontsize=14),
- lens=-2,
+ lens=0,
  anno_lens=8,
  pos_line=FALSE,
  seed=123,
@@ -1206,7 +1226,12 @@ nmatlist2heatmaps <- function
          stop("No values in rows matched any nmatlist rownames.");
       }
    }
+
    ## Also optionally subset rows by rownames(anno_df)
+   # use anno_df from attributes if defined
+   if (length(anno_df) == 0 && "anno_df" %in% names(attributes(nmatlist))) {
+      anno_df <- attr(nmatlist, "anno_df");
+   }
    if (length(anno_df) > 0) {
       rows <- intersect(rows, rownames(anno_df));
       # rows <- rows[rows %in% rownames(anno_df)];
@@ -1214,11 +1239,37 @@ nmatlist2heatmaps <- function
          stop("rownames(anno_df) did not match any values in rows.");
       }
    }
+
+   ## Use partition from anno_df if present
+   # - update partition_label with columns used
+   if (length(anno_df) > 0 && inherits(anno_df, "data.frame")) {
+      par_colnames <- c("partition", "group", "row_split", "split");
+      if (length(partition) == 0 && any(par_colnames %in% colnames(anno_df))) {
+         par_colname <- intersect(par_colnames, colnames(anno_df))
+         if (length(partition_label) == 0) {
+            partition_label <- paste(par_colname, collapse="_");
+         }
+         partition <- jamba::nameVector(
+            jamba::pasteByRowOrdered(anno_df[, par_colname, drop=FALSE]),
+            rownames(anno_df));
+         if (length(par_colname) == 1) {
+            if (ncol(anno_df) == 1) {
+               anno_df <- NULL;
+            } else {
+               anno_keep <- setdiff(colnames(anno_df), par_colname);
+               anno_df <- anno_df[, anno_keep, drop=FALSE];
+            }
+         }
+      }
+   }
+
+   ## Apply partition
    partition_colors <- NULL;
    if (length(partition) > 0) {
       if (length(anno_df) > 0 && all(partition %in% colnames(anno_df))) {
          partition_df <- data.frame(check.names=FALSE,
             anno_df[, partition, drop=FALSE]);
+         partition_label <- paste(partition, collapse="_");
          for (pcol in partition) {
             if (is.numeric(partition_df[[pcol]])) {
                # sort numeric columns decreasing order
@@ -1417,12 +1468,13 @@ nmatlist2heatmaps <- function
          length.out=length(nmatlist));
    }
    if (length(nmat_colors) == 0) {
-      if (length(panel_groups) > 0) {
+      if (length(panel_groups) > 1) {
          nmat_colors <- colorjam::group2colors(panel_groups,
             ...);
       } else {
-         nmat_colors <- colorjam::rainbowJam(length(nmatlist),
-            ...);
+         nmat_colors <- rep("RdBu_r", length(nmatlist))
+         # nmat_colors <- colorjam::rainbowJam(length(nmatlist),
+         #    ...);
       }
    }
    if (length(nmat_colors) < length(nmatlist)) {
@@ -1775,8 +1827,11 @@ nmatlist2heatmaps <- function
          p_at <- p_before_after$after;
       }
 
+      if (length(partition_label) == 0) {
+         partition_label <- "Cluster";
+      }
       p_heatmap_legend_param <- list(
-         title="Cluster",
+         title=partition_label,
          title_position="topleft",
          type="boxplot",
          pch=26:28,
@@ -1801,7 +1856,7 @@ nmatlist2heatmaps <- function
          raster_quality=raster_quality,
          raster_by_magick=raster_by_magick,
          col=k_colors,
-         name="cluster",
+         name=partition_label,
          show_row_names=FALSE,
          width=k_width);
       PHM_rows <- rows;
@@ -2397,9 +2452,13 @@ nmatlist2heatmaps <- function
    top_legend <- list();
 
    EH_l <- lapply(seq_along(nmatlist), function(i){
-      nmat <- nmatlist[[i]][rows,,drop=FALSE];
+      nmat <- nmatlist[[i]];
+      class(nmat) <- c("normalizedMatrix", "matrix");
+
       signal_name <- attr(nmat, "signal_name");
       target_name <- attr(nmat, "target_name");
+      # do not subset before using attributes
+      nmat <- nmat[rows, , drop=FALSE];
       ## Check for duplicated signal_name
       if (signal_name %in% names(signal_name_hash)) {
          # append Excel-style column alphabetic lettering
@@ -2447,10 +2506,18 @@ nmatlist2heatmaps <- function
                c("divergent=", TRUE), sep="")
          }
       }
-      if (!is.function(color) && length(color) == 1 && divergent) {
-         color2 <- color_complement(color, ...);
-         color <- c(color2, middle_color, color);
-         divergent <- TRUE;
+      if (!is.function(color) && length(color) == 1 && TRUE %in% divergent) {
+         if (TRUE %in% jamba::isColor(color)) {
+            color2 <- color_complement(color, ...);
+            color <- c(color2, middle_color, color);
+            divergent <- TRUE;
+         } else {
+            if ("Reds" %in% color) {
+               # change "Reds" default to blue-white-red
+               color <- "RdBu_r";
+               divergent <- TRUE;
+            }
+         }
       }
       if (verbose) {
          if (length(ylim) == 0) {
@@ -2486,34 +2553,50 @@ nmatlist2heatmaps <- function
                color_txt)
          );
       }
+
+      if (length(iceiling) == 0 || all(is.na(iceiling))) {
+         iceiling <- 1; # use the complete range
+      }
       if (length(iceiling) > 0 && !is.na(iceiling)) {
          iceiling <- get_nmat_ceiling(imat,
             iceiling,
             verbose=verbose>1);
-         if (divergent) {
+         if (is.function(color)) {
+            colramp <- color;
+         } else if (divergent) {
+            colramp <- colorjam::col_div_xf(x=iceiling,
+               lens=lens[[i]],
+               divergent=TRUE,
+               n=21,
+               colramp=color);
             ibreaks <- seq(from=-iceiling,
                to=iceiling,
                length=21);
          } else {
+            colramp <- colorjam::col_linear_xf(x=iceiling,
+               lens=lens[[i]],
+               n=21,
+               colramp=color);
             ibreaks <- seq(from=0,
                to=iceiling,
                length=21);
          }
-         if (is.function(color)) {
-            colramp <- color;
-         } else {
-            colramp <- circlize::colorRamp2(
-               breaks=ibreaks,
-               colors=jamba::getColorRamp(color,
-                  defaultBaseColor=middle_color,
-                  divergent=divergent,
-                  n=21,
-                  lens=lens[[i]]));
-         }
+         # if (is.function(color)) {
+         #    colramp <- color;
+         # } else {
+         #    colramp <- circlize::colorRamp2(
+         #       breaks=ibreaks,
+         #       colors=jamba::getColorRamp(color,
+         #          defaultBaseColor=middle_color,
+         #          divergent=divergent,
+         #          n=21,
+         #          lens=lens[[i]]));
+         # }
       } else {
          if (is.function(color)) {
             colramp <- color;
          } else {
+            # colramp <- colorjam::col_div_xf(iceiling)
             colramp <- jamba::getColorRamp(color,
                n=21,
                defaultBaseColor=middle_color,

@@ -1,3 +1,20 @@
+# platjam 0.0.96.900
+
+## changes to existing functions
+
+* `nmatlist2heatmaps()`
+
+   * `nmat_colors` now recognize "RdBu_r" from RBrewerColors, and properly set
+   the divergent midpoint to zero, calling `colorjam::col_div_xf()`.
+   * Default `nmat_colors` will use blue-white-red for one panel group.
+   * When `anno_df` is not supplied, and `attr(nmatlist, "anno_df")` is
+   available, it uses that for `anno_df` functions.
+
+* `deepTools_matrix2nmat()`
+
+   * More thoroughly handles data, assigns colnames consistent with other
+   input formats, with coordinate ranges "-1000:-991" for example.
+
 # platjam 0.0.95.900
 
 ## changes to existing functions

@@ -19,10 +19,11 @@ nmatlist2heatmaps(
   k_width = grid::unit(5, "mm"),
   k_method = c("correlation", "euclidean", "pearson", "spearman"),
   k_heatmap = main_heatmap,
-  partition = NULL,
   row_title_rot = 0,
+  partition = NULL,
   partition_counts = TRUE,
   partition_count_template = "{partition_name}\\n({counts} rows)",
+  partition_label = NULL,
   rows = NULL,
   row_order = NULL,
   nmat_colors = NULL,
@@ -61,7 +62,7 @@ nmatlist2heatmaps(
   axis_name_gp = grid::gpar(fontsize = 10),
   axis_name_rot = 90,
   column_title_gp = grid::gpar(fontsize = 14),
-  lens = -2,
+  lens = 0,
   anno_lens = 8,
   pos_line = FALSE,
   seed = 123,
@@ -194,25 +195,32 @@ default uses \code{main_heatmap}. This value is only used when
 \code{k_clusters} is greater than 1. This argument is useful for
 clustering multiple coverage heatmaps together.}
 
-\item{partition}{\code{character} or \code{factor} vector used to split rows
-of each matrix in \code{nmatlist}, and \strong{must named by rownames}
-in \code{nmatlist}.
-This value is converted to \code{factor}, and will honor provided
-factor levels if already defined.
-\itemize{
-\item When \code{partition} and \code{k_clusters} are both defined, the
-data is first grouped by \code{partition} then each partition group
-is separately k-means clustered, using rules described for
-\code{k_clusters} and \code{min_rows_per_k}.
-Colors from \code{k_colors} are assigned to each partition value,
-then colors are split to light-to-dark gradient
-using \code{jamba::color2gradient()}.
-}}
-
 \item{row_title_rot}{\code{numeric} value in degrees, to rotate the
 partition labels on the left, when either \code{partition} or
 \code{k_clusters} are provided. The default \code{0} uses horizontal
 text. For long labels, it may be better to use \code{30} or \code{60}.}
+
+\item{partition}{\code{character} or \code{factor} vector used to split rows
+of each matrix in \code{nmatlist}, and \strong{must named by rownames}
+in \code{nmatlist}.
+\itemize{
+\item When NULL, and when \code{anno_df} is defined, it looks for partitioning
+colnames: 'partition', 'group', 'row_split', and uses one or more
+that match these values, case-insensitively. In this case, the vector
+is created using \code{jamba::pasteByRowsOrdered()} which will preserve any
+factor ordering that is present, and then names the vector by rownames.
+\item When provided one or more \code{character} values that all match
+\code{colnames(anno_df)}, it uses those values to generate a vector
+named by \code{rownames(anno_df)}.
+\item When \code{partition} and \code{k_clusters} are both defined, the
+data is first grouped by \code{partition} then each partition group
+is separately k-means clustered, using rules described for
+\code{k_clusters} and \code{min_rows_per_k}.
+\item Colors defined in \code{k_colors} are assigned to each partition value,
+then colors are split to light-to-dark gradient
+using \code{jamba::color2gradient()} for each k-means cluster, when
+\code{k_clusters} is also defined with value greater than 1.
+}}
 
 \item{partition_counts}{\code{logical} indicating whether to include the
 number of rows in each partition, default \code{TRUE}.
@@ -224,6 +232,13 @@ rows will be displayed.}
 \code{partition_counts=TRUE}, used together with \code{glue::glue()} to format
 each row partition. The default: \code{"{partition_name}\\n({counts} rows)"}
 will print for example: \code{"A\\n(125 rows)"}}
+
+\item{partition_label}{\code{character} optional label used for the partition
+annotation, default is NULL. When \code{anno_df} contains a partitioning
+column, one or more are used for partitioning. In this case, when
+\code{partition_label} is not defined, the colnames used for partitioning
+are concatenated with '_' (underscore) and used to create the label.
+Otherwise, the default becomes 'Cluster'.}
 
 \item{rows}{optional vector to define subset rows, or specific row order:
 \itemize{
@@ -293,6 +308,12 @@ whose \code{rownames(anno_df)} must match rownames in the nmatlist data.
 When \code{rownames(anno_df)} does not match, this function fails with
 an error message.
 \itemize{
+\item When \code{anno_df} is not supplied, and \code{attr(nmatlist, "anno_df")} is
+defined, it is used as \code{anno_df} by default. This mechanism allows
+importing data into nmatlist and defining appropriate \code{anno_df}
+at the same time, then using it directly.
+\item When \code{partition} is not defined, columns in \code{anno_df} may be used
+for row partitioning, see info for argument \code{partition}.
 \item Data can optionally be sorted by defining \code{byCols}.
 \item When provided, data in \code{nmatlist} is automatically subsetted
 to the matching \code{rownames(anno_df)} also present in \code{nmatlist}.
