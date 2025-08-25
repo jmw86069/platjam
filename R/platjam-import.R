@@ -2123,13 +2123,84 @@ nmatlist2heatmaps <- function
          col=anno_colors_l);
       AHM_rows <- rows;
 
+      ##################################
+      ## Optional row marks - moved for now
+      if (FALSE) {
+         anno_rows <- rows[rows %in% anno_row_marks];
+         if (length(anno_rows) > 0) {
+            anno_row_which <- match(anno_rows, rows);
+            if (length(anno_row_labels) > 0 && all(anno_row_labels %in% colnames(anno_df))) {
+               anno_row_labels <- pasteByRow(
+                  anno_df[anno_rows,anno_row_labels,drop=FALSE],
+                  sep=" ");
+            } else if (length(anno_row_labels) >= length(anno_rows)) {
+               if (length(names(anno_row_labels)) == 0 &&
+                     length(anno_row_labels) == length(anno_row_marks)) {
+                  names(anno_row_labels) <- anno_row_marks;
+               }
+               anno_row_labels <- anno_row_labels[anno_rows];
+            } else {
+               anno_row_labels <- anno_rows;
+            }
+            ## Print optional verbose output
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Preparing row marks for ",
+                  jamba::formatInt(length(anno_rows)),
+                  " anno_rows found in anno_df, top 20 entries are shown:");
+               print(head(
+                  data.frame(
+                     anno_rows=anno_rows,
+                     anno_row_which=anno_row_which,
+                     anno_row_labels=anno_row_labels),
+                  20));
+            }
+            ##################################
+            ## Mark Heatmap
+            if (!"gpar" %in% class(anno_row_gp)) {
+               anno_row_gp <- grid::gpar(fontsize=14)
+            }
+            MHM <- ComplexHeatmap::Heatmap(
+               jamba::nameVector(anno_df[rows, 1], rows),
+               col=anno_colors_l[[1]],
+               name=colnames(anno_df)[1],
+               show_row_names=FALSE,
+               width=k_width,
+               cluster_rows=FALSE,
+               right_annotation=ComplexHeatmap::rowAnnotation(
+                  foo=ComplexHeatmap::anno_mark(at=anno_row_which,
+                     labels_gp=anno_row_gp,
+                     labels=anno_row_labels)
+               )
+            );
+            MHM_rows <- rows;
+         } else {
+            MHM <- NULL;
+         }
+      }
+      MHM <- NULL;
+   } else {
+      AHM <- NULL;
+      MHM <- NULL;
+      byCols <- row_order_type;
+   }
+
+   ##################################
+   ## label row marks
+   # check if length(anno_df)==0 but row marks are defined
+   # which causes the previous section to be skipped
+   if (length(anno_row_marks) > 0) {
+
+      ##################################
       ## Optional row marks
       anno_rows <- rows[rows %in% anno_row_marks];
       if (length(anno_rows) > 0) {
          anno_row_which <- match(anno_rows, rows);
-         if (length(anno_row_labels) > 0 && all(anno_row_labels %in% colnames(anno_df))) {
-            anno_row_labels <- pasteByRow(
-               anno_df[anno_rows,anno_row_labels,drop=FALSE],
+         if (length(anno_row_labels) > 0 &&
+               inherits(anno_df, "data.frame") &&
+               all(anno_row_labels %in% colnames(anno_df))) {
+            anno_row_labels <- jamba::pasteByRow(
+               anno_df[anno_rows, anno_row_labels, drop=FALSE],
                sep=" ");
          } else if (length(anno_row_labels) >= length(anno_rows)) {
             if (length(names(anno_row_labels)) == 0 &&
@@ -2158,13 +2229,27 @@ nmatlist2heatmaps <- function
          if (!"gpar" %in% class(anno_row_gp)) {
             anno_row_gp <- grid::gpar(fontsize=14)
          }
-         MHM <- ComplexHeatmap::Heatmap(jamba::nameVector(anno_df[rows,1], rows),
-            col=anno_colors_l[[1]],
-            name=colnames(anno_df)[1],
+         if (length(anno_df) > 0 && inherits(anno_df, "data.frame")) {
+            use_anno_df <- anno_df[rows, 1, drop=FALSE];
+         } else {
+            use_anno_df <- data.frame(name=rows, row.names=rows);
+         }
+         use_anno_colors <- list(x="#FFFFFF");
+         # use_anno_colors <- list(x=jamba::nameVector(
+         #    rep("#FFFFFF", length(unique(use_anno_df[rows, 1]))),
+         #    unique(use_anno_df[rows, 1])));
+         names(use_anno_colors) <- colnames(use_anno_df)[1];
+         MHM <- ComplexHeatmap::Heatmap(
+            jamba::nameVector(use_anno_df[rows, 1], rows),
+            # col=anno_colors_l[[1]],
+            col=use_anno_colors,
+            name=paste0(colnames(use_anno_df)[1], ".marks"),
             show_row_names=FALSE,
-            width=k_width,
+            width=k_width / 10,
             cluster_rows=FALSE,
             right_annotation=ComplexHeatmap::rowAnnotation(
+               show_legend=FALSE,
+               show_annotation_name=FALSE,
                foo=ComplexHeatmap::anno_mark(at=anno_row_which,
                   labels_gp=anno_row_gp,
                   labels=anno_row_labels)
@@ -2174,12 +2259,7 @@ nmatlist2heatmaps <- function
       } else {
          MHM <- NULL;
       }
-   } else {
-      AHM <- NULL;
-      MHM <- NULL;
-      byCols <- row_order_type;
    }
-
 
    ##################################
    ## panel_groups
@@ -2813,6 +2893,8 @@ nmatlist2heatmaps <- function
    ## Layout heatmap panels
    ##
    HM_drawn <- NULL;
+   use_annotation_legend_list <- NULL;
+
    if (length(hm_nrow) > 0 &&
          hm_nrow > 1 &&
          length(nmatlist) > 1) {
@@ -2909,40 +2991,27 @@ nmatlist2heatmaps <- function
             "ht_gap:");
          print(ht_gap);
       }
-      if (do_plot &&
-            (length(title) > 0 || length(caption) > 0)) {
-         if (verbose) {
-            jamba::printDebug("nmatlist2heatmaps(): ",
-               "Preparing ComplexHeatmap::draw(HeatmapList)");
-         }
-         HM_drawn <- ComplexHeatmap::draw(HM_temp,
-            column_title=title,
-            column_title_gp=title_gp,
-            ht_gap=ht_gap,
-            adjust_annotation_extension=TRUE,
-            annotation_legend_list=c(
-               caption_legends,
-               list(top_legend)),
-            main_heatmap=main_heatmap_temp,
-            merge_legends=TRUE,
-            padding=padding)
-         if (FALSE) {
-            jamba::printDebug("nmatlist2heatmaps(): ",
-               "Preparing HeatmapList grob for grid_with_title()");
-            HM_grob <- grid::grid.grabExpr(
-               ComplexHeatmap::draw(HM_temp,
-                  ht_gap=ht_gap,
-                  main_heatmap=main_heatmap_temp)
-            );
-            jamba::printDebug("nmatlist2heatmaps(): ",
-               "Calling grid_with_title()");
-            multienrichjam::grid_with_title(HM_grob,
-               title=title,
-               caption=caption,
-               verbose=verbose,
-               ...);
+      if ((length(title) > 0 || length(caption) > 0)) {
+         use_annotation_legend_list <- c(
+            caption_legends,
+            list(top_legend));
+         if (do_plot) {
+            if (verbose) {
+               jamba::printDebug("nmatlist2heatmaps(): ",
+                  "Preparing ComplexHeatmap::draw(HeatmapList)");
+            }
+            HM_drawn <- ComplexHeatmap::draw(HM_temp,
+               column_title=title,
+               column_title_gp=title_gp,
+               ht_gap=ht_gap,
+               adjust_annotation_extension=TRUE,
+               annotation_legend_list=use_annotation_legend_list,
+               main_heatmap=main_heatmap_temp,
+               merge_legends=TRUE,
+               padding=padding)
          }
       } else {
+         use_annotation_legend_list <- list(top_legend)
          if (do_plot) {
             HM_drawn <- ComplexHeatmap::draw(HM_temp,
                ht_gap=ht_gap,
@@ -2979,7 +3048,11 @@ nmatlist2heatmaps <- function
    fn_params$ylims <- ylims;
    fn_params$signal_ceiling <- signal_ceiling;
    fn_params$ht_gap <- ht_gap;
+   fn_params$title_gp <- title_gp;
+   fn_params$padding <- padding;
    fn_params$top_annotation_list <- top_annotation_list;
+   fn_params$use_annotation_legend_list <- use_annotation_legend_list;
+
    if (length(recenter_heatmap) > 0) {
       fn_params$recenter_heatmap <- recenter_heatmap;
       fn_params$recenter_range <- recenter_range;
@@ -3063,7 +3136,8 @@ nmatlist2heatmaps <- function
          HM_temp=HM_temp,
          ht_gap=ht_gap,
          main_heatmap=main_heatmap_temp),
-      caption_legendlist=caption_legendlist
+      caption_legendlist=caption_legendlist,
+      caption_legends=caption_legends
    );
    # return HM_drawn with the heatmap as drawn
    if (length(HM_drawn) > 0) {

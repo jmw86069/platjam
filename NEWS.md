@@ -1,3 +1,19 @@
+# platjam 0.0.97.900
+
+## new functions
+
+* `draw_nmathm()`
+
+   * Intended to draw the output from `nmatlist2heatmaps()` in a separate step.
+   Still somewhat of a work in progress.
+
+* `nmatlist2heatmaps()`
+
+   * row marks via `anno_row_marks` no longer require `anno_df` to be supplied.
+   * Row marks are rendered using a "blank" heatmap with 1/10 the width
+   of the simple annotation width, and using white color, so it will
+   appear invisible. Row labels are associated with that hidden heatmap.
+
 # platjam 0.0.96.900
 
 ## changes to existing functions

@@ -1,6 +1,6 @@
 Package: platjam
 Title: Platform Jam, biological platform importers.
-Version: 0.0.96.900
+Version: 0.0.97.900
 Authors@R: person(given="James M.", family="Ward",
     email="jmw86069@gmail.com", role=c("aut", "cre"))
 Description: Platform data import methods for biological platform

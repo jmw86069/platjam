@@ -1,8 +1,34 @@
 # TODO for platjam
 
+## 22aug2025
+
+* `rmd_tab_iterator()`
+
+   * When `tab_list` contains vectors with one item, consider "auto-collapsing"
+   to skip those when printing out tabs. It would help automate workflows
+   where a few variables are used, but maybe only a subset have multiple
+   values, and it is not known upfront.
+
+* Improve `design2colors()`
+
+   * Somehow it needs to be more "automated" to produce better results.
+   Logic to apply when columns have ordered factor levels, or numeric/integer
+   values used in grouping.
+
 ## 23jul2025
 
+
 * Improve `deepTools_matrix2nmat()`
+* Consider S4 objects:
+
+   * "nmatlist" - formal way of containing `list` of `normalizedMatrix`
+   
+      * attributes: 'anno_df'
+      * some way to store re-centered peaks for persistence
+
+   * "nmathm" - output from `nmatlist2heatmaps()`
+
+* Port coverage heatmap automation functions
 
 ## 18apr2025
 
