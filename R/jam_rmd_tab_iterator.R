@@ -200,9 +200,11 @@ rmd_tab_iterator <- function
          tab_label <- jamba::cPaste(sep=" ", tab_value);
       }
       tab_suffix <- "{.tabset}";
-      if (length(tab_list) == 1) {
-         tab_suffix <- "";
-      }
+      # 23apr2026: terminal tabs are no longer tabset-free,
+      # to enable people adding their own sub-tabs if needed.
+      # if (length(tab_list) == 1) {
+      #    tab_suffix <- "";
+      # }
       # print the tab header
       # TODO: suppress the header when no content is present,
       # which probably requires assembling each sub-component to determine

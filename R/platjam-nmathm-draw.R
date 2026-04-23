@@ -26,8 +26,6 @@
 #'    as already defined, but these options permit custom values.
 #' @param ... additional arguments are passed to internal functions.
 #'
-#' @param
-#'
 #' @export
 draw_nmathm <- function
 (nmathm,

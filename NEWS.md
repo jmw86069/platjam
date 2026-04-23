@@ -1,3 +1,23 @@
+# platjam 0.0.98.900
+
+## updates to existing functions
+
+* `rmd_tab_iterator()`
+
+   * now always adds '{.tabset}' to tabs even the
+   last level of tabs, in order to allow people to append their own
+   sub-tabs if relevant. If not, no harm.
+
+* `design2colors()` work in progress:
+
+   * new argument `use_add_colors=TRUE` to use `colorjam::add_colors()`
+   which uses color difference to optimize adding colors with the most
+   perceptually distinct difference from existing colors.
+   It may be slow.
+   * new argument `color_list` intended for iterative color usage.
+   * `color_sub` can be supplied as a `list`, and will populate `color_list`.
+   * `color_sub` supplied without names will cause an error.
+
 # platjam 0.0.97.900
 
 ## new functions

@@ -1,5 +1,39 @@
 # TODO for platjam
 
+## 03apr2026
+
+* `design2colors()`
+
+   * Permit `color_sub` to contain color `function` for columns.
+   * Add option to assign colors in each column independently when
+   desired.
+   * Consider option to supply color_list and update in place,
+   for example adding columns/colors.
+
+* `plot_sedesign()`
+
+   * Fix error and bug when using group_fill,
+   or group_border. The if() statement is probably incorrect.
+
+* `rmd_tab_iterator()`
+
+   * Consider option to `print()` or `cat()` or `return()` the
+   R commands being run for each iteration.
+   * Add '{.tabset}' to all tabs so it can be nested.
+   * Confirm method to skip printing tab levels which have only one value,
+   or print an alternative label to indicate the value.
+   * Consider creating some common templates.
+
+## 26aug2025
+
+* Consider new helper function to convert tx2gene 'tx_range'
+into 'gene_range'.
+
+   * It could GRanges logic to combine overlapping ranges,
+   * Or could simply take one transcript.
+   * Ideal world, it takes detected transcripts as input,
+   then combines 'tx_range' among those entries.
+
 ## 22aug2025
 
 * `rmd_tab_iterator()`
@@ -8,6 +42,13 @@
    to skip those when printing out tabs. It would help automate workflows
    where a few variables are used, but maybe only a subset have multiple
    values, and it is not known upfront.
+   * Create series of "helper functions" to use in Rmd workflows.
+   * Hide tabs with only one (or zero) items.
+   * Consider prefixing the first tab in a series with the tab name.
+   For example "[assay_name: jammanorm_counts], [quantile_counts]"
+   "[control: overall], [vs WT]"
+   "[centerby: global], [cell type]"
+   "[venn_set: C-Ctrl, B-Ctrl], [A-Ctrl, B-Ctrl, C-Ctrl]"
 
 * Improve `design2colors()`
 

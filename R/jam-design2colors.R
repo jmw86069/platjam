@@ -126,6 +126,38 @@
 #'    which `colnames(x)` to use, in order, for group lightness gradient.
 #' @param class_colnames `character` or `intger` vector indicating
 #'    higher-level grouping of `group_colnames`
+#' @param color_list `list` default NULL, with names in `colnames(x)`
+#'    with optional color assignments by column. This argument represents
+#'    input recognized by `heatmap_se()` argument `sample_color_list`.
+#'    Each elementmay be one of the following:
+#'    * `character` vector of colors, with names matching values in
+#'    the column.
+#'    * `character` with single color, to be applied as a gradient to
+#'    column values.
+#'    * `function` which takes column values, typically numeric, and
+#'    returns one color for each input value.
+#' @param color_sub one of the following:
+#'    * `character` vector of R colors, where `names(color_sub)`
+#'    assign each color to a character string. It is intended to allow
+#'    specific color assignments upfront.
+#'    Also `names(color_sub)` may match `colnames(x)` in which case
+#'    the color is assigned to that color using a color gradient across
+#'    the unique character values in that column. Values are assigned in
+#'    order of their appearance in `x` unless the column is a `factor`,
+#'    in which case colors are assigned to `levels` in order.
+#'    * `list` named by `colnames(x)` to assign colors to each column.
+#'    In this case, values may be: `character` vector with colors named
+#'    by unique value in the column; `function` to apply to values in the
+#'    column, assumed to be `numeric` values; or single `character` color
+#'    which is used to create a color gradient as described above.
+#' @param color_sub_max `numeric` optional value used to define a fixed
+#'    upper limit to a color gradient when a color is applied to
+#'    a `numeric` column.
+#'    * When one value is defined for `color_sub_max` it is used for all
+#'    `numeric` columns uniformly.
+#'    * When multiple values are defined for `color_sub_max`, then
+#'    `names(color_sub_max)` are used to associate to the appropriate
+#'    column matching with `colnames(x)`.
 #' @param preset `character` string passed to `colorjam::h2hwOptions()`,
 #'    which defines the hues around a color wheel, used when selecting
 #'    categorical colors. Some shortcuts:
@@ -166,22 +198,6 @@
 #' @param Crange,Lrange `numeric` ranges passed to `colorjam::rainbowJam()`
 #'    to define slightly less saturated colors than the default rainbow
 #'    palette.
-#' @param color_sub `character` vector of R colors, where `names(color_sub)`
-#'    assign each color to a character string. It is intended to allow
-#'    specific color assignments upfront.
-#'    * `colnames(x)`: when `names(color_sub)` matches a column name in `x`,
-#'    the color is assigned to that color using a color gradient across
-#'    the unique character values in that column. Values are assigned in
-#'    order of their appearance in `x` unless the column is a `factor`,
-#'    in which case colors are assigned to `levels`.
-#' @param color_sub_max `numeric` optional value used to define a fixed
-#'    upper limit to a color gradient when a color is applied to
-#'    a `numeric` column.
-#'    * When one value is defined for `color_sub_max` it is used for all
-#'    `numeric` columns uniformly.
-#'    * When multiple values are defined for `color_sub_max`, then
-#'    `names(color_sub_max)` are used to associate to the appropriate
-#'    column matching with `colnames(x)`.
 #' @param na_color `character` string, default "grey90", R color assigned
 #'    to `NA` values.
 #' @param use_naValue `character` string, default `"<NA>"`, used to assign
@@ -215,6 +231,10 @@
 #'    * Optional `FALSE`: Color assignments are re-used where applicable,
 #'    except when overridden by `color_sub` for a particular column. In
 #'    that case, color assignments are maintained for each specific column.
+#' @param use_add_colors `logical` whether to use experimental
+#'    `colorjam::add_colors()` which finds colors with maximum perceptual
+#'    difference from the existing colors. It is notably slower than other
+#'    approaches, and does not give options to provide specific color hues.
 #' @param plot_type `character` string indicating a type of plot for results:
 #'    * `"table"`: plots a color table equal to the input `data.frame` where
 #'    background cells indicate color assignments.
@@ -259,6 +279,14 @@
 #'
 #' dfc <- design2colors(df,
 #'    group_colnames="genotype",
+#'    lightness_colnames="treatment",
+#'    class_colnames="class",
+#'    color_sub=c(age="dodgerblue"))
+#'
+#' # same as above except use add_colors()
+#' dfca <- design2colors(df,
+#'    group_colnames="genotype",
+#'    use_add_colors=TRUE,
 #'    lightness_colnames="treatment",
 #'    class_colnames="class",
 #'    color_sub=c(age="dodgerblue"))
@@ -309,6 +337,7 @@
 #'    lightness_colnames=c("time", "treatment"),
 #'    class_colnames="class",
 #'    preset="dichromat",
+#'    use_add_colors=TRUE,
 #'    color_sub=c(
 #'       treatment="steelblue",
 #'       time="dodgerblue"
@@ -322,6 +351,9 @@ design2colors <- function
  lightness_colnames=NULL,
  class_colnames=NULL,
  ignore_colnames=NULL,
+ color_list=NULL,
+ color_sub=NULL,
+ color_sub_max=NULL,
  preset="dichromat2",
  phase=1,
  rotate_phase=-1,
@@ -332,12 +364,11 @@ design2colors <- function
  dex=c(2, 5),
  Crange=NULL,#c(70, 120),
  Lrange=NULL,#c(45, 90),
- color_sub=NULL,
- color_sub_max=NULL,
  na_color="grey90",
  use_naValue="<NA>",
  shuffle_colors=FALSE,
  force_consistent_colors=TRUE,
+ use_add_colors=TRUE,
  plot_type=c("table",
     "list",
     "none"),
@@ -398,13 +429,36 @@ design2colors <- function
    dex <- rep(dex,
       length.out=2);
 
+   ## Todo:
+   # validate color_list input
+
    # validate color_sub as supplied
    # - note that color names should be converted to hex
    #   in order to be compatible with some downstream tools
    #   such as knitr::kable(), jamba::kable_coloring().
    # - recognized color ramps are left as-is as character names
    # - all other values are converted to NA and ignored
-   if (length(color_sub) > 0 && "character" %in% class(color_sub)) {
+   if (length(color_list) == 0) {
+      color_list <- list();
+   }
+   if (!is.list(color_list)) {
+      color_list <- as.list(color_list);
+   }
+   if (length(color_sub) > 0 && is.list(color_sub)) {
+      # color_sub as list will populate color_list
+      if (length(names(color_sub)) == 0) {
+         # without names, it is not usable
+         stop(paste0("color_sub as a list must have names."));
+      }
+      for (cname in names(color_sub)) {
+         color_list[[cname]] <- color_sub[[cname]];
+      }
+   }
+   if (length(color_sub) > 0 && inherits(color_sub, "character")) {
+      if (length(names(color_sub)) == 0) {
+         # without names, it is not usable
+         stop(paste0("color_sub as a vector must have names."));
+      }
       # note if this step fails, re-use the input unchanged
       Rcolors <- grDevices::colors();
       # match hex or Rcolors
@@ -906,7 +960,8 @@ design2colors <- function
    new_colors <- lapply(iter_colnames, function(icol) {
       # new in version 0.0.52.900: do not assign colors
       # when color_sub is already defined
-      if (length(color_sub) > 0 && icol %in% names(color_sub)) {
+      if (length(color_sub) > 0 &&
+            icol %in% c(names(color_list), names(color_sub))) {
          return(NULL);
       }
       # skip numeric columns which will be assigned gradient colors
@@ -965,12 +1020,13 @@ design2colors <- function
       colname_colnames <- NULL;
 
       if (any(add_colnames %in% names(color_sub))) {
-         colname_colnames <- intersect(add_colnames, names(color_sub));
+         colname_colnames <- intersect(add_colnames,
+            c(names(color_list), names(color_sub)));
          add_colnames <- setdiff(add_colnames, colname_colnames);
 
          # iterate remaining colnames and assign colors
          colname_colors <- lapply(jamba::nameVector(colname_colnames),
-         function(icol){
+            function(icol){
             if (verbose > 1) {
                jamba::printDebug("design2colors(): ",
                   "colname_icol: ", icol);
@@ -982,12 +1038,20 @@ design2colors <- function
                      c("   is.factor=", "TRUE"), sep="");
                }
                ivalues <- levels(factor_NA_level(x_input[[icol]]));
-            # } else if (inherits(x_input[[icol]], "numeric")) {
             } else if (is.numeric(x_input[[icol]])) {
                # numeric columns will receive gradient color function
                if (verbose > 1) {
                   jamba::printDebug("design2colors(): ",
                      c("   is.numeric=", "TRUE"), sep="");
+               }
+               if (icol %in% names(color_list)) {
+                  if (is.function(color_list[[icol]])) {
+                     return(color_list[[icol]])
+                  } else {
+                     use_icolor <- color_list[[icol]];
+                  }
+               } else {
+                  use_icolor <- color_sub[[icol]];
                }
                color_max <- NULL;
                if (length(color_sub_max) == 1) {
@@ -998,7 +1062,7 @@ design2colors <- function
                icolors <- assign_numeric_colors(x=x_input[[icol]],
                   restrict_pretty_range=FALSE,
                   color_max=color_max,
-                  color=color_sub[[icol]]);
+                  color=use_icolor);
                return(icolors);
             } else {
                if (verbose > 1) {
@@ -1008,6 +1072,17 @@ design2colors <- function
                ivalues <- unique(as.character(x_input[[icol]]));
             }
             ivalues <- jamba::rmNA(ivalues);
+            # color_list or color_sub
+            if (icol %in% names(color_list)) {
+               use_icolor <- color_list[[icol]];
+               if (length(names(use_icolor)) > 0) {
+                  if (any(names(use_icolor)) %in% ivalues) {
+                     # Todo: figure out how to skip some values if needed
+                  }
+               }
+            } else {
+               use_icolor <- color_sub[[icol]];
+            }
             # use ivalues to define colors
             icolors <- jamba::nameVector(
                jamba::color2gradient(color_sub[[icol]],
@@ -1032,6 +1107,9 @@ design2colors <- function
                "colname_colors: ");
             print_color_list(colname_colors);
          }
+         # 0.0.98.900: add to color_list
+         color_list[names(colname_colors)] <- colname_colors;
+         #
          new_color_list[names(colname_colors)] <- colname_colors;
          new_color_list_fn <- (jamba::sclass(new_color_list) %in% "function")
          new_color_atomic <- unlist(unname(new_color_list[!new_color_list_fn]));
@@ -1134,15 +1212,31 @@ design2colors <- function
          } else {
             add_m <- add_values;
          }
-         add_colors_v <- jamba::nameVector(
-            colorjam::rainbowJam(add_n,
-               phase=phase,
-               hues=add_hue,
-               preset=preset,
-               Crange=Crange,
-               Lrange=Lrange,
-               ...),
-            add_m);
+         if (isTRUE(use_add_colors)) {
+            add_colors_v <- colorjam::add_colors(
+               add_colors_1,
+               n=add_n,
+               return_type="new",
+               color_fn=function(n, ...){
+                  colorjam::rainbowJam(n=n,
+                     ...,
+                     preset=preset,
+                     Crange=Crange,
+                     Lrange=Lrange)
+               },
+               ...)
+            names(add_colors_v) <- add_m;
+         } else {
+            add_colors_v <- jamba::nameVector(
+               colorjam::rainbowJam(add_n,
+                  phase=phase,
+                  hues=add_hue,
+                  preset=preset,
+                  Crange=Crange,
+                  Lrange=Lrange,
+                  ...),
+               add_m);
+         }
          add_colors_1 <- c(add_colors_1,
             add_colors_v);
          if (verbose > 1) {
