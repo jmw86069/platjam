@@ -61,9 +61,9 @@ default_env$overlay_defaults$aggregate <- "none";
 
 }
 \seealso{
-Other jam ucsc browser functions: 
-\code{\link{assign_track_defaults}()},
-\code{\link{make_ucsc_trackname}()},
-\code{\link{parse_ucsc_gokey}()}
+Other jam ucsc browser functions:
+\code{\link[=assign_track_defaults]{assign_track_defaults()}},
+\code{\link[=make_ucsc_trackname]{make_ucsc_trackname()}},
+\code{\link[=parse_ucsc_gokey]{parse_ucsc_gokey()}}
 }
 \concept{jam ucsc browser functions}

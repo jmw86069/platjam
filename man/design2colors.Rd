@@ -370,6 +370,14 @@ dfc <- design2colors(df,
    class_colnames="class",
    color_sub=c(age="dodgerblue"))
 
+# same as above except use add_colors()
+dfca <- design2colors(df,
+   group_colnames="genotype",
+   use_add_colors=TRUE,
+   lightness_colnames="treatment",
+   class_colnames="class",
+   color_sub=c(age="dodgerblue"))
+
 # same as above except assign colors to columns and some values
 dfc <- design2colors(df,
    group_colnames="sample_group",
@@ -416,6 +424,7 @@ dfc12 <- design2colors(df12,
    lightness_colnames=c("time", "treatment"),
    class_colnames="class",
    preset="dichromat",
+   use_add_colors=TRUE,
    color_sub=c(
       treatment="steelblue",
       time="dodgerblue"
@@ -424,11 +433,11 @@ dfc12 <- design2colors(df12,
 
 }
 \seealso{
-Other jam color functions: 
-\code{\link{assign_numeric_colors}()},
-\code{\link{df_to_numcolors}()},
-\code{\link{mean_hue}()},
-\code{\link{print_color_list}()},
-\code{\link{quick_complement_color}()}
+Other jam color functions:
+\code{\link[=assign_numeric_colors]{assign_numeric_colors()}},
+\code{\link[=df_to_numcolors]{df_to_numcolors()}},
+\code{\link[=mean_hue]{mean_hue()}},
+\code{\link[=print_color_list]{print_color_list()}},
+\code{\link[=quick_complement_color]{quick_complement_color()}}
 }
 \concept{jam color functions}

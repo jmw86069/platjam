@@ -1,19 +1,58 @@
 # TODO for platjam
 
-## 03apr2026
+## 31jul2026
+
+* Add Rmd/Qmd friendly check for "exit_after".
+
+   * Method to add Rmd/Qmd param `'exit_after'` to support
+   exiting the Rmd or Qmd at that step in processing.
+   * It should be in a chunk with cache=FALSE.
+   * Maybe: `check_exit_after('section_name')`
+
+* Test a Rmd/Qmd hook to print the chunk name, which prints
+the chunk name to STDOUT inside the document.
+Consider printing the figure output path and filename.
+
+```
+knitr::knit_hooks$set(
+  print_chunk = function(before, options) {
+    if (before) {
+      cat(sprintf(
+        "\n\n**Chunk:** `%s`\n\n",
+        options$label
+      ))
+    }
+    NULL
+  }
+)
+```
+
+* `rmd_tab_iterator()`
+
+   * Consider option to supply nested list with exact tabs
+   and sub-tabs to use, rather than sharing sub-tabs for all.
+
+* `qmd_tab_iterator()` - direct port using Quarto syntax?
+Consider `'sayuks/quartabs'` and `quartabs::render_tabset()`
+as a Quarto-specific option.
+
 
 * `design2colors()`
 
+   * Change default so that 'add_color' is not enabled, too slow.
    * Permit `color_sub` to contain color `function` for columns.
    * Add option to assign colors in each column independently when
    desired.
    * Consider option to supply color_list and update in place,
    for example adding columns/colors.
 
+
+## 03apr2026
+
 * `plot_sedesign()`
 
    * Fix error and bug when using group_fill,
-   or group_border. The if() statement is probably incorrect.
+   or group_border. The 'if' statement is probably incorrect.
 
 * `rmd_tab_iterator()`
 

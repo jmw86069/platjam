@@ -67,11 +67,11 @@ print_color_list(scl)
 
 }
 \seealso{
-Other jam color functions: 
-\code{\link{assign_numeric_colors}()},
-\code{\link{design2colors}()},
-\code{\link{df_to_numcolors}()},
-\code{\link{mean_hue}()},
-\code{\link{quick_complement_color}()}
+Other jam color functions:
+\code{\link[=assign_numeric_colors]{assign_numeric_colors()}},
+\code{\link[=design2colors]{design2colors()}},
+\code{\link[=df_to_numcolors]{df_to_numcolors()}},
+\code{\link[=mean_hue]{mean_hue()}},
+\code{\link[=quick_complement_color]{quick_complement_color()}}
 }
 \concept{jam color functions}

@@ -26,20 +26,20 @@ This function is intended to be called by \code{import_proteomics_PD()} after
 the Excel data is split into protein and peptide \code{data.frame} components.
 }
 \seealso{
-Other jam utility functions: 
-\code{\link{cardinality}()},
-\code{\link{color_complement}()},
-\code{\link{convert_imputed_assays_to_na}()},
-\code{\link{curate_se_colData}()},
-\code{\link{curate_to_df_by_pattern}()},
-\code{\link{design2layout}()},
-\code{\link{get_numeric_transform}()},
-\code{\link{handle_df_args}()},
-\code{\link{merge_proteomics_se}()},
-\code{\link{nmat_summary}()},
-\code{\link{nmatlist_summary}()},
-\code{\link{rmd_tab_iterator}()},
-\code{\link{rowNormScale}()},
-\code{\link{summit_from_vector}()}
+Other jam utility functions:
+\code{\link[=cardinality]{cardinality()}},
+\code{\link[=color_complement]{color_complement()}},
+\code{\link[=convert_imputed_assays_to_na]{convert_imputed_assays_to_na()}},
+\code{\link[=curate_se_colData]{curate_se_colData()}},
+\code{\link[=curate_to_df_by_pattern]{curate_to_df_by_pattern()}},
+\code{\link[=design2layout]{design2layout()}},
+\code{\link[=get_numeric_transform]{get_numeric_transform()}},
+\code{\link[=handle_df_args]{handle_df_args()}},
+\code{\link[=merge_proteomics_se]{merge_proteomics_se()}},
+\code{\link[=nmat_summary]{nmat_summary()}},
+\code{\link[=nmatlist_summary]{nmatlist_summary()}},
+\code{\link[=rmd_tab_iterator]{rmd_tab_iterator()}},
+\code{\link[=rowNormScale]{rowNormScale()}},
+\code{\link[=summit_from_vector]{summit_from_vector()}}
 }
 \concept{jam utility functions}

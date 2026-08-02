@@ -7,12 +7,12 @@
 get_salmon_meta(metafile, exclude_hashes = TRUE, ...)
 }
 \arguments{
-\item{metafile}{character vector of one or more files, usually the
+\item{metafile}{\code{character} vector of one or more files, usually the
 full file path to the \code{meta_info.json} file after running Salmon
 quant. The path \code{metafile} should be the path to any output file
 from one Salmon quant analysis.}
 
-\item{exclude_hashes}{logical indicating whether to drop columns that
+\item{exclude_hashes}{\code{logical} indicating whether to drop columns that
 contain file hashes.}
 
 \item{...}{additional arguments are ignored.}
@@ -62,9 +62,9 @@ if (nchar(cmdinfopath) > 0) {
 
 }
 \seealso{
-Other jam nextgen sequence functions: 
-\code{\link{get_salmon_root}()},
-\code{\link{parse_salmon_flenfile}()},
-\code{\link{save_salmon_qc_xlsx}()}
+Other jam nextgen sequence functions:
+\code{\link[=get_salmon_root]{get_salmon_root()}},
+\code{\link[=parse_salmon_flenfile]{parse_salmon_flenfile()}},
+\code{\link[=save_salmon_qc_xlsx]{save_salmon_qc_xlsx()}}
 }
 \concept{jam nextgen sequence functions}

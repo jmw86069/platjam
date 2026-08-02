@@ -36,11 +36,11 @@
 #'    of unique Salmon root directories in the input `metafile`.
 #'    For any input `metafile` not found, the output is `NULL`.
 #'
-#' @param metafile character vector of one or more files, usually the
+#' @param metafile `character` vector of one or more files, usually the
 #'    full file path to the `meta_info.json` file after running Salmon
 #'    quant. The path `metafile` should be the path to any output file
 #'    from one Salmon quant analysis.
-#' @param exclude_hashes logical indicating whether to drop columns that
+#' @param exclude_hashes `logical` indicating whether to drop columns that
 #'    contain file hashes.
 #' @param ... additional arguments are ignored.
 #'
@@ -359,7 +359,7 @@ save_salmon_qc_xlsx <- function
       meta_qc[,1]);
 
    ## adjust to 75 million input reads
-   qc_cols_adj <- unvigrep("output|bias", qc_cols);
+   qc_cols_adj <- jamba::unvigrep("output|bias", qc_cols);
    metam <- as.matrix(metajsons[,qc_cols_adj,drop=FALSE]);
    metam_adj <- metam;
    metam_adjustment <- adj_target_reads / metam[,"num_processed"];
@@ -371,8 +371,12 @@ save_salmon_qc_xlsx <- function
       metam_adj);
 
    ## orientation data
+   if (verbose > 1) {
+      jamba::printDebug("colnames(metajsons):\n   ",
+         colnames(metajsons), sep="\n   ")
+   }
    ori_cols <- jamba::vgrep("^[A-Z]+$", colnames(metajsons));
-   meta_ori <- as.matrix(metajsons[,ori_cols,drop=FALSE]);
+   meta_ori <- as.matrix(metajsons[, ori_cols, drop=FALSE]);
    meta_ori_df <- data.frame(check.names=FALSE,
       output=rownames(meta_ori),
       meta_ori);
@@ -398,7 +402,7 @@ save_salmon_qc_xlsx <- function
          sheet="Raw_QC",
          dryrun=FALSE,
          verbose=verbose,
-         numColumns=seq(from=2, to=ncol(meta_qc))
+         numColumns=tail(seq_len(ncol(meta_qc)), -1)
       )
       jamba::set_xlsx_colwidths(salmon_qc_xlsx,
          sheet="Raw_QC",
@@ -424,7 +428,7 @@ save_salmon_qc_xlsx <- function
          sheet="Adjusted_QC",
          dryrun=FALSE,
          verbose=verbose,
-         numColumns=seq(from=2, to=ncol(metam_adj_df))
+         numColumns=tail(seq_len(ncol(metam_adj_df)), -1)
       )
       jamba::set_xlsx_colwidths(salmon_qc_xlsx,
          sheet="Adjusted_QC",
@@ -435,64 +439,66 @@ save_salmon_qc_xlsx <- function
          heights=rep(c(17*5,17),c(1, nrow(metam_adj_df))))
 
       ## Salmon orientation
-      ori_means <- colMeans(meta_ori_pct_df[,-1,drop=FALSE]);
-      ori_int <- (ori_means == 0 | ori_means >= 10);
-      jamba::writeOpenxlsx(file=salmon_qc_xlsx,
-         x=meta_ori_df,
-         sheetName="Orientation",
-         colorSub=colorSub1,
-         intColumns=unname(which(ori_int) + 1),
-         numColumns=unname(which(!ori_int) + 1),
-         numFormat="#,##0.0",
-         append=TRUE,
-         verbose=verbose,
-         doConditional=FALSE);
-      applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
-         x=meta_ori_df,
-         sheet="Orientation",
-         dryrun=FALSE,
-         verbose=verbose,
-         numColumns=seq(from=2, to=ncol(meta_ori_df))
-      )
-      jamba::set_xlsx_colwidths(salmon_qc_xlsx,
-         sheet="Orientation",
-         widths=rep(c(50,12),c(1, ncol(meta_ori_df)-1)))
-      jamba::set_xlsx_rowheights(salmon_qc_xlsx,
-         sheet="Orientation",
-         rows=seq_len(nrow(meta_ori_df)+1),
-         heights=rep(c(17*5,17),c(1, nrow(meta_ori_df))))
+      if (length(ori_cols) > 1) {
+         ori_means <- colMeans(meta_ori_pct_df[, -1, drop=FALSE]);
+         ori_int <- (ori_means == 0 | ori_means >= 10);
+         jamba::writeOpenxlsx(file=salmon_qc_xlsx,
+            x=meta_ori_df,
+            sheetName="Orientation",
+            colorSub=colorSub1,
+            intColumns=unname(which(ori_int) + 1),
+            numColumns=unname(which(!ori_int) + 1),
+            numFormat="#,##0.0",
+            append=TRUE,
+            verbose=verbose,
+            doConditional=FALSE);
+         applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
+            x=meta_ori_df,
+            sheet="Orientation",
+            dryrun=FALSE,
+            verbose=verbose,
+            numColumns=tail(seq_len(ncol(meta_ori_df)), -1)
+         )
+         jamba::set_xlsx_colwidths(salmon_qc_xlsx,
+            sheet="Orientation",
+            widths=rep(c(50,12),c(1, ncol(meta_ori_df)-1)))
+         jamba::set_xlsx_rowheights(salmon_qc_xlsx,
+            sheet="Orientation",
+            rows=seq_len(nrow(meta_ori_df)+1),
+            heights=rep(c(17*5,17),c(1, nrow(meta_ori_df))))
 
-      ## Salmon orientation by percent
-      ori_pct_means <- colMeans(meta_ori_pct_df[,-1]);
-      ori_pct_int <- (ori_pct_means == 0 | ori_pct_means >= 10);
-      jamba::writeOpenxlsx(file=salmon_qc_xlsx,
-         x=meta_ori_pct_df,
-         sheetName="Orientation_Percent",
-         colorSub=colorSub1,
-         intColumns=unname(which(ori_pct_int) + 1),
-         numColumns=unname(which(!ori_pct_int) + 1),
-         numFormat="#,##0.000",
-         append=TRUE,
-         verbose=verbose,
-         doConditional=FALSE);
-      applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
-         x=meta_ori_pct_df,
-         sheet="Orientation_Percent",
-         dryrun=FALSE,
-         verbose=verbose,
-         numColumns=seq(from=2, to=ncol(meta_ori_pct_df))
-      )
-      jamba::set_xlsx_colwidths(salmon_qc_xlsx,
-         sheet="Orientation_Percent",
-         widths=rep(c(50,12),c(1, ncol(meta_ori_pct_df)-1)))
-      jamba::set_xlsx_rowheights(salmon_qc_xlsx,
-         sheet="Orientation_Percent",
-         rows=seq_len(nrow(meta_ori_pct_df)+1),
-         heights=rep(c(17*5,17),c(1, nrow(meta_ori_pct_df))))
-      dfs <- list(meta_qc=meta_qc,
-         meta_qc_adj=metam_adj_df,
-         meta_ori=meta_ori_df,
-         meta_ori_pct=meta_ori_pct_df);
+         ## Salmon orientation by percent
+         ori_pct_means <- colMeans(meta_ori_pct_df[,-1, drop=FALSE]);
+         ori_pct_int <- (ori_pct_means == 0 | ori_pct_means >= 10);
+         jamba::writeOpenxlsx(file=salmon_qc_xlsx,
+            x=meta_ori_pct_df,
+            sheetName="Orientation_Percent",
+            colorSub=colorSub1,
+            intColumns=unname(which(ori_pct_int) + 1),
+            numColumns=unname(which(!ori_pct_int) + 1),
+            numFormat="#,##0.000",
+            append=TRUE,
+            verbose=verbose,
+            doConditional=FALSE);
+         applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
+            x=meta_ori_pct_df,
+            sheet="Orientation_Percent",
+            dryrun=FALSE,
+            verbose=verbose,
+            numColumns=tail(seq_len(ncol(meta_ori_pct_df)), -1)
+         )
+         jamba::set_xlsx_colwidths(salmon_qc_xlsx,
+            sheet="Orientation_Percent",
+            widths=rep(c(50,12),c(1, ncol(meta_ori_pct_df)-1)))
+         jamba::set_xlsx_rowheights(salmon_qc_xlsx,
+            sheet="Orientation_Percent",
+            rows=seq_len(nrow(meta_ori_pct_df)+1),
+            heights=rep(c(17*5,17),c(1, nrow(meta_ori_pct_df))))
+         dfs <- list(meta_qc=meta_qc,
+            meta_qc_adj=metam_adj_df,
+            meta_ori=meta_ori_df,
+            meta_ori_pct=meta_ori_pct_df);
+      }
    }
 
    invisible(dfs);

@@ -163,18 +163,18 @@ se_list <- import_metabolomics_niehs(data_path);
 
 }
 \seealso{
-Other jam import functions: 
-\code{\link{coverage_matrix2nmat}()},
-\code{\link{deepTools_matrix2nmat}()},
-\code{\link{frequency_matrix2nmat}()},
-\code{\link{import_lipotype_csv}()},
-\code{\link{import_nanostring_csv}()},
-\code{\link{import_nanostring_rcc}()},
-\code{\link{import_nanostring_rlf}()},
-\code{\link{import_omics_data}()},
-\code{\link{import_proteomics_PD}()},
-\code{\link{import_proteomics_mascot}()},
-\code{\link{import_salmon_quant}()},
-\code{\link{process_metab_compounds_file}()}
+Other jam import functions:
+\code{\link[=coverage_matrix2nmat]{coverage_matrix2nmat()}},
+\code{\link[=deepTools_matrix2nmat]{deepTools_matrix2nmat()}},
+\code{\link[=frequency_matrix2nmat]{frequency_matrix2nmat()}},
+\code{\link[=import_lipotype_csv]{import_lipotype_csv()}},
+\code{\link[=import_nanostring_csv]{import_nanostring_csv()}},
+\code{\link[=import_nanostring_rcc]{import_nanostring_rcc()}},
+\code{\link[=import_nanostring_rlf]{import_nanostring_rlf()}},
+\code{\link[=import_omics_data]{import_omics_data()}},
+\code{\link[=import_proteomics_PD]{import_proteomics_PD()}},
+\code{\link[=import_proteomics_mascot]{import_proteomics_mascot()}},
+\code{\link[=import_salmon_quant]{import_salmon_quant()}},
+\code{\link[=process_metab_compounds_file]{process_metab_compounds_file()}}
 }
 \concept{jam import functions}

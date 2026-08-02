@@ -1,3 +1,29 @@
+# platjam 0.0.99.900
+
+## Updates to existing functions
+
+* `import_salmon_quant()`
+
+   * Improved detection of duplicate transcript_id rownames,
+   mostly caused by missing entries in `tx2gene`. Error message
+   is more specific.
+   * New argument 'debug' which returns the raw `txiTx` object,
+   suitable for debugging and downstream use in other tools.
+
+* `save_salmon_qc_xlsx()` 
+
+  * now tolerates orientation data being
+   empty when using the new Salmon-2.x Rust port. Salmon-2.x fixed
+   the bug in previous Salmon when using libType A ('any'),
+   it auto-detected the right format, then failed to filter reads
+   by that format before running quant.
+   It seems to have affected less than 1% of reads mapped.
+
+* `design2colors()`
+
+   * New default `use_add_colors=FALSE`, it was just too slow.
+
+
 # platjam 0.0.98.900
 
 ## updates to existing functions

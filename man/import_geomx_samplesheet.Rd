@@ -101,7 +101,7 @@ lengths(samplelist)
 
 }
 \seealso{
-Other jam GeoMx functions: 
-\code{\link{revcomp}()}
+Other jam GeoMx functions:
+\code{\link[=revcomp]{revcomp()}}
 }
 \concept{jam GeoMx functions}

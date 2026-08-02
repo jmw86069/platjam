@@ -137,29 +137,29 @@ if (suppressPackageStartupMessages(require(EnrichedHeatmap))) {
 
 }
 \seealso{
-Other jam coverage heatmap functions: 
-\code{\link{get_nmat_ceiling}()},
-\code{\link{nmathm_row_order}()},
-\code{\link{nmatlist2heatmaps}()},
-\code{\link{recenter_nmatlist}()},
-\code{\link{restrand_nmatlist}()},
-\code{\link{validate_heatmap_params}()},
-\code{\link{zoom_nmat}()},
-\code{\link{zoom_nmatlist}()}
+Other jam coverage heatmap functions:
+\code{\link[=get_nmat_ceiling]{get_nmat_ceiling()}},
+\code{\link[=nmathm_row_order]{nmathm_row_order()}},
+\code{\link[=nmatlist2heatmaps]{nmatlist2heatmaps()}},
+\code{\link[=recenter_nmatlist]{recenter_nmatlist()}},
+\code{\link[=restrand_nmatlist]{restrand_nmatlist()}},
+\code{\link[=validate_heatmap_params]{validate_heatmap_params()}},
+\code{\link[=zoom_nmat]{zoom_nmat()}},
+\code{\link[=zoom_nmatlist]{zoom_nmatlist()}}
 
-Other jam import functions: 
-\code{\link{deepTools_matrix2nmat}()},
-\code{\link{frequency_matrix2nmat}()},
-\code{\link{import_lipotype_csv}()},
-\code{\link{import_metabolomics_niehs}()},
-\code{\link{import_nanostring_csv}()},
-\code{\link{import_nanostring_rcc}()},
-\code{\link{import_nanostring_rlf}()},
-\code{\link{import_omics_data}()},
-\code{\link{import_proteomics_PD}()},
-\code{\link{import_proteomics_mascot}()},
-\code{\link{import_salmon_quant}()},
-\code{\link{process_metab_compounds_file}()}
+Other jam import functions:
+\code{\link[=deepTools_matrix2nmat]{deepTools_matrix2nmat()}},
+\code{\link[=frequency_matrix2nmat]{frequency_matrix2nmat()}},
+\code{\link[=import_lipotype_csv]{import_lipotype_csv()}},
+\code{\link[=import_metabolomics_niehs]{import_metabolomics_niehs()}},
+\code{\link[=import_nanostring_csv]{import_nanostring_csv()}},
+\code{\link[=import_nanostring_rcc]{import_nanostring_rcc()}},
+\code{\link[=import_nanostring_rlf]{import_nanostring_rlf()}},
+\code{\link[=import_omics_data]{import_omics_data()}},
+\code{\link[=import_proteomics_PD]{import_proteomics_PD()}},
+\code{\link[=import_proteomics_mascot]{import_proteomics_mascot()}},
+\code{\link[=import_salmon_quant]{import_salmon_quant()}},
+\code{\link[=process_metab_compounds_file]{process_metab_compounds_file()}}
 }
 \concept{jam coverage heatmap functions}
 \concept{jam import functions}

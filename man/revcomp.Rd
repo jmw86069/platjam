@@ -26,7 +26,7 @@ revcomp(dna_in)
 
 }
 \seealso{
-Other jam GeoMx functions: 
-\code{\link{import_geomx_samplesheet}()}
+Other jam GeoMx functions:
+\code{\link[=import_geomx_samplesheet]{import_geomx_samplesheet()}}
 }
 \concept{jam GeoMx functions}

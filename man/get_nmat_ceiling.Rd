@@ -28,14 +28,14 @@ In all cases, \code{iceiling} is rounded to 3 digits with \code{round(iceiling, 
 Also in all cases, \code{na.rm=TRUE} is used, to prevent returning \code{NA}.
 }
 \seealso{
-Other jam coverage heatmap functions: 
-\code{\link{coverage_matrix2nmat}()},
-\code{\link{nmathm_row_order}()},
-\code{\link{nmatlist2heatmaps}()},
-\code{\link{recenter_nmatlist}()},
-\code{\link{restrand_nmatlist}()},
-\code{\link{validate_heatmap_params}()},
-\code{\link{zoom_nmat}()},
-\code{\link{zoom_nmatlist}()}
+Other jam coverage heatmap functions:
+\code{\link[=coverage_matrix2nmat]{coverage_matrix2nmat()}},
+\code{\link[=nmathm_row_order]{nmathm_row_order()}},
+\code{\link[=nmatlist2heatmaps]{nmatlist2heatmaps()}},
+\code{\link[=recenter_nmatlist]{recenter_nmatlist()}},
+\code{\link[=restrand_nmatlist]{restrand_nmatlist()}},
+\code{\link[=validate_heatmap_params]{validate_heatmap_params()}},
+\code{\link[=zoom_nmat]{zoom_nmat()}},
+\code{\link[=zoom_nmatlist]{zoom_nmatlist()}}
 }
 \concept{jam coverage heatmap functions}

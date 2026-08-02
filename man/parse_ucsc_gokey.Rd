@@ -219,9 +219,9 @@ if (FALSE) {
 
 }
 \seealso{
-Other jam ucsc browser functions: 
-\code{\link{assign_track_defaults}()},
-\code{\link{get_track_defaults}()},
-\code{\link{make_ucsc_trackname}()}
+Other jam ucsc browser functions:
+\code{\link[=assign_track_defaults]{assign_track_defaults()}},
+\code{\link[=get_track_defaults]{get_track_defaults()}},
+\code{\link[=make_ucsc_trackname]{make_ucsc_trackname()}}
 }
 \concept{jam ucsc browser functions}

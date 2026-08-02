@@ -368,7 +368,7 @@ design2colors <- function
  use_naValue="<NA>",
  shuffle_colors=FALSE,
  force_consistent_colors=TRUE,
- use_add_colors=TRUE,
+ use_add_colors=FALSE,
  plot_type=c("table",
     "list",
     "none"),

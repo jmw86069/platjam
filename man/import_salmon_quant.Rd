@@ -19,6 +19,7 @@ import_salmon_quant(
   gene_body_ids = NULL,
   trim_tx_from = NULL,
   trim_tx_to = NULL,
+  debug = FALSE,
   verbose = FALSE,
   ...
 )
@@ -96,6 +97,8 @@ gene's unspliced transcripts can be present on two strands.
 \code{"(-)"} and \code{"(+)"} from the transcript_id \code{tx_colname} column.
 }}
 
+\item{debug}{\code{logical} default FALSE, will return the raw 'txiTx' object.}
+
 \item{verbose}{\code{logical} indicating whether to print verbose output.}
 
 \item{...}{additional arguments are passed to supporting functions.}
@@ -161,18 +164,18 @@ run \code{limma::diffSplice()} to compare the unspliced:spliced ratio
 across experiment groups.
 }
 \seealso{
-Other jam import functions: 
-\code{\link{coverage_matrix2nmat}()},
-\code{\link{deepTools_matrix2nmat}()},
-\code{\link{frequency_matrix2nmat}()},
-\code{\link{import_lipotype_csv}()},
-\code{\link{import_metabolomics_niehs}()},
-\code{\link{import_nanostring_csv}()},
-\code{\link{import_nanostring_rcc}()},
-\code{\link{import_nanostring_rlf}()},
-\code{\link{import_omics_data}()},
-\code{\link{import_proteomics_PD}()},
-\code{\link{import_proteomics_mascot}()},
-\code{\link{process_metab_compounds_file}()}
+Other jam import functions:
+\code{\link[=coverage_matrix2nmat]{coverage_matrix2nmat()}},
+\code{\link[=deepTools_matrix2nmat]{deepTools_matrix2nmat()}},
+\code{\link[=frequency_matrix2nmat]{frequency_matrix2nmat()}},
+\code{\link[=import_lipotype_csv]{import_lipotype_csv()}},
+\code{\link[=import_metabolomics_niehs]{import_metabolomics_niehs()}},
+\code{\link[=import_nanostring_csv]{import_nanostring_csv()}},
+\code{\link[=import_nanostring_rcc]{import_nanostring_rcc()}},
+\code{\link[=import_nanostring_rlf]{import_nanostring_rlf()}},
+\code{\link[=import_omics_data]{import_omics_data()}},
+\code{\link[=import_proteomics_PD]{import_proteomics_PD()}},
+\code{\link[=import_proteomics_mascot]{import_proteomics_mascot()}},
+\code{\link[=process_metab_compounds_file]{process_metab_compounds_file()}}
 }
 \concept{jam import functions}

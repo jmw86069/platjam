@@ -111,6 +111,7 @@
 #'    gene's unspliced transcripts can be present on two strands.
 #'    * The previous default (version <= 0.0.78.900) was to remove
 #'    `"(-)"` and `"(+)"` from the transcript_id `tx_colname` column.
+#' @param debug `logical` default FALSE, will return the raw 'txiTx' object.
 #' @param verbose `logical` indicating whether to print verbose output.
 #' @param ... additional arguments are passed to supporting functions.
 #'
@@ -133,6 +134,7 @@ import_salmon_quant <- function
  gene_body_ids=NULL,
  trim_tx_from=NULL,#c("[(][-+][)]"),
  trim_tx_to=NULL,
+ debug=FALSE,
  verbose=FALSE,
  ...)
 {
@@ -222,6 +224,9 @@ import_salmon_quant <- function
       countsFromAbundance=countsFromAbundance,
       txOut=TRUE);
    isamples <- colnames(txiTx[[1]]);
+   if (isTRUE(debug)) {
+      return(txiTx);
+   }
 
    # optionally curate transcript rownames
    if (length(trim_tx_from) > 0) {
@@ -300,14 +305,28 @@ import_salmon_quant <- function
    if ("tx" %in% import_types) {
       # rowData for transcripts
       # table(rownames(txiTx[[1]]) %in% tx2gene$transcript_id)
-      rowData_tx <- tx2gene[match(rownames(txiTx[[1]]), tx2gene[[tx_colname]]),,drop=FALSE];
+      tx_match <- match(rownames(txiTx[[1]]), tx2gene[[tx_colname]]);
+      if (any(is.na(tx_match))) {
+         jamba::printDebug("import_salmon_quant(): ",
+            jamba::formatInt(sum(is.na(tx_match))),
+            " NA values detected from matching '", tx_colname, "'.");
+      }
+      rowData_tx <- tx2gene[tx_match, , drop=FALSE];
       # TODO: debug workarounds when this step fails,
       # usually occurs when rownames do not match tx2gene, which is
       # often the version numbers ENST000012.1_1
-      rownames(rowData_tx) <- rowData_tx[[tx_colname]];
+      # rownames(rowData_tx) <- rowData_tx[[tx_colname]];
+      tryCatch({
+         rownames(rowData_tx) <- rowData_tx[[tx_colname]];
+      }, error=function(e){
+         print(e);
+         jamba::printDebug("Duplicate rownames()",
+            " often arise from incomplete tx2gene data.");
+         stop("Error during rownames(rowData_tx).");
+      })
 
       # Create tx SummarizedExperiment
-      TxSE <- SummarizedExperiment(
+      TxSE <- SummarizedExperiment::SummarizedExperiment(
          assays=list(
             counts=log2(1+txiTx$counts)[,isamples, drop=FALSE],
             abundance=log2(1+txiTx$abundance)[,isamples, drop=FALSE],

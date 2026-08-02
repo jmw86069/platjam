@@ -65,18 +65,18 @@ is the lowercase value, with spaces replaced with underscore \code{"_"}.
 For example \code{"Gap Fill Status"} will become assay name \code{"gap_fill_status"}.
 }
 \seealso{
-Other jam import functions: 
-\code{\link{coverage_matrix2nmat}()},
-\code{\link{deepTools_matrix2nmat}()},
-\code{\link{frequency_matrix2nmat}()},
-\code{\link{import_lipotype_csv}()},
-\code{\link{import_metabolomics_niehs}()},
-\code{\link{import_nanostring_csv}()},
-\code{\link{import_nanostring_rcc}()},
-\code{\link{import_nanostring_rlf}()},
-\code{\link{import_omics_data}()},
-\code{\link{import_proteomics_PD}()},
-\code{\link{import_proteomics_mascot}()},
-\code{\link{import_salmon_quant}()}
+Other jam import functions:
+\code{\link[=coverage_matrix2nmat]{coverage_matrix2nmat()}},
+\code{\link[=deepTools_matrix2nmat]{deepTools_matrix2nmat()}},
+\code{\link[=frequency_matrix2nmat]{frequency_matrix2nmat()}},
+\code{\link[=import_lipotype_csv]{import_lipotype_csv()}},
+\code{\link[=import_metabolomics_niehs]{import_metabolomics_niehs()}},
+\code{\link[=import_nanostring_csv]{import_nanostring_csv()}},
+\code{\link[=import_nanostring_rcc]{import_nanostring_rcc()}},
+\code{\link[=import_nanostring_rlf]{import_nanostring_rlf()}},
+\code{\link[=import_omics_data]{import_omics_data()}},
+\code{\link[=import_proteomics_PD]{import_proteomics_PD()}},
+\code{\link[=import_proteomics_mascot]{import_proteomics_mascot()}},
+\code{\link[=import_salmon_quant]{import_salmon_quant()}}
 }
 \concept{jam import functions}

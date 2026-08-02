@@ -53,9 +53,9 @@ by removing invalid track characters, for example for \code{"track"},
 for the track hierarchy to remain valid.
 }
 \seealso{
-Other jam ucsc browser functions: 
-\code{\link{get_track_defaults}()},
-\code{\link{make_ucsc_trackname}()},
-\code{\link{parse_ucsc_gokey}()}
+Other jam ucsc browser functions:
+\code{\link[=get_track_defaults]{get_track_defaults()}},
+\code{\link[=make_ucsc_trackname]{make_ucsc_trackname()}},
+\code{\link[=parse_ucsc_gokey]{parse_ucsc_gokey()}}
 }
 \concept{jam ucsc browser functions}

@@ -29,9 +29,9 @@ range.}
 Save Salmon QC to Xlsx
 }
 \seealso{
-Other jam nextgen sequence functions: 
-\code{\link{get_salmon_meta}()},
-\code{\link{get_salmon_root}()},
-\code{\link{parse_salmon_flenfile}()}
+Other jam nextgen sequence functions:
+\code{\link[=get_salmon_meta]{get_salmon_meta()}},
+\code{\link[=get_salmon_root]{get_salmon_root()}},
+\code{\link[=parse_salmon_flenfile]{parse_salmon_flenfile()}}
 }
 \concept{jam nextgen sequence functions}

@@ -44,9 +44,9 @@ fragment lengths reported, typically values from 1 to 1000.
 Parse Salmon fragment length file
 }
 \seealso{
-Other jam nextgen sequence functions: 
-\code{\link{get_salmon_meta}()},
-\code{\link{get_salmon_root}()},
-\code{\link{save_salmon_qc_xlsx}()}
+Other jam nextgen sequence functions:
+\code{\link[=get_salmon_meta]{get_salmon_meta()}},
+\code{\link[=get_salmon_root]{get_salmon_root()}},
+\code{\link[=save_salmon_qc_xlsx]{save_salmon_qc_xlsx()}}
 }
 \concept{jam nextgen sequence functions}
