@@ -376,16 +376,18 @@ save_salmon_qc_xlsx <- function
          colnames(metajsons), sep="\n   ")
    }
    ori_cols <- jamba::vgrep("^[A-Z]+$", colnames(metajsons));
-   meta_ori <- as.matrix(metajsons[, ori_cols, drop=FALSE]);
-   meta_ori_df <- data.frame(check.names=FALSE,
-      output=rownames(meta_ori),
-      meta_ori);
+   if (length(ori_cols) > 1) {
+      meta_ori <- as.matrix(metajsons[, ori_cols, drop=FALSE]);
+      meta_ori_df <- data.frame(check.names=FALSE,
+         output=rownames(meta_ori),
+         meta_ori);
 
-   ## orientation data by percent for each sample
-   meta_ori_pct <- meta_ori / rowSums(meta_ori) * 100;
-   meta_ori_pct_df <- data.frame(check.names=FALSE,
-      output=rownames(meta_ori_pct),
-      meta_ori_pct);
+      ## orientation data by percent for each sample
+      meta_ori_pct <- meta_ori / rowSums(meta_ori) * 100;
+      meta_ori_pct_df <- data.frame(check.names=FALSE,
+         output=rownames(meta_ori_pct),
+         meta_ori_pct);
+   }
 
    if (length(salmon_qc_xlsx) > 0) {
       jamba::writeOpenxlsx(file=salmon_qc_xlsx,

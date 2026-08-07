@@ -1,3 +1,9 @@
+# platjam 0.0.99.950
+
+## Hotfix
+
+* `import_salmon_quant()` skipped more orientation-related logic.
+
 # platjam 0.0.99.900
 
 ## Updates to existing functions

@@ -1,5 +1,43 @@
 # TODO for platjam
 
+## 06aug2026
+
+* Normalize bigwigs from Salmon quant data.
+
+   * Inputs:
+   Salmon quant folders
+   curation.txt: sample-to-group (and -to-bigwig if needed)
+   bigwig files: must match curation.txt somehow
+
+* Create Markdown summary document of various rules and guides:
+
+   * How `curation.txt` is defined and used.
+
+      * Consider formalizing factor design columns, see slicejam.
+      * 'Input', 'Factor: Label1', 'Group', 'Label', 'Rep', 'Batch', 'Block'
+      * 'Input' as first column to match filenames.
+      * Consider 'AltInput*' for additional filename matching.
+
+   * How Rmd params can define one or more design models.
+   * How jammaplot determines plot panel dimensions, and
+   figure size in inches.
+   * How to define "detected rows" with `se_detected_rows()`.
+   * How to handle detected_rows_list.
+   * How to store multiple normalizations in SE.
+   * How to define multiple sets of housekeeper (HK) genes,
+   especially for NanoString data.
+   * Common RMarkdown Rmd options, as recommended.
+   * Common Quarto Qmd options, as recommended.
+   * How to load Rmd or Qmd cache to a new R session.
+
+* Create boilerplate Rmd/Qmd tablist functions:
+
+   * JammaPlot: iterate assay_names, centerBy, normgroup, useRank
+   * Heatmap: max rows (for overall data), column split, row split,
+   centerBy_colnames as `list`? Intended as an "overview".
+   * HeatmapHits: SEStats, SEDesign
+
+
 ## 31jul2026
 
 * Add Rmd/Qmd friendly check for "exit_after".
