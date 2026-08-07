@@ -442,64 +442,85 @@ save_salmon_qc_xlsx <- function
 
       ## Salmon orientation
       if (length(ori_cols) > 1) {
-         ori_means <- colMeans(meta_ori_pct_df[, -1, drop=FALSE]);
-         ori_int <- (ori_means == 0 | ori_means >= 10);
-         jamba::writeOpenxlsx(file=salmon_qc_xlsx,
-            x=meta_ori_df,
-            sheetName="Orientation",
-            colorSub=colorSub1,
-            intColumns=unname(which(ori_int) + 1),
-            numColumns=unname(which(!ori_int) + 1),
-            numFormat="#,##0.0",
-            append=TRUE,
-            verbose=verbose,
-            doConditional=FALSE);
-         applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
-            x=meta_ori_df,
-            sheet="Orientation",
-            dryrun=FALSE,
-            verbose=verbose,
-            numColumns=tail(seq_len(ncol(meta_ori_df)), -1)
+         ori_means <- colMeans(meta_ori_pct_df[, -1, drop = FALSE])
+         ori_int <- (ori_means == 0 | ori_means >= 10)
+         jamba::writeOpenxlsx(
+            file = salmon_qc_xlsx,
+            x = meta_ori_df,
+            sheetName = "Orientation",
+            colorSub = colorSub1,
+            intColumns = unname(which(ori_int) + 1),
+            numColumns = unname(which(!ori_int) + 1),
+            numFormat = "#,##0.0",
+            append = TRUE,
+            verbose = verbose,
+            doConditional = FALSE
          )
-         jamba::set_xlsx_colwidths(salmon_qc_xlsx,
-            sheet="Orientation",
-            widths=rep(c(50,12),c(1, ncol(meta_ori_df)-1)))
-         jamba::set_xlsx_rowheights(salmon_qc_xlsx,
-            sheet="Orientation",
-            rows=seq_len(nrow(meta_ori_df)+1),
-            heights=rep(c(17*5,17),c(1, nrow(meta_ori_df))))
+         applyXlsxConditionalFormatByColumn(
+            file = salmon_qc_xlsx,
+            x = meta_ori_df,
+            sheet = "Orientation",
+            dryrun = FALSE,
+            verbose = verbose,
+            numColumns = tail(seq_len(ncol(meta_ori_df)), -1)
+         )
+         jamba::set_xlsx_colwidths(
+            salmon_qc_xlsx,
+            sheet = "Orientation",
+            widths = rep(c(50, 12), c(1, ncol(meta_ori_df) - 1))
+         )
+         jamba::set_xlsx_rowheights(
+            salmon_qc_xlsx,
+            sheet = "Orientation",
+            rows = seq_len(nrow(meta_ori_df) + 1),
+            heights = rep(c(17 * 5, 17), c(1, nrow(meta_ori_df)))
+         )
 
          ## Salmon orientation by percent
-         ori_pct_means <- colMeans(meta_ori_pct_df[,-1, drop=FALSE]);
-         ori_pct_int <- (ori_pct_means == 0 | ori_pct_means >= 10);
-         jamba::writeOpenxlsx(file=salmon_qc_xlsx,
-            x=meta_ori_pct_df,
-            sheetName="Orientation_Percent",
-            colorSub=colorSub1,
-            intColumns=unname(which(ori_pct_int) + 1),
-            numColumns=unname(which(!ori_pct_int) + 1),
-            numFormat="#,##0.000",
-            append=TRUE,
-            verbose=verbose,
-            doConditional=FALSE);
-         applyXlsxConditionalFormatByColumn(file=salmon_qc_xlsx,
-            x=meta_ori_pct_df,
-            sheet="Orientation_Percent",
-            dryrun=FALSE,
-            verbose=verbose,
-            numColumns=tail(seq_len(ncol(meta_ori_pct_df)), -1)
+         ori_pct_means <- colMeans(meta_ori_pct_df[, -1, drop = FALSE])
+         ori_pct_int <- (ori_pct_means == 0 | ori_pct_means >= 10)
+         jamba::writeOpenxlsx(
+            file = salmon_qc_xlsx,
+            x = meta_ori_pct_df,
+            sheetName = "Orientation_Percent",
+            colorSub = colorSub1,
+            intColumns = unname(which(ori_pct_int) + 1),
+            numColumns = unname(which(!ori_pct_int) + 1),
+            numFormat = "#,##0.000",
+            append = TRUE,
+            verbose = verbose,
+            doConditional = FALSE
          )
-         jamba::set_xlsx_colwidths(salmon_qc_xlsx,
-            sheet="Orientation_Percent",
-            widths=rep(c(50,12),c(1, ncol(meta_ori_pct_df)-1)))
-         jamba::set_xlsx_rowheights(salmon_qc_xlsx,
-            sheet="Orientation_Percent",
-            rows=seq_len(nrow(meta_ori_pct_df)+1),
-            heights=rep(c(17*5,17),c(1, nrow(meta_ori_pct_df))))
-         dfs <- list(meta_qc=meta_qc,
-            meta_qc_adj=metam_adj_df,
-            meta_ori=meta_ori_df,
-            meta_ori_pct=meta_ori_pct_df);
+         applyXlsxConditionalFormatByColumn(
+            file = salmon_qc_xlsx,
+            x = meta_ori_pct_df,
+            sheet = "Orientation_Percent",
+            dryrun = FALSE,
+            verbose = verbose,
+            numColumns = tail(seq_len(ncol(meta_ori_pct_df)), -1)
+         )
+         jamba::set_xlsx_colwidths(
+            salmon_qc_xlsx,
+            sheet = "Orientation_Percent",
+            widths = rep(c(50, 12), c(1, ncol(meta_ori_pct_df) - 1))
+         )
+         jamba::set_xlsx_rowheights(
+            salmon_qc_xlsx,
+            sheet = "Orientation_Percent",
+            rows = seq_len(nrow(meta_ori_pct_df) + 1),
+            heights = rep(c(17 * 5, 17), c(1, nrow(meta_ori_pct_df)))
+         )
+         dfs <- list(
+            meta_qc = meta_qc,
+            meta_qc_adj = metam_adj_df,
+            meta_ori = meta_ori_df,
+            meta_ori_pct = meta_ori_pct_df
+         )
+      } else {
+         dfs <- list(
+            meta_qc = meta_qc,
+            meta_qc_adj = metam_adj_df
+         )
       }
    }
 
